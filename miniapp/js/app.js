@@ -20,16 +20,126 @@ function haptic(type = 'light') {
   }
 }
 
+const DEFAULT_DATA = {
+  leads: [
+    {
+      id: "lead-1",
+      category: "development",
+      categoryName: "Веброзробка",
+      subcategory: "landing",
+      subcategoryName: "Односторінковий сайт",
+      sourceType: "chat",
+      sourceName: "IT Фріланс Україна | Замовлення",
+      sourceUsername: "@it_freelance_ua",
+      authorName: "Катерина",
+      authorUsername: "@kateryna_coffee",
+      title: "Терміново потрібен лендінг для кав'ярні у Львові",
+      text: "Терміново шукаю розробника на сайт для кав'ярні! Потрібен сучасний стильний односторінковий сайт з меню, контактами, картою та формою замовлення столика. Дедлайн: 2-3 дні. Бюджет: 15 000 ₴. Шукаємо досвідченого розробника з портфоліо схожих робіт. Пишіть в особисті з прикладами!",
+      date: "2026-10-06T12:37:00.000Z",
+      dateFormatted: "Сьогодні, 12:37",
+      budget: 15000,
+      currency: "₴",
+      isUrgent: true,
+      requiresPortfolio: true,
+      experienceRequired: true,
+      aiRating: 85,
+      aiSummary: "Термінова розробка конверсійного лендінгу для кав'ярні за 2-3 дні. Бюджет 15 000 ₴.",
+      aiAnalysis: {
+        score: 85,
+        summary: "Термінова розробка лендінгу для кав'ярні за 2-3 дні.",
+        pros: ["Високий адекватний бюджет (15 000 ₴)", "Чіткі вимоги та конкретні блоки", "Прямий контакт замовника"],
+        cons: ["Стислий дедлайн (2-3 дні)"]
+      },
+      inCrm: false
+    }
+  ],
+  crm: [
+    {
+      id: "crm-1",
+      leadId: "lead-1",
+      name: "Олексій",
+      username: "@olexa12",
+      avatarLetter: "О",
+      status: "offer",
+      statusLabel: "Оффер",
+      service: "development",
+      serviceLabel: "Розробка",
+      niche: "Кав'ярня / Ресторан",
+      budget: 14000,
+      currency: "₴",
+      source: "partners",
+      sourceLabel: "Партнери",
+      notes: "Обговорили вимоги. Чекає договір та демо.",
+      links: { telegram: "https://t.me/olexa12", phone: "+380971234567" },
+      orders: [{ id: "ord-1", title: "Створення односторінкового сайту", amount: 14000, paidStatus: "partial", deadline: "2026-10-15" }]
+    }
+  ],
+  income: {
+    totalEarned: 120500,
+    totalExpected: 20000,
+    currency: "₴",
+    chart: [
+      { month: "Чер", amount: 18000 },
+      { month: "Лип", amount: 24000 },
+      { month: "Сер", amount: 29000 },
+      { month: "Вер", amount: 37500 },
+      { month: "Жов", amount: 12000 }
+    ],
+    history: [
+      {
+        id: "inc-w1",
+        period: "1-7 жов 2026",
+        weekLabel: "1–7 жовтня",
+        total: 4500,
+        days: [
+          { date: "1 жов", dayName: "Пн", amount: 1000, client: "Кафе 'Затишок'" },
+          { date: "4 жов", dayName: "Чт", amount: 2500, client: "Андрій" },
+          { date: "6 жов", dayName: "Сб", amount: 500, client: "Ольга" },
+          { date: "7 жов", dayName: "Нд", amount: 500, client: "Дмитро" }
+        ]
+      },
+      {
+        id: "inc-w2",
+        period: "8-14 жов 2026",
+        weekLabel: "8–14 жовтня",
+        total: 2000,
+        days: [{ date: "8 жов", dayName: "Пн", amount: 2000, client: "Beauty Studio" }]
+      },
+      {
+        id: "inc-w3",
+        period: "15-21 жов 2026",
+        weekLabel: "15–21 жовтня",
+        total: 0,
+        days: []
+      },
+      {
+        id: "inc-w4",
+        period: "22-31 жов 2026",
+        weekLabel: "22–31 жовтня",
+        total: 5500,
+        days: [{ date: "24 жов", dayName: "Ср", amount: 5500, client: "Віктор" }]
+      }
+    ]
+  },
+  profile: {
+    agencyName: "DenisWeb Studio",
+    ownerName: "Денис Залізко",
+    theme: "light",
+    about: "DenisWeb Studio — діджитал-агентство сучасної веброзробки та результативного маркетингу. Створюємо висококонверсійні лендінги, інтернет-магазини, 3D-сайти, каталоги та Telegram-боти. Наші стандарти: чистий код, PageSpeed 90+, адаптив під усі гаджети, інтеграція ШІ у процеси та безкоштовне інтерактивне демо до внесення авансу. Оплата 40% аванс / 60% після запуску.",
+    responseTemplate: "Вітаю, {NAME}! Побачив ваше замовлення щодо {TASK}. У DenisWeb Studio ми реалізуємо подібні проєкти під ключ за 2-4 дні з гарантією швидкості та чистого коду.\n\nГотові безкоштовно розробити концепт та інтерактивне демо головного блоку ще до початку оплати, щоб ви наочно побачили результат.\n\nНаш сайт та кейси: https://denis-webstudio.site\nКоли вам зручно коротко обговорити деталі?"
+  }
+};
+
 // ============================================================
 // APP STATE
 // ============================================================
 const state = {
   currentTab: 'tab-leads',
   theme: localStorage.getItem('dws_theme') || 'light',
-  leads: [],
-  crm: [],
-  income: { totalEarned: 0, totalExpected: 0, chart: [], history: [] },
-  profile: {},
+  leads: JSON.parse(localStorage.getItem('dws_leads') || 'null') || [...DEFAULT_DATA.leads],
+  crm: JSON.parse(localStorage.getItem('dws_crm') || 'null') || [...DEFAULT_DATA.crm],
+  income: JSON.parse(localStorage.getItem('dws_income') || 'null') || JSON.parse(JSON.stringify(DEFAULT_DATA.income)),
+  profile: JSON.parse(localStorage.getItem('dws_profile') || 'null') || { ...DEFAULT_DATA.profile },
   sources: { chats: [], channels: [] },
   activeCrmLead: null,
   activeLeadForAi: null,
