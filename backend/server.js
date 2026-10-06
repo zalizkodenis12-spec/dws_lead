@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { db } from './db/db.js';
 import { analyzeLeadAi, generatePersonalizedOffer } from './ai/gemini.js';
 import { ingestMessage, loadSources } from './parser/monitor.js';
+import './bot.js';
 
 dotenv.config();
 
