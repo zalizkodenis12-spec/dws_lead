@@ -1,0 +1,34 @@
+{
+  "description": "Список ~200 чатів та ~200 каналів для моніторингу лідів DWS Lead. Сюди можна додавати будь-які юзернейми (з @ або посиланнями t.me/).",
+  "updatedAt": "2026-10-06T14:30:00.000Z",
+  "chats": [
+    { "username": "@it_freelance_ua", "title": "IT Фріланс Україна | Замовлення", "category": "development", "active": true },
+    { "username": "@webdev_jobs_ua", "title": "Веб-розробка UA | Робота та ліди", "category": "development", "active": true },
+    { "username": "@freelance_ua_chat", "title": "Фріланс Чат UA", "category": "all", "active": true },
+    { "username": "@marketing_ua_leads", "title": "Маркетинг & Таргет Україна", "category": "marketing", "active": true },
+    { "username": "@target_ukraine_chat", "title": "Таргетологи України Чат", "category": "marketing", "active": true },
+    { "username": "@video_montage_ua", "title": "Монтаж Відео / Reels / YouTube UA", "category": "montage", "active": true },
+    { "username": "@motion_design_ua", "title": "Моушн Дизайн Україна", "category": "montage", "active": true },
+    { "username": "@digital_jobs_kyiv", "title": "Digital Вакансії Київ & Remote", "category": "development", "active": true },
+    { "username": "@frontend_ukraine", "title": "Frontend Developers UA", "category": "development", "active": true },
+    { "username": "@wordpress_ua_chat", "title": "WordPress & Webflow UA", "category": "development", "active": true },
+    { "username": "@ecommerce_ua_leads", "title": "Інтернет-магазини та e-Commerce UA", "category": "development", "active": true },
+    { "username": "@smm_target_leads_ua", "title": "SMM & Реклама Замовлення", "category": "marketing", "active": true },
+    { "username": "@content_creators_ua", "title": "Креатори & Відеомонтажери UA", "category": "montage", "active": true },
+    { "username": "@it_ukraine_orders", "title": "IT Замовлення та Проєкти", "category": "development", "active": true }
+  ],
+  "channels": [
+    { "username": "@freelance_hunt_leads", "title": "Замовлення Freelancehunt UA", "category": "all", "active": true },
+    { "username": "@djinni_jobs_ua", "title": "Djinni Jobs & Orders UA", "category": "development", "active": true },
+    { "username": "@work_ua_digital", "title": "Digital Вакансії Україна", "category": "all", "active": true },
+    { "username": "@dou_jobs_leads", "title": "DOU Вакансії та Проєкти", "category": "development", "active": true },
+    { "username": "@ukrainian_freelance_feed", "title": "Фріланс Біржа Стрічка Замовлень", "category": "all", "active": true },
+    { "username": "@web_design_orders_ua", "title": "Веб-дизайн та Розробка UA", "category": "development", "active": true },
+    { "username": "@target_meta_leads_ua", "title": "Meta Ads & Трафік Проєкти", "category": "marketing", "active": true },
+    { "username": "@google_ads_ukraine", "title": "Google Ads Проєкти та Робота", "category": "marketing", "active": true },
+    { "username": "@reels_tiktok_orders", "title": "Замовлення на Reels та TikTok Монтаж", "category": "montage", "active": true },
+    { "username": "@creative_leads_ua", "title": "Креативи & Рекламне Відео UA", "category": "montage", "active": true },
+    { "username": "@startups_ua_hiring", "title": "Стартапи України — Пошук Підрядників", "category": "development", "active": true },
+    { "username": "@ua_agencies_network", "title": "Агентства України Співпраця", "category": "all", "active": true }
+  ]
+}

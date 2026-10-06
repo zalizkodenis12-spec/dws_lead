@@ -1,0 +1,18 @@
+{
+  "name": "dws-lead",
+  "version": "1.0.0",
+  "description": "DWS Lead — Telegram Mini App & Lead Management System for DenisWeb Studio",
+  "main": "backend/server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node backend/server.js",
+    "bot": "node backend/bot.js",
+    "monitor": "node backend/parser/monitor.js",
+    "dev": "node backend/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7"
+  }
+}

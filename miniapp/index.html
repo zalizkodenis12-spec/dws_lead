@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>DWS Lead — DenisWeb Studio</title>
+  
+  <!-- Telegram Web App SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <!-- Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="icon" href="assets/favicon.ico">
+</head>
+<body class="light-theme">
+  <!-- Signature DenisWeb Studio Grain Noise Overlay -->
+  <div class="noise"></div>
+
+  <!-- App Wrapper -->
+  <div class="app-wrap">
+    
+    <!-- TOP HEADER -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="header-logo">
+          <span class="logo-dws">DWS</span><span class="logo-lead">Lead</span>
+        </div>
+        <span class="header-studio">DenisWeb Studio</span>
+      </div>
+      <div class="header-actions">
+        <!-- Theme toggle icon button -->
+        <button id="themeToggleBtn" class="icon-btn theme-toggle" title="Змінити тему">
+          <svg class="sun-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          <svg class="moon-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+        <!-- Refresh button -->
+        <button id="refreshBtn" class="icon-btn" title="Оновити дані">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN SCROLLABLE CONTENT AREA -->
+    <main class="app-main">
+
+      <!-- ============================================================
+           TAB 1: ЗАЯВКИ (LEADS)
+           ============================================================ -->
+      <section id="tab-leads" class="tab-view active">
+        <!-- Section Header -->
+        <div class="view-header">
+          <div class="view-title-wrap">
+            <h1 class="view-title">Заявки</h1>
+            <span class="count-badge" id="leadsTodayCount">101 сьогодні</span>
+          </div>
+        </div>
+
+        <!-- Filter Pills Bar -->
+        <div class="filter-pills-bar">
+          <button id="openNichesBtn" class="filter-pill">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+            <span id="activeNicheLabel">Категорії</span>
+            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <button id="openFiltersBtn" class="filter-pill">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+            <span>Фільтри</span>
+          </button>
+          <button id="toggleSortBtn" class="filter-pill icon-only" title="Сортування">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+          </button>
+        </div>
+
+        <!-- Search Bar with Input & Action Button -->
+        <div class="search-bar">
+          <div class="search-input-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="leadSearchInput" placeholder="Веброзробка сайтів, маркетинг...">
+          </div>
+          <button id="leadSearchBtn" class="btn btn--fill btn--sm">ПОШУК</button>
+        </div>
+
+        <!-- Active Filter Chips (if any selected) -->
+        <div id="activeFiltersContainer" class="active-chips-row" style="display:none;"></div>
+
+        <!-- Leads Cards Feed -->
+        <div id="leadsList" class="cards-feed">
+          <!-- Dynamically populated or loaded from DB -->
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 2: CRM
+           ============================================================ -->
+      <section id="tab-crm" class="tab-view">
+        <div class="view-header">
+          <div class="view-title-wrap">
+            <h1 class="view-title">CRM</h1>
+            <span class="count-badge" id="crmTotalCount">15 лідів</span>
+          </div>
+          <button id="addCrmBtn" class="btn btn--fill btn--sm btn--add">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>Клієнт</span>
+          </button>
+        </div>
+
+        <!-- Horizontal Status Filter Tabs (Kanban status selector) -->
+        <div class="status-scroll-bar">
+          <button class="status-tab active" data-status="all">Всі <span class="st-num" id="st-all-count">14</span></button>
+          <button class="status-tab" data-status="in_progress">В процесі <span class="st-num" id="st-in_progress-count">8</span></button>
+          <button class="status-tab" data-status="working">Працюєм <span class="st-num" id="st-working-count">3</span></button>
+          <button class="status-tab" data-status="offer">Оффер <span class="st-num" id="st-offer-count">4</span></button>
+          <button class="status-tab" data-status="closed">Закриті <span class="st-num" id="st-closed-count">7</span></button>
+          <button class="status-tab" data-status="follow_up">Follow-up <span class="st-num" id="st-follow_up-count">2</span></button>
+          <button class="status-tab" data-status="discuss_later">Обговорити пізніше</button>
+          <button class="status-tab" data-status="ignoring">Ігнорує</button>
+          <button class="status-tab" data-status="rejected">Відмова</button>
+          <button class="status-tab" data-status="cancelled">Не співпрацюєм</button>
+        </div>
+
+        <!-- CRM Clients List -->
+        <div id="crmList" class="crm-feed">
+          <!-- Dynamically populated -->
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 3: ДОХІД (INCOME)
+           ============================================================ -->
+      <section id="tab-income" class="tab-view">
+        <div class="view-header">
+          <div class="view-title-wrap">
+            <h1 class="view-title">Дохід</h1>
+            <span class="count-badge" id="incomeOrdersCount">15 заявок</span>
+          </div>
+          <button id="addIncomeBtn" class="btn btn--fill btn--sm btn--add">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>Замовлення</span>
+          </button>
+        </div>
+
+        <!-- Metric Stat Cards (Side-by-side) -->
+        <div class="income-stats-grid">
+          <div class="income-stat-card">
+            <span class="stat-label">ЗАРОБЛЕНО</span>
+            <div class="stat-value" id="totalEarnedVal">120 500 ₴</div>
+            <span class="stat-sub">За весь час</span>
+          </div>
+          <div class="income-stat-card">
+            <span class="stat-label">ОЧІКУВАНО</span>
+            <div class="stat-value text-accent" id="totalExpectedVal">20 000 ₴</div>
+            <span class="stat-sub">В процесі роботи</span>
+          </div>
+        </div>
+
+        <!-- Interactive Monthly Bar Chart Card -->
+        <div class="income-chart-card">
+          <div class="chart-header">
+            <span class="chart-title">Динаміка оплат</span>
+            <span class="chart-active-month" id="chartActiveMonthLabel">Жов: 12 000 ₴</span>
+          </div>
+          <div class="bars-container" id="incomeBars">
+            <!-- Bars rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Filter Time Pills -->
+        <div class="income-filters-row">
+          <button id="openTimeFilterBtn" class="filter-pill flex-1">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span id="activeTimeLabel">За весь час</span>
+            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <button id="openCalendarBtn" class="filter-pill">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span>По даті</span>
+          </button>
+        </div>
+
+        <!-- Weekly & Daily Income Accordion List -->
+        <div class="income-accordion-wrap" id="incomeAccordion">
+          <!-- Weeks with collapsible day items -->
+        </div>
+      </section>
+
+      <!-- ============================================================
+           TAB 4: ПРОФІЛЬ (PROFILE)
+           ============================================================ -->
+      <section id="tab-profile" class="tab-view">
+        <div class="view-header">
+          <div class="view-title-wrap">
+            <h1 class="view-title">Профіль</h1>
+            <span class="count-badge">DenisWeb Studio</span>
+          </div>
+        </div>
+
+        <div class="profile-card">
+          <!-- "ПРО СЕБЕ" Block -->
+          <div class="form-group">
+            <div class="label-row">
+              <label class="form-label" for="profileAbout">ПРО СЕБЕ:</label>
+              <span class="char-counter" id="aboutCounter">0/2000</span>
+            </div>
+            <p class="form-hint">Досвід, навички, стиль та інше. Використовується AI для генерації персоналізованого відгуку.</p>
+            <textarea id="profileAbout" class="form-textarea" rows="4" maxlength="2000" placeholder="Опишіть ваш досвід, стек та особливості підходу..."></textarea>
+          </div>
+
+          <!-- "ШАБЛОН ВІДГУКУ" Block -->
+          <div class="form-group">
+            <div class="label-row">
+              <label class="form-label" for="profileTemplate">ШАБЛОН ВІДГУКУ:</label>
+              <span class="char-counter" id="templateCounter">0/2000</span>
+            </div>
+            <p class="form-hint">Приклад, за яким іде відгук клієнту на вакансію. AI адаптує його під кожне замовлення.</p>
+            <textarea id="profileTemplate" class="form-textarea" rows="5" maxlength="2000" placeholder="Вітаю, {NAME}! Побачив замовлення {TASK}..."></textarea>
+          </div>
+
+          <!-- THEME SELECTION -->
+          <div class="form-group">
+            <label class="form-label">ТЕМА:</label>
+            <div class="theme-selector-pills">
+              <button type="button" class="theme-choice-pill" data-theme="light">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                <span>Світла</span>
+              </button>
+              <button type="button" class="theme-choice-pill" data-theme="dark">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                <span>Темна</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- SOURCES INFO -->
+          <div class="form-group">
+            <label class="form-label">БАЗА ДЖЕРЕЛ ПОШУКУ:</label>
+            <div class="sources-stat-box">
+              <div class="sources-stat-item">
+                <span class="num">~200</span>
+                <span class="txt">Telegram чатів</span>
+              </div>
+              <div class="sources-divider"></div>
+              <div class="sources-stat-item">
+                <span class="num">~200</span>
+                <span class="txt">Telegram каналів</span>
+              </div>
+            </div>
+            <button id="openSourcesBtn" class="btn btn--out btn--block btn--sm mt-2">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              <span>Керувати списком чатів та каналів</span>
+            </button>
+          </div>
+
+          <button id="saveProfileBtn" class="btn btn--fill btn--block btn--lg">ЗБЕРЕГТИ НАЛАШТУВАННЯ</button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ============================================================
+         BOTTOM NAVIGATION BAR (4 TABS)
+         ============================================================ -->
+    <nav class="app-nav">
+      <button class="nav-btn active" data-tab="tab-leads">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        <span>Заявки</span>
+      </button>
+      <button class="nav-btn" data-tab="tab-crm">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        <span>CRM</span>
+      </button>
+      <button class="nav-btn" data-tab="tab-income">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <span>Дохід</span>
+      </button>
+      <button class="nav-btn" data-tab="tab-profile">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"></circle><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path></svg>
+        <span>Профіль</span>
+      </button>
+    </nav>
+
+  </div> <!-- End .app-wrap -->
+
+  <!-- ============================================================
+       MODALS & BOTTOM SHEETS
+       ============================================================ -->
+
+  <!-- MODAL: МОЇ НІШІ (КАТЕГОРІЇ) -->
+  <div id="modalNiches" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Мої ніші</h3>
+        <button class="modal-close" data-close="modalNiches">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Розробка Section -->
+        <div class="niche-group">
+          <div class="niche-group-header" data-toggle="niche-dev-sub">
+            <div class="niche-group-info">
+              <span class="niche-icon">💻</span>
+              <span class="niche-name">Веброзробка</span>
+            </div>
+            <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <div id="niche-dev-sub" class="niche-sub-list">
+            <label class="check-item"><input type="checkbox" name="sub-landing" checked> <span>Лендінги</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-ecommerce" checked> <span>Онлайн-магазини</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-catalog" checked> <span>Сайти-каталоги</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-3d_site" checked> <span>3D сайти</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-multipages" checked> <span>Багатосторінкові</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-tg_bots" checked> <span>Телеграм-боти</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-maintenance" checked> <span>Технічне обслуговування</span></label>
+          </div>
+        </div>
+
+        <!-- Маркетинг Section -->
+        <div class="niche-group">
+          <div class="niche-group-header" data-toggle="niche-mark-sub">
+            <div class="niche-group-info">
+              <span class="niche-icon">🎯</span>
+              <span class="niche-name">Маркетинг</span>
+            </div>
+            <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <div id="niche-mark-sub" class="niche-sub-list" style="display:none;">
+            <label class="check-item"><input type="checkbox" name="sub-meta_target" checked> <span>Таргетована реклама Meta</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-google_ads" checked> <span>Google реклама</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-tiktok_ads" checked> <span>TikTok реклама</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-telegram_ads" checked> <span>Telegram реклама</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-seo" checked> <span>SEO оптимізація</span></label>
+          </div>
+        </div>
+
+        <!-- Монтаж Section -->
+        <div class="niche-group">
+          <div class="niche-group-header" data-toggle="niche-mont-sub">
+            <div class="niche-group-info">
+              <span class="niche-icon">🎬</span>
+              <span class="niche-name">Монтаж</span>
+            </div>
+            <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </div>
+          <div id="niche-mont-sub" class="niche-sub-list" style="display:none;">
+            <label class="check-item"><input type="checkbox" name="sub-reels_tiktok" checked> <span>Reels & TikTok</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-youtube" checked> <span>YouTube монтаж</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-ads_creatives" checked> <span>Рекламні креативи</span></label>
+            <label class="check-item"><input type="checkbox" name="sub-motion" checked> <span>Моушн-дизайн</span></label>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--out" data-close="modalNiches">Відхилити</button>
+        <button id="saveNichesBtn" class="btn btn--fill">ЗБЕРЕГТИ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ФІЛЬТРИ ЛІДІВ -->
+  <div id="modalFilters" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Фільтри</h3>
+        <button class="modal-close" data-close="modalFilters">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Бюджет -->
+        <div class="filter-section">
+          <label class="form-label">БЮДЖЕТ:</label>
+          <div class="filter-options-grid">
+            <button class="opt-btn active" data-budget="all">Всі</button>
+            <button class="opt-btn" data-budget="under5k">До 5 000 ₴</button>
+            <button class="opt-btn" data-budget="5k-15k">5 000 – 15 000 ₴</button>
+            <button class="opt-btn" data-budget="15k-30k">15 000 – 30 000 ₴</button>
+            <button class="opt-btn" data-budget="30k+">30 000+ ₴</button>
+          </div>
+        </div>
+
+        <!-- Портфоліо -->
+        <div class="filter-section">
+          <label class="form-label">ПОРТФОЛІО:</label>
+          <div class="filter-options-grid">
+            <button class="opt-btn active" data-portfolio="any">Без різниці</button>
+            <button class="opt-btn" data-portfolio="required">Тільки з портфоліо</button>
+          </div>
+        </div>
+
+        <!-- Досвід -->
+        <div class="filter-section">
+          <label class="form-label">ДОСВІД:</label>
+          <div class="filter-options-grid">
+            <button class="opt-btn active" data-exp="any">Без різниці</button>
+            <button class="opt-btn" data-exp="required">Потрібен досвід</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--out" data-close="modalFilters">Скинути</button>
+        <button id="applyFiltersBtn" class="btn btn--fill">ЗАСТОСУВАТИ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AI-РЕЙТИНГ (AI-РЕЙТ) -->
+  <div id="modalAiRating" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">AI-Аналіз замовлення</h3>
+        <button class="modal-close" data-close="modalAiRating">&times;</button>
+      </div>
+      <div class="modal-body" id="aiRatingContent">
+        <!-- Skeleton Loader or Content -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--fill btn--block" data-close="modalAiRating">Зрозуміло</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AI-ВІДГУК (OFFER GENERATOR) -->
+  <div id="modalAiOffer" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">AI-Відгук на вакансію</h3>
+        <button class="modal-close" data-close="modalAiOffer">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="ai-offer-box" id="aiOfferContent">
+          <!-- Skeleton Loader or Textarea with generated offer -->
+        </div>
+      </div>
+      <div class="modal-footer flex-col gap-2">
+        <button id="copyAiOfferBtn" class="btn btn--out btn--block">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span>КОПІЮВАТИ ТЕКСТ</span>
+        </button>
+        <button id="openClientChatBtn" class="btn btn--fill btn--block">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.52 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .37z"/></svg>
+          <span>НАПИСАТИ В TELEGRAM</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ДЕТАЛЬНА КАРТКА ЛІДА В CRM -->
+  <div id="modalCrmDetail" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <div class="crm-lead-title-row">
+          <div class="client-avatar lg" id="crmDetailAvatar">О</div>
+          <div>
+            <h3 class="modal-title" id="crmDetailName">Олексій</h3>
+            <span class="crm-detail-user" id="crmDetailUsername">@olexa12</span>
+          </div>
+        </div>
+        <button class="modal-close" data-close="modalCrmDetail">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Етап (Статус) Selector -->
+        <div class="form-group">
+          <label class="form-label">ЕТАП ВОРОНКИ:</label>
+          <select id="crmDetailStatusSelect" class="form-select">
+            <option value="follow_up">Follow-up</option>
+            <option value="in_progress">В процесі</option>
+            <option value="working">Працюєм</option>
+            <option value="offer">Оффер</option>
+            <option value="closed">Закритий</option>
+            <option value="discuss_later">Обговорити пізніше</option>
+            <option value="ignoring">Ігнорує</option>
+            <option value="rejected">Відмова</option>
+            <option value="cancelled">Більше не співпрацюєм</option>
+          </select>
+        </div>
+
+        <!-- Big CTA: НАПИСАТИ В ТЕЛЕГРАМ -->
+        <a id="crmDetailTgLink" href="#" target="_blank" class="btn btn--fill btn--block btn--tg mb-3">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.52 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .37z"/></svg>
+          <span>НАПИСАТИ В TELEGRAM</span>
+        </a>
+
+        <!-- Service & Niche -->
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">ПОСЛУГА:</label>
+            <select id="crmDetailService" class="form-select">
+              <option value="development">Розробка</option>
+              <option value="marketing">Маркетинг</option>
+              <option value="montage">Монтаж</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">БЮДЖЕТ (₴):</label>
+            <input type="number" id="crmDetailBudget" class="form-input" placeholder="14 000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">НІША / ПРОЄКТ:</label>
+          <input type="text" id="crmDetailNiche" class="form-input" placeholder="Кав'ярня, доставка їжі, салон...">
+        </div>
+
+        <!-- Orders & Payments inside CRM lead -->
+        <div class="crm-orders-box">
+          <label class="form-label">ЗАМОВЛЕННЯ:</label>
+          <div class="order-item-card">
+            <input type="text" id="crmOrderTitle" class="form-input mb-2" placeholder="Створення односторінкового сайту">
+            <div class="form-row mb-2">
+              <div class="flex-1">
+                <label class="form-sublabel">ОПЛАТА:</label>
+                <select id="crmOrderPaidStatus" class="form-select">
+                  <option value="unpaid">Не оплачено</option>
+                  <option value="partial">Частково (Аванс)</option>
+                  <option value="paid">Оплачено повністю</option>
+                </select>
+              </div>
+              <div class="flex-1">
+                <label class="form-sublabel">ДЕДЛАЙН:</label>
+                <input type="date" id="crmOrderDeadline" class="form-input">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ЗАМІТКИ:</label>
+          <textarea id="crmDetailNotes" class="form-textarea" rows="2" placeholder="Деталі переговорів, побажання клієнта..."></textarea>
+        </div>
+
+      </div>
+
+      <div class="modal-footer flex-col gap-2">
+        <button id="saveCrmDetailBtn" class="btn btn--fill btn--block">ЗБЕРЕГТИ ЗМІНИ</button>
+        <button id="deleteCrmLeadBtn" class="btn btn--danger btn--block">ВИДАЛИТИ ЛІДА</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ДОДАТИ КЛІЄНТА В CRM (+) -->
+  <div id="modalAddCrm" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Додати клієнта</h3>
+        <button class="modal-close" data-close="modalAddCrm">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">ІМ'Я:</label>
+            <input type="text" id="newCrmName" class="form-input" placeholder="Олександр">
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">ТЕЛЕГРАМ (@):</label>
+            <input type="text" id="newCrmUsername" class="form-input" placeholder="@username">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">ПОСЛУГА:</label>
+            <select id="newCrmService" class="form-select">
+              <option value="development">Розробка</option>
+              <option value="marketing">Маркетинг</option>
+              <option value="montage">Монтаж</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">ЗВІДКИ ПРИЙШОВ:</label>
+            <select id="newCrmSource" class="form-select">
+              <option value="tg_leads">DWS Lead (Чати/Канали)</option>
+              <option value="partners">Партнери</option>
+              <option value="site">Сайт агенства</option>
+              <option value="tiktok">TikTok</option>
+              <option value="cold">Холодні розсилки</option>
+              <option value="ads">Реклама</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">НІША:</label>
+            <input type="text" id="newCrmNiche" class="form-input" placeholder="Кав'ярня, нерухомість...">
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">БЮДЖЕТ (₴):</label>
+            <input type="number" id="newCrmBudget" class="form-input" placeholder="15 000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">СТАТУС:</label>
+          <select id="newCrmStatus" class="form-select">
+            <option value="in_progress">В процесі</option>
+            <option value="offer">Оффер</option>
+            <option value="working">Працюєм</option>
+            <option value="follow_up">Follow-up</option>
+            <option value="closed">Закритий</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ОПИС ЗАМОВЛЕННЯ:</label>
+          <input type="text" id="newCrmOrderTitle" class="form-input" placeholder="Розробка лендінгу під ключ">
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--out" data-close="modalAddCrm">Відхилити</button>
+        <button id="submitAddCrmBtn" class="btn btn--fill">ДОДАТИ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ДОДАТИ ЗАМОВЛЕННЯ В ДОХІД (+) -->
+  <div id="modalAddIncome" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Додати замовлення</h3>
+        <button class="modal-close" data-close="modalAddIncome">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="form-group">
+          <label class="form-label">НАЗВА ЗАМОВЛЕННЯ:</label>
+          <input type="text" id="newIncomeProject" class="form-input" placeholder="Сайт для кафе">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">ІМ'Я КЛІЄНТА:</label>
+            <input type="text" id="newIncomeClient" class="form-input" placeholder="Вітя">
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">СУМА (₴):</label>
+            <input type="number" id="newIncomeAmount" class="form-input" placeholder="20 000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">СТАТУС ОПЛАТИ:</label>
+          <div class="filter-options-grid">
+            <button class="opt-btn active" data-paid="true">Оплачено (У дохід)</button>
+            <button class="opt-btn" data-paid="false">Очікувано (В процесі)</button>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--out" data-close="modalAddIncome">Відхилити</button>
+        <button id="submitAddIncomeBtn" class="btn btn--fill">ДОДАТИ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ФІЛЬТР ЧАСУ (ДОХІД) -->
+  <div id="modalTimeFilter" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Фільтр часу</h3>
+        <button class="modal-close" data-close="modalTimeFilter">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="time-filter-list">
+          <button class="time-choice-item active" data-period="all"><span>За весь час</span> <span class="check">✓</span></button>
+          <button class="time-choice-item" data-period="year"><span>За останній рік</span></button>
+          <button class="time-choice-item" data-period="6m"><span>За останні 6 місяців</span></button>
+          <button class="time-choice-item" data-period="3m"><span>За останні 3 місяці</span></button>
+          <button class="time-choice-item" data-period="1m"><span>За останній місяць</span></button>
+          <button class="time-choice-item" data-period="1w"><span>За останній тиждень</span></button>
+          <button class="time-choice-item" data-period="1d"><span>За останній день</span></button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--fill btn--block" data-close="modalTimeFilter">ГОТОВО</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: КЕРУВАННЯ СПИСКОМ ДЖЕРЕЛ (~200 чатів і ~200 каналів) -->
+  <div id="modalSources" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Джерела пошуку</h3>
+        <button class="modal-close" data-close="modalSources">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="form-hint">Вставте сюди юзернейми або посилання на українські чати й канали (по одному на рядок):</p>
+        <div class="form-group">
+          <label class="form-label">СПИСОК ЧАТІВ ТА КАНАЛІВ:</label>
+          <textarea id="sourcesTextarea" class="form-textarea" rows="8" placeholder="@it_freelance_ua&#10;@webdev_jobs_ua&#10;@freelance_hunt_leads..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--out" data-close="modalSources">Закрити</button>
+        <button id="saveSourcesBtn" class="btn btn--fill">ЗБЕРЕГТИ ДЖЕРЕЛА</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
