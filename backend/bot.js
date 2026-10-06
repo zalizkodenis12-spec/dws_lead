@@ -39,7 +39,7 @@ export async function setupMenuButton() {
   const res = await tgRequest('setChatMenuButton', {
     menu_button: {
       type: 'web_app',
-      text: '🚀 DWS Lead',
+      text: 'Відкрити DWSlead',
       web_app: { url: APP_URL }
     }
   });
@@ -68,7 +68,7 @@ export async function sendLeadNotification(lead) {
     reply_markup: {
       inline_keyboard: [
         [
-          { text: '🚀 Відкрити в DWS Lead', web_app: { url: APP_URL } }
+          { text: 'Відкрити DWSlead', web_app: { url: APP_URL } }
         ]
       ]
     }
@@ -93,24 +93,16 @@ async function pollUpdates() {
           if (text.startsWith('/start')) {
             await tgRequest('sendMessage', {
               chat_id: chatId,
-              text: `👋 <b>Вітаємо в DWS Lead!</b>\n\n` +
-                `Це персональний Telegram Mini App сервіс для пошуку клієнтів та замовлень агентства <b>DenisWeb Studio</b>.\n\n` +
-                `📊 <b>Можливості:</b>\n` +
-                `• Моніторинг ~200 чатів і ~200 каналів України\n` +
-                `• Нульова витрата токенів: розумний 0-cost смарт-фільтр\n` +
-                `• On-demand AI-скоринг (0–100) та персоналізовані відгуки\n` +
-                `• Вбудована CRM (10 статусів воронки)\n` +
-                `• Облік доходів з аналітикою по тижнях і днях\n` +
-                `• Фірмовий дизайн DenisWeb Studio (Світла та Темна теми)\n\n` +
-                `Натисніть кнопку нижче, щоб запустити додаток 👇`,
+              text: `Привіт, це <b>DWS Lead</b> — бот, який закриває три задачі фрілансера:\n\n` +
+                `• знайти замовлення\n` +
+                `• не втратити клієнта\n` +
+                `• зрозуміти скільки заробив\n\n` +
+                `Ловлю вакансії та замовлення з 200+ тг-чатів і 200+ каналів України, веду по них CRM і рахую доходи по тижнях і місяцях.`,
               parse_mode: 'HTML',
               reply_markup: {
                 inline_keyboard: [
                   [
-                    { text: '🚀 Запустити DWS Lead', web_app: { url: APP_URL } }
-                  ],
-                  [
-                    { text: '🌐 Сайт DenisWeb Studio', url: 'https://denis-webstudio.site' }
+                    { text: 'Відкрити DWSlead', web_app: { url: APP_URL } }
                   ]
                 ]
               }
