@@ -28,16 +28,57 @@ export function loadSources() {
   return { chats: [], channels: [] };
 }
 
+export function saveSourcesToFile(sourcesData) {
+  try {
+    fs.writeFileSync(SOURCES_PATH, JSON.stringify(sourcesData, null, 2), 'utf-8');
+    return true;
+  } catch (err) {
+    console.error('Error saving sources:', err);
+    return false;
+  }
+}
+
+export function cleanTelegramPostText(text) {
+  if (!text) return '';
+  let lines = text.split(/\r?\n/).map(l => l.trimEnd());
+  while (lines.length > 0) {
+    const last = lines[lines.length - 1].trim();
+    if (!last) {
+      lines.pop();
+      continue;
+    }
+    const isReactionLine = /^[\p{Emoji}\s\d❤👍🔥]+$/u.test(last) && !/[a-zA-Zа-яА-ЯіїєґІЇЄҐ]/.test(last);
+    const isViewLine = /^(?:[\d.,]+[KkMm]?\s*views|edited|\d{1,2}:\d{2}|👁|\s)+$/iu.test(last);
+    const isReactionsAndViews = /^(?:[\p{Emoji}\s\d❤👍🔥]+)?\s*[\d.,]+[KkMm]?\s*views.*$/iu.test(last);
+    if (isReactionLine || isViewLine || isReactionsAndViews) {
+      lines.pop();
+    } else {
+      break;
+    }
+  }
+  return lines.join('\n').trim();
+}
+
 /**
  * Ingest a raw incoming message from a chat or channel
  */
 export function ingestMessage({ text, authorName, authorUsername, sourceTitle, sourceUsername, sourceType = 'chat' }) {
-  if (!text || text.trim().length < 15) return null;
+  const cleanedText = cleanTelegramPostText(text);
+  if (!cleanedText || cleanedText.length < 15) return null;
+
+  // Reject digests, articles, or candidate resumes indicated by "‣"
+  if (/‣|актуальні вакансії минулого|діліться з друзями, які в пошуку|10 сервісів для підвищення/i.test(cleanedText)) {
+    return null;
+  }
+
+  // Must have a direct personal username so the user can message the vacancy owner in PM
+  if (!authorUsername || !authorUsername.startsWith('@') || authorUsername.length < 5) {
+    return null;
+  }
 
   // 1. Run through zero-cost smart rule filter
-  const classification = classifyLeadRuleBased(text, authorUsername);
+  const classification = classifyLeadRuleBased(cleanedText, authorUsername);
   if (!classification) {
-    // Discarded (either spam, resume from candidate, or unrelated topic)
     return null;
   }
 
@@ -58,10 +99,10 @@ export function ingestMessage({ text, authorName, authorUsername, sourceTitle, s
     sourceType,
     sourceName: sourceTitle || 'Telegram чат',
     sourceUsername: sourceUsername || '',
-    authorName: authorName || 'Клієнт',
-    authorUsername: authorUsername || '',
+    authorName: authorName || 'Замовник',
+    authorUsername: authorUsername,
     title: classification.title,
-    text: text.trim(),
+    text: cleanedText,
     date: now.toISOString(),
     dateFormatted: `Сьогодні, ${timeFormatted}`,
     budget: classification.budget,
@@ -69,21 +110,19 @@ export function ingestMessage({ text, authorName, authorUsername, sourceTitle, s
     isUrgent: classification.isUrgent,
     requiresPortfolio: classification.requiresPortfolio,
     experienceRequired: classification.experienceRequired,
-    aiRating: classification.initialRating, // Initial heuristic rating (0 tokens spent!)
+    aiRating: classification.initialRating,
     aiSummary: `Замовлення: ${classification.subcategoryName.toLowerCase()}${classification.budget ? ` з бюджетом ${classification.budget} ₴` : ''}.`,
-    aiAnalysis: null, // Left null until user clicks for deep analysis
+    aiAnalysis: null,
     inCrm: false
   };
 
   const savedLead = db.addLead(newLead);
   if (!savedLead) {
-    // Duplicate lead, ignored
     return null;
   }
 
-  console.log(`[DWS Lead] 🎯 Знайдено новий лід [${classification.categoryName}]: "${classification.title}" (Бюджет: ${classification.budget || 'договірний'} ₴)`);
+  console.log(`[DWS Lead] 🎯 Знайдено новий лід [${classification.categoryName}]: "${classification.title}" -> ${authorUsername}`);
 
-  // Send Telegram bot notification if score >= 80 or has high budget
   try {
     import('../bot.js').then(({ sendLeadNotification }) => {
       if (typeof sendLeadNotification === 'function' && savedLead.aiRating >= 80) {
@@ -96,82 +135,144 @@ export function ingestMessage({ text, authorName, authorUsername, sourceTitle, s
 }
 
 /**
- * Scans all accessible public Ukrainian channels from sources.json
+ * Scans all accessible public Ukrainian channels and chats from sources.json
  */
 export async function scanPublicChannels() {
   const sources = loadSources();
-  const allList = [...(sources.channels || []), ...(sources.chats || [])];
-  
-  // Collect handles, exclude private invite links
+  const allList = [...(sources.chats || []), ...(sources.channels || [])];
+
   const targetHandles = [];
   const seenHandles = new Set();
 
   for (const item of allList) {
-    let raw = (item.username || '').trim();
+    let raw = (typeof item === 'string' ? item : (item.username || '')).trim();
     if (!raw || raw.startsWith('joinchat') || raw.includes('/joinchat/')) continue;
-    let clean = raw.replace('https://t.me/', '').replace('@', '').trim();
+    let clean = raw.replace('https://t.me/', '').replace('@', '').split('/')[0].trim();
     if (!clean || seenHandles.has(clean.toLowerCase())) continue;
     seenHandles.add(clean.toLowerCase());
     targetHandles.push({
       handle: clean,
-      title: item.title || clean,
-      category: item.category || 'general'
+      title: (typeof item === 'object' && (item.title || item.name)) ? (item.title || item.name) : clean,
+      category: (typeof item === 'object' && item.category) ? item.category : 'general'
     });
   }
 
-  console.log(`[DWS Lead Monitor] 🔎 Початок сканування ${targetHandles.length} публічних каналів України...`);
+  console.log(`[DWS Lead Monitor] 🔎 Початок сканування ${targetHandles.length} джерел України...`);
   let newLeadsCount = 0;
+
+  const ignoredHandles = new Set([
+    ...seenHandles,
+    'share', 'joinchat', 'iv', 'addstickers', 'proxy', 'telegram', 'icloud', 'gmail', 'ukr', 'rethink', 'manager_jecontact'
+  ]);
+
+  const userVerifyCache = new Map();
+  async function isRealPersonalTelegramUser(handle) {
+    const key = handle.toLowerCase();
+    if (userVerifyCache.has(key)) return userVerifyCache.get(key);
+    try {
+      const r = await fetch(`https://t.me/${handle}`, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+      });
+      if (!r.ok) {
+        userVerifyCache.set(key, false);
+        return false;
+      }
+      const pageHtml = await r.text();
+      const exists = pageHtml.includes('tgme_page_title');
+      const isChannelOrGroup = /subscribers|members/i.test(pageHtml);
+      const isValidPerson = exists && !isChannelOrGroup;
+      userVerifyCache.set(key, isValidPerson);
+      return isValidPerson;
+    } catch {
+      userVerifyCache.set(key, false);
+      return false;
+    }
+  }
 
   for (const src of targetHandles) {
     try {
-      const res = await fetch(`https://t.me/s/${src.handle}`, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-          'Accept-Language': 'uk-UA,uk;q=0.9,en;q=0.8'
-        }
-      });
-      if (!res.ok) continue;
-
-      const html = await res.text();
-      const parts = html.split('tgme_widget_message_wrap');
-      if (parts.length <= 1) continue;
-
-      for (let i = 1; i < parts.length; i++) {
-        const block = parts[i];
-        const textMatch = block.match(/<div[^>]*class="[^"]*tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<(?:div class="tgme_widget_message_footer"|\/div)/i) ||
-                          block.match(/<div[^>]*class="[^"]*tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
-        if (!textMatch) continue;
-
-        let cleanText = textMatch[1]
-          .replace(/<br\s*[\/]?>/gi, '\n')
-          .replace(/<[^>]+>/g, '')
-          .replace(/&quot;/g, '"')
-          .replace(/&amp;/g, '&')
-          .replace(/&#39;/g, "'")
-          .replace(/&#036;/g, '$')
-          .replace(/&#33;/g, '!')
-          .trim();
-
-        if (cleanText.length < 25) continue;
-
-        // Try extracting author username from link inside post
-        let authorUsername = '';
-        const authorMatch = block.match(/href="https:\/\/t\.me\/([a-zA-Z0-9_]+)"/);
-        if (authorMatch && !authorMatch[1].startsWith('s_') && authorMatch[1].toLowerCase() !== src.handle.toLowerCase()) {
-          authorUsername = '@' + authorMatch[1];
-        }
-
-        const lead = ingestMessage({
-          text: cleanText,
-          authorName: 'Клієнт / Роботодавець',
-          authorUsername,
-          sourceTitle: src.title,
-          sourceUsername: '@' + src.handle,
-          sourceType: 'channel'
+      let urlsToFetch = [`https://t.me/s/${src.handle}`];
+      for (let pageIdx = 0; pageIdx < urlsToFetch.length; pageIdx++) {
+        const res = await fetch(urlsToFetch[pageIdx], {
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept-Language': 'uk-UA,uk;q=0.9,en;q=0.8'
+          }
         });
+        if (!res.ok) continue;
 
-        if (lead) {
-          newLeadsCount++;
+        const html = await res.text();
+        if (pageIdx === 0) {
+          const beforeMatches = [...html.matchAll(/data-before="(\d+)"/g)];
+          if (beforeMatches.length > 0) {
+            const oldestId = beforeMatches[0][1];
+            urlsToFetch.push(`https://t.me/s/${src.handle}?before=${oldestId}`);
+          }
+        }
+
+        const parts = html.split('tgme_widget_message_wrap');
+        if (parts.length <= 1) continue;
+
+        for (let i = 1; i < parts.length; i++) {
+          const block = parts[i];
+          const textMatch = block.match(/<div[^>]*class="[^"]*tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<(?:div class="tgme_widget_message_footer"|\/div)/i) ||
+                            block.match(/<div[^>]*class="[^"]*tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+          if (!textMatch) continue;
+
+          const rawBodyHtml = textMatch[1];
+
+          let cleanText = rawBodyHtml
+            .replace(/<br\s*[\/]?>/gi, '\n')
+            .replace(/<[^>]+>/g, '')
+            .replace(/&quot;/g, '"')
+            .replace(/&amp;/g, '&')
+            .replace(/&#39;/g, "'")
+            .replace(/&#036;/g, '$')
+            .replace(/&#33;/g, '!')
+            .replace(/&nbsp;/g, ' ')
+            .trim();
+
+          cleanText = cleanTelegramPostText(cleanText);
+          if (cleanText.length < 25) continue;
+
+          // Collect all candidate @usernames from text and body links (checking bottom-most contact links first)
+          const candidates = [];
+          const mentionMatches = [...cleanText.matchAll(/(?:^|[\s(,:;>«"'])@([a-zA-Z0-9_]{4,32})\b/g)];
+          for (const m of mentionMatches) {
+            candidates.push(m[1]);
+          }
+          const linkMatches = [...rawBodyHtml.matchAll(/href="https:\/\/t\.me\/([a-zA-Z0-9_]{4,32})"/g)];
+          for (const lm of linkMatches) {
+            candidates.push(lm[1]);
+          }
+
+          let authorUsername = '';
+          for (let cIdx = candidates.length - 1; cIdx >= 0; cIdx--) {
+            const candidate = candidates[cIdx];
+            if (candidate.startsWith('s_') || ignoredHandles.has(candidate.toLowerCase()) || candidate.toLowerCase().endsWith('bot')) {
+              continue;
+            }
+            if (await isRealPersonalTelegramUser(candidate)) {
+              authorUsername = '@' + candidate;
+              break;
+            }
+          }
+
+          // Only ingest if we have a verified real personal Telegram account to message in PM!
+          if (!authorUsername) continue;
+
+          const lead = ingestMessage({
+            text: cleanText,
+            authorName: authorUsername.replace('@', ''),
+            authorUsername,
+            sourceTitle: src.title,
+            sourceUsername: '@' + src.handle,
+            sourceType: 'chat'
+          });
+
+          if (lead) {
+            newLeadsCount++;
+          }
         }
       }
     } catch (err) {

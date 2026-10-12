@@ -29,7 +29,6 @@
         <div class="header-logo">
           <span class="logo-dws">DWS</span><span class="logo-lead">Lead</span>
         </div>
-        <span class="header-studio">DenisWeb Studio</span>
       </div>
       <div class="header-actions">
         <!-- Theme toggle icon button -->
@@ -55,7 +54,7 @@
         <div class="view-header">
           <h1 class="view-title">Заявки</h1>
           <div class="leads-today-stat" id="leadsTodayCount">
-            <span class="leads-count-num" id="leadsCountNum">27</span>
+            <span class="leads-count-num" id="leadsCountNum">17</span>
             <span class="leads-count-label">сьогодні</span>
           </div>
         </div>
@@ -239,12 +238,12 @@
             <label class="form-label">БАЗА ДЖЕРЕЛ ПОШУКУ:</label>
             <div class="sources-stat-box">
               <div class="sources-stat-item">
-                <span class="num" id="sourcesChatsCount">14</span>
+                <span class="num" id="sourcesChatsCount">79</span>
                 <span class="txt">Telegram чатів</span>
               </div>
               <div class="sources-divider"></div>
               <div class="sources-stat-item">
-                <span class="num" id="sourcesChannelsCount">79</span>
+                <span class="num" id="sourcesChannelsCount">14</span>
                 <span class="txt">Telegram каналів</span>
               </div>
             </div>
@@ -743,7 +742,7 @@
       </div>
       <div class="modal-body">
         <div class="sources-modal-summary" style="padding: 10px 14px; background: var(--gray); border-radius: var(--r); font-size: 0.88rem; font-weight: 600; color: var(--black);">
-          Активна база: <span id="modalSourcesTotal">93</span> джерел (<span id="modalSourcesChats">14</span> чатів, <span id="modalSourcesChannels">79</span> каналів)
+          Активна база: <span id="modalSourcesTotal">93</span> джерел (<span id="modalSourcesChats">79</span> чатів, <span id="modalSourcesChannels">14</span> каналів)
         </div>
         <p class="form-hint" style="margin-top: 10px;">Вставте нові юзернейми або посилання на Telegram канали/чати (по одному на рядок):</p>
         <div class="form-group">
@@ -751,9 +750,8 @@
           <textarea id="sourcesTextarea" class="form-textarea" rows="6" placeholder="@новий_чат&#10;https://t.me/новий_канал..."></textarea>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn--out" data-close="modalSources">Закрити</button>
-        <button id="saveSourcesBtn" class="btn btn--fill">ДОДАТИ ДЖЕРЕЛА</button>
+      <div class="modal-footer justify-center">
+        <button id="saveSourcesBtn" class="btn btn--fill btn--block">ДОДАТИ ДЖЕРЕЛА</button>
       </div>
     </div>
   </div>

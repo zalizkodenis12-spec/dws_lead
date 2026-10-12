@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { db } from './db/db.js';
 import { analyzeLeadAi, generatePersonalizedOffer } from './ai/gemini.js';
-import { ingestMessage, loadSources, scanPublicChannels, startMonitor } from './parser/monitor.js';
+import { ingestMessage, loadSources, saveSourcesToFile, scanPublicChannels, startMonitor } from './parser/monitor.js';
 import './bot.js';
 
 dotenv.config();
@@ -230,9 +230,61 @@ app.get('/api/sources', (req, res) => {
   }
 });
 
-app.post('/api/sources', (req, res) => {
+app.post('/api/sources', async (req, res) => {
   try {
-    const updated = db.updateSources(req.body);
+    const currentFileSources = loadSources();
+    const incomingChats = Array.isArray(req.body.chats) ? req.body.chats : [];
+    const incomingChannels = Array.isArray(req.body.channels) ? req.body.channels : [];
+
+    // Merge into sources.json objects
+    const existingChatNames = new Set((currentFileSources.chats || []).map(c => (typeof c === 'string' ? c : c.username || '').toLowerCase()));
+    const existingChannelNames = new Set((currentFileSources.channels || []).map(c => (typeof c === 'string' ? c : c.username || '').toLowerCase()));
+
+    for (const ch of incomingChats) {
+      const handle = (typeof ch === 'string' ? ch : ch.username || '').trim();
+      if (!handle) continue;
+      const clean = handle.startsWith('@') || handle.startsWith('http') ? handle : '@' + handle;
+      if (!existingChatNames.has(clean.toLowerCase())) {
+        existingChatNames.add(clean.toLowerCase());
+        currentFileSources.chats.push(typeof ch === 'object' ? ch : {
+          username: clean,
+          title: clean.replace('@', '').replace('https://t.me/', '') + ' UA',
+          category: 'general',
+          active: true,
+          type: 'chat'
+        });
+      }
+    }
+
+    for (const ch of incomingChannels) {
+      const handle = (typeof ch === 'string' ? ch : ch.username || '').trim();
+      if (!handle) continue;
+      const clean = handle.startsWith('@') || handle.startsWith('http') ? handle : '@' + handle;
+      if (!existingChannelNames.has(clean.toLowerCase())) {
+        existingChannelNames.add(clean.toLowerCase());
+        currentFileSources.channels.push(typeof ch === 'object' ? ch : {
+          username: clean,
+          title: clean.replace('@', '').replace('https://t.me/', '') + ' UA',
+          category: 'general',
+          active: true,
+          type: 'channel'
+        });
+      }
+    }
+
+    currentFileSources.totalCount = (currentFileSources.chats?.length || 0) + (currentFileSources.channels?.length || 0);
+    currentFileSources.updatedAt = new Date().toISOString();
+    saveSourcesToFile(currentFileSources);
+
+    const dbSources = {
+      chats: currentFileSources.chats.map(c => typeof c === 'string' ? c : c.username),
+      channels: currentFileSources.channels.map(c => typeof c === 'string' ? c : c.username)
+    };
+    const updated = db.updateSources(dbSources);
+
+    // Trigger live channel scan asynchronously so new sources immediately pull vacancies
+    scanPublicChannels().catch(() => {});
+
     res.json({ success: true, data: updated });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

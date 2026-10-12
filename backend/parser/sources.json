@@ -4,564 +4,657 @@
   "totalCount": 93,
   "chats": [
     {
-      "username": "@business_chat_ua",
-      "title": "business_chat_ua UA",
-      "category": "general",
-      "active": true
-    },
-    {
-      "username": "@flschat",
-      "title": "flschat UA",
-      "category": "development",
-      "active": true
-    },
-    {
-      "username": "@rabota_kieve_chate",
-      "title": "rabota_kieve_chate UA",
-      "category": "general",
-      "active": true
-    },
-    {
-      "username": "joinchat/woxZIzaWi-syNzBi",
-      "title": "Закритий чат UA (Invite)",
-      "category": "general",
-      "active": true
-    },
-    {
-      "username": "@Marketing_chat_UA",
-      "title": "Marketing_chat_UA UA",
-      "category": "marketing",
-      "active": true
-    },
-    {
-      "username": "@chat_robota",
-      "title": "chat_robota UA",
-      "category": "general",
-      "active": true
-    },
-    {
-      "username": "@lviv_ua_group",
-      "title": "lviv_ua_group UA",
-      "category": "general",
-      "active": true
-    },
-    {
-      "username": "@kyiv_ua_group",
-      "title": "kyiv_ua_group UA",
-      "category": "general",
-      "active": true
-    },
-    {
-      "username": "@lvova_chat",
-      "title": "lvova_chat UA",
-      "category": "general",
-      "active": true
-    },
-    {
-      "username": "@vinnytsia_ua_group",
-      "title": "vinnytsia_ua_group UA",
-      "category": "general",
-      "active": true
-    },
-    {
-      "username": "@dnipro_ua_group",
-      "title": "dnipro_ua_group UA",
-      "category": "general",
-      "active": true
-    },
-    {
-      "username": "@odesa_ua_group",
-      "title": "odesa_ua_group UA",
-      "category": "general",
-      "active": true
-    },
-    {
-      "username": "@kharkiv_ua_group",
-      "title": "kharkiv_ua_group UA",
-      "category": "general",
-      "active": true
-    },
-    {
-      "username": "@bazarUkrain",
-      "title": "bazarUkrain UA",
-      "category": "general",
-      "active": true
-    }
-  ],
-  "channels": [
-    {
       "username": "@work_kiev3",
       "title": "work_kiev3 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@kyiv1work",
       "title": "kyiv1work UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@uman_rabota",
       "title": "uman_rabota UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@toprobota_kyiv",
       "title": "toprobota_kyiv UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@rabota_dnepre3",
       "title": "rabota_dnepre3 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@smmbunker",
       "title": "smmbunker UA",
       "category": "marketing",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@smmpeople",
       "title": "smmpeople UA",
       "category": "marketing",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@robotka_kyiv",
       "title": "robotka_kyiv UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@robotka_kiev",
       "title": "robotka_kiev UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@vakanciiodessa",
       "title": "vakanciiodessa UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@toprobotalviv24",
       "title": "toprobotalviv24 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@Robota_ternopil24",
       "title": "Robota_ternopil24 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@dnipro_wopk",
       "title": "dnipro_wopk UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@R0botka_ua",
       "title": "R0botka_ua UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@toprobota_odesa",
       "title": "toprobota_odesa UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@vakancii_onlineua",
       "title": "vakancii_onlineua UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@toprobotadnipro24",
       "title": "toprobotadnipro24 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@rabota_kiev_o",
       "title": "rabota_kiev_o UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@toprobotapoltava24",
       "title": "toprobotapoltava24 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@toprobotavinnytsia24",
       "title": "toprobotavinnytsia24 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@dnipro_robata",
       "title": "dnipro_robata UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@marketing_network1",
       "title": "marketing_network1 UA",
       "category": "marketing",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@robota_pidrobitok_kyivv",
       "title": "robota_pidrobitok_kyivv UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@robota_poltava_top",
       "title": "robota_poltava_top UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@vakancii_chernihiv",
       "title": "vakancii_chernihiv UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@robota_kropyvnytskyi24",
       "title": "robota_kropyvnytskyi24 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@rabotay_kieve",
       "title": "rabotay_kieve UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@H_news_R",
       "title": "H_news_R UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@rabota_odessa7",
       "title": "rabota_odessa7 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@lutsk_robotka",
       "title": "lutsk_robotka UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@facebook_25",
       "title": "facebook_25 UA",
       "category": "marketing",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@Odessaa_ua",
       "title": "Odessaa_ua UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@krivoyq_rog_rabotaq",
       "title": "krivoyq_rog_rabotaq UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@ArbiDoktor",
       "title": "ArbiDoktor UA",
       "category": "marketing",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@ring_express_brd",
       "title": "ring_express_brd UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@umanwork",
       "title": "umanwork UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@in_traff",
       "title": "in_traff UA",
       "category": "marketing",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@you_can_know_more",
       "title": "you_can_know_more UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@robota_odesa4",
       "title": "robota_odesa4 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@workplaceinukraine",
       "title": "workplaceinukraine UA",
       "category": "development",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@rabota_kiev_bird",
       "title": "rabota_kiev_bird UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@Robota_kyiv_new",
       "title": "Robota_kyiv_new UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@aplaywork",
       "title": "aplaywork UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@top_vacansii",
       "title": "top_vacansii UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@kiev_jobs",
       "title": "kiev_jobs UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@jb_ua",
       "title": "jb_ua UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@jobzy",
       "title": "jobzy UA",
       "category": "development",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@freelance_workua",
       "title": "freelance_workua UA",
       "category": "development",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@W0RK_UKRAINE",
       "title": "W0RK_UKRAINE UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@uaallwork",
       "title": "uaallwork UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@ua_robota",
       "title": "ua_robota UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@I13partners",
       "title": "I13partners UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@mykolaivrobota_ua",
       "title": "mykolaivrobota_ua UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@traffic_cpa_hr",
       "title": "traffic_cpa_hr UA",
       "category": "marketing",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@traffic_hr_cpa",
       "title": "traffic_hr_cpa UA",
       "category": "marketing",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@mediabuers_cpa",
       "title": "mediabuers_cpa UA",
       "category": "marketing",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@uzhgorodrobota_ua",
       "title": "uzhgorodrobota_ua UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@kievy_rabota",
       "title": "kievy_rabota UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@work_in_ukraine_golovne",
       "title": "work_in_ukraine_golovne UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@jecontact",
       "title": "jecontact UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@adgoodashell",
       "title": "adgoodashell UA",
       "category": "marketing",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@Kiev_rabota_vakansii",
       "title": "Kiev_rabota_vakansii UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@rabota_kieve5",
       "title": "rabota_kieve5 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@Vinnytsia_Job",
       "title": "Vinnytsia_Job UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@rabota_zhutomere",
       "title": "rabota_zhutomere UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@Workday_Lviv",
       "title": "Workday_Lviv UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@RudenkoSMM",
       "title": "RudenkoSMM UA",
       "category": "marketing",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@Nikolaeve_v_rabota_robotaq",
       "title": "Nikolaeve_v_rabota_robotaq UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@w_o_r_k_Poland",
       "title": "w_o_r_k_Poland UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@pidr0bitok_Lviv",
       "title": "pidr0bitok_Lviv UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@business_grup_ukraine",
       "title": "business_grup_ukraine UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@robotakiew",
       "title": "robotakiew UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@Nikolaev_rabota_robota",
       "title": "Nikolaev_rabota_robota UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@robitalviv2024",
       "title": "robitalviv2024 UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@DIPLOMATIA_UA",
       "title": "DIPLOMATIA_UA UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@evo_prom",
       "title": "evo_prom UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@rabotay_zhitomire",
       "title": "rabotay_zhitomire UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@worktopua",
       "title": "worktopua UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
     },
     {
       "username": "@rabota_Odessa_horeca",
       "title": "rabota_Odessa_horeca UA",
       "category": "general",
-      "active": true
+      "active": true,
+      "type": "chat"
+    }
+  ],
+  "channels": [
+    {
+      "username": "@business_chat_ua",
+      "title": "business_chat_ua UA",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@flschat",
+      "title": "flschat UA",
+      "category": "development",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@rabota_kieve_chate",
+      "title": "rabota_kieve_chate UA",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "joinchat/woxZIzaWi-syNzBi",
+      "title": "Закритий чат UA (Invite)",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@Marketing_chat_UA",
+      "title": "Marketing_chat_UA UA",
+      "category": "marketing",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@chat_robota",
+      "title": "chat_robota UA",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@lviv_ua_group",
+      "title": "lviv_ua_group UA",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@kyiv_ua_group",
+      "title": "kyiv_ua_group UA",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@lvova_chat",
+      "title": "lvova_chat UA",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@vinnytsia_ua_group",
+      "title": "vinnytsia_ua_group UA",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@dnipro_ua_group",
+      "title": "dnipro_ua_group UA",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@odesa_ua_group",
+      "title": "odesa_ua_group UA",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@kharkiv_ua_group",
+      "title": "kharkiv_ua_group UA",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@bazarUkrain",
+      "title": "bazarUkrain UA",
+      "category": "general",
+      "active": true,
+      "type": "channel"
     }
   ]
 }

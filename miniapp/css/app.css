@@ -361,19 +361,22 @@ body.dark-theme .leads-count-label {
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
+  width: 100%;
 }
 
 .filter-pill {
+  flex: 1;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 8px 14px;
+  padding: 10px 14px;
   border-radius: var(--pill);
   background: var(--gray);
   border: 1px solid var(--border);
   color: var(--text);
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.84rem;
+  font-weight: 700;
   cursor: pointer;
   transition: var(--trans);
 }
@@ -385,7 +388,9 @@ body.dark-theme .leads-count-label {
 }
 
 .filter-pill.icon-only {
-  padding: 8px 10px;
+  flex: 0 0 42px;
+  width: 42px;
+  padding: 10px;
 }
 
 .chevron {
@@ -647,7 +652,7 @@ body.dark-theme .leads-count-label {
 }
 
 .lead-tag.portfolio {
-  background: var(--gray);
+  background: var(--white);
   border-color: var(--border);
   color: var(--black);
 }
@@ -1093,11 +1098,11 @@ body.dark-theme .lead-tag.portfolio {
 
 .form-label {
   font-family: var(--ffh);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 800;
   letter-spacing: 0.6px;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--black);
 }
 
 .form-sublabel {
@@ -1201,9 +1206,10 @@ body.dark-theme .lead-tag.portfolio {
 }
 
 .sources-stat-item .txt {
-  font-size: 0.75rem;
-  color: var(--muted);
-  font-weight: 600;
+  font-family: var(--ffh);
+  font-size: 0.78rem;
+  color: var(--black);
+  font-weight: 800;
 }
 
 .sources-divider {
