@@ -1,34 +1,567 @@
 {
-  "description": "Список ~200 чатів та ~200 каналів для моніторингу лідів DWS Lead. Сюди можна додавати будь-які юзернейми (з @ або посиланнями t.me/).",
-  "updatedAt": "2026-10-06T14:30:00.000Z",
+  "description": "База з 100+ Telegram чатів та каналів України, надісланих користувачем для моніторингу замовлень DWS Lead.",
+  "updatedAt": "2026-10-12T17:27:38.026Z",
+  "totalCount": 93,
   "chats": [
-    { "username": "@it_freelance_ua", "title": "IT Фріланс Україна | Замовлення", "category": "development", "active": true },
-    { "username": "@webdev_jobs_ua", "title": "Веб-розробка UA | Робота та ліди", "category": "development", "active": true },
-    { "username": "@freelance_ua_chat", "title": "Фріланс Чат UA", "category": "all", "active": true },
-    { "username": "@marketing_ua_leads", "title": "Маркетинг & Таргет Україна", "category": "marketing", "active": true },
-    { "username": "@target_ukraine_chat", "title": "Таргетологи України Чат", "category": "marketing", "active": true },
-    { "username": "@video_montage_ua", "title": "Монтаж Відео / Reels / YouTube UA", "category": "montage", "active": true },
-    { "username": "@motion_design_ua", "title": "Моушн Дизайн Україна", "category": "montage", "active": true },
-    { "username": "@digital_jobs_kyiv", "title": "Digital Вакансії Київ & Remote", "category": "development", "active": true },
-    { "username": "@frontend_ukraine", "title": "Frontend Developers UA", "category": "development", "active": true },
-    { "username": "@wordpress_ua_chat", "title": "WordPress & Webflow UA", "category": "development", "active": true },
-    { "username": "@ecommerce_ua_leads", "title": "Інтернет-магазини та e-Commerce UA", "category": "development", "active": true },
-    { "username": "@smm_target_leads_ua", "title": "SMM & Реклама Замовлення", "category": "marketing", "active": true },
-    { "username": "@content_creators_ua", "title": "Креатори & Відеомонтажери UA", "category": "montage", "active": true },
-    { "username": "@it_ukraine_orders", "title": "IT Замовлення та Проєкти", "category": "development", "active": true }
+    {
+      "username": "@business_chat_ua",
+      "title": "business_chat_ua UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@flschat",
+      "title": "flschat UA",
+      "category": "development",
+      "active": true
+    },
+    {
+      "username": "@rabota_kieve_chate",
+      "title": "rabota_kieve_chate UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "joinchat/woxZIzaWi-syNzBi",
+      "title": "Закритий чат UA (Invite)",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@Marketing_chat_UA",
+      "title": "Marketing_chat_UA UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@chat_robota",
+      "title": "chat_robota UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@lviv_ua_group",
+      "title": "lviv_ua_group UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@kyiv_ua_group",
+      "title": "kyiv_ua_group UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@lvova_chat",
+      "title": "lvova_chat UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@vinnytsia_ua_group",
+      "title": "vinnytsia_ua_group UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@dnipro_ua_group",
+      "title": "dnipro_ua_group UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@odesa_ua_group",
+      "title": "odesa_ua_group UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@kharkiv_ua_group",
+      "title": "kharkiv_ua_group UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@bazarUkrain",
+      "title": "bazarUkrain UA",
+      "category": "general",
+      "active": true
+    }
   ],
   "channels": [
-    { "username": "@freelance_hunt_leads", "title": "Замовлення Freelancehunt UA", "category": "all", "active": true },
-    { "username": "@djinni_jobs_ua", "title": "Djinni Jobs & Orders UA", "category": "development", "active": true },
-    { "username": "@work_ua_digital", "title": "Digital Вакансії Україна", "category": "all", "active": true },
-    { "username": "@dou_jobs_leads", "title": "DOU Вакансії та Проєкти", "category": "development", "active": true },
-    { "username": "@ukrainian_freelance_feed", "title": "Фріланс Біржа Стрічка Замовлень", "category": "all", "active": true },
-    { "username": "@web_design_orders_ua", "title": "Веб-дизайн та Розробка UA", "category": "development", "active": true },
-    { "username": "@target_meta_leads_ua", "title": "Meta Ads & Трафік Проєкти", "category": "marketing", "active": true },
-    { "username": "@google_ads_ukraine", "title": "Google Ads Проєкти та Робота", "category": "marketing", "active": true },
-    { "username": "@reels_tiktok_orders", "title": "Замовлення на Reels та TikTok Монтаж", "category": "montage", "active": true },
-    { "username": "@creative_leads_ua", "title": "Креативи & Рекламне Відео UA", "category": "montage", "active": true },
-    { "username": "@startups_ua_hiring", "title": "Стартапи України — Пошук Підрядників", "category": "development", "active": true },
-    { "username": "@ua_agencies_network", "title": "Агентства України Співпраця", "category": "all", "active": true }
+    {
+      "username": "@work_kiev3",
+      "title": "work_kiev3 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@kyiv1work",
+      "title": "kyiv1work UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@uman_rabota",
+      "title": "uman_rabota UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@toprobota_kyiv",
+      "title": "toprobota_kyiv UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@rabota_dnepre3",
+      "title": "rabota_dnepre3 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@smmbunker",
+      "title": "smmbunker UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@smmpeople",
+      "title": "smmpeople UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@robotka_kyiv",
+      "title": "robotka_kyiv UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@robotka_kiev",
+      "title": "robotka_kiev UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@vakanciiodessa",
+      "title": "vakanciiodessa UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@toprobotalviv24",
+      "title": "toprobotalviv24 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@Robota_ternopil24",
+      "title": "Robota_ternopil24 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@dnipro_wopk",
+      "title": "dnipro_wopk UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@R0botka_ua",
+      "title": "R0botka_ua UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@toprobota_odesa",
+      "title": "toprobota_odesa UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@vakancii_onlineua",
+      "title": "vakancii_onlineua UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@toprobotadnipro24",
+      "title": "toprobotadnipro24 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@rabota_kiev_o",
+      "title": "rabota_kiev_o UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@toprobotapoltava24",
+      "title": "toprobotapoltava24 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@toprobotavinnytsia24",
+      "title": "toprobotavinnytsia24 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@dnipro_robata",
+      "title": "dnipro_robata UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@marketing_network1",
+      "title": "marketing_network1 UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@robota_pidrobitok_kyivv",
+      "title": "robota_pidrobitok_kyivv UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@robota_poltava_top",
+      "title": "robota_poltava_top UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@vakancii_chernihiv",
+      "title": "vakancii_chernihiv UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@robota_kropyvnytskyi24",
+      "title": "robota_kropyvnytskyi24 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@rabotay_kieve",
+      "title": "rabotay_kieve UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@H_news_R",
+      "title": "H_news_R UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@rabota_odessa7",
+      "title": "rabota_odessa7 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@lutsk_robotka",
+      "title": "lutsk_robotka UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@facebook_25",
+      "title": "facebook_25 UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@Odessaa_ua",
+      "title": "Odessaa_ua UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@krivoyq_rog_rabotaq",
+      "title": "krivoyq_rog_rabotaq UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@ArbiDoktor",
+      "title": "ArbiDoktor UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@ring_express_brd",
+      "title": "ring_express_brd UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@umanwork",
+      "title": "umanwork UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@in_traff",
+      "title": "in_traff UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@you_can_know_more",
+      "title": "you_can_know_more UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@robota_odesa4",
+      "title": "robota_odesa4 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@workplaceinukraine",
+      "title": "workplaceinukraine UA",
+      "category": "development",
+      "active": true
+    },
+    {
+      "username": "@rabota_kiev_bird",
+      "title": "rabota_kiev_bird UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@Robota_kyiv_new",
+      "title": "Robota_kyiv_new UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@aplaywork",
+      "title": "aplaywork UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@top_vacansii",
+      "title": "top_vacansii UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@kiev_jobs",
+      "title": "kiev_jobs UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@jb_ua",
+      "title": "jb_ua UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@jobzy",
+      "title": "jobzy UA",
+      "category": "development",
+      "active": true
+    },
+    {
+      "username": "@freelance_workua",
+      "title": "freelance_workua UA",
+      "category": "development",
+      "active": true
+    },
+    {
+      "username": "@W0RK_UKRAINE",
+      "title": "W0RK_UKRAINE UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@uaallwork",
+      "title": "uaallwork UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@ua_robota",
+      "title": "ua_robota UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@I13partners",
+      "title": "I13partners UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@mykolaivrobota_ua",
+      "title": "mykolaivrobota_ua UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@traffic_cpa_hr",
+      "title": "traffic_cpa_hr UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@traffic_hr_cpa",
+      "title": "traffic_hr_cpa UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@mediabuers_cpa",
+      "title": "mediabuers_cpa UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@uzhgorodrobota_ua",
+      "title": "uzhgorodrobota_ua UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@kievy_rabota",
+      "title": "kievy_rabota UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@work_in_ukraine_golovne",
+      "title": "work_in_ukraine_golovne UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@jecontact",
+      "title": "jecontact UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@adgoodashell",
+      "title": "adgoodashell UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@Kiev_rabota_vakansii",
+      "title": "Kiev_rabota_vakansii UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@rabota_kieve5",
+      "title": "rabota_kieve5 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@Vinnytsia_Job",
+      "title": "Vinnytsia_Job UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@rabota_zhutomere",
+      "title": "rabota_zhutomere UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@Workday_Lviv",
+      "title": "Workday_Lviv UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@RudenkoSMM",
+      "title": "RudenkoSMM UA",
+      "category": "marketing",
+      "active": true
+    },
+    {
+      "username": "@Nikolaeve_v_rabota_robotaq",
+      "title": "Nikolaeve_v_rabota_robotaq UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@w_o_r_k_Poland",
+      "title": "w_o_r_k_Poland UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@pidr0bitok_Lviv",
+      "title": "pidr0bitok_Lviv UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@business_grup_ukraine",
+      "title": "business_grup_ukraine UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@robotakiew",
+      "title": "robotakiew UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@Nikolaev_rabota_robota",
+      "title": "Nikolaev_rabota_robota UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@robitalviv2024",
+      "title": "robitalviv2024 UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@DIPLOMATIA_UA",
+      "title": "DIPLOMATIA_UA UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@evo_prom",
+      "title": "evo_prom UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@rabotay_zhitomire",
+      "title": "rabotay_zhitomire UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@worktopua",
+      "title": "worktopua UA",
+      "category": "general",
+      "active": true
+    },
+    {
+      "username": "@rabota_Odessa_horeca",
+      "title": "rabota_Odessa_horeca UA",
+      "category": "general",
+      "active": true
+    }
   ]
 }

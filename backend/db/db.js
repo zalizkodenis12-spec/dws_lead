@@ -87,6 +87,18 @@ export const db = {
     if (!newLead.id) {
       newLead.id = `lead-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     }
+    
+    // Deduplication check: by title or first 80 characters of text
+    const textSnippet = (newLead.text || '').trim().substring(0, 80);
+    const isDuplicate = (data.leads || []).some(l => {
+      if (l.title && newLead.title && l.title.trim().toLowerCase() === newLead.title.trim().toLowerCase()) return true;
+      if (textSnippet && l.text && l.text.trim().substring(0, 80) === textSnippet) return true;
+      return false;
+    });
+    if (isDuplicate) {
+      return null;
+    }
+
     if (!newLead.date) {
       newLead.date = new Date().toISOString();
     }

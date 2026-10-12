@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { db } from './db/db.js';
 import { analyzeLeadAi, generatePersonalizedOffer } from './ai/gemini.js';
-import { ingestMessage, loadSources } from './parser/monitor.js';
+import { ingestMessage, loadSources, scanPublicChannels, startMonitor } from './parser/monitor.js';
 import './bot.js';
 
 dotenv.config();
@@ -33,6 +33,17 @@ app.get('/api/leads', (req, res) => {
     const { category, subcategory, budget, query, sortBy } = req.query;
     const leads = db.getLeads({ category, subcategory, budget, query, sortBy });
     res.json({ success: true, count: leads.length, data: leads });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Trigger live channel scan on-demand
+app.post('/api/leads/scan', async (req, res) => {
+  try {
+    const result = await scanPublicChannels();
+    const leads = db.getLeads();
+    res.json({ success: true, scanResult: result, count: leads.length, data: leads });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
@@ -252,4 +263,7 @@ app.listen(PORT, () => {
   console.log(`📱 Mini App UI available at http://localhost:${PORT}`);
   console.log(`⚡ DenisWeb Studio Design System & Ukrainian Engine`);
   console.log(`====================================================`);
+  
+  // Launch live channel monitor & scheduler
+  startMonitor();
 });
