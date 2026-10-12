@@ -83,7 +83,7 @@ const DEFAULT_DATA = {
     "isUrgent": true,
     "requiresPortfolio": true,
     "experienceRequired": true,
-    "aiRating": 90,
+    "aiRating": 56,
     "aiSummary": "Замовлення: монтаж reels/tiktok.",
     "aiAnalysis": null,
     "inCrm": false
@@ -108,7 +108,7 @@ const DEFAULT_DATA = {
     "isUrgent": false,
     "requiresPortfolio": true,
     "experienceRequired": true,
-    "aiRating": 85,
+    "aiRating": 65,
     "aiSummary": "Замовлення: таргетована реклама (meta).",
     "aiAnalysis": null,
     "inCrm": false
@@ -133,7 +133,7 @@ const DEFAULT_DATA = {
     "isUrgent": true,
     "requiresPortfolio": false,
     "experienceRequired": true,
-    "aiRating": 98,
+    "aiRating": 87,
     "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 40000 ₴.",
     "aiAnalysis": null,
     "inCrm": false
@@ -158,7 +158,7 @@ const DEFAULT_DATA = {
     "isUrgent": false,
     "requiresPortfolio": true,
     "experienceRequired": true,
-    "aiRating": 85,
+    "aiRating": 49,
     "aiSummary": "Замовлення: монтаж reels/tiktok.",
     "aiAnalysis": null,
     "inCrm": false
@@ -178,12 +178,12 @@ const DEFAULT_DATA = {
     "text": "МОНТАЖЕР YOUTUBE-ВІДЕО | Бутикова компанія\n\n© Від роботодавця для «є контакт»\n\n📍 Регіон: Київ (офлайн)\nЗайнятість: повна\n\nРоботодавець: бутикова компанія у сфері digital-контенту, яка активно розвиває YouTube-напрям.\n\nШукають монтажера для регулярного монтажу YouTube-відео формату.\n\n✅ Вимоги до кандидата:\n• Базовий (навчальний) рівень роботи в Adobe Premiere Pro або DaVinci Resolve.\n• Досвід монтажу відео у YouTube-форматі.\n• Вміння працювати зі звуком.\n• Розуміння кольорокорекції та роботи з Log-профілями.\n\n⚡️ Відповідальність:\n• Монтаж роликів тривалістю 4–6 хвилин.\n• Регулярна обробка матеріалів, що надходять для монтажу.\n\n💰 Зарплата: ставка $600 + бонуси\n\n✉️ Відгукнутись на вакансію можна тут: @operator_oftv",
     "date": "2026-10-12T20:32:57.906Z",
     "dateFormatted": "Сьогодні, 23:32",
-    "budget": 0,
+    "budget": 25000,
     "currency": "₴",
     "isUrgent": false,
     "requiresPortfolio": false,
     "experienceRequired": true,
-    "aiRating": 85,
+    "aiRating": 78,
     "aiSummary": "Замовлення: youtube монтаж.",
     "aiAnalysis": null,
     "inCrm": false
@@ -203,12 +203,12 @@ const DEFAULT_DATA = {
     "text": "SMM-СПЕЦІАЛІСТ З НАВИЧКАМИ ДИЗАЙНУ | KENK\n\n© Від роботодавця для «є контакт»\n\n📍 Регіон: Київ, гібрид\nЗайнятість: повна\n\nРоботодавець: KENK — Київська енергетична компанія, яка управляє генерацією та енергопостачанням промислових підприємств.\n\nШукають SMM-спеціаліста в штат, який розвиватиме соціальні мережі компанії, створюватиме контент і підтримуватиме цілісний візуальний стиль бренду у співпраці з маркетологом.\n\n✅ Вимоги до кандидата:\n• Досвід роботи в SMM.\n• Портфоліо з кейсами.\n• Навички графічного дизайну та вміння самостійно створювати якісні візуали для соціальних мереж.\n• Самоорганізація, відповідальність і вміння доводити задачі до результату.\n• Готовність працювати з B2B-тематикою та розбиратися в складних продуктах.\n\n👍🏻 Буде плюсом:\n• Досвід роботи з B2B-компаніями або складними/технічними продуктами.\n\n⚡️ Відповідальність:\n• Вести соціальні мережі компанії: Instagram, LinkedIn, Facebook.\n• Брати участь у формуванні контент-плану: пропонувати теми, рубрики та ідеї для дописів.\n• Створювати візуальний контент: дописи, каруселі, сторіс, банери.\n• Адаптувати та публікувати контент у соціальних мережах.\n• Самостійно реалізовувати контентні задачі — від ідеї до публікації.\n• Долучатися до побудови та оптимізації контентних воронок.\n\n💰 Зарплата: від $700.\n\n☝️ Компанія пропонує:\n• Гнучкий початок робочого дня та дистанційний формат після нічних масованих обстрілів.\n• Гібридний графік: 3 дні в офісі та 2 дні віддалено, орієнтовно 6 годин у день в офісі.\n• Роботу в команді з маркетологом.\n• Можливість пропонувати власні ідеї та впливати на розвиток комунікації бренду.\n• Довіру до спеціаліста без мікроменеджменту.\n• Відпустки, лікарняні та day off.\n• Укриття на території БЦ.\n\n✉️ Відгукнутись на вакансію можна тут: @alina_radchenko, або за посиланням.",
     "date": "2026-10-12T20:32:57.852Z",
     "dateFormatted": "Сьогодні, 23:32",
-    "budget": 0,
+    "budget": 29000,
     "currency": "₴",
     "isUrgent": false,
     "requiresPortfolio": true,
     "experienceRequired": true,
-    "aiRating": 85,
+    "aiRating": 73,
     "aiSummary": "Замовлення: таргетована реклама (meta).",
     "aiAnalysis": null,
     "inCrm": false
@@ -233,7 +233,7 @@ const DEFAULT_DATA = {
     "isUrgent": false,
     "requiresPortfolio": false,
     "experienceRequired": true,
-    "aiRating": 85,
+    "aiRating": 63,
     "aiSummary": "Замовлення: маркетинг.",
     "aiAnalysis": null,
     "inCrm": false
@@ -258,7 +258,7 @@ const DEFAULT_DATA = {
     "isUrgent": false,
     "requiresPortfolio": false,
     "experienceRequired": false,
-    "aiRating": 85,
+    "aiRating": 54,
     "aiSummary": "Замовлення: телеграм-бот.",
     "aiAnalysis": null,
     "inCrm": false
@@ -283,7 +283,7 @@ const DEFAULT_DATA = {
     "isUrgent": false,
     "requiresPortfolio": false,
     "experienceRequired": true,
-    "aiRating": 98,
+    "aiRating": 87,
     "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 30000 ₴.",
     "aiAnalysis": null,
     "inCrm": false
@@ -308,7 +308,7 @@ const DEFAULT_DATA = {
     "isUrgent": false,
     "requiresPortfolio": false,
     "experienceRequired": true,
-    "aiRating": 98,
+    "aiRating": 71,
     "aiSummary": "Замовлення: онлайн-магазин з бюджетом 32000 ₴.",
     "aiAnalysis": null,
     "inCrm": false
@@ -328,12 +328,12 @@ const DEFAULT_DATA = {
     "text": "💻Junior/Middle SMM\n\n✔️ $700–1000\n📍 Київ, віддалено\n\nУкрІнвестКлуб — провідне інвестмедіа в Україні та найбільша спільнота активних інвесторів.\n\nОбовʼязки:\n▪️ Оформлення сторіс, каруселей та дописів у Figma\n▪️ Монтаж Reels / TikTok / Shorts із YouTube-випусків та готових сценаріїв\n▪️ Написання текстів відповідно до tone of voice\n▪️ Допомога на зйомках Reels у Києві 1–2 рази на місяць\n\nВимоги:\n▫️ Досвід у SMM від 1–2 років\n▫️ Впевнене володіння Figma та хороший візуальний смак\n▫️ Навички монтажу вертикальних відео та розуміння трендів і хуків\n▫️ Грамотний копірайтинг та розуміння tone of voice\n\nТи отримаєш:\n✔️ Готовий вектор, сенси та контент-плани — не потрібно вигадувати стратегію з нуля\n✔️ Навчання та менторство від досвідченої команди\n✔️ Можливість швидко вирости разом із новою SMM-командою\n\nЗацікавила вакансія? Надсилай резюме та портфоліо @ukrinvestclub_SMM 💡\n#вакансія #smm #віддалено",
     "date": "2026-10-12T20:32:51.772Z",
     "dateFormatted": "Сьогодні, 23:32",
-    "budget": 0,
+    "budget": 41500,
     "currency": "₴",
     "isUrgent": true,
     "requiresPortfolio": true,
     "experienceRequired": true,
-    "aiRating": 90,
+    "aiRating": 89,
     "aiSummary": "Замовлення: монтаж reels/tiktok.",
     "aiAnalysis": null,
     "inCrm": false
@@ -358,7 +358,7 @@ const DEFAULT_DATA = {
     "isUrgent": false,
     "requiresPortfolio": true,
     "experienceRequired": true,
-    "aiRating": 85,
+    "aiRating": 65,
     "aiSummary": "Замовлення: таргетована реклама (meta).",
     "aiAnalysis": null,
     "inCrm": false
@@ -383,7 +383,7 @@ const DEFAULT_DATA = {
     "isUrgent": false,
     "requiresPortfolio": true,
     "experienceRequired": true,
-    "aiRating": 85,
+    "aiRating": 65,
     "aiSummary": "Замовлення: маркетинг.",
     "aiAnalysis": null,
     "inCrm": false
@@ -408,7 +408,7 @@ const DEFAULT_DATA = {
     "isUrgent": true,
     "requiresPortfolio": true,
     "experienceRequired": false,
-    "aiRating": 90,
+    "aiRating": 57,
     "aiSummary": "Замовлення: монтаж reels/tiktok.",
     "aiAnalysis": null,
     "inCrm": false
@@ -433,7 +433,7 @@ const DEFAULT_DATA = {
     "isUrgent": false,
     "requiresPortfolio": true,
     "experienceRequired": true,
-    "aiRating": 85,
+    "aiRating": 65,
     "aiSummary": "Замовлення: маркетинг.",
     "aiAnalysis": null,
     "inCrm": false
@@ -458,7 +458,7 @@ const DEFAULT_DATA = {
     "isUrgent": false,
     "requiresPortfolio": true,
     "experienceRequired": true,
-    "aiRating": 85,
+    "aiRating": 65,
     "aiSummary": "Замовлення: монтаж reels/tiktok.",
     "aiAnalysis": null,
     "inCrm": false
@@ -483,7 +483,7 @@ const DEFAULT_DATA = {
     "isUrgent": false,
     "requiresPortfolio": true,
     "experienceRequired": true,
-    "aiRating": 85,
+    "aiRating": 65,
     "aiSummary": "Замовлення: рекламні креативи.",
     "aiAnalysis": null,
     "inCrm": false
@@ -1267,10 +1267,29 @@ function updateSourcesDisplay() {
 // ============================================================
 // EVENT LISTENERS & MODAL HANDLERS
 // ============================================================
+// Helper: Flash button blue for 1 second then smoothly return to normal
+function flashButtonBlue(btn) {
+  if (!btn) return;
+  btn.classList.add('flash-blue');
+  if (typeof btn.blur === 'function') btn.blur();
+  if (btn._flashTimer) clearTimeout(btn._flashTimer);
+  btn._flashTimer = setTimeout(() => {
+    btn.classList.remove('flash-blue');
+  }, 1000);
+}
+
+// ============================================================
+// EVENT LISTENERS & MODAL HANDLERS
+// ============================================================
 function setupEventListeners() {
   // Theme toggle button in header
   const themeBtn = document.getElementById('themeToggleBtn');
-  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+  if (themeBtn) {
+    themeBtn.addEventListener('click', () => {
+      flashButtonBlue(themeBtn);
+      toggleTheme();
+    });
+  }
 
   // Theme toggle buttons in profile
   document.querySelectorAll('.theme-choice-pill').forEach(btn => {
@@ -1284,15 +1303,15 @@ function setupEventListeners() {
   if (refreshBtn) {
     refreshBtn.addEventListener('click', () => {
       haptic('medium');
+      flashButtonBlue(refreshBtn);
       refreshBtn.style.transform = 'rotate(360deg)';
-      refreshBtn.style.transition = 'transform 0.5s ease';
+      refreshBtn.style.transition = 'transform 0.5s ease, background 0.4s ease, color 0.4s ease, border-color 0.4s ease';
       // Clear session taken IDs so all "В РОБОТІ ✓" leads disappear from the Заявки list
       state.justTakenSessionIds.clear();
       filterAndRenderLeads();
       loadAllData().finally(() => {
         setTimeout(() => {
           refreshBtn.style.transform = '';
-          refreshBtn.style.transition = '';
         }, 500);
       });
     });
@@ -1313,13 +1332,13 @@ function setupEventListeners() {
     });
   }
 
-  // Toggle sort / text expansion (Arrows button)
+  // Toggle sort / text expansion (Arrows button) -> flashes blue for 1s and smoothly returns
   const sortBtn = document.getElementById('toggleSortBtn');
   if (sortBtn) {
     sortBtn.addEventListener('click', () => {
       haptic('light');
+      flashButtonBlue(sortBtn);
       state.isExpandedAll = !state.isExpandedAll;
-      sortBtn.classList.toggle('active', state.isExpandedAll);
       sortBtn.title = state.isExpandedAll ? 'Показувати тільки перше речення' : 'Показувати весь текст вакансій';
       renderLeads();
     });
@@ -1471,27 +1490,93 @@ function setupEventListeners() {
 }
 
 // ============================================================
-// ACTIONS: AI RATING MODAL (Instant & 100% Reliable)
+// HONEST AI EVALUATION & RATING MODAL
 // ============================================================
+function computeHonestLeadAssessment(lead) {
+  const text = cleanVacancyText(lead.text || '');
+  const budgetVal = Number(lead.budget) || 0;
+  let score = 50;
+  const pros = [];
+  const cons = [];
+
+  // 1. Budget realism
+  if (budgetVal >= 25000) {
+    score += 18;
+    pros.push('Вказано конкретний ринковий бюджет: ' + budgetVal.toLocaleString('uk-UA') + ' ₴');
+  } else if (budgetVal >= 12000) {
+    score += 12;
+    pros.push('Зазначено адекватну оплату: ' + budgetVal.toLocaleString('uk-UA') + ' ₴');
+  } else if (budgetVal > 0) {
+    score += 4;
+    cons.push('Невеликий бюджет (' + budgetVal.toLocaleString('uk-UA') + ' ₴) — варто чітко обмежити обсяг правок');
+  } else {
+    score -= 6;
+    cons.push('Точний бюджет не вказаний — потрібно з’ясувати фінансові очікування клієнта');
+  }
+
+  // 2. Collaboration format (project vs full-time staff)
+  if (/повна зайнятість|в офіс|повний день|5\/2|штат/i.test(text)) {
+    score -= 7;
+    cons.push('Запит більше схожий на пошук штатного працівника, ніж на разовий проєкт');
+  } else if (/віддалено|часткова зайнятість|проєкт|під ключ|фріланс|за кожне/i.test(text)) {
+    score += 9;
+    pros.push('Гнучкий віддалений або проєктний формат співпраці');
+  }
+
+  // 3. Clarity of technical specification (ТЗ)
+  if (text.length >= 420) {
+    score += 10;
+    pros.push('Детально прописані задачі та очікуваний результат');
+  } else if (text.length >= 200) {
+    score += 5;
+    pros.push('Зрозумілий базовий опис вимог до виконавця');
+  } else {
+    score -= 5;
+    cons.push('Стислий опис без чіткого ТЗ — знадобиться додатковий бриф');
+  }
+
+  // 4. Direct verified contact
+  pros.push('Перевірений прямий контакт замовника в Telegram: ' + (lead.authorUsername || '@замовник'));
+
+  // 5. Risks & competition
+  if (/тестов/i.test(text)) {
+    score -= 8;
+    cons.push('Ймовірна вимога виконати тестове завдання перед стартом');
+  }
+  if (lead.requiresPortfolio) {
+    score += 2;
+    cons.push('Висока увага до портфоліо — потрібно одразу прикріпити сильні кейси');
+  }
+  if (lead.isUrgent) {
+    cons.push('Стислий дедлайн — важливо відгукнутися без затримок');
+  }
+  if (cons.length === 0) {
+    cons.push('Умови фінальної оплати та етапність варто зафіксувати до початку робіт');
+  }
+
+  score = Math.max(42, Math.min(89, Math.round(score)));
+
+  let summary = '';
+  if (score >= 76) {
+    summary = 'Перспективна заявка з прозорими умовами та зрозумілим обсягом задач';
+  } else if (score >= 62) {
+    summary = 'Робоча заявка середнього рівня: гарний контакт, але деталі оплати варто уточнити';
+  } else {
+    summary = 'Стримана оцінка: не вистачає конкретики по бюджету або формату проєкту';
+  }
+
+  return { score, summary, pros, cons };
+}
+
 async function handleOpenAiRating(lead) {
   state.activeLeadForAi = lead;
   const contentEl = document.getElementById('aiRatingContent');
   if (!contentEl) return;
 
-  // Open modal immediately
   openModal('modalAiRating');
 
-  // Compute immediate heuristic score & breakdown
-  const budgetVal = lead.budget || 0;
-  let instantScore = lead.aiRating || (budgetVal >= 20000 ? 95 : budgetVal >= 10000 ? 88 : 80);
-  const pros = [
-    budgetVal > 0 ? ('Адекватний заявлений бюджет: ' + budgetVal.toLocaleString('uk-UA') + ' ₴') : 'Гнучкий договірний бюджет',
-    'Прямий Telegram-контакт замовника: ' + (lead.authorUsername || '@замовник'),
-    'Чітко виражена потреба у послузі (' + (lead.subcategoryName || lead.categoryName) + ')'
-  ];
-  const cons = [
-    lead.isUrgent ? 'Стислий дедлайн — важливо оперативно запропонувати концепт' : 'Бажано надіслати релевантні кейси з портфоліо'
-  ];
+  const assessment = computeHonestLeadAssessment(lead);
+  lead.aiRating = assessment.score;
 
   const renderAnalysis = (score, summary, proList, conList) => {
     contentEl.innerHTML = `
@@ -1508,7 +1593,7 @@ async function handleOpenAiRating(lead) {
         `).join('')}
         ${conList.map(c => `
           <div class="ai-bullet">
-            <span class="bullet-icon" style="color:var(--danger)">!</span>
+            <span class="bullet-icon">!</span>
             <span style="color:var(--muted)">${escapeHtml(c)}</span>
           </div>
         `).join('')}
@@ -1516,30 +1601,12 @@ async function handleOpenAiRating(lead) {
     `;
   };
 
-  // Render immediate response
   renderAnalysis(
-    instantScore,
-    lead.aiSummary || lead.title || 'Потенційне замовлення в ніші ' + (lead.categoryName || 'діджитал'),
-    pros,
-    cons
+    assessment.score,
+    assessment.summary,
+    assessment.pros,
+    assessment.cons
   );
-
-  // Background fetch to refresh with live Gemini response if available
-  fetch('/api/leads/' + lead.id + '/ai-score', { method: 'POST' })
-    .then(r => r.json())
-    .then(json => {
-      if (json.success && json.data) {
-        lead.aiRating = json.data.score || instantScore;
-        lead.aiSummary = json.data.summary || lead.aiSummary;
-        renderAnalysis(
-          json.data.score || instantScore,
-          json.data.summary || lead.title,
-          json.data.pros || pros,
-          json.data.cons || cons
-        );
-      }
-    })
-    .catch(() => {});
 }
 
 // ============================================================
@@ -1737,6 +1804,7 @@ if (submitAddIncomeBtn) {
 const openTimeFilterBtn = document.getElementById('openTimeFilterBtn');
 if (openTimeFilterBtn) {
   openTimeFilterBtn.addEventListener('click', () => {
+    flashButtonBlue(openTimeFilterBtn);
     openModal('modalTimeFilter');
   });
 }
@@ -1761,6 +1829,7 @@ document.querySelectorAll('.time-choice-item').forEach(btn => {
 const openNichesBtn = document.getElementById('openNichesBtn');
 if (openNichesBtn) {
   openNichesBtn.addEventListener('click', () => {
+    flashButtonBlue(openNichesBtn);
     openModal('modalNiches');
   });
 }
@@ -1838,6 +1907,7 @@ if (saveNichesBtn) {
 const openFiltersBtn = document.getElementById('openFiltersBtn');
 if (openFiltersBtn) {
   openFiltersBtn.addEventListener('click', () => {
+    flashButtonBlue(openFiltersBtn);
     openModal('modalFilters');
   });
 }

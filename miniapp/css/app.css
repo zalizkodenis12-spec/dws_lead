@@ -178,16 +178,14 @@ html, body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: var(--trans);
+  transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, transform 0.35s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.icon-btn:hover {
-  color: var(--accent);
-  border-color: var(--accent);
-}
-
-.theme-toggle:hover {
-  transform: rotate(15deg) scale(1.08);
+.icon-btn.flash-blue {
+  color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  background: var(--accent-bg) !important;
 }
 
 /* ============================================================
@@ -198,13 +196,13 @@ html, body {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 16px;
-  padding-bottom: calc(var(--nav-h) + 24px);
+  padding-bottom: calc(var(--nav-h) + 76px);
   -webkit-overflow-scrolling: touch;
 }
 
 .tab-view {
   display: none;
-  animation: fadeIn 0.25s ease-out;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .tab-view.active {
@@ -212,8 +210,8 @@ html, body {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ---- VIEW HEADERS ---- */
@@ -364,13 +362,30 @@ body.dark-theme .leads-count-label {
   width: 100%;
 }
 
-.filter-pill {
+.filter-pills-left {
   flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  min-width: 0;
+}
+
+.filter-pills-right {
+  flex: 0 0 92px;
+  width: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filter-pill {
+  width: 100%;
+  min-width: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 10px 14px;
+  padding: 10px 10px;
   border-radius: var(--pill);
   background: var(--gray);
   border: 1px solid var(--border);
@@ -378,19 +393,22 @@ body.dark-theme .leads-count-label {
   font-size: 0.84rem;
   font-weight: 700;
   cursor: pointer;
-  transition: var(--trans);
+  transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, transform 0.35s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.filter-pill.active, .filter-pill:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: var(--accent-bg);
+.filter-pill.flash-blue {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  background: var(--accent-bg) !important;
 }
 
 .filter-pill.icon-only {
-  flex: 0 0 42px;
-  width: 42px;
-  padding: 10px;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: 50%;
 }
 
 .chevron {
@@ -405,10 +423,19 @@ body.dark-theme .leads-count-label {
   align-items: center;
   gap: 8px;
   margin-bottom: 16px;
+  width: 100%;
+}
+
+#leadSearchBtn {
+  flex: 0 0 92px;
+  width: 92px;
+  padding: 10px 0;
+  justify-content: center;
 }
 
 .search-input-wrap {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1572,7 +1599,7 @@ body.dark-theme .lead-tag.portfolio {
 }
 
 .ai-bullet .bullet-icon {
-  color: var(--success);
+  color: var(--accent) !important;
   font-weight: 900;
 }
 
@@ -1621,4 +1648,31 @@ body.dark-theme .lead-tag.portfolio {
   line-height: 1.5;
   white-space: pre-wrap;
   color: var(--text);
+}
+
+/* Centered floating round blue plus button right above bottom navigation */
+.fab-center-add {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--nav-h) + 12px);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #FFFFFF;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0, 102, 255, 0.38);
+  z-index: 18;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fab-center-add:active {
+  transform: translateX(-50%) scale(0.92);
+  background: var(--accent-h);
 }

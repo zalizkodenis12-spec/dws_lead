@@ -141,28 +141,28 @@ export function extractBudget(text) {
 
   let budget = 0;
 
-  // UAH matching (e.g. 15000 грн, 15 000 ₴, 20к грн)
-  const uahMatch = text.match(/(\d+[\s\d]*)\s*(грн|₴|uah|гривень|тис|тис\.|k|к)/i);
-  if (uahMatch) {
-    let raw = uahMatch[1].replace(/\s+/g, '');
-    let val = parseInt(raw, 10);
-    const unit = uahMatch[2].toLowerCase();
-    if (unit.includes('тис') || unit === 'k' || unit === 'к') {
-      val = val * 1000;
-    }
-    if (!isNaN(val) && val >= 300 && val < 2000000) {
-      budget = val;
-    }
+  // UAH matching (e.g. 15000 грн, 15 000 ₴, 25 000–30 000 грн)
+  const uahRangeMatch = text.match(/(\d{1,3}(?:[\s.,]\d{3})+|\d{4,6})\s*[–—-]\s*(\d{1,3}(?:[\s.,]\d{3})+|\d{4,6})\s*(грн|₴|uah|гривень)/i);
+  const uahSingleMatch = text.match(/(\d{1,3}(?:[\s]\d{3})+|\d{3,6})\s*(грн|₴|uah|гривень|тис\.?\s*грн)/i);
+  if (uahRangeMatch) {
+    let val = parseInt(uahRangeMatch[2].replace(/[\s.,]+/g, ''), 10);
+    if (!isNaN(val) && val >= 500 && val <= 500000) budget = val;
+  } else if (uahSingleMatch) {
+    let val = parseInt(uahSingleMatch[1].replace(/\s+/g, ''), 10);
+    if (uahSingleMatch[2].toLowerCase().includes('тис')) val *= 1000;
+    if (!isNaN(val) && val >= 500 && val <= 500000) budget = val;
   }
 
-  // USD matching ($500, 500$)
+  // USD matching ($700, $700–1000, 500$, 500 USD)
   if (!budget) {
-    const usdMatch = text.match(/(\$|\b)(\d+[\s\d]*)\s*(\$|usd|дол|доларів)/i);
-    if (usdMatch) {
-      let raw = (usdMatch[2] || usdMatch[1]).replace(/\s+/g, '');
-      let val = parseInt(raw, 10);
-      if (!isNaN(val) && val >= 10 && val < 20000) {
-        budget = val * 41.5; // Approx USD to UAH
+    const usdPrefix = text.match(/\$\s*(\d{2,5})(?:\s*[–—-]\s*(\d{2,5}))?/i);
+    const usdSuffix = text.match(/\b(\d{2,5})(?:\s*[–—-]\s*(\d{2,5}))?\s*(\$|usd|дол|доларів)/i);
+    const m = usdPrefix || usdSuffix;
+    if (m) {
+      let raw = m[2] || m[1];
+      let val = parseInt(raw.replace(/\s+/g, ''), 10);
+      if (!isNaN(val) && val >= 20 && val <= 10000) {
+        budget = Math.round((val * 41.5) / 500) * 500;
       }
     }
   }
@@ -282,14 +282,23 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
   const requiresPortfolio = lower.includes('портфоліо') || lower.includes('кейси') || lower.includes('приклади');
   const experienceRequired = lower.includes('досвід') || lower.includes('мідл') || lower.includes('досвідчений');
 
-  // 7. Calculate AI initial heuristic score (0-100)
-  let heuristicScore = 70;
-  if (budget > 15000) heuristicScore += 15;
-  else if (budget > 5000) heuristicScore += 10;
-  if (contact && contact.startsWith('@')) heuristicScore += 10;
-  if (isUrgent) heuristicScore += 5;
-  if (clean.length > 100) heuristicScore += 5;
-  if (heuristicScore > 98) heuristicScore = 98;
+  // 7. Calculate honest AI initial heuristic score (42-89)
+  let heuristicScore = 50;
+  if (budget >= 25000) heuristicScore += 18;
+  else if (budget >= 12000) heuristicScore += 12;
+  else if (budget > 0) heuristicScore += 4;
+  else heuristicScore -= 6;
+
+  if (/повна зайнятість|в офіс|повний день|5\/2|штат/i.test(clean)) heuristicScore -= 7;
+  else if (/віддалено|часткова зайнятість|проєкт|під ключ|фріланс|за кожне/i.test(clean)) heuristicScore += 9;
+
+  if (clean.length >= 420) heuristicScore += 10;
+  else if (clean.length >= 200) heuristicScore += 5;
+  else heuristicScore -= 5;
+
+  if (/тестов/i.test(clean)) heuristicScore -= 8;
+  if (requiresPortfolio) heuristicScore += 2;
+  heuristicScore = Math.max(42, Math.min(89, Math.round(heuristicScore)));
 
   // Generate crisp title
   const firstLine = clean.split('\n')[0].substring(0, 75).trim();
