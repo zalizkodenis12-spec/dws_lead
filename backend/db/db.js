@@ -53,6 +53,18 @@ export const db = {
       else if (filters.budget === '30k+') leads = leads.filter(l => (l.budget || 0) > 30000);
     }
 
+    // Filter by portfolio
+    if (filters.portfolio && filters.portfolio !== 'any') {
+      if (filters.portfolio === 'required') leads = leads.filter(l => l.requiresPortfolio);
+      else if (filters.portfolio === 'none') leads = leads.filter(l => !l.requiresPortfolio);
+    }
+
+    // Filter by experience
+    if (filters.exp && filters.exp !== 'any') {
+      if (filters.exp === 'required') leads = leads.filter(l => l.experienceRequired);
+      else if (filters.exp === 'none') leads = leads.filter(l => !l.experienceRequired);
+    }
+
     // Filter by search query
     if (filters.query && typeof filters.query === 'string' && filters.query.trim()) {
       const q = filters.query.toLowerCase().trim();

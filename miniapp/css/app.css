@@ -250,6 +250,34 @@ html, body {
   color: var(--muted);
 }
 
+.leads-today-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.leads-count-num {
+  font-family: var(--ffh);
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--black);
+  line-height: 1;
+}
+
+.leads-count-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--black);
+}
+
+body.dark-theme .leads-count-num,
+body.dark-theme .leads-count-label {
+  color: var(--black);
+}
+
 /* ============================================================
    BUTTONS & PILLS
    ============================================================ */
@@ -435,9 +463,83 @@ html, body {
 
 .lead-card-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+/* Left square AI button */
+.ai-rating-square-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-sm);
+  background: var(--accent-bg);
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.72rem;
+  line-height: 1.15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  text-align: center;
+  padding: 2px;
+  transition: var(--trans);
+}
+
+.ai-rating-square-btn:hover, .ai-rating-square-btn:active {
+  background: var(--accent);
+  color: #FFFFFF;
+}
+
+/* Middle title & subline */
+.lead-card-header-middle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lead-card-title {
+  font-family: var(--ffh);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--black);
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lead-card-subline {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Right avatar */
+.lead-author-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(135deg, #0066FF, #00C6FF);
+  color: #FFFFFF;
+  font-family: var(--ffh);
+  font-size: 1.1rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .lead-subcat-tag {
@@ -1239,31 +1341,140 @@ html, body {
 }
 
 /* Niche check items */
+.modal-title.text-center {
+  text-align: center;
+  width: 100%;
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.modal-footer.justify-center {
+  justify-content: center;
+}
+
+/* Niche check items */
 .niche-group {
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: var(--r);
   overflow: hidden;
+  background: var(--white);
+  margin-bottom: 10px;
+  transition: var(--trans);
+}
+
+.niche-group.selected {
+  border: 2px solid #0066FF;
+  background: rgba(0, 102, 255, 0.05);
+  box-shadow: 0 0 10px rgba(0, 102, 255, 0.15);
 }
 
 .niche-group-header {
-  padding: 12px 14px;
-  background: var(--card-sub);
+  padding: 10px 14px;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  cursor: pointer;
 }
 
 .niche-group-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  flex: 1;
+  cursor: pointer;
+}
+
+.niche-icon-square {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #F4F4F1;
+  border: 1px solid #E2E2DE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #000000;
+}
+
+.niche-chevron-btn {
+  background: none;
+  border: none;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--muted);
+  border-radius: 6px;
+  transition: var(--trans);
+}
+
+.niche-chevron-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--black);
+}
+
+.niche-chevron-btn .chevron {
+  transition: transform 0.2s ease;
+}
+
+.niche-group.open .niche-chevron-btn .chevron {
+  transform: rotate(180deg);
 }
 
 .niche-name {
   font-family: var(--ffh);
   font-weight: 700;
   font-size: 0.95rem;
+  color: var(--black);
+}
+
+/* Take to CRM details modal */
+.modal-lead-header-info {
+  flex: 1;
+}
+
+.modal-lead-meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.ai-summary-card {
+  background: var(--card-sub);
+  border: 1.5px dashed rgba(0, 102, 255, 0.4);
+  border-radius: var(--r);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.ai-summary-title {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.78rem;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.ai-summary-desc {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.take-modal-text {
+  background: var(--gray);
+  border-radius: var(--r);
+  padding: 12px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text);
+  max-height: 220px;
+  overflow-y: auto;
+  white-space: pre-line;
+  margin-top: 6px;
 }
 
 .niche-sub-list {

@@ -55,7 +55,10 @@
         <div class="view-header">
           <div class="view-title-wrap">
             <h1 class="view-title">Заявки</h1>
-            <span class="count-badge" id="leadsTodayCount">101 сьогодні</span>
+            <div class="leads-today-stat" id="leadsTodayCount">
+              <span class="leads-count-num">1</span>
+              <span class="leads-count-label">сьогодні</span>
+            </div>
           </div>
         </div>
 
@@ -70,8 +73,8 @@
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
             <span>Фільтри</span>
           </button>
-          <button id="toggleSortBtn" class="filter-pill icon-only" title="Сортування">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+          <button id="toggleSortBtn" class="filter-pill icon-only" title="Розгорнути/Згорнути текст вакансій">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
           </button>
         </div>
 
@@ -292,19 +295,23 @@
   <div id="modalNiches" class="modal-overlay">
     <div class="modal-sheet">
       <div class="modal-header">
-        <h3 class="modal-title">Мої ніші</h3>
+        <h3 class="modal-title text-center">Мої ніші</h3>
         <button class="modal-close" data-close="modalNiches">&times;</button>
       </div>
       <div class="modal-body">
         
         <!-- Розробка Section -->
-        <div class="niche-group">
-          <div class="niche-group-header" data-toggle="niche-dev-sub">
-            <div class="niche-group-info">
-              <span class="niche-icon">💻</span>
+        <div class="niche-group selected" id="nicheGroupDev">
+          <div class="niche-group-header">
+            <div class="niche-group-info" data-niche-select="dev">
+              <div class="niche-icon-square">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#000" stroke-width="2.2"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"></path><path d="M13 13l6 6"></path></svg>
+              </div>
               <span class="niche-name">Веброзробка</span>
             </div>
-            <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <button class="niche-chevron-btn" data-toggle="niche-dev-sub" title="Підкатегорії">
+              <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
           </div>
           <div id="niche-dev-sub" class="niche-sub-list">
             <label class="check-item"><input type="checkbox" name="sub-landing" checked> <span>Лендінги</span></label>
@@ -318,13 +325,17 @@
         </div>
 
         <!-- Маркетинг Section -->
-        <div class="niche-group">
-          <div class="niche-group-header" data-toggle="niche-mark-sub">
-            <div class="niche-group-info">
-              <span class="niche-icon">🎯</span>
+        <div class="niche-group selected" id="nicheGroupMark">
+          <div class="niche-group-header">
+            <div class="niche-group-info" data-niche-select="mark">
+              <div class="niche-icon-square">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#000" stroke-width="2.2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
+              </div>
               <span class="niche-name">Маркетинг</span>
             </div>
-            <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <button class="niche-chevron-btn" data-toggle="niche-mark-sub" title="Підкатегорії">
+              <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
           </div>
           <div id="niche-mark-sub" class="niche-sub-list" style="display:none;">
             <label class="check-item"><input type="checkbox" name="sub-meta_target" checked> <span>Таргетована реклама Meta</span></label>
@@ -336,13 +347,17 @@
         </div>
 
         <!-- Монтаж Section -->
-        <div class="niche-group">
-          <div class="niche-group-header" data-toggle="niche-mont-sub">
-            <div class="niche-group-info">
-              <span class="niche-icon">🎬</span>
+        <div class="niche-group selected" id="nicheGroupMont">
+          <div class="niche-group-header">
+            <div class="niche-group-info" data-niche-select="mont">
+              <div class="niche-icon-square">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#000" stroke-width="2.2"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
+              </div>
               <span class="niche-name">Монтаж</span>
             </div>
-            <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <button class="niche-chevron-btn" data-toggle="niche-mont-sub" title="Підкатегорії">
+              <svg class="chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
           </div>
           <div id="niche-mont-sub" class="niche-sub-list" style="display:none;">
             <label class="check-item"><input type="checkbox" name="sub-reels_tiktok" checked> <span>Reels & TikTok</span></label>
@@ -353,9 +368,8 @@
         </div>
 
       </div>
-      <div class="modal-footer">
-        <button class="btn btn--out" data-close="modalNiches">Відхилити</button>
-        <button id="saveNichesBtn" class="btn btn--fill">ЗБЕРЕГТИ</button>
+      <div class="modal-footer justify-center">
+        <button id="saveNichesBtn" class="btn btn--fill btn--block">ЗБЕРЕГТИ</button>
       </div>
     </div>
   </div>
@@ -364,7 +378,7 @@
   <div id="modalFilters" class="modal-overlay">
     <div class="modal-sheet">
       <div class="modal-header">
-        <h3 class="modal-title">Фільтри</h3>
+        <h3 class="modal-title text-center">Фільтри</h3>
         <button class="modal-close" data-close="modalFilters">&times;</button>
       </div>
       <div class="modal-body">
@@ -385,8 +399,9 @@
         <div class="filter-section">
           <label class="form-label">ПОРТФОЛІО:</label>
           <div class="filter-options-grid">
-            <button class="opt-btn active" data-portfolio="any">Без різниці</button>
-            <button class="opt-btn" data-portfolio="required">Тільки з портфоліо</button>
+            <button class="opt-btn active" data-portfolio="any">Всі</button>
+            <button class="opt-btn" data-portfolio="required">З портфоліо</button>
+            <button class="opt-btn" data-portfolio="none">Без портфоліо</button>
           </div>
         </div>
 
@@ -394,15 +409,52 @@
         <div class="filter-section">
           <label class="form-label">ДОСВІД:</label>
           <div class="filter-options-grid">
-            <button class="opt-btn active" data-exp="any">Без різниці</button>
-            <button class="opt-btn" data-exp="required">Потрібен досвід</button>
+            <button class="opt-btn active" data-exp="any">Всі</button>
+            <button class="opt-btn" data-exp="required">З досвідом</button>
+            <button class="opt-btn" data-exp="none">Без досвіду</button>
           </div>
         </div>
 
       </div>
-      <div class="modal-footer">
-        <button class="btn btn--out" data-close="modalFilters">Скинути</button>
-        <button id="applyFiltersBtn" class="btn btn--fill">ЗАСТОСУВАТИ</button>
+      <div class="modal-footer justify-center">
+        <button id="applyFiltersBtn" class="btn btn--fill btn--block">ЗАСТОСУВАТИ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ДЕТАЛІ ЗАЯВКИ ТА ВЗЯТТЯ В РОБОТУ -->
+  <div id="modalTakeCrmLead" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <div class="modal-lead-header-info">
+          <h3 class="modal-title" id="takeModalTitle">Односторінковий сайт</h3>
+          <div class="modal-lead-meta" id="takeModalMeta">Сьогодні, 12:37, @kateryna_coffee</div>
+        </div>
+        <button class="modal-close" data-close="modalTakeCrmLead">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- AI Summary Box -->
+        <div class="ai-summary-card" id="takeModalAiBox">
+          <div class="ai-summary-title">КОРОТКО ВІД AI:</div>
+          <div class="ai-summary-desc" id="takeModalAiText"></div>
+          <button id="takeModalGenAiBtn" class="btn btn--sm btn--out mt-2" style="display:none;">
+            ✨ Згенерувати короткий опис від AI
+          </button>
+        </div>
+        
+        <!-- Full text of vacancy -->
+        <div class="take-modal-text-wrap mt-3">
+          <label class="form-sublabel">ТЕКСТ ВАКАНСІЇ:</label>
+          <div class="take-modal-text" id="takeModalFullText"></div>
+        </div>
+      </div>
+      <div class="modal-footer flex-row gap-2">
+        <button id="takeModalDirectTgBtn" class="btn btn--out flex-1">
+          ВІДГУК
+        </button>
+        <button id="takeModalAiOfferBtn" class="btn btn--fill flex-1">
+          AI-ВІДГУК
+        </button>
       </div>
     </div>
   </div>

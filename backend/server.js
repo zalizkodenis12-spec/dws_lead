@@ -30,8 +30,8 @@ app.use(express.static(MINIAPP_DIR));
 // 1. LEADS FEED
 app.get('/api/leads', (req, res) => {
   try {
-    const { category, subcategory, budget, query, sortBy } = req.query;
-    const leads = db.getLeads({ category, subcategory, budget, query, sortBy });
+    const { category, subcategory, budget, portfolio, exp, query, sortBy } = req.query;
+    const leads = db.getLeads({ category, subcategory, budget, portfolio, exp, query, sortBy });
     res.json({ success: true, count: leads.length, data: leads });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

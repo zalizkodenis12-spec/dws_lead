@@ -44,7 +44,7 @@ console.log(`- Лід створено: ID=${ingested?.id}, Назва="${ingest
 
 // 4. Test AI module (Offline heuristic mode)
 console.log('\n4️⃣ Перевірка AI модуля (Score & Offer):');
-const testLead = db.getLeadById('lead-1');
+const testLead = db.getLeads()[0];
 const aiAnalysis = await analyzeLeadAi(testLead);
 console.log(`- AI Скоринг: ${aiAnalysis.score}/100`);
 console.log(`- AI Стислий опис: "${aiAnalysis.summary}"`);
