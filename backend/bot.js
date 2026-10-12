@@ -48,31 +48,90 @@ export async function setupMenuButton() {
   }
 }
 
-/**
- * Send alert about hot lead
- */
-export async function sendLeadNotification(lead) {
-  if (!TOKEN || !ADMIN_CHAT_ID) return;
-  const text = `🎯 <b>НОВИЙ ГАРЯЧИЙ ЛІД [${lead.categoryName || 'Веброзробка'}]!</b>\n\n` +
-    `📌 <b>${lead.title}</b>\n` +
-    `👤 Автор: ${lead.authorName || 'Клієнт'} (<code>${lead.authorUsername || 'без юзернейма'}</code>)\n` +
-    `💰 Бюджет: <b>${lead.budget ? lead.budget.toLocaleString('uk-UA') + ' ₴' : 'Договірний'}</b>\n` +
-    `⭐ AI-Рейтинг: <b>${lead.aiRating}/100</b>\n\n` +
-    `💬 <i>"${(lead.text || '').substring(0, 180)}..."</i>\n\n` +
-    `📅 Джерело: ${lead.sourceName || 'TG чат'}`;
+import { db } from './db/db.js';
 
-  await tgRequest('sendMessage', {
-    chat_id: ADMIN_CHAT_ID,
-    text,
-    parse_mode: 'HTML',
-    reply_markup: {
-      inline_keyboard: [
-        [
-          { text: 'Відкрити DWSlead', web_app: { url: APP_URL } }
-        ]
-      ]
-    }
+const subscribedChats = new Set();
+if (ADMIN_CHAT_ID) subscribedChats.add(String(ADMIN_CHAT_ID));
+
+/**
+ * Individual lead alerts are disabled — only daily summary at 23:00 is sent.
+ */
+export async function sendLeadNotification() {
+  return;
+}
+
+/**
+ * Send daily summary of collected leads at 23:00 Kyiv time
+ */
+export async function sendDailyLeadsSummary() {
+  if (!TOKEN || subscribedChats.size === 0) return;
+
+  const allLeads = db.getLeads() || [];
+  const nowKyivDate = new Intl.DateTimeFormat('uk-UA', {
+    timeZone: 'Europe/Kyiv',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date());
+
+  const todayLeads = allLeads.filter(l => {
+    if (!l.date) return true;
+    const dStr = new Intl.DateTimeFormat('uk-UA', {
+      timeZone: 'Europe/Kyiv',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date(l.date));
+    return dStr === nowKyivDate;
   });
+
+  const count = todayLeads.length > 0 ? todayLeads.length : allLeads.length;
+
+  const text = `📊 <b>Підсумок дня від DWS Lead</b>\n\n` +
+    `Сьогодні прийшло та відібрано <b>${count}</b> актуальних лідів.\n\n` +
+    `Натисніть кнопку нижче, щоб переглянути всі заявки 👇`;
+
+  for (const chatId of subscribedChats) {
+    await tgRequest('sendMessage', {
+      chat_id: chatId,
+      text,
+      parse_mode: 'HTML',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: 'Відкрити DWSlead', web_app: { url: APP_URL } }
+          ]
+        ]
+      }
+    });
+  }
+}
+
+let lastDailySummaryDate = '';
+function startDailySummaryScheduler() {
+  setInterval(() => {
+    const now = new Date();
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Europe/Kyiv',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    }).formatToParts(now);
+
+    const map = {};
+    for (const p of parts) map[p.type] = p.value;
+    const dateKey = `${map.year}-${map.month}-${map.day}`;
+    const hour = parseInt(map.hour, 10);
+    const minute = parseInt(map.minute, 10);
+
+    if (hour === 23 && minute === 0 && lastDailySummaryDate !== dateKey) {
+      lastDailySummaryDate = dateKey;
+      sendDailyLeadsSummary().catch(() => {});
+    }
+  }, 30 * 1000);
 }
 
 /**
@@ -88,6 +147,7 @@ async function pollUpdates() {
         offset = update.update_id + 1;
         if (update.message && update.message.text) {
           const chatId = update.message.chat.id;
+          subscribedChats.add(String(chatId));
           const text = update.message.text.trim();
 
           if (text.startsWith('/start')) {
@@ -97,7 +157,7 @@ async function pollUpdates() {
                 `• знайти замовлення\n` +
                 `• не втратити клієнта\n` +
                 `• зрозуміти скільки заробив\n\n` +
-                `Ловлю вакансії та замовлення з 200+ тг-чатів і 200+ каналів України, веду по них CRM і рахую доходи по тижнях і місяцях.`,
+                `Ловлю вакансії та замовлення з 79 тг-чатів і 14 каналів України, веду по них CRM і рахую доходи по тижнях і місяцях.`,
               parse_mode: 'HTML',
               reply_markup: {
                 inline_keyboard: [
@@ -120,5 +180,6 @@ async function pollUpdates() {
 if (TOKEN) {
   setupMenuButton();
   pollUpdates();
-  console.log('[DWS Lead Bot] 🤖 Бот успішно запущений і очікує команди...');
+  startDailySummaryScheduler();
+  console.log('[DWS Lead Bot] 🤖 Бот успішно запущений (підсумок дня щодня о 23:00)...');
 }

@@ -123,14 +123,6 @@ export function ingestMessage({ text, authorName, authorUsername, sourceTitle, s
 
   console.log(`[DWS Lead] 🎯 Знайдено новий лід [${classification.categoryName}]: "${classification.title}" -> ${authorUsername}`);
 
-  try {
-    import('../bot.js').then(({ sendLeadNotification }) => {
-      if (typeof sendLeadNotification === 'function' && savedLead.aiRating >= 80) {
-        sendLeadNotification(savedLead);
-      }
-    }).catch(() => {});
-  } catch (e) {}
-
   return savedLead;
 }
 
