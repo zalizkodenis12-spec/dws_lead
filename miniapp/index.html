@@ -53,12 +53,10 @@
       <section id="tab-leads" class="tab-view active">
         <!-- Section Header -->
         <div class="view-header">
-          <div class="view-title-wrap">
-            <h1 class="view-title">Заявки</h1>
-            <div class="leads-today-stat" id="leadsTodayCount">
-              <span class="leads-count-num">1</span>
-              <span class="leads-count-label">сьогодні</span>
-            </div>
+          <h1 class="view-title">Заявки</h1>
+          <div class="leads-today-stat" id="leadsTodayCount">
+            <span class="leads-count-num" id="leadsCountNum">27</span>
+            <span class="leads-count-label">сьогодні</span>
           </div>
         </div>
 
@@ -197,7 +195,6 @@
         <div class="view-header">
           <div class="view-title-wrap">
             <h1 class="view-title">Профіль</h1>
-            <span class="count-badge">DenisWeb Studio</span>
           </div>
         </div>
 
@@ -208,7 +205,7 @@
               <label class="form-label" for="profileAbout">ПРО СЕБЕ:</label>
               <span class="char-counter" id="aboutCounter">0/2000</span>
             </div>
-            <p class="form-hint">Досвід, навички, стиль та інше. Використовується AI для генерації персоналізованого відгуку.</p>
+            <p class="form-hint">Досвід, навички, стек та особливості підходу. Використовується AI для генерації персоналізованого відгуку.</p>
             <textarea id="profileAbout" class="form-textarea" rows="4" maxlength="2000" placeholder="Опишіть ваш досвід, стек та особливості підходу..."></textarea>
           </div>
 
@@ -218,7 +215,7 @@
               <label class="form-label" for="profileTemplate">ШАБЛОН ВІДГУКУ:</label>
               <span class="char-counter" id="templateCounter">0/2000</span>
             </div>
-            <p class="form-hint">Приклад, за яким іде відгук клієнту на вакансію. AI адаптує його під кожне замовлення.</p>
+            <p class="form-hint">Фірмовий шаблон, за яким надсилається відгук клієнту. AI адаптує його під кожне замовлення.</p>
             <textarea id="profileTemplate" class="form-textarea" rows="5" maxlength="2000" placeholder="Вітаю, {NAME}! Побачив замовлення {TASK}..."></textarea>
           </div>
 
@@ -242,12 +239,12 @@
             <label class="form-label">БАЗА ДЖЕРЕЛ ПОШУКУ:</label>
             <div class="sources-stat-box">
               <div class="sources-stat-item">
-                <span class="num">~200</span>
+                <span class="num" id="sourcesChatsCount">14</span>
                 <span class="txt">Telegram чатів</span>
               </div>
               <div class="sources-divider"></div>
               <div class="sources-stat-item">
-                <span class="num">~200</span>
+                <span class="num" id="sourcesChannelsCount">79</span>
                 <span class="txt">Telegram каналів</span>
               </div>
             </div>
@@ -737,7 +734,7 @@
     </div>
   </div>
 
-  <!-- MODAL: КЕРУВАННЯ СПИСКОМ ДЖЕРЕЛ (~200 чатів і ~200 каналів) -->
+  <!-- MODAL: КЕРУВАННЯ СПИСКОМ ДЖЕРЕЛ -->
   <div id="modalSources" class="modal-overlay">
     <div class="modal-sheet">
       <div class="modal-header">
@@ -745,15 +742,18 @@
         <button class="modal-close" data-close="modalSources">&times;</button>
       </div>
       <div class="modal-body">
-        <p class="form-hint">Вставте сюди юзернейми або посилання на українські чати й канали (по одному на рядок):</p>
+        <div class="sources-modal-summary" style="padding: 10px 14px; background: var(--gray); border-radius: var(--r); font-size: 0.88rem; font-weight: 600; color: var(--black);">
+          Активна база: <span id="modalSourcesTotal">93</span> джерел (<span id="modalSourcesChats">14</span> чатів, <span id="modalSourcesChannels">79</span> каналів)
+        </div>
+        <p class="form-hint" style="margin-top: 10px;">Вставте нові юзернейми або посилання на Telegram канали/чати (по одному на рядок):</p>
         <div class="form-group">
-          <label class="form-label">СПИСОК ЧАТІВ ТА КАНАЛІВ:</label>
-          <textarea id="sourcesTextarea" class="form-textarea" rows="8" placeholder="@it_freelance_ua&#10;@webdev_jobs_ua&#10;@freelance_hunt_leads..."></textarea>
+          <label class="form-label">ДОДАТИ НОВІ ДЖЕРЕЛА:</label>
+          <textarea id="sourcesTextarea" class="form-textarea" rows="6" placeholder="@новий_чат&#10;https://t.me/новий_канал..."></textarea>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn--out" data-close="modalSources">Закрити</button>
-        <button id="saveSourcesBtn" class="btn btn--fill">ЗБЕРЕГТИ ДЖЕРЕЛА</button>
+        <button id="saveSourcesBtn" class="btn btn--fill">ДОДАТИ ДЖЕРЕЛА</button>
       </div>
     </div>
   </div>
