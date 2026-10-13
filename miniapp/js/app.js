@@ -2111,19 +2111,44 @@ function renderCrmOrdersList() {
 
   list.innerHTML = orders.map((ord, idx) => {
     const stText = statusLabels[ord.paidStatus] || '1) Не оплачено';
-    const amtText = Number(ord.amount) > 0 ? (Number(ord.amount).toLocaleString('uk-UA') + ' ₴') : '';
-    const datesText = (ord.dateStart || ord.dateEnd) ? `${ord.dateStart || '...'} → ${ord.dateEnd || '...'}` : '';
+    const amtText = Number(ord.amount) > 0 ? (Number(ord.amount).toLocaleString('uk-UA') + ' ₴') : '0 ₴';
+    let datesText = '';
+    if (ord.dateStart && ord.dateEnd) {
+      const s = ord.dateStart.split('-');
+      const e = ord.dateEnd.split('-');
+      datesText = `${s[2]}.${s[1]}.${s[0]} → ${e[2]}.${e[1]}.${e[0]}`;
+    } else if (ord.dateStart) {
+      const s = ord.dateStart.split('-');
+      datesText = `Від ${s[2]}.${s[1]}.${s[0]}`;
+    } else if (ord.dateEnd) {
+      const e = ord.dateEnd.split('-');
+      datesText = `До ${e[2]}.${e[1]}.${e[0]}`;
+    } else {
+      datesText = 'Терміни не вказані';
+    }
+
+    const pillClass = ord.paidStatus === 'paid' ? 'paid' : ord.paidStatus === 'partial' ? 'partial' : '';
 
     return `
-      <div class="crm-order-item-chip" data-idx="${idx}">
-        <div class="crm-order-chip-left">
-          <div class="crm-order-chip-title">${escapeHtml(ord.title || 'Створення сайту')} ${amtText ? `• <span style="color:var(--accent); font-weight:800;">${amtText}</span>` : ''}</div>
-          <div class="crm-order-chip-meta">${datesText ? `📅 ${datesText}` : ''}</div>
+      <div class="crm-order-card-item" data-idx="${idx}">
+        <div class="crm-order-card-header">
+          <div class="crm-order-card-title">${escapeHtml(ord.title || 'Створення сайту')}</div>
+          <span class="crm-order-status-pill ${pillClass}">${stText}</span>
         </div>
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span class="crm-order-chip-status ${ord.paidStatus === 'paid' ? 'paid' : ''}">${stText}</span>
-          <button type="button" class="btn-order-edit" data-idx="${idx}" style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:0.9rem; padding:2px;" title="Редагувати">✏️</button>
-          <button type="button" class="btn-order-del" data-idx="${idx}" style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.15rem; line-height:1; padding:2px;" title="Видалити">&times;</button>
+        <div class="crm-order-card-dates">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <span>${datesText}</span>
+        </div>
+        <div class="crm-order-card-footer">
+          <div class="crm-order-card-amount">${amtText}</div>
+          <div class="crm-order-card-actions">
+            <button type="button" class="btn-order-action btn-order-edit" data-idx="${idx}" title="Редагувати">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+            </button>
+            <button type="button" class="btn-order-action btn-order-del" data-idx="${idx}" title="Видалити">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
         </div>
       </div>
     `;
@@ -2230,7 +2255,7 @@ function setupCrmDetailHandlers() {
   // Save edit name
   const saveEditNameBtn = document.getElementById('crmSaveEditNameBtn');
   if (saveEditNameBtn) {
-    saveEditNameBtn.addEventListener('click', () => {
+    saveEditNameBtn.addEventListener('click', async () => {
       if (!state.activeCrmLead) return;
       const newName = (document.getElementById('crmEditLeadNameInput').value || '').trim() || 'Клієнт';
       let newUser = (document.getElementById('crmEditLeadUserInput').value || '').trim();
@@ -2264,6 +2289,21 @@ function setupCrmDetailHandlers() {
         };
       }
       localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+
+      try {
+        await fetch('/api/crm/' + state.activeCrmLead.id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: newName,
+            username: newUser,
+            avatarLetter: state.activeCrmLead.avatarLetter
+          })
+        });
+      } catch (e) {
+        console.warn('Failed to update CRM name on server', e);
+      }
+
       renderCrm();
       syncAccountToServer();
       haptic('success');
@@ -2403,6 +2443,9 @@ function setupCrmDetailHandlers() {
       const totalBudget = orders.reduce((sum, o) => sum + (Number(o.amount) || 0), 0);
 
       const updates = {
+        name: state.activeCrmLead.name || 'Клієнт',
+        username: state.activeCrmLead.username || '@юзернейм',
+        avatarLetter: state.activeCrmLead.avatarLetter || 'Л',
         status,
         statusLabel: CRM_STATUSES[status] || 'В процесі',
         service,
@@ -2664,17 +2707,33 @@ if (addCrmBtn) {
   });
 }
 
+const headerAddCrmBtn = document.getElementById('headerAddCrmBtn');
+if (headerAddCrmBtn) {
+  headerAddCrmBtn.addEventListener('click', () => {
+    openModal('modalAddCrm');
+  });
+}
+
 const submitAddCrmBtn = document.getElementById('submitAddCrmBtn');
 if (submitAddCrmBtn) {
   submitAddCrmBtn.addEventListener('click', async () => {
-    const name = document.getElementById('newCrmName').value.trim();
-    const username = document.getElementById('newCrmUsername').value.trim();
-    const service = document.getElementById('newCrmService').value;
-    const source = document.getElementById('newCrmSource').value;
-    const niche = document.getElementById('newCrmNiche').value.trim();
-    const budget = Number(document.getElementById('newCrmBudget').value) || 0;
-    const status = document.getElementById('newCrmStatus').value;
-    const orderTitle = document.getElementById('newCrmOrderTitle').value.trim();
+    const name = (document.getElementById('newCrmName')?.value || '').trim();
+    let username = (document.getElementById('newCrmUsername')?.value || '').trim();
+    if (username && !username.startsWith('@')) username = '@' + username;
+    const service = document.getElementById('newCrmService')?.value || 'development';
+    const source = document.getElementById('newCrmSource')?.value || 'tg_leads';
+    const niche = (document.getElementById('newCrmNiche')?.value || '').trim();
+    const budget = Number(document.getElementById('newCrmBudget')?.value) || 0;
+    const status = document.getElementById('newCrmStatus')?.value || 'in_progress';
+    const orderTitle = (document.getElementById('newCrmOrderTitle')?.value || '').trim() || 'Створення сайту';
+
+    const links = {
+      phone: (document.getElementById('newCrmLinkPhone')?.value || '').trim(),
+      instagram: (document.getElementById('newCrmLinkInsta')?.value || '').trim(),
+      tiktok: (document.getElementById('newCrmLinkTiktok')?.value || '').trim(),
+      tgChannel: (document.getElementById('newCrmLinkTgChannel')?.value || '').trim(),
+      site: (document.getElementById('newCrmLinkSite')?.value || '').trim()
+    };
 
     if (!name) {
       alert('Будь ласка, введіть ім\'я клієнта');
@@ -2682,15 +2741,66 @@ if (submitAddCrmBtn) {
     }
 
     haptic('medium');
-    await fetch('/api/crm', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, username, service, source, niche, budget, status, orderTitle })
-    });
+    submitAddCrmBtn.textContent = 'ДОДАЄМО...';
+
+    const payload = {
+      name,
+      username,
+      service,
+      serviceLabel: (service === 'marketing' ? 'Реклама' : service === 'montage' ? 'Монтаж' : 'Розробка'),
+      source,
+      niche,
+      budget,
+      status,
+      statusLabel: CRM_STATUSES[status] || 'В процесі',
+      orderTitle,
+      links,
+      orders: [
+        {
+          id: 'ord-' + Date.now(),
+          title: orderTitle,
+          amount: budget,
+          dateStart: new Date().toISOString().slice(0, 10),
+          dateEnd: '',
+          paidStatus: 'unpaid'
+        }
+      ]
+    };
+
+    try {
+      const res = await fetch('/api/crm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const json = await res.json();
+      if (json.success && json.data) {
+        state.crm.unshift(json.data);
+      } else {
+        payload.id = 'crm-' + Date.now();
+        payload.avatarLetter = name.charAt(0).toUpperCase();
+        state.crm.unshift(payload);
+      }
+    } catch (err) {
+      payload.id = 'crm-' + Date.now();
+      payload.avatarLetter = name.charAt(0).toUpperCase();
+      state.crm.unshift(payload);
+    }
+
+    localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+    syncAccountToServer();
+    renderCrm();
 
     haptic('success');
+    submitAddCrmBtn.textContent = 'ДОДАТИ КЛІЄНТА';
     closeModal('modalAddCrm');
-    fetchCrm();
+
+    // Reset inputs
+    ['newCrmName', 'newCrmUsername', 'newCrmNiche', 'newCrmBudget', 'newCrmOrderTitle',
+     'newCrmLinkPhone', 'newCrmLinkInsta', 'newCrmLinkTiktok', 'newCrmLinkTgChannel', 'newCrmLinkSite'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
   });
 }
 
