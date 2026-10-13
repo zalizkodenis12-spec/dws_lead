@@ -107,7 +107,7 @@ export function ingestMessage({ text, authorName, authorUsername, sourceTitle, s
     dateFormatted: `Сьогодні, ${timeFormatted}`,
     budget: classification.budget,
     currency: '₴',
-    country: classification.country || '🇺🇦 Україна',
+    country: classification.country || 'Україна',
     isUrgent: classification.isUrgent,
     requiresPortfolio: classification.requiresPortfolio,
     experienceRequired: classification.experienceRequired,

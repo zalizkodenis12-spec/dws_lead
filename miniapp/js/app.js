@@ -743,6 +743,15 @@ async function fetchLeads() {
   filterAndRenderLeads();
 }
 
+function cleanCountryName(country) {
+  if (!country) return 'Україна';
+  const cleaned = String(country)
+    .replace(/[\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF]/g, '')
+    .replace(/[\uD83C-\uDBFF\uDC00-\uDFFF\u200D\uFE0F🌐]/g, '')
+    .trim();
+  return cleaned || 'Україна';
+}
+
 function filterAndRenderLeads() {
   let list = [...(state.allLeads || DEFAULT_DATA.leads)];
 
@@ -860,10 +869,10 @@ function renderLeads() {
         <!-- Vacancy text with preserved paragraphs and whitespace -->
         <div class="lead-text">${escapeHtml(displayText)}</div>
 
-        <!-- Badges: Budget and Country/Market -->
+        <!-- Badges: Budget and Country/Market (Без прапорця, тільки назва країни) -->
         <div class="lead-tags-row">
           <span class="lead-tag budget">Бюджет: ${budgetTxt}</span>
-          <span class="lead-tag country">${escapeHtml(lead.country || '🇺🇦 Україна')}</span>
+          <span class="lead-tag country">${escapeHtml(cleanCountryName(lead.country))}</span>
         </div>
 
         <!-- Action button -->
@@ -1003,7 +1012,7 @@ function openTakeCrmModal(lead, btn) {
         source: 'tg_leads',
         sourceLabel: lead.sourceName || 'DWS Lead',
         notes: cleanVacancyText(lead.text),
-        orders: [{ id: 'ord-' + Date.now(), title: lead.title || 'Замовлення', amount: lead.budget || 0, paidStatus: 'unpaid', deadline: '' }]
+        orders: []
       });
       localStorage.setItem('dws_crm', JSON.stringify(state.crm));
       renderCrm();
@@ -2072,19 +2081,9 @@ function handleOpenCrmDetail(item) {
   const notesText = document.getElementById('crmDetailNotes');
   if (notesText) notesText.value = item.notes || '';
 
-  // Orders initialization
+  // Orders initialization (послуги самі по собі не створюються, тільки вручну)
   if (!Array.isArray(item.orders)) {
     item.orders = [];
-    if (item.orderTitle || (item.budget && Number(item.budget) > 0)) {
-      item.orders.push({
-        id: 'ord-' + Date.now(),
-        title: item.orderTitle || 'Створення сайту',
-        amount: Number(item.budget) || 0,
-        dateStart: '',
-        dateEnd: item.deadline || '',
-        paidStatus: 'unpaid'
-      });
-    }
   }
 
   // Hide order card box
@@ -2103,7 +2102,7 @@ function renderCrmOrdersList() {
   const orders = Array.isArray(state.activeCrmLead.orders) ? state.activeCrmLead.orders : [];
 
   if (orders.length === 0) {
-    list.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 0.8rem; padding: 12px; background: var(--card-sub); border: 1px dashed var(--border); border-radius: var(--r-sm);">Замовлень ще немає. Натисніть «+ Додати замовлення»</div>`;
+    list.innerHTML = '';
     return;
   }
 
@@ -2317,7 +2316,7 @@ function setupCrmDetailHandlers() {
   if (openNewOrderBtn) {
     openNewOrderBtn.addEventListener('click', () => {
       state.editingOrderId = null;
-      document.getElementById('crmOrderServiceInput').value = 'Створення сайту';
+      document.getElementById('crmOrderServiceInput').value = '';
       document.getElementById('crmOrderAmountInput').value = '';
 
       const today = new Date().toISOString().split('T')[0];
@@ -2757,16 +2756,7 @@ if (submitAddCrmBtn) {
       statusLabel: CRM_STATUSES[status] || 'В процесі',
       orderTitle,
       links,
-      orders: [
-        {
-          id: 'ord-' + Date.now(),
-          title: orderTitle,
-          amount: budget,
-          dateStart: new Date().toISOString().slice(0, 10),
-          dateEnd: '',
-          paidStatus: 'unpaid'
-        }
-      ]
+      orders: []
     };
 
     try {

@@ -173,17 +173,7 @@ export const db = {
         site: '',
         phone: ''
       },
-      orders: leadData.orders || [
-        {
-          id: `ord-${Date.now()}`,
-          title: leadData.orderTitle || 'Розробка проєкту',
-          amount: Number(leadData.budget) || 0,
-          paidStatus: 'unpaid',
-          paidStatusLabel: 'Не оплачено',
-          paidAmount: 0,
-          deadline: leadData.deadline || ''
-        }
-      ],
+      orders: Array.isArray(leadData.orders) ? leadData.orders : [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
