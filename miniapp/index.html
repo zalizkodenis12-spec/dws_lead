@@ -511,11 +511,17 @@
   <div id="modalCrmDetail" class="modal-overlay">
     <div class="modal-sheet">
       <div class="modal-header">
-        <div class="crm-lead-title-row">
-          <div class="client-avatar lg" id="crmDetailAvatar">О</div>
-          <div>
-            <h3 class="modal-title" id="crmDetailName">Олексій</h3>
-            <span class="crm-detail-user" id="crmDetailUsername">@olexa12</span>
+        <div class="crm-lead-title-row" style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
+          <button type="button" id="crmDetailEditNameBtn" class="crm-pencil-btn" title="Редагувати ім'я та юзернейм">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </button>
+          <div class="client-avatar" id="crmDetailAvatar">О</div>
+          <div style="min-width: 0;">
+            <h3 class="modal-title" id="crmDetailName" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.2;">Олексій</h3>
+            <span class="crm-detail-user" id="crmDetailUsername" style="color: var(--accent); font-weight: 600; font-size: 0.85rem; display: block;">@olexa12</span>
           </div>
         </div>
         <button class="modal-close" data-close="modalCrmDetail">&times;</button>
@@ -523,15 +529,32 @@
 
       <div class="modal-body">
         
+        <!-- MINI-MENU РЕДАГУВАННЯ ІМЕНІ ТА ЮЗЕРА (по кліку на олівець) -->
+        <div id="crmEditNameMenu" class="crm-edit-name-panel" style="display: none;">
+          <div class="form-group mb-2">
+            <label class="form-sublabel">ІМ'Я КЛІЄНТА:</label>
+            <input type="text" id="crmEditLeadNameInput" class="form-input" placeholder="Ім'я клієнта">
+          </div>
+          <div class="form-group mb-3">
+            <label class="form-sublabel">TELEGRAM (@ЮЗЕРНЕЙМ):</label>
+            <input type="text" id="crmEditLeadUserInput" class="form-input" placeholder="@username">
+          </div>
+          <div class="form-row gap-2">
+            <button type="button" id="crmCancelEditNameBtn" class="btn btn--out flex-1">Скинути</button>
+            <button type="button" id="crmSaveEditNameBtn" class="btn btn--fill flex-1">Зберегти</button>
+          </div>
+        </div>
+
         <!-- Етап (Статус) Selector -->
         <div class="form-group">
           <label class="form-label">ЕТАП ВОРОНКИ:</label>
           <select id="crmDetailStatusSelect" class="form-select">
-            <option value="follow_up">Follow-up</option>
             <option value="in_progress">В процесі</option>
-            <option value="working">Працюєм</option>
             <option value="offer">Оффер</option>
+            <option value="paid">Оплата</option>
+            <option value="working">Працюєм</option>
             <option value="closed">Закритий</option>
+            <option value="follow_up">Follow-up</option>
             <option value="discuss_later">Обговорити пізніше</option>
             <option value="ignoring">Ігнорує</option>
             <option value="rejected">Відмова</option>
@@ -539,65 +562,97 @@
           </select>
         </div>
 
-        <!-- Big CTA: НАПИСАТИ В ТЕЛЕГРАМ -->
-        <a id="crmDetailTgLink" href="#" target="_blank" class="btn btn--fill btn--block btn--tg mb-3">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.52 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .37z"/></svg>
-          <span>НАПИСАТИ В TELEGRAM</span>
+        <!-- Кнопка Написати (синя, веде в чат) -->
+        <a id="crmDetailTgLink" href="#" target="_blank" class="btn btn--fill btn--block mb-3" style="text-align: center; justify-content: center; font-weight: 700;">
+          Написати
         </a>
 
-        <!-- Service & Niche -->
-        <div class="form-row">
-          <div class="form-group flex-1">
-            <label class="form-label">ПОСЛУГА:</label>
-            <select id="crmDetailService" class="form-select">
-              <option value="development">Розробка</option>
-              <option value="marketing">Маркетинг</option>
-              <option value="montage">Монтаж</option>
-            </select>
-          </div>
-          <div class="form-group flex-1">
-            <label class="form-label">БЮДЖЕТ (₴):</label>
-            <input type="number" id="crmDetailBudget" class="form-input" placeholder="14 000">
-          </div>
+        <!-- Блок Додаткові контакти та посилання (4 рядки) -->
+        <div class="form-group">
+          <label class="form-label">ДОДАТКОВІ КОНТАКТИ ТА ПОСИЛАННЯ:</label>
+          <input type="tel" id="crmLinkPhone" class="form-input mb-2" placeholder="Номер телефону (+380...)">
+          <input type="text" id="crmLinkInsta" class="form-input mb-2" placeholder="Instagram (@ або посилання)">
+          <input type="text" id="crmLinkTiktok" class="form-input mb-2" placeholder="TikTok (@ або посилання)">
+          <input type="text" id="crmLinkTgChannel" class="form-input" placeholder="Telegram-канал (ТГК)">
         </div>
 
+        <!-- Послуга на всю ширину (100%) -->
+        <div class="form-group">
+          <label class="form-label">ПОСЛУГА:</label>
+          <select id="crmDetailService" class="form-select">
+            <option value="development">Розробка сайтів та ботів</option>
+            <option value="marketing">Реклама та маркетинг</option>
+            <option value="montage">Відеомонтаж та контент</option>
+          </select>
+        </div>
+
+        <!-- Ніша / проєкт -->
         <div class="form-group">
           <label class="form-label">НІША / ПРОЄКТ:</label>
-          <input type="text" id="crmDetailNiche" class="form-input" placeholder="Кав'ярня, доставка їжі, салон...">
+          <input type="text" id="crmDetailNiche" class="form-input" placeholder="Кав'ярня, нерухомість, одяг, салон...">
         </div>
 
-        <!-- Orders & Payments inside CRM lead -->
-        <div class="crm-orders-box">
-          <label class="form-label">ЗАМОВЛЕННЯ:</label>
-          <div class="order-item-card">
-            <input type="text" id="crmOrderTitle" class="form-input mb-2" placeholder="Створення односторінкового сайту">
-            <div class="form-row mb-2">
-              <div class="flex-1">
-                <label class="form-sublabel">ОПЛАТА:</label>
-                <select id="crmOrderPaidStatus" class="form-select">
-                  <option value="unpaid">Не оплачено</option>
-                  <option value="partial">Частково (Аванс)</option>
-                  <option value="paid">Оплачено повністю</option>
-                </select>
-              </div>
-              <div class="flex-1">
-                <label class="form-sublabel">ДЕДЛАЙН:</label>
-                <input type="date" id="crmOrderDeadline" class="form-input">
-              </div>
-            </div>
-          </div>
-        </div>
-
+        <!-- Замітки (після ніші) -->
         <div class="form-group">
           <label class="form-label">ЗАМІТКИ:</label>
           <textarea id="crmDetailNotes" class="form-textarea" rows="2" placeholder="Деталі переговорів, побажання клієнта..."></textarea>
+        </div>
+
+        <!-- Блок Замовлення (з можливістю додавати кілька замовлень) -->
+        <div class="crm-orders-section mb-3">
+          <div class="flex-between items-center mb-2" style="display: flex; justify-content: space-between; align-items: center;">
+            <label class="form-label mb-0" style="margin-bottom: 0;">ЗАМОВЛЕННЯ:</label>
+            <button type="button" id="crmOpenNewOrderBtn" class="btn btn--out btn--sm" style="padding: 4px 10px; font-size: 0.76rem;">+ Додати замовлення</button>
+          </div>
+
+          <!-- Список існуючих замовлень -->
+          <div id="crmOrdersList" class="crm-orders-list mb-2"></div>
+
+          <!-- Квадратний блок форми замовлення -->
+          <div id="crmOrderCardBox" class="crm-order-card-box" style="display: none;">
+            <div class="form-group mb-2">
+              <label class="form-sublabel" style="display: block; text-align: center;">НАЗВА ПОСЛУГИ:</label>
+              <input type="text" id="crmOrderServiceInput" class="form-input text-center" style="font-weight: 700; font-family: var(--ffh); font-size: 0.96rem; text-align: center;" placeholder="Створення сайту" value="Створення сайту">
+            </div>
+
+            <div class="form-group mb-2">
+              <label class="form-sublabel">СУМА ЗАМОВЛЕННЯ (₴):</label>
+              <input type="number" id="crmOrderAmountInput" class="form-input" placeholder="0" min="0">
+            </div>
+
+            <!-- Дві дати дедлайну в одній строці: початок зліва, кінець справа -->
+            <div class="form-row gap-2 mb-3">
+              <div class="flex-1">
+                <label class="form-sublabel">ПОЧАТОК:</label>
+                <input type="date" id="crmOrderDateStart" class="form-input">
+              </div>
+              <div class="flex-1">
+                <label class="form-sublabel">КІНЕЦЬ (ДЕДЛАЙН):</label>
+                <input type="date" id="crmOrderDateEnd" class="form-input">
+              </div>
+            </div>
+
+            <!-- 3 статуси замовлення: 1) не оплачено 2) частково 3) оплачено -->
+            <label class="form-sublabel">СТАТУС ОПЛАТИ ЗАМОВЛЕННЯ:</label>
+            <div class="crm-order-status-bar mb-3" id="crmOrderStatusSegment">
+              <button type="button" class="crm-order-status-btn active" data-paid="unpaid">1) Не оплачено</button>
+              <button type="button" class="crm-order-status-btn" data-paid="partial">2) Частково</button>
+              <button type="button" class="crm-order-status-btn" data-paid="paid">3) Оплачено</button>
+            </div>
+
+            <!-- Дві кнопки: Зберегти та Відмінити (50% / 50%) -->
+            <div class="form-row gap-2">
+              <button type="button" id="crmCancelOrderBtn" class="btn btn--out flex-1">Відмінити</button>
+              <button type="button" id="crmSaveOrderBtn" class="btn btn--fill flex-1">Зберегти</button>
+            </div>
+          </div>
         </div>
 
       </div>
 
       <div class="modal-footer flex-col gap-2">
         <button id="saveCrmDetailBtn" class="btn btn--fill btn--block">ЗБЕРЕГТИ ЗМІНИ</button>
-        <button id="deleteCrmLeadBtn" class="btn btn--danger btn--block">ВИДАЛИТИ ЛІДА</button>
+        <button id="deleteCrmLeadBtn" class="btn btn--out btn--block" style="color: var(--muted); border-color: var(--border);">Видалити ліда з CRM</button>
       </div>
     </div>
   </div>
@@ -892,9 +947,9 @@
       </div>
       <div class="modal-body">
         
-        <!-- 1. СТАТУС / ЕТАП РОБОТИ -->
+        <!-- 1. СТАТУС / ЕТАПИ РОБОТИ -->
         <div class="form-group">
-          <label class="form-label">ЕТАП РОБОТИ (СТАТУС):</label>
+          <label class="form-label">ЕТАПИ РОБОТИ (ОБЕРІТЬ 4 ДЛЯ ПАНЕЛІ):</label>
           <div class="filter-options-grid" id="crmFilterStatusGrid">
             <button type="button" class="opt-btn active" data-status="all">Всі (Всі клієнти)</button>
             <button type="button" class="opt-btn" data-status="in_progress">В процесі</button>
@@ -927,7 +982,6 @@
       </div>
       <div class="modal-footer flex-col gap-2">
         <button type="button" id="applyCrmFilterBtn" class="btn btn--fill btn--block">ЗАСТОСУВАТИ ФІЛЬТРИ</button>
-        <button type="button" id="resetCrmFilterBtn" class="btn btn--out btn--block">Скинути фільтри</button>
       </div>
     </div>
   </div>

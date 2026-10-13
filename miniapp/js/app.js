@@ -616,6 +616,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupProfileCounters();
   setupCalendarModal();
   setupCrmFilterModal();
+  setupCrmDetailHandlers();
   setupAccountSync();
   setupEventListeners();
   loadAllData();
@@ -1145,10 +1146,25 @@ function renderCrm() {
 
   container.innerHTML = filtered.map(item => {
     const initial = item.avatarLetter || (item.name ? item.name.charAt(0).toUpperCase() : 'Л');
-    const amount = (item.budget && Number(item.budget) > 0) ? (Number(item.budget).toLocaleString('uk-UA') + ' ₴') : '—';
+    
+    // Calculate total budget from orders or fallback to item.budget
+    let totalBudget = 0;
+    if (Array.isArray(item.orders) && item.orders.length > 0) {
+      totalBudget = item.orders.reduce((sum, ord) => sum + (Number(ord.amount) || 0), 0);
+    }
+    if (totalBudget === 0 && item.budget) {
+      totalBudget = Number(item.budget) || 0;
+    }
+    const amount = totalBudget > 0 ? (totalBudget.toLocaleString('uk-UA') + ' ₴') : '—';
     const stageLabel = item.statusLabel || CRM_STATUSES[item.status] || 'В процесі';
-    const nicheText = item.niche || item.orderTitle || 'Проєкт під ключ';
-    const serviceUser = `${item.serviceLabel || 'Розробка'}${item.username ? (' • ' + item.username) : ''}`;
+
+    // 1. Client name (black)
+    // 2. Client username (STUDIO BLUE, @username)
+    // 3. Niche & Service (black)
+    const usernameDisplay = item.username ? (item.username.startsWith('@') ? item.username : ('@' + item.username)) : '@юзернейм';
+    const nicheText = item.niche ? item.niche : 'Проєкт під ключ';
+    const serviceText = item.serviceLabel || (item.service === 'marketing' ? 'Реклама' : item.service === 'montage' ? 'Монтаж' : 'Розробка');
+    const nicheAndService = `${nicheText} • ${serviceText}`;
 
     return `
       <div class="crm-card" data-id="${item.id}">
@@ -1156,8 +1172,8 @@ function renderCrm() {
           <div class="client-avatar">${initial}</div>
           <div class="crm-card-info">
             <div class="crm-card-name">${escapeHtml(item.name || 'Клієнт')}</div>
-            <div class="crm-card-niche">${escapeHtml(nicheText)}</div>
-            <div class="crm-card-service-user">${escapeHtml(serviceUser)}</div>
+            <div class="crm-card-user">${escapeHtml(usernameDisplay)}</div>
+            <div class="crm-card-niche-service">${escapeHtml(nicheAndService)}</div>
           </div>
         </div>
         <div class="crm-card-right">
@@ -2001,109 +2017,418 @@ async function handleOpenAiRating(lead) {
 function handleOpenCrmDetail(item) {
   state.activeCrmLead = item;
 
-  document.getElementById('crmDetailAvatar').textContent = item.avatarLetter || item.name.charAt(0);
-  document.getElementById('crmDetailName').textContent = item.name;
-  document.getElementById('crmDetailUsername').textContent = item.username || '';
+  // Header
+  const avatarEl = document.getElementById('crmDetailAvatar');
+  if (avatarEl) avatarEl.textContent = item.avatarLetter || (item.name ? item.name.charAt(0).toUpperCase() : 'Л');
+  
+  const nameEl = document.getElementById('crmDetailName');
+  if (nameEl) nameEl.textContent = item.name || 'Клієнт';
 
+  const userEl = document.getElementById('crmDetailUsername');
+  const userText = item.username ? (item.username.startsWith('@') ? item.username : ('@' + item.username)) : '@юзернейм';
+  if (userEl) userEl.textContent = userText;
+
+  // Hide edit name menu
+  const editNameMenu = document.getElementById('crmEditNameMenu');
+  if (editNameMenu) editNameMenu.style.display = 'none';
+
+  // Status selector
   const statusSelect = document.getElementById('crmDetailStatusSelect');
   if (statusSelect) statusSelect.value = item.status || 'in_progress';
 
+  // Telegram CTA "Написати"
   const tgLink = document.getElementById('crmDetailTgLink');
   if (tgLink) {
     const u = item.username ? item.username.replace('@', '') : '';
     tgLink.href = u ? ('https://t.me/' + u) : '#';
   }
 
+  // 4 Additional Contact fields
+  const links = item.links || {};
+  const phoneInput = document.getElementById('crmLinkPhone');
+  if (phoneInput) phoneInput.value = links.phone || '';
+
+  const instaInput = document.getElementById('crmLinkInsta');
+  if (instaInput) instaInput.value = links.instagram || '';
+
+  const tiktokInput = document.getElementById('crmLinkTiktok');
+  if (tiktokInput) tiktokInput.value = links.tiktok || '';
+
+  const tgChanInput = document.getElementById('crmLinkTgChannel');
+  if (tgChanInput) tgChanInput.value = links.tgChannel || '';
+
+  // Service (full-width)
   const servSelect = document.getElementById('crmDetailService');
   if (servSelect) servSelect.value = item.service || 'development';
 
-  const budgetInput = document.getElementById('crmDetailBudget');
-  if (budgetInput) budgetInput.value = item.budget || '';
-
+  // Niche
   const nicheInput = document.getElementById('crmDetailNiche');
   if (nicheInput) nicheInput.value = item.niche || '';
 
+  // Notes
   const notesText = document.getElementById('crmDetailNotes');
   if (notesText) notesText.value = item.notes || '';
 
-  const order = item.orders && item.orders[0] ? item.orders[0] : {};
-  const orderTitle = document.getElementById('crmOrderTitle');
-  if (orderTitle) orderTitle.value = order.title || 'Розробка проєкту';
+  // Orders initialization
+  if (!Array.isArray(item.orders)) {
+    item.orders = [];
+    if (item.orderTitle || (item.budget && Number(item.budget) > 0)) {
+      item.orders.push({
+        id: 'ord-' + Date.now(),
+        title: item.orderTitle || 'Створення сайту',
+        amount: Number(item.budget) || 0,
+        dateStart: '',
+        dateEnd: item.deadline || '',
+        paidStatus: 'unpaid'
+      });
+    }
+  }
 
-  const paidSelect = document.getElementById('crmOrderPaidStatus');
-  if (paidSelect) paidSelect.value = order.paidStatus || 'unpaid';
+  // Hide order card box
+  const orderBox = document.getElementById('crmOrderCardBox');
+  if (orderBox) orderBox.style.display = 'none';
+  state.editingOrderId = null;
 
-  const deadlineInput = document.getElementById('crmOrderDeadline');
-  if (deadlineInput) deadlineInput.value = order.deadline || '';
-
+  renderCrmOrdersList();
   openModal('modalCrmDetail');
 }
 
-// Save CRM detail
-const saveCrmDetailBtn = document.getElementById('saveCrmDetailBtn');
-if (saveCrmDetailBtn) {
-  saveCrmDetailBtn.addEventListener('click', async () => {
-    if (!state.activeCrmLead) return;
-    haptic('medium');
+// Render Orders List for active lead
+function renderCrmOrdersList() {
+  const list = document.getElementById('crmOrdersList');
+  if (!list || !state.activeCrmLead) return;
+  const orders = Array.isArray(state.activeCrmLead.orders) ? state.activeCrmLead.orders : [];
 
-    const status = document.getElementById('crmDetailStatusSelect').value;
-    const service = document.getElementById('crmDetailService').value;
-    const budget = Number(document.getElementById('crmDetailBudget').value) || 0;
-    const niche = document.getElementById('crmDetailNiche').value;
-    const notes = document.getElementById('crmDetailNotes').value;
-    const orderTitle = document.getElementById('crmOrderTitle').value;
-    const paidStatus = document.getElementById('crmOrderPaidStatus').value;
-    const deadline = document.getElementById('crmOrderDeadline').value;
+  if (orders.length === 0) {
+    list.innerHTML = `<div style="text-align: center; color: var(--muted); font-size: 0.8rem; padding: 12px; background: var(--card-sub); border: 1px dashed var(--border); border-radius: var(--r-sm);">Замовлень ще немає. Натисніть «+ Додати замовлення»</div>`;
+    return;
+  }
 
-    const updates = {
-      status,
-      service,
-      budget,
-      niche,
-      notes,
-      orders: [
-        {
-          id: state.activeCrmLead.orders?.[0]?.id || ('ord-' + Date.now()),
-          title: orderTitle,
-          amount: budget,
-          paidStatus,
-          deadline
-        }
-      ]
-    };
+  const statusLabels = { unpaid: '1) Не оплачено', partial: '2) Частково', paid: '3) Оплачено' };
 
-    saveCrmDetailBtn.textContent = 'ЗБЕРІГАЄМО...';
-    try {
-      await fetch('/api/crm/' + state.activeCrmLead.id, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updates)
+  list.innerHTML = orders.map((ord, idx) => {
+    const stText = statusLabels[ord.paidStatus] || '1) Не оплачено';
+    const amtText = Number(ord.amount) > 0 ? (Number(ord.amount).toLocaleString('uk-UA') + ' ₴') : '';
+    const datesText = (ord.dateStart || ord.dateEnd) ? `${ord.dateStart || '...'} → ${ord.dateEnd || '...'}` : '';
+
+    return `
+      <div class="crm-order-item-chip" data-idx="${idx}">
+        <div class="crm-order-chip-left">
+          <div class="crm-order-chip-title">${escapeHtml(ord.title || 'Створення сайту')} ${amtText ? `• <span style="color:var(--accent); font-weight:800;">${amtText}</span>` : ''}</div>
+          <div class="crm-order-chip-meta">${datesText ? `📅 ${datesText}` : ''}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="crm-order-chip-status ${ord.paidStatus === 'paid' ? 'paid' : ''}">${stText}</span>
+          <button type="button" class="btn-order-edit" data-idx="${idx}" style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:0.9rem; padding:2px;" title="Редагувати">✏️</button>
+          <button type="button" class="btn-order-del" data-idx="${idx}" style="background:none; border:none; color:var(--muted); cursor:pointer; font-size:1.15rem; line-height:1; padding:2px;" title="Видалити">&times;</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Edit order handler
+  list.querySelectorAll('.btn-order-edit').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = Number(btn.dataset.idx);
+      const ord = orders[idx];
+      if (!ord) return;
+      state.editingOrderId = ord.id || ('ord-' + idx);
+
+      const servInput = document.getElementById('crmOrderServiceInput');
+      if (servInput) servInput.value = ord.title || 'Створення сайту';
+
+      const amtInput = document.getElementById('crmOrderAmountInput');
+      if (amtInput) amtInput.value = ord.amount > 0 ? ord.amount : '';
+
+      const startInput = document.getElementById('crmOrderDateStart');
+      if (startInput) startInput.value = ord.dateStart || '';
+
+      const endInput = document.getElementById('crmOrderDateEnd');
+      if (endInput) endInput.value = ord.dateEnd || '';
+
+      document.querySelectorAll('#crmOrderStatusSegment .crm-order-status-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.paid === (ord.paidStatus || 'unpaid'));
       });
-      haptic('success');
-      saveCrmDetailBtn.textContent = 'ЗБЕРЕЖЕНО ✓';
-      closeModal('modalCrmDetail');
-      fetchCrm();
-    } catch (err) {
-      saveCrmDetailBtn.textContent = 'ПОМИЛКА';
-    } finally {
-      setTimeout(() => { saveCrmDetailBtn.textContent = 'ЗБЕРЕГТИ ЗМІНИ'; }, 1500);
-    }
+
+      const box = document.getElementById('crmOrderCardBox');
+      if (box) box.style.display = 'block';
+      haptic('light');
+    });
+  });
+
+  // Delete order handler
+  list.querySelectorAll('.btn-order-del').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const idx = Number(btn.dataset.idx);
+      if (!confirm('Видалити це замовлення?')) return;
+      orders.splice(idx, 1);
+      state.activeCrmLead.orders = orders;
+      const totalBudget = orders.reduce((sum, o) => sum + (Number(o.amount) || 0), 0);
+      state.activeCrmLead.budget = totalBudget;
+      renderCrmOrdersList();
+      renderCrm();
+      haptic('medium');
+    });
   });
 }
 
-// Delete CRM lead
-const deleteCrmLeadBtn = document.getElementById('deleteCrmLeadBtn');
-if (deleteCrmLeadBtn) {
-  deleteCrmLeadBtn.addEventListener('click', async () => {
-    if (!state.activeCrmLead) return;
-    if (!confirm('Ви дійсно хочете видалити цього ліда з CRM?')) return;
-    haptic('medium');
+// Setup handlers for CRM Lead detail modal buttons (pencil, orders, save, delete)
+function setupCrmDetailHandlers() {
+  // Pencil button click: toggles edit name menu
+  const pencilBtn = document.getElementById('crmDetailEditNameBtn');
+  if (pencilBtn) {
+    pencilBtn.addEventListener('click', () => {
+      const menu = document.getElementById('crmEditNameMenu');
+      if (!menu || !state.activeCrmLead) return;
+      const isHidden = (menu.style.display === 'none' || !menu.style.display);
+      if (isHidden) {
+        document.getElementById('crmEditLeadNameInput').value = state.activeCrmLead.name || '';
+        document.getElementById('crmEditLeadUserInput').value = state.activeCrmLead.username || '';
+        menu.style.display = 'block';
+      } else {
+        menu.style.display = 'none';
+      }
+      haptic('light');
+    });
+  }
 
-    await fetch('/api/crm/' + state.activeCrmLead.id, { method: 'DELETE' });
-    haptic('success');
-    closeModal('modalCrmDetail');
-    fetchCrm();
+  // Cancel edit name
+  const cancelEditNameBtn = document.getElementById('crmCancelEditNameBtn');
+  if (cancelEditNameBtn) {
+    cancelEditNameBtn.addEventListener('click', () => {
+      const menu = document.getElementById('crmEditNameMenu');
+      if (menu) menu.style.display = 'none';
+      haptic('light');
+    });
+  }
+
+  // Save edit name
+  const saveEditNameBtn = document.getElementById('crmSaveEditNameBtn');
+  if (saveEditNameBtn) {
+    saveEditNameBtn.addEventListener('click', () => {
+      if (!state.activeCrmLead) return;
+      const newName = (document.getElementById('crmEditLeadNameInput').value || '').trim() || 'Клієнт';
+      let newUser = (document.getElementById('crmEditLeadUserInput').value || '').trim();
+      if (newUser && !newUser.startsWith('@')) newUser = '@' + newUser;
+
+      state.activeCrmLead.name = newName;
+      state.activeCrmLead.username = newUser;
+      state.activeCrmLead.avatarLetter = newName.charAt(0).toUpperCase();
+
+      document.getElementById('crmDetailName').textContent = newName;
+      document.getElementById('crmDetailUsername').textContent = newUser || '@юзернейм';
+      document.getElementById('crmDetailAvatar').textContent = state.activeCrmLead.avatarLetter;
+
+      const tgLink = document.getElementById('crmDetailTgLink');
+      if (tgLink) {
+        const u = newUser ? newUser.replace('@', '') : '';
+        tgLink.href = u ? ('https://t.me/' + u) : '#';
+      }
+
+      const menu = document.getElementById('crmEditNameMenu');
+      if (menu) menu.style.display = 'none';
+
+      // Update in state.crm and persist
+      const idx = state.crm.findIndex(c => c.id === state.activeCrmLead.id);
+      if (idx !== -1) {
+        state.crm[idx] = {
+          ...state.crm[idx],
+          name: newName,
+          username: newUser,
+          avatarLetter: state.activeCrmLead.avatarLetter
+        };
+      }
+      localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+      renderCrm();
+      syncAccountToServer();
+      haptic('success');
+    });
+  }
+
+  // Open New Order Box
+  const openNewOrderBtn = document.getElementById('crmOpenNewOrderBtn');
+  if (openNewOrderBtn) {
+    openNewOrderBtn.addEventListener('click', () => {
+      state.editingOrderId = null;
+      document.getElementById('crmOrderServiceInput').value = 'Створення сайту';
+      document.getElementById('crmOrderAmountInput').value = '';
+      document.getElementById('crmOrderDateStart').value = new Date().toISOString().split('T')[0];
+      document.getElementById('crmOrderDateEnd').value = '';
+
+      document.querySelectorAll('#crmOrderStatusSegment .crm-order-status-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.paid === 'unpaid');
+      });
+
+      const box = document.getElementById('crmOrderCardBox');
+      if (box) box.style.display = 'block';
+      haptic('light');
+    });
+  }
+
+  // Segmented status buttons for order
+  document.querySelectorAll('#crmOrderStatusSegment .crm-order-status-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#crmOrderStatusSegment .crm-order-status-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      haptic('light');
+    });
   });
+
+  // Cancel order button
+  const cancelOrderBtn = document.getElementById('crmCancelOrderBtn');
+  if (cancelOrderBtn) {
+    cancelOrderBtn.addEventListener('click', () => {
+      const box = document.getElementById('crmOrderCardBox');
+      if (box) box.style.display = 'none';
+      state.editingOrderId = null;
+      haptic('light');
+    });
+  }
+
+  // Save order button
+  const saveOrderBtn = document.getElementById('crmSaveOrderBtn');
+  if (saveOrderBtn) {
+    saveOrderBtn.addEventListener('click', () => {
+      if (!state.activeCrmLead) return;
+      if (!Array.isArray(state.activeCrmLead.orders)) state.activeCrmLead.orders = [];
+
+      const title = (document.getElementById('crmOrderServiceInput').value || '').trim() || 'Створення сайту';
+      const amount = Number(document.getElementById('crmOrderAmountInput').value) || 0;
+      const dateStart = document.getElementById('crmOrderDateStart').value;
+      const dateEnd = document.getElementById('crmOrderDateEnd').value;
+      const activeStatusBtn = document.querySelector('#crmOrderStatusSegment .crm-order-status-btn.active');
+      const paidStatus = activeStatusBtn?.dataset.paid || 'unpaid';
+
+      if (state.editingOrderId) {
+        const existingIdx = state.activeCrmLead.orders.findIndex(o => o.id === state.editingOrderId);
+        if (existingIdx !== -1) {
+          state.activeCrmLead.orders[existingIdx] = {
+            ...state.activeCrmLead.orders[existingIdx],
+            title,
+            amount,
+            dateStart,
+            dateEnd,
+            paidStatus
+          };
+        }
+      } else {
+        state.activeCrmLead.orders.push({
+          id: 'ord-' + Date.now(),
+          title,
+          amount,
+          dateStart,
+          dateEnd,
+          paidStatus
+        });
+      }
+
+      // Recalculate total budget
+      const totalBudget = state.activeCrmLead.orders.reduce((sum, o) => sum + (Number(o.amount) || 0), 0);
+      state.activeCrmLead.budget = totalBudget;
+
+      const box = document.getElementById('crmOrderCardBox');
+      if (box) box.style.display = 'none';
+      state.editingOrderId = null;
+
+      renderCrmOrdersList();
+      renderCrm();
+
+      // Persist in state.crm
+      const idx = state.crm.findIndex(c => c.id === state.activeCrmLead.id);
+      if (idx !== -1) {
+        state.crm[idx] = { ...state.crm[idx], orders: state.activeCrmLead.orders, budget: totalBudget };
+        localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+      }
+      syncAccountToServer();
+      haptic('success');
+    });
+  }
+
+  // Save CRM detail button
+  const saveCrmDetailBtn = document.getElementById('saveCrmDetailBtn');
+  if (saveCrmDetailBtn) {
+    saveCrmDetailBtn.addEventListener('click', async () => {
+      if (!state.activeCrmLead) return;
+      haptic('medium');
+
+      const status = document.getElementById('crmDetailStatusSelect').value;
+      const service = document.getElementById('crmDetailService').value;
+      const niche = document.getElementById('crmDetailNiche').value;
+      const notes = document.getElementById('crmDetailNotes').value;
+
+      const links = {
+        phone: document.getElementById('crmLinkPhone')?.value || '',
+        instagram: document.getElementById('crmLinkInsta')?.value || '',
+        tiktok: document.getElementById('crmLinkTiktok')?.value || '',
+        tgChannel: document.getElementById('crmLinkTgChannel')?.value || ''
+      };
+
+      const orders = Array.isArray(state.activeCrmLead.orders) ? state.activeCrmLead.orders : [];
+      const totalBudget = orders.reduce((sum, o) => sum + (Number(o.amount) || 0), 0);
+
+      const updates = {
+        status,
+        statusLabel: CRM_STATUSES[status] || 'В процесі',
+        service,
+        serviceLabel: (service === 'marketing' ? 'Реклама' : service === 'montage' ? 'Монтаж' : 'Розробка'),
+        niche,
+        notes,
+        links,
+        orders,
+        budget: totalBudget
+      };
+
+      saveCrmDetailBtn.textContent = 'ЗБЕРІГАЄМО...';
+      try {
+        await fetch('/api/crm/' + state.activeCrmLead.id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates)
+        });
+
+        const idx = state.crm.findIndex(c => c.id === state.activeCrmLead.id);
+        if (idx !== -1) {
+          state.crm[idx] = { ...state.crm[idx], ...updates };
+          localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+        }
+
+        haptic('success');
+        saveCrmDetailBtn.textContent = 'ЗБЕРЕЖЕНО ✓';
+        closeModal('modalCrmDetail');
+        renderCrm();
+        syncAccountToServer();
+      } catch (err) {
+        saveCrmDetailBtn.textContent = 'ПОМИЛКА';
+      } finally {
+        setTimeout(() => { saveCrmDetailBtn.textContent = 'ЗБЕРЕГТИ ЗМІНИ'; }, 1500);
+      }
+    });
+  }
+
+  // Delete CRM lead (neutral outline styling, no red)
+  const deleteCrmLeadBtn = document.getElementById('deleteCrmLeadBtn');
+  if (deleteCrmLeadBtn) {
+    deleteCrmLeadBtn.addEventListener('click', async () => {
+      if (!state.activeCrmLead) return;
+      if (!confirm('Ви дійсно хочете видалити цього ліда з CRM?')) return;
+      haptic('medium');
+
+      try {
+        await fetch('/api/crm/' + state.activeCrmLead.id, { method: 'DELETE' });
+      } catch (err) {
+        console.warn(err);
+      }
+      state.crm = state.crm.filter(c => c.id !== state.activeCrmLead.id);
+      localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+
+      haptic('success');
+      closeModal('modalCrmDetail');
+      renderCrm();
+      syncAccountToServer();
+    });
+  }
 }
 
 // Add CRM client modal (+)
@@ -2684,24 +3009,31 @@ if (applyFiltersBtn) {
 function setupCrmFilterModal() {
   const openBtn = document.getElementById('openCrmFilterBtn');
   const applyBtn = document.getElementById('applyCrmFilterBtn');
-  const resetBtn = document.getElementById('resetCrmFilterBtn');
   const budgetInput = document.getElementById('crmFilterMinBudget');
 
   if (openBtn) {
     openBtn.addEventListener('click', () => {
       flashButtonBlue(openBtn);
 
-      // Sync active status button in modal
+      // 1. Sync 4 pinned stages in modal (ensure 'all' is always selected)
+      if (!Array.isArray(state.crmPinnedStages) || state.crmPinnedStages.length < 4) {
+        state.crmPinnedStages = ['all', 'in_progress', 'offer', 'paid'];
+      }
+      if (!state.crmPinnedStages.includes('all')) {
+        state.crmPinnedStages[0] = 'all';
+      }
+
       document.querySelectorAll('#crmFilterStatusGrid .opt-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.status === state.activeCrmStatus);
+        const st = b.dataset.status;
+        b.classList.toggle('active', state.crmPinnedStages.includes(st) || st === 'all');
       });
 
-      // Sync active service button in modal
+      // 2. Sync active service button in modal
       document.querySelectorAll('#crmFilterServiceGrid .opt-btn').forEach(b => {
         b.classList.toggle('active', b.dataset.service === state.crmFilterService);
       });
 
-      // Sync budget input
+      // 3. Sync budget input
       if (budgetInput) {
         budgetInput.value = state.crmFilterMinBudget > 0 ? state.crmFilterMinBudget : '';
       }
@@ -2710,66 +3042,79 @@ function setupCrmFilterModal() {
     });
   }
 
-  // Status buttons inside modal
+  // Multi-select for exactly 4 stages (with 'all' locked as default active)
   document.querySelectorAll('#crmFilterStatusGrid .opt-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('#crmFilterStatusGrid .opt-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+      const st = btn.dataset.status;
+      if (st === 'all') {
+        // "Всі" is always mandatory and cannot be deselected
+        btn.classList.add('active');
+        haptic('light');
+        return;
+      }
+
+      const activeBtns = Array.from(document.querySelectorAll('#crmFilterStatusGrid .opt-btn.active'));
+      const isCurrentlyActive = btn.classList.contains('active');
+
+      if (isCurrentlyActive) {
+        if (activeBtns.length > 1) {
+          btn.classList.remove('active');
+        }
+      } else {
+        if (activeBtns.length >= 4) {
+          // If already 4 chosen, deactivate the latest non-'all' button to keep exactly 4
+          const replaceable = activeBtns.filter(b => b.dataset.status !== 'all');
+          if (replaceable.length > 0) {
+            replaceable[replaceable.length - 1].classList.remove('active');
+          }
+        }
+        btn.classList.add('active');
+      }
+      haptic('light');
     });
   });
 
-  // Service buttons inside modal
+  // Service buttons inside modal (single-choice)
   document.querySelectorAll('#crmFilterServiceGrid .opt-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#crmFilterServiceGrid .opt-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      haptic('light');
     });
   });
 
   // Apply filters
   if (applyBtn) {
     applyBtn.addEventListener('click', () => {
-      const activeStatusBtn = document.querySelector('#crmFilterStatusGrid .opt-btn.active');
-      const activeServiceBtn = document.querySelector('#crmFilterServiceGrid .opt-btn.active');
+      const activeStageBtns = Array.from(document.querySelectorAll('#crmFilterStatusGrid .opt-btn.active'));
+      let selectedStages = activeStageBtns.map(b => b.dataset.status);
 
-      const selectedStatus = activeStatusBtn?.dataset.status || 'all';
-      const selectedService = activeServiceBtn?.dataset.service || 'all';
-      const minBudget = Number(budgetInput?.value) || 0;
-
-      state.activeCrmStatus = selectedStatus;
-      state.crmFilterService = selectedService;
-      state.crmFilterMinBudget = minBudget;
-
-      // If selected status is not among current pinned stages, replace slot 4 so it's directly visible
-      if (!state.crmPinnedStages.includes(selectedStatus) && selectedStatus !== 'all') {
-        state.crmPinnedStages[3] = selectedStatus;
-        localStorage.setItem('dws_crm_pinned_stages', JSON.stringify(state.crmPinnedStages));
+      // Guarantee 'all' is always present and first
+      if (!selectedStages.includes('all')) {
+        selectedStages.unshift('all');
+      } else {
+        selectedStages = ['all', ...selectedStages.filter(s => s !== 'all')];
       }
+
+      // If fewer than 4 selected, fill from defaults
+      const defaults = ['in_progress', 'offer', 'paid', 'working', 'closed'];
+      for (const def of defaults) {
+        if (selectedStages.length >= 4) break;
+        if (!selectedStages.includes(def)) selectedStages.push(def);
+      }
+
+      state.crmPinnedStages = selectedStages.slice(0, 4);
+      localStorage.setItem('dws_crm_pinned_stages', JSON.stringify(state.crmPinnedStages));
+
+      const activeServiceBtn = document.querySelector('#crmFilterServiceGrid .opt-btn.active');
+      state.crmFilterService = activeServiceBtn?.dataset.service || 'all';
+      state.crmFilterMinBudget = Number(budgetInput?.value) || 0;
+
+      renderCrmStageTabs();
+      renderCrm();
 
       haptic('success');
       closeModal('modalCrmFilter');
-      renderCrm();
-    });
-  }
-
-  // Reset filters
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
-      state.activeCrmStatus = 'all';
-      state.crmFilterService = 'all';
-      state.crmFilterMinBudget = 0;
-
-      document.querySelectorAll('#crmFilterStatusGrid .opt-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.status === 'all');
-      });
-      document.querySelectorAll('#crmFilterServiceGrid .opt-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.service === 'all');
-      });
-      if (budgetInput) budgetInput.value = '';
-
-      haptic('medium');
-      closeModal('modalCrmFilter');
-      renderCrm();
     });
   }
 }

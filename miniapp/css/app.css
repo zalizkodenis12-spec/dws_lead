@@ -838,7 +838,8 @@ body.dark-theme .lead-tag.country {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  padding: 12px 14px;
+  padding: 14px 16px;
+  min-height: 84px;
   cursor: pointer;
   transition: var(--trans);
   gap: 12px;
@@ -861,15 +862,15 @@ body.dark-theme .lead-tag.country {
 }
 
 .client-avatar {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--pill);
   background: var(--accent-bg);
   border: 1px solid rgba(0, 102, 255, 0.25);
   color: var(--accent);
   font-family: var(--ffh);
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -889,10 +890,10 @@ body.dark-theme .lead-tag.country {
   min-width: 0;
 }
 
-/* 3 rows, all BLACK color, aligned with pixel precision */
+/* 1. Client name: BLACK */
 .crm-card-name {
   font-family: var(--ffh);
-  font-size: 0.95rem;
+  font-size: 0.96rem;
   font-weight: 700;
   color: var(--black) !important;
   line-height: 1.25;
@@ -901,8 +902,20 @@ body.dark-theme .lead-tag.country {
   text-overflow: ellipsis;
 }
 
-.crm-card-niche {
+/* 2. Username: STUDIO BLUE */
+.crm-card-user {
   font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent) !important;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 3. Niche & Service: BLACK */
+.crm-card-niche-service {
+  font-size: 0.79rem;
   font-weight: 600;
   color: var(--black) !important;
   line-height: 1.25;
@@ -911,29 +924,24 @@ body.dark-theme .lead-tag.country {
   text-overflow: ellipsis;
 }
 
-.crm-card-service-user {
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--black) !important;
-  line-height: 1.25;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 body.dark-theme .crm-card-name,
-body.dark-theme .crm-card-niche,
-body.dark-theme .crm-card-service-user {
+body.dark-theme .crm-card-niche-service {
   color: #FFFFFF !important;
 }
 
+body.dark-theme .crm-card-user {
+  color: #388BFD !important;
+}
+
+/* Right column: CENTERED! */
 .crm-card-right {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 6px;
   flex-shrink: 0;
+  width: 96px;
 }
 
 /* All stage badges in IDENTICAL EQUAL OVALS and ALL STUDIO BLUE! */
@@ -960,11 +968,142 @@ body.dark-theme .crm-card-service-user {
   font-weight: 800;
   font-size: 0.92rem;
   color: var(--black);
-  text-align: right;
+  text-align: center;
   min-height: 18px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Pencil button for editing client name */
+.crm-pencil-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--pill);
+  background: var(--card-sub);
+  border: 1px solid var(--border);
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--trans);
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.crm-pencil-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+body.dark-theme .crm-pencil-btn {
+  color: #FFFFFF;
+}
+
+/* Mini-menu sliding panel for client name */
+.crm-edit-name-panel {
+  background: var(--card-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+/* Order Section & Card Box */
+.crm-order-card-box {
+  background: var(--card-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px;
+  margin-top: 8px;
+  box-shadow: var(--shadow-sm);
+}
+
+.crm-order-status-bar {
+  display: flex;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 3px;
+  gap: 3px;
+  width: 100%;
+}
+
+.crm-order-status-btn {
+  flex: 1;
+  padding: 9px 4px;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--ffh);
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--trans);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.crm-order-status-btn.active {
+  background: var(--accent);
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 102, 255, 0.25);
+}
+
+.crm-order-item-chip {
+  background: var(--card-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.crm-order-chip-left {
+  min-width: 0;
+  flex: 1;
+}
+
+.crm-order-chip-title {
+  font-family: var(--ffh);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.dark-theme .crm-order-chip-title {
+  color: #FFFFFF;
+}
+
+.crm-order-chip-meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.crm-order-chip-status {
+  padding: 3px 8px;
+  border-radius: var(--pill);
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid rgba(0, 102, 255, 0.2);
+  white-space: nowrap;
+}
+
+.crm-order-chip-status.paid {
+  background: var(--accent);
+  color: #FFFFFF;
 }
 
 /* ============================================================
