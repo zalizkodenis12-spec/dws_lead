@@ -678,13 +678,16 @@ body.dark-theme .leads-count-label {
   color: var(--accent);
 }
 
-.lead-tag.portfolio {
+.lead-tag.portfolio,
+.lead-tag.country {
   background: var(--white);
   border-color: var(--border);
   color: var(--black);
+  font-weight: 600;
 }
 
-body.dark-theme .lead-tag.portfolio {
+body.dark-theme .lead-tag.portfolio,
+body.dark-theme .lead-tag.country {
   background: #1C1C1C;
   border-color: #2E2E2E;
   color: #FFFFFF;
@@ -968,7 +971,7 @@ body.dark-theme .lead-tag.portfolio {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  height: 110px;
+  height: 120px;
   padding-top: 10px;
 }
 
@@ -976,17 +979,29 @@ body.dark-theme .lead-tag.portfolio {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
   flex: 1;
+  height: 100%;
   cursor: pointer;
 }
 
-.bar-pill {
+.bar-pill-track {
   width: 26px;
+  height: 85px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border-radius: var(--pill);
+}
+
+.bar-pill {
+  width: 100%;
   background: var(--gray);
   border-radius: var(--pill);
-  transition: height 0.4s ease-out, background var(--trans);
+  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), background var(--trans);
   position: relative;
+  min-height: 8px;
 }
 
 .bar-col.active .bar-pill {
@@ -998,6 +1013,7 @@ body.dark-theme .lead-tag.portfolio {
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--muted);
+  user-select: none;
 }
 
 .bar-col.active .bar-month-name {
@@ -1842,13 +1858,18 @@ body.dark-theme .lead-tag.portfolio {
 }
 
 .income-rec-badge.paid {
-  background: rgba(16, 185, 129, 0.12);
-  color: #10B981;
+  background: var(--accent-bg);
+  color: var(--accent);
 }
 
 .income-rec-badge.expected {
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--muted);
+}
+
+body.dark-theme .income-rec-badge.expected {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted);
 }
 
 .income-rec-amount-box {
@@ -1862,11 +1883,11 @@ body.dark-theme .lead-tag.portfolio {
   font-family: var(--ffh);
   font-size: 1.05rem;
   font-weight: 800;
-  color: var(--black);
+  color: var(--accent);
 }
 
 .income-rec-amount.paid {
-  color: #10B981;
+  color: var(--accent);
 }
 
 .income-rec-del-btn {
@@ -1884,6 +1905,240 @@ body.dark-theme .lead-tag.portfolio {
 
 .income-rec-del-btn:hover {
   color: var(--danger);
+}
+
+/* ---- 4-TIER HIERARCHICAL ACCORDION (MONTH -> WEEKS -> DAYS -> ORDERS) ---- */
+.income-tree-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.income-tree-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  transition: border-color var(--trans);
+}
+
+.income-tree-card:hover {
+  border-color: var(--border-dark);
+}
+
+/* Level 1: Month card */
+.income-tree-card.level-month {
+  border: 1px solid var(--border-dark);
+  background: var(--card-bg);
+}
+
+/* Level 2: Week card */
+.income-tree-card.level-week {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+/* Level 3: Day card */
+.income-tree-card.level-day {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+/* Tree Node Header */
+.tree-node-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: background var(--trans);
+}
+
+.tree-node-header:active {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+body.dark-theme .tree-node-header:active {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.tree-node-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.tree-chevron {
+  width: 16px;
+  height: 16px;
+  stroke: var(--black);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.income-tree-card.is-open > .tree-node-header .tree-chevron {
+  transform: rotate(180deg);
+}
+
+.tree-node-title {
+  font-family: var(--ffh);
+  font-weight: 700;
+  color: var(--black);
+}
+
+.level-month > .tree-node-header .tree-node-title {
+  font-size: 1rem;
+}
+
+.level-week > .tree-node-header .tree-node-title {
+  font-size: 0.9rem;
+}
+
+.level-day > .tree-node-header .tree-node-title {
+  font-size: 0.85rem;
+}
+
+.tree-node-sum {
+  font-family: var(--ffh);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--black);
+  flex-shrink: 0;
+}
+
+.level-month > .tree-node-header .tree-node-sum {
+  font-size: 1.05rem;
+}
+
+.tree-node-content {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 10px 12px 10px;
+}
+
+.income-tree-card.is-open > .tree-node-content {
+  display: flex;
+}
+
+.tree-empty-note {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+  padding: 8px 10px;
+}
+
+/* Level 4: Order Leaf Card */
+.order-leaf-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color var(--trans), transform var(--trans);
+}
+
+.order-leaf-card:hover {
+  border-color: var(--accent);
+}
+
+.order-leaf-card:active {
+  transform: scale(0.99);
+}
+
+.order-leaf-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.order-leaf-title {
+  font-family: var(--ffh);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.order-leaf-meta {
+  font-size: 0.78rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.order-leaf-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.order-leaf-badge.paid {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.order-leaf-badge.expected {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--muted);
+}
+
+body.dark-theme .order-leaf-badge.expected {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--muted);
+}
+
+/* ALL AMOUNTS IN DENISWEB STUDIO ACCENT BLUE, NOT GREEN! */
+.order-leaf-amount {
+  font-family: var(--ffh);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--accent) !important;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.order-leaf-edit-icon {
+  width: 14px;
+  height: 14px;
+  stroke: var(--muted);
+  opacity: 0.7;
+}
+
+.order-leaf-card:hover .order-leaf-edit-icon {
+  stroke: var(--accent);
+  opacity: 1;
+}
+
+.btn--danger {
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  font-weight: 700;
+  padding: 12px 16px;
+  border-radius: var(--pill);
+  cursor: pointer;
+  transition: var(--trans);
+}
+
+.btn--danger:hover {
+  background: var(--danger);
+  color: #FFFFFF;
 }
 
 /* AI Offer Box */

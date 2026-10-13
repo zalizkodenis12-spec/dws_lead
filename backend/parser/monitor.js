@@ -107,6 +107,7 @@ export function ingestMessage({ text, authorName, authorUsername, sourceTitle, s
     dateFormatted: `Сьогодні, ${timeFormatted}`,
     budget: classification.budget,
     currency: '₴',
+    country: classification.country || '🇺🇦 Україна',
     isUrgent: classification.isUrgent,
     requiresPortfolio: classification.requiresPortfolio,
     experienceRequired: classification.experienceRequired,
@@ -287,10 +288,12 @@ export async function startMonitor() {
   // 1. Run initial channel scan on startup
   scanPublicChannels().catch(err => console.error('[DWS Lead Monitor] Scan error:', err.message));
 
-  // 2. Schedule regular channel scans every 5 minutes
+  // 2. Schedule regular channel scans every 1 hour (60 minutes)
+  const ONE_HOUR_MS = 60 * 60 * 1000;
   setInterval(() => {
     scanPublicChannels().catch(err => console.error('[DWS Lead Monitor] Periodic scan error:', err.message));
-  }, 5 * 60 * 1000);
+  }, ONE_HOUR_MS);
+  console.log('[DWS Lead Monitor] ⏰ Автоматичний парсинг активний: кожну 1 годину + миттєво при натисканні "Оновити" в додатку.');
 
   // 3. Optional MTProto client for private chats
   const apiId = process.env.TELEGRAM_API_ID;

@@ -721,6 +721,52 @@
     </div>
   </div>
 
+  <!-- MODAL: РЕДАГУВАННЯ ЗАМОВЛЕННЯ В ДОХОДІ -->
+  <div id="modalEditIncome" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Редагувати замовлення</h3>
+        <button class="modal-close" data-close="modalEditIncome">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editIncomeId">
+        <div class="form-group">
+          <label class="form-label">НАЗВА ЗАМОВЛЕННЯ:</label>
+          <input type="text" id="editIncomeProject" class="form-input" placeholder="Назва проєкту">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">ІМ'Я КЛІЄНТА:</label>
+            <input type="text" id="editIncomeClient" class="form-input" placeholder="Клієнт">
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">СУМА (₴):</label>
+            <input type="number" id="editIncomeAmount" class="form-input" placeholder="0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">СТАТУС ОПЛАТИ:</label>
+          <div class="filter-options-grid">
+            <button type="button" class="opt-btn" id="editIncomePaidBtn" data-paid="true">Оплачено (У дохід)</button>
+            <button type="button" class="opt-btn" id="editIncomeExpectedBtn" data-paid="false">Очікувано (В процесі)</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ДАТА ЗАМОВЛЕННЯ:</label>
+          <input type="date" id="editIncomeDate" class="form-input">
+        </div>
+
+      </div>
+      <div class="modal-footer flex-col gap-2">
+        <button type="button" id="saveEditIncomeBtn" class="btn btn--fill btn--block">ЗБЕРЕГТИ ЗМІНИ</button>
+        <button type="button" id="deleteEditIncomeBtn" class="btn btn--danger btn--block">ВИДАЛИТИ ЗАМОВЛЕННЯ</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: ФІЛЬТР ЧАСУ (ДОХІД) -->
   <div id="modalTimeFilter" class="modal-overlay">
     <div class="modal-sheet">

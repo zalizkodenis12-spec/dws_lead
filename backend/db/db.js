@@ -291,6 +291,20 @@ export const db = {
     return this.getIncome();
   },
 
+  updateIncomeRecord(id, updates) {
+    const data = readDb();
+    if (data.income && Array.isArray(data.income.records)) {
+      const idx = data.income.records.findIndex(r => r.id === id);
+      if (idx !== -1) {
+        if (updates.amount !== undefined) updates.amount = Number(updates.amount) || 0;
+        if (updates.isPaid !== undefined) updates.isPaid = Boolean(updates.isPaid);
+        data.income.records[idx] = { ...data.income.records[idx], ...updates };
+        writeDb(data);
+      }
+    }
+    return this.getIncome();
+  },
+
   // ---- PROFILE ----
   getProfile() {
     const data = readDb();

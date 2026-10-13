@@ -850,10 +850,10 @@ function renderLeads() {
         <!-- Vacancy text with preserved paragraphs and whitespace -->
         <div class="lead-text">${escapeHtml(displayText)}</div>
 
-        <!-- Badges: Budget and Portfolio only, no emojis, clean layout -->
+        <!-- Badges: Budget and Country/Market -->
         <div class="lead-tags-row">
           <span class="lead-tag budget">Бюджет: ${budgetTxt}</span>
-          <span class="lead-tag portfolio">${lead.requiresPortfolio ? 'З портфоліо' : 'Без портфоліо'}</span>
+          <span class="lead-tag country">${escapeHtml(lead.country || '🇺🇦 Україна')}</span>
         </div>
 
         <!-- Action button -->
@@ -1222,10 +1222,12 @@ function renderIncome() {
   if (barsContainer) {
     barsContainer.innerHTML = last5Months.map((m, idx) => {
       const isActive = idx === activeChartIdx;
-      const heightPercent = m.amount > 0 ? Math.max(Math.round((m.amount / maxVal) * 100), 15) : 8;
+      const pxHeight = m.amount > 0 ? Math.max(Math.round((m.amount / maxVal) * 85), 14) : 8;
       return `
         <div class="bar-col ${isActive ? 'active' : ''}" data-idx="${idx}" title="${m.fullName}: ${m.amount.toLocaleString('uk-UA')} ₴">
-          <div class="bar-pill" style="height: ${heightPercent}%;"></div>
+          <div class="bar-pill-track">
+            <div class="bar-pill" style="height: ${pxHeight}px;"></div>
+          </div>
           <span class="bar-month-name">${m.shortName}</span>
         </div>
       `;
@@ -1246,7 +1248,7 @@ function renderIncome() {
     });
   }
 
-  // 4. RENDER HISTORY RECORDS LIST
+  // 4. RENDER 4-TIER HIERARCHICAL ACCORDION (Month -> Weeks -> Days -> Orders)
   if (accordionContainer) {
     if (filteredRecords.length === 0) {
       if (allRecords.length === 0) {
@@ -1267,45 +1269,182 @@ function renderIncome() {
         `;
       }
     } else {
-      accordionContainer.innerHTML = filteredRecords.map(r => {
-        const dObj = r.date ? new Date(r.date) : new Date();
-        const dFmt = `${dObj.getDate()} ${monthShortNames[dObj.getMonth()] || ''} ${dObj.getFullYear()}`;
-        return `
-          <div class="income-record-card" data-id="${r.id}">
-            <div class="income-rec-info">
-              <div class="income-rec-title">${escapeHtml(r.project)}</div>
-              <div class="income-rec-meta">
-                <span>${escapeHtml(r.client)}</span>
-                <span>•</span>
-                <span>${dFmt}</span>
-                <span>•</span>
-                <span class="income-rec-badge ${r.isPaid ? 'paid' : 'expected'}">${r.isPaid ? 'Оплачено' : 'Очікувано'}</span>
+      // Group records into Month -> Weeks -> Days -> Orders
+      const monthsMap = new Map();
+      const monthShortGen = ['січ', 'лют', 'бер', 'кві', 'тра', 'чер', 'лип', 'сер', 'вер', 'жов', 'лис', 'гру'];
+      const dayNamesUk = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
+      for (const r of filteredRecords) {
+        const d = r.date ? new Date(r.date) : new Date();
+        const year = isNaN(d.getFullYear()) ? new Date().getFullYear() : d.getFullYear();
+        const month = isNaN(d.getMonth()) ? new Date().getMonth() : d.getMonth();
+        const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+
+        if (!monthsMap.has(monthKey)) {
+          monthsMap.set(monthKey, {
+            year,
+            month,
+            monthTitle: `${monthFullNames[month]} ${year}`,
+            records: []
+          });
+        }
+        monthsMap.get(monthKey).records.push(r);
+      }
+
+      const sortedMonthKeys = Array.from(monthsMap.keys()).sort((a, b) => b.localeCompare(a));
+
+      let treeHtml = `<div class="income-tree-wrap">`;
+
+      sortedMonthKeys.forEach((mKey, mIdx) => {
+        const mObj = monthsMap.get(mKey);
+        const mTotal = mObj.records.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+        const isMonthOpen = mIdx === 0; // Newest month open by default
+
+        // 4 standard weeks
+        const weeks = [
+          { label: '1–7 число', min: 1, max: 7, records: [] },
+          { label: '8–14 число', min: 8, max: 14, records: [] },
+          { label: '15–21 число', min: 15, max: 21, records: [] },
+          { label: '22–31 число', min: 22, max: 31, records: [] }
+        ];
+
+        for (const r of mObj.records) {
+          const d = r.date ? new Date(r.date) : new Date();
+          const day = d.getDate();
+          if (day >= 1 && day <= 7) weeks[0].records.push(r);
+          else if (day >= 8 && day <= 14) weeks[1].records.push(r);
+          else if (day >= 15 && day <= 21) weeks[2].records.push(r);
+          else weeks[3].records.push(r);
+        }
+
+        treeHtml += `
+          <div class="income-tree-card level-month ${isMonthOpen ? 'is-open' : ''}">
+            <div class="tree-node-header" data-level="month">
+              <div class="tree-node-left">
+                <svg class="tree-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <span class="tree-node-title">${escapeHtml(mObj.monthTitle)}</span>
+              </div>
+              <span class="tree-node-sum">${mTotal.toLocaleString('uk-UA')} ₴</span>
+            </div>
+            <div class="tree-node-content">
+        `;
+
+        weeks.forEach((w) => {
+          const wTotal = w.records.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+          const isWeekOpen = isMonthOpen && w.records.length > 0;
+
+          // Group week records by day
+          const daysMap = new Map();
+          for (const r of w.records) {
+            const d = r.date ? new Date(r.date) : new Date();
+            const dayIso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            if (!daysMap.has(dayIso)) {
+              const dName = dayNamesUk[d.getDay()] || 'Пн';
+              const mGen = monthShortGen[d.getMonth()] || 'жов';
+              daysMap.set(dayIso, {
+                iso: dayIso,
+                label: `${d.getDate()} ${mGen} (${dName})`,
+                records: []
+              });
+            }
+            daysMap.get(dayIso).records.push(r);
+          }
+
+          const sortedDays = Array.from(daysMap.values()).sort((a, b) => b.iso.localeCompare(a.iso));
+
+          treeHtml += `
+            <div class="income-tree-card level-week ${isWeekOpen ? 'is-open' : ''}">
+              <div class="tree-node-header" data-level="week">
+                <div class="tree-node-left">
+                  <svg class="tree-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  <span class="tree-node-title">${w.label}</span>
+                </div>
+                <span class="tree-node-sum">${wTotal.toLocaleString('uk-UA')} ₴</span>
+              </div>
+              <div class="tree-node-content">
+          `;
+
+          if (w.records.length === 0) {
+            treeHtml += `<div class="tree-empty-note">Замовлень за цей період немає</div>`;
+          } else {
+            sortedDays.forEach((dObj) => {
+              const dTotal = dObj.records.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+              const isDayOpen = true;
+
+              treeHtml += `
+                <div class="income-tree-card level-day ${isDayOpen ? 'is-open' : ''}">
+                  <div class="tree-node-header" data-level="day">
+                    <div class="tree-node-left">
+                      <svg class="tree-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      <span class="tree-node-title">${escapeHtml(dObj.label)}</span>
+                    </div>
+                    <span class="tree-node-sum">${dTotal.toLocaleString('uk-UA')} ₴</span>
+                  </div>
+                  <div class="tree-node-content">
+              `;
+
+              dObj.records.forEach((r) => {
+                treeHtml += `
+                  <div class="order-leaf-card" data-id="${r.id}">
+                    <div class="order-leaf-info">
+                      <div class="order-leaf-title">${escapeHtml(r.project)}</div>
+                      <div class="order-leaf-meta">
+                        <span>${escapeHtml(r.client)}</span>
+                        <span>•</span>
+                        <span class="order-leaf-badge ${r.isPaid ? 'paid' : 'expected'}">${r.isPaid ? 'Оплачено' : 'Очікувано'}</span>
+                      </div>
+                    </div>
+                    <div class="order-leaf-amount">
+                      <span>${(Number(r.amount) || 0).toLocaleString('uk-UA')} ₴</span>
+                      <svg class="order-leaf-edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                `;
+              });
+
+              treeHtml += `
+                  </div>
+                </div>
+              `;
+            });
+          }
+
+          treeHtml += `
               </div>
             </div>
-            <div class="income-rec-amount-box">
-              <span class="income-rec-amount ${r.isPaid ? 'paid' : ''}">${r.isPaid ? '+' : ''}${(Number(r.amount) || 0).toLocaleString('uk-UA')} ₴</span>
-              <button class="income-rec-del-btn" title="Видалити запис" data-id="${r.id}">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-              </button>
+          `;
+        });
+
+        treeHtml += `
             </div>
           </div>
         `;
-      }).join('');
+      });
 
-      accordionContainer.querySelectorAll('.income-rec-del-btn').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
+      treeHtml += `</div>`;
+      accordionContainer.innerHTML = treeHtml;
+
+      // Attach accordion toggle events
+      accordionContainer.querySelectorAll('.tree-node-header').forEach(hdr => {
+        hdr.addEventListener('click', (e) => {
           e.stopPropagation();
-          const recId = btn.dataset.id;
-          if (!confirm('Видалити цей запис доходу?')) return;
-          haptic('medium');
-          state.income.records = state.income.records.filter(item => item.id !== recId);
-          localStorage.setItem('dws_income', JSON.stringify(state.income));
-          renderIncome();
-          try {
-            await fetch(`/api/income/${recId}`, { method: 'DELETE' });
-          } catch (err) {
-            console.warn('Error deleting income record:', err);
+          const card = hdr.closest('.income-tree-card');
+          if (card) {
+            card.classList.toggle('is-open');
+            haptic('light');
           }
+        });
+      });
+
+      // Attach order leaf click event to open modalEditIncome
+      accordionContainer.querySelectorAll('.order-leaf-card').forEach(leaf => {
+        leaf.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const recId = leaf.dataset.id;
+          openEditIncomeModal(recId);
         });
       });
     }
@@ -1948,6 +2087,128 @@ if (submitAddIncomeBtn) {
       });
     } catch (err) {
       console.warn('Error syncing income record to server:', err);
+    }
+  });
+}
+
+// ============================================================
+// EDIT INCOME RECORD MODAL (РЕДАГУВАННЯ / ВИДАЛЕННЯ ЗАМОВЛЕННЯ)
+// ============================================================
+let editIncomePaidStatus = true;
+
+function openEditIncomeModal(recId) {
+  const rec = (state.income.records || []).find(r => r.id === recId);
+  if (!rec) return;
+
+  const idEl = document.getElementById('editIncomeId');
+  const projEl = document.getElementById('editIncomeProject');
+  const clientEl = document.getElementById('editIncomeClient');
+  const amountEl = document.getElementById('editIncomeAmount');
+  const dateEl = document.getElementById('editIncomeDate');
+  const paidBtn = document.getElementById('editIncomePaidBtn');
+  const expBtn = document.getElementById('editIncomeExpectedBtn');
+
+  if (idEl) idEl.value = rec.id;
+  if (projEl) projEl.value = rec.project || '';
+  if (clientEl) clientEl.value = rec.client || '';
+  if (amountEl) amountEl.value = rec.amount || '';
+  if (dateEl) {
+    const d = rec.date ? new Date(rec.date) : new Date();
+    dateEl.value = isNaN(d.getTime()) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
+  }
+
+  editIncomePaidStatus = Boolean(rec.isPaid);
+  if (paidBtn && expBtn) {
+    paidBtn.classList.toggle('active', editIncomePaidStatus);
+    expBtn.classList.toggle('active', !editIncomePaidStatus);
+  }
+
+  haptic('light');
+  openModal('modalEditIncome');
+}
+
+// Paid toggle listeners for edit modal
+const editIncomePaidBtn = document.getElementById('editIncomePaidBtn');
+const editIncomeExpectedBtn = document.getElementById('editIncomeExpectedBtn');
+if (editIncomePaidBtn && editIncomeExpectedBtn) {
+  editIncomePaidBtn.addEventListener('click', () => {
+    editIncomePaidStatus = true;
+    editIncomePaidBtn.classList.add('active');
+    editIncomeExpectedBtn.classList.remove('active');
+  });
+  editIncomeExpectedBtn.addEventListener('click', () => {
+    editIncomePaidStatus = false;
+    editIncomeExpectedBtn.classList.add('active');
+    editIncomePaidBtn.classList.remove('active');
+  });
+}
+
+// Save edited income
+const saveEditIncomeBtn = document.getElementById('saveEditIncomeBtn');
+if (saveEditIncomeBtn) {
+  saveEditIncomeBtn.addEventListener('click', async () => {
+    const id = document.getElementById('editIncomeId')?.value;
+    const project = document.getElementById('editIncomeProject')?.value.trim();
+    const client = document.getElementById('editIncomeClient')?.value.trim() || 'Клієнт';
+    const amount = Number(document.getElementById('editIncomeAmount')?.value) || 0;
+    const dateInput = document.getElementById('editIncomeDate')?.value;
+    const date = dateInput ? new Date(dateInput).toISOString() : new Date().toISOString();
+
+    if (!id || !project || !amount) {
+      alert('Будь ласка, введіть назву замовлення та суму');
+      return;
+    }
+
+    haptic('medium');
+    const idx = (state.income.records || []).findIndex(r => r.id === id);
+    if (idx !== -1) {
+      state.income.records[idx] = {
+        ...state.income.records[idx],
+        project,
+        client,
+        amount,
+        isPaid: editIncomePaidStatus,
+        date
+      };
+      localStorage.setItem('dws_income', JSON.stringify(state.income));
+    }
+
+    haptic('success');
+    closeModal('modalEditIncome');
+    renderIncome();
+
+    try {
+      await fetch(`/api/income/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project, client, amount, isPaid: editIncomePaidStatus, date })
+      });
+    } catch (err) {
+      console.warn('Error syncing income update to server:', err);
+    }
+  });
+}
+
+// Delete edited income
+const deleteEditIncomeBtn = document.getElementById('deleteEditIncomeBtn');
+if (deleteEditIncomeBtn) {
+  deleteEditIncomeBtn.addEventListener('click', async () => {
+    const id = document.getElementById('editIncomeId')?.value;
+    if (!id) return;
+    if (!confirm('Видалити це замовлення з обліку доходу?')) return;
+
+    haptic('medium');
+    state.income.records = (state.income.records || []).filter(r => r.id !== id);
+    localStorage.setItem('dws_income', JSON.stringify(state.income));
+
+    haptic('success');
+    closeModal('modalEditIncome');
+    renderIncome();
+
+    try {
+      await fetch(`/api/income/${id}`, { method: 'DELETE' });
+    } catch (err) {
+      console.warn('Error deleting income on server:', err);
     }
   });
 }

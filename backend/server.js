@@ -201,6 +201,15 @@ app.post('/api/income', (req, res) => {
   }
 });
 
+app.put('/api/income/:id', (req, res) => {
+  try {
+    const updated = db.updateIncomeRecord(req.params.id, req.body);
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 app.delete('/api/income/:id', (req, res) => {
   try {
     const updated = db.deleteIncomeRecord(req.params.id);

@@ -282,6 +282,16 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
   const requiresPortfolio = lower.includes('портфоліо') || lower.includes('кейси') || lower.includes('приклади');
   const experienceRequired = lower.includes('досвід') || lower.includes('мідл') || lower.includes('досвідчений');
 
+  // Country & Market detection
+  let country = '🇺🇦 Україна';
+  if (/(?:₽|руб|rub|спб|москва|мск|снг|рф|россия|тинькофф|сбер)/i.test(clean)) {
+    country = '🌐 СНД';
+  } else if (/(?:\$|usd|eur|€|remote global|worldwide|europe|english)/i.test(clean) && !/(?:грн|uah|₴|київ|львів|україна|дніпро|одес)/i.test(clean)) {
+    country = '🌍 Global';
+  } else if (/(?:zł|pln|польщ|варшав|warszaw)/i.test(clean)) {
+    country = '🇵🇱 Польща';
+  }
+
   // 7. Calculate honest AI initial heuristic score (42-89)
   let heuristicScore = 50;
   if (budget >= 25000) heuristicScore += 18;
@@ -312,6 +322,7 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
     title,
     budget,
     contact,
+    country,
     isUrgent,
     requiresPortfolio,
     experienceRequired,
