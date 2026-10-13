@@ -569,7 +569,13 @@ const state = {
     query: '',
     sortBy: 'date'
   },
-  activeCrmStatus: 'all'
+  activeCrmStatus: 'all',
+  crmPinnedStages: JSON.parse(localStorage.getItem('dws_crm_pinned_stages') || 'null') || ['all', 'in_progress', 'offer', 'paid'],
+  crmFilterService: 'all',
+  crmFilterMinBudget: 0,
+  accountKey: localStorage.getItem('dws_account_key') || (tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : 'default'),
+  accountUser: localStorage.getItem('dws_account_user') || (tg?.initDataUnsafe?.user?.username ? ('@' + tg.initDataUnsafe.user.username) : ''),
+  accountName: localStorage.getItem('dws_account_name') || (tg?.initDataUnsafe?.user?.first_name || 'Денис Залізко')
 };
 
 // Helper: Open direct Telegram PM with vacancy owner
@@ -609,6 +615,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setupModals();
   setupProfileCounters();
   setupCalendarModal();
+  setupCrmFilterModal();
+  setupAccountSync();
   setupEventListeners();
   loadAllData();
 });
@@ -695,6 +703,7 @@ function switchTab(tabId) {
 // DATA FETCHING & RENDERING
 // ============================================================
 async function loadAllData() {
+  await fetchAccountData();
   await Promise.all([
     fetchLeads(),
     fetchCrm(),
@@ -1010,69 +1019,162 @@ function openTakeCrmModal(lead, btn) {
   openModal('modalTakeCrmLead');
 }
 
+const CRM_STATUSES = {
+  'all': 'Всі',
+  'in_progress': 'В процесі',
+  'offer': 'Оффер',
+  'paid': 'Оплата',
+  'working': 'Працюєм',
+  'closed': 'Закриті',
+  'follow_up': 'Follow-up',
+  'rejected': 'Відмова'
+};
+
+function getLeadsNoun(n) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 19) return 'лідів';
+  if (mod10 === 1) return 'лід';
+  if (mod10 >= 2 && mod10 <= 4) return 'ліди';
+  return 'лідів';
+}
+
 // ---- 2. CRM FEED ----
 async function fetchCrm() {
   try {
-    const res = await fetch('/api/crm?status=' + state.activeCrmStatus);
+    const res = await fetch('/api/crm');
     const json = await res.json();
-    if (json.success) {
+    if (json.success && Array.isArray(json.data)) {
       state.crm = json.data;
       localStorage.setItem('dws_crm', JSON.stringify(state.crm));
-      renderCrm();
     }
   } catch (err) {
     console.warn('Error fetching CRM:', err);
-    renderCrm();
   }
+  renderCrm();
+}
+
+function renderCrmStageTabs() {
+  const container = document.getElementById('crmStagesBox');
+  if (!container) return;
+  const pinned = state.crmPinnedStages || ['all', 'in_progress', 'offer', 'paid'];
+
+  container.innerHTML = pinned.map(st => {
+    const isActive = state.activeCrmStatus === st;
+    const label = CRM_STATUSES[st] || st;
+    return `
+      <button type="button" class="crm-stage-tab ${isActive ? 'active' : ''}" data-status="${st}">
+        ${escapeHtml(label)}
+      </button>
+    `;
+  }).join('');
+
+  container.querySelectorAll('.crm-stage-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const st = tab.dataset.status;
+      state.activeCrmStatus = st;
+      container.querySelectorAll('.crm-stage-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      // Sync active state in modal grid
+      document.querySelectorAll('#crmFilterStatusGrid .opt-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.status === st);
+      });
+
+      haptic('light');
+      renderCrm();
+    });
+  });
 }
 
 function renderCrm() {
   const container = document.getElementById('crmList');
-  const countBadge = document.getElementById('crmTotalCount');
+  const countNumEl = document.getElementById('crmTotalCountNum');
+  const countLabelEl = document.getElementById('crmTotalCountLabel');
   if (!container) return;
 
-  if (countBadge) {
-    countBadge.textContent = state.crm.length + ' лідів';
+  const allClients = Array.isArray(state.crm) ? state.crm : [];
+  const totalCount = allClients.length;
+
+  // Real count in header (Right corner, large black number + word)
+  if (countNumEl) countNumEl.textContent = totalCount;
+  if (countLabelEl) countLabelEl.textContent = getLeadsNoun(totalCount);
+
+  // Render 4-stage tabs in single row
+  renderCrmStageTabs();
+
+  // Filter CRM leads by status, service, and budget
+  let filtered = [...allClients];
+  if (state.activeCrmStatus && state.activeCrmStatus !== 'all') {
+    filtered = filtered.filter(item => item.status === state.activeCrmStatus);
+  }
+  if (state.crmFilterService && state.crmFilterService !== 'all') {
+    filtered = filtered.filter(item => item.service === state.crmFilterService);
+  }
+  if (state.crmFilterMinBudget && state.crmFilterMinBudget > 0) {
+    filtered = filtered.filter(item => (Number(item.budget) || 0) >= state.crmFilterMinBudget);
   }
 
-  updateCrmStatusCounts();
+  // Highlight settings button if non-default filters applied
+  const filterBtn = document.getElementById('openCrmFilterBtn');
+  if (filterBtn) {
+    const hasExtra = (state.activeCrmStatus !== 'all') || (state.crmFilterService !== 'all') || (state.crmFilterMinBudget > 0);
+    filterBtn.classList.toggle('has-filters', hasExtra);
+  }
 
-  if (state.crm.length === 0) {
-    container.innerHTML = `
-      <div class="empty-state" style="text-align:center; padding: 40px 20px; color: var(--muted);">
-        <p style="font-weight:600; font-size:1.05rem;">Немає лідів у цьому статусі</p>
-        <p style="font-size:0.85rem; margin-top:6px;">Перенесіть замовлення із вкладки «Заявки» або додайте клієнта вручну (+)</p>
-      </div>
-    `;
+  if (filtered.length === 0) {
+    if (totalCount === 0) {
+      container.innerHTML = `
+        <div class="empty-state" style="text-align:center; padding: 40px 20px; color: var(--muted); background: var(--card-bg); border: 1px dashed var(--border); border-radius: var(--r-lg);">
+          <div style="font-size: 2.2rem; margin-bottom: 8px;">👥</div>
+          <p style="font-family: var(--ffh); font-weight:700; font-size:1.05rem; color:var(--black); margin-bottom:4px;">Клієнтів ще немає</p>
+          <p style="font-size:0.85rem; line-height: 1.4;">Перенесіть замовлення із вкладки «Заявки» або додайте клієнта вручну (+)</p>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div class="empty-state" style="text-align:center; padding: 36px 20px; color: var(--muted); background: var(--card-bg); border: 1px dashed var(--border); border-radius: var(--r-lg);">
+          <div style="font-size: 2rem; margin-bottom: 8px;">🔍</div>
+          <p style="font-family: var(--ffh); font-weight:700; font-size:1rem; color:var(--black); margin-bottom:4px;">Немає лідів за обраними фільтрами</p>
+          <p style="font-size:0.82rem; line-height: 1.4;">Спробуйте скинути фільтри або обрати інший статус роботи</p>
+        </div>
+      `;
+    }
     return;
   }
 
-  container.innerHTML = state.crm.map(item => {
+  container.innerHTML = filtered.map(item => {
     const initial = item.avatarLetter || (item.name ? item.name.charAt(0).toUpperCase() : 'Л');
-    const amount = item.budget ? (item.budget.toLocaleString('uk-UA') + ' ₴') : '';
+    const amount = (item.budget && Number(item.budget) > 0) ? (Number(item.budget).toLocaleString('uk-UA') + ' ₴') : '—';
+    const stageLabel = item.statusLabel || CRM_STATUSES[item.status] || 'В процесі';
+    const nicheText = item.niche || item.orderTitle || 'Проєкт під ключ';
+    const serviceUser = `${item.serviceLabel || 'Розробка'}${item.username ? (' • ' + item.username) : ''}`;
 
     return `
       <div class="crm-card" data-id="${item.id}">
         <div class="crm-card-left">
           <div class="client-avatar">${initial}</div>
           <div class="crm-card-info">
-            <h4>${escapeHtml(item.name)}</h4>
-            <span class="crm-card-user">${escapeHtml(item.username || '')}</span>
-            <div class="crm-card-service">${escapeHtml(item.serviceLabel || 'Розробка')} • ${escapeHtml(item.niche || '')}</div>
+            <div class="crm-card-name">${escapeHtml(item.name || 'Клієнт')}</div>
+            <div class="crm-card-niche">${escapeHtml(nicheText)}</div>
+            <div class="crm-card-service-user">${escapeHtml(serviceUser)}</div>
           </div>
         </div>
         <div class="crm-card-right">
-          <span class="status-chip ${item.status}">${escapeHtml(item.statusLabel || item.status)}</span>
-          ${amount ? `<span class="crm-amount">${amount}</span>` : ''}
+          <span class="crm-stage-badge">${escapeHtml(stageLabel)}</span>
+          <span class="crm-amount">${amount}</span>
         </div>
       </div>
     `;
   }).join('');
-}
 
-function updateCrmStatusCounts() {
-  const allEl = document.getElementById('st-all-count');
-  if (allEl) allEl.textContent = state.crm.length;
+  container.querySelectorAll('.crm-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const id = card.dataset.id;
+      const item = state.crm.find(c => c.id === id);
+      if (item) handleOpenCrmDetail(item);
+    });
+  });
 }
 
 // ---- 3. INCOME TRACKER ----
@@ -2574,6 +2676,201 @@ if (applyFiltersBtn) {
     closeModal('modalFilters');
     filterAndRenderLeads();
   });
+}
+
+// ============================================================
+// CRM FILTER MODAL HANDLERS
+// ============================================================
+function setupCrmFilterModal() {
+  const openBtn = document.getElementById('openCrmFilterBtn');
+  const applyBtn = document.getElementById('applyCrmFilterBtn');
+  const resetBtn = document.getElementById('resetCrmFilterBtn');
+  const budgetInput = document.getElementById('crmFilterMinBudget');
+
+  if (openBtn) {
+    openBtn.addEventListener('click', () => {
+      flashButtonBlue(openBtn);
+
+      // Sync active status button in modal
+      document.querySelectorAll('#crmFilterStatusGrid .opt-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.status === state.activeCrmStatus);
+      });
+
+      // Sync active service button in modal
+      document.querySelectorAll('#crmFilterServiceGrid .opt-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.service === state.crmFilterService);
+      });
+
+      // Sync budget input
+      if (budgetInput) {
+        budgetInput.value = state.crmFilterMinBudget > 0 ? state.crmFilterMinBudget : '';
+      }
+
+      openModal('modalCrmFilter');
+    });
+  }
+
+  // Status buttons inside modal
+  document.querySelectorAll('#crmFilterStatusGrid .opt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#crmFilterStatusGrid .opt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Service buttons inside modal
+  document.querySelectorAll('#crmFilterServiceGrid .opt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#crmFilterServiceGrid .opt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Apply filters
+  if (applyBtn) {
+    applyBtn.addEventListener('click', () => {
+      const activeStatusBtn = document.querySelector('#crmFilterStatusGrid .opt-btn.active');
+      const activeServiceBtn = document.querySelector('#crmFilterServiceGrid .opt-btn.active');
+
+      const selectedStatus = activeStatusBtn?.dataset.status || 'all';
+      const selectedService = activeServiceBtn?.dataset.service || 'all';
+      const minBudget = Number(budgetInput?.value) || 0;
+
+      state.activeCrmStatus = selectedStatus;
+      state.crmFilterService = selectedService;
+      state.crmFilterMinBudget = minBudget;
+
+      // If selected status is not among current pinned stages, replace slot 4 so it's directly visible
+      if (!state.crmPinnedStages.includes(selectedStatus) && selectedStatus !== 'all') {
+        state.crmPinnedStages[3] = selectedStatus;
+        localStorage.setItem('dws_crm_pinned_stages', JSON.stringify(state.crmPinnedStages));
+      }
+
+      haptic('success');
+      closeModal('modalCrmFilter');
+      renderCrm();
+    });
+  }
+
+  // Reset filters
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      state.activeCrmStatus = 'all';
+      state.crmFilterService = 'all';
+      state.crmFilterMinBudget = 0;
+
+      document.querySelectorAll('#crmFilterStatusGrid .opt-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.status === 'all');
+      });
+      document.querySelectorAll('#crmFilterServiceGrid .opt-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.service === 'all');
+      });
+      if (budgetInput) budgetInput.value = '';
+
+      haptic('medium');
+      closeModal('modalCrmFilter');
+      renderCrm();
+    });
+  }
+}
+
+// ============================================================
+// ACCOUNT SYNC & RECOGNITION (MULTI-DEVICE LINKING)
+// ============================================================
+function setupAccountSync() {
+  const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+
+  if (tgUser && tgUser.id) {
+    // Automatically recognized via Telegram WebApp
+    state.accountKey = String(tgUser.id);
+    state.accountUser = tgUser.username ? ('@' + tgUser.username) : '';
+    state.accountName = (tgUser.first_name + ' ' + (tgUser.last_name || '')).trim() || 'Денис Залізко';
+    localStorage.setItem('dws_account_key', state.accountKey);
+    localStorage.setItem('dws_account_user', state.accountUser);
+    localStorage.setItem('dws_account_name', state.accountName);
+  } else {
+    // External browser: check saved accountKey or prompt after short delay
+    const savedKey = localStorage.getItem('dws_account_key');
+    if (!savedKey) {
+      setTimeout(() => {
+        openModal('modalAccountLink');
+      }, 700);
+    }
+  }
+
+  const quickDenisBtn = document.getElementById('quickLoginDenisBtn');
+  const accountInput = document.getElementById('accountUserInput');
+  const submitAccountBtn = document.getElementById('submitAccountBtn');
+
+  if (quickDenisBtn && accountInput) {
+    quickDenisBtn.addEventListener('click', () => {
+      accountInput.value = '@zalizkodenis12';
+      haptic('light');
+    });
+  }
+
+  if (submitAccountBtn) {
+    submitAccountBtn.addEventListener('click', async () => {
+      const val = (accountInput?.value || '').trim();
+      const cleanKey = val.replace(/^@/, '') || 'zalizkodenis12';
+
+      state.accountKey = cleanKey;
+      state.accountUser = val.startsWith('@') ? val : ('@' + cleanKey);
+      state.accountName = 'Денис Залізко';
+
+      localStorage.setItem('dws_account_key', state.accountKey);
+      localStorage.setItem('dws_account_user', state.accountUser);
+      localStorage.setItem('dws_account_name', state.accountName);
+
+      haptic('success');
+      closeModal('modalAccountLink');
+      await loadAllData();
+    });
+  }
+}
+
+async function fetchAccountData() {
+  if (!state.accountKey) return;
+  try {
+    const res = await fetch('/api/account/' + encodeURIComponent(state.accountKey));
+    const json = await res.json();
+    if (json.success && json.data) {
+      if (Array.isArray(json.data.crm) && json.data.crm.length > 0) {
+        state.crm = json.data.crm;
+        localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+      }
+      if (json.data.income && Array.isArray(json.data.income.records) && json.data.income.records.length > 0) {
+        state.income = json.data.income;
+        localStorage.setItem('dws_income', JSON.stringify(state.income));
+      }
+      if (Array.isArray(json.data.takenLeadIds) && json.data.takenLeadIds.length > 0) {
+        json.data.takenLeadIds.forEach(id => state.takenLeadIds.add(id));
+        localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
+      }
+    }
+  } catch (err) {
+    console.warn('Account sync error:', err);
+  }
+}
+
+async function syncAccountToServer() {
+  if (!state.accountKey) return;
+  try {
+    await fetch('/api/account/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        accountKey: state.accountKey,
+        username: state.accountUser,
+        name: state.accountName,
+        crm: state.crm,
+        income: state.income,
+        takenLeadIds: [...state.takenLeadIds]
+      })
+    });
+  } catch (err) {
+    console.warn('Sync error:', err);
+  }
 }
 
 // ============================================================

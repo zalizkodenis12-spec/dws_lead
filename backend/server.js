@@ -322,6 +322,26 @@ app.post('/api/ingest', (req, res) => {
   }
 });
 
+// 7. MULTI-DEVICE ACCOUNT SYNC
+app.get('/api/account/:accountKey', (req, res) => {
+  try {
+    const data = db.getAccountData(req.params.accountKey);
+    res.json({ success: true, data });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/account/sync', (req, res) => {
+  try {
+    const { accountKey, crm, income, profile, takenLeadIds, username, name } = req.body;
+    const synced = db.syncAccount(accountKey, { crm, income, profile, takenLeadIds, username, name });
+    res.json({ success: true, data: synced });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Fallback to index.html for SPA routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(MINIAPP_DIR, 'index.html'));

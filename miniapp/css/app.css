@@ -740,53 +740,88 @@ body.dark-theme .lead-tag.country {
 }
 
 /* ============================================================
-   TAB 2: CRM & STATUS TABS
+   TAB 2: CRM & STAGES ROW (Single-row 4 tabs + Settings button)
    ============================================================ */
-.status-scroll-bar {
+.crm-stages-row {
   display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 12px;
-  margin-bottom: 12px;
-  -webkit-overflow-scrolling: touch;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 14px;
 }
 
-.status-scroll-bar::-webkit-scrollbar {
-  display: none;
-}
-
-.status-tab {
-  flex-shrink: 0;
-  padding: 6px 14px;
-  border-radius: var(--pill);
-  background: var(--gray);
+.crm-stages-box {
+  flex: 1;
+  display: flex;
+  background: var(--card-bg);
   border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 3px;
+  gap: 3px;
+  box-shadow: var(--shadow-sm);
+  min-width: 0;
+}
+
+.crm-stage-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 4px;
+  border-radius: calc(var(--r) - 3px);
+  font-family: var(--ff);
+  font-size: 0.76rem;
+  font-weight: 700;
   color: var(--muted);
-  font-size: 0.8rem;
-  font-weight: 600;
   cursor: pointer;
   transition: var(--trans);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.status-tab.active {
+.crm-stage-tab:hover {
+  color: var(--black);
+}
+
+.crm-stage-tab.active {
   background: var(--accent);
-  color: #fff;
+  color: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.28);
+}
+
+.crm-filter-settings-btn {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--black);
+  cursor: pointer;
+  transition: var(--trans);
+  box-shadow: var(--shadow-sm);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.crm-filter-settings-btn:hover {
   border-color: var(--accent);
+  color: var(--accent);
 }
 
-.status-tab .st-num {
-  font-size: 0.72rem;
-  padding: 1px 6px;
-  border-radius: var(--pill);
-  background: rgba(0, 0, 0, 0.08);
+.crm-filter-settings-btn:active {
+  transform: scale(0.95);
 }
 
-.status-tab.active .st-num {
-  background: rgba(255, 255, 255, 0.25);
-  color: #fff;
+.crm-filter-settings-btn.has-filters {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-bg);
 }
 
 /* CRM Client Card */
@@ -802,21 +837,27 @@ body.dark-theme .lead-tag.country {
   justify-content: space-between;
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 14px 16px;
+  border-radius: var(--r);
+  padding: 12px 14px;
   cursor: pointer;
   transition: var(--trans);
+  gap: 12px;
 }
 
 .crm-card:hover {
   border-color: var(--accent);
-  transform: translateY(-1px);
+}
+
+.crm-card:active {
+  transform: scale(0.99);
 }
 
 .crm-card-left {
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
+  flex: 1;
 }
 
 .client-avatar {
@@ -841,52 +882,89 @@ body.dark-theme .lead-tag.country {
   font-size: 1.35rem;
 }
 
-.crm-card-info h4 {
+.crm-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+/* 3 rows, all BLACK color, aligned with pixel precision */
+.crm-card-name {
   font-family: var(--ffh);
-  font-size: 0.98rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  color: var(--black);
+  color: var(--black) !important;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.crm-card-user {
+.crm-card-niche {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--black) !important;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.crm-card-service-user {
   font-size: 0.78rem;
-  color: var(--accent);
   font-weight: 500;
+  color: var(--black) !important;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.crm-card-service {
-  font-size: 0.75rem;
-  color: var(--muted);
+body.dark-theme .crm-card-name,
+body.dark-theme .crm-card-niche,
+body.dark-theme .crm-card-service-user {
+  color: #FFFFFF !important;
 }
 
 .crm-card-right {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  justify-content: center;
+  gap: 5px;
+  flex-shrink: 0;
 }
 
-.status-chip {
-  display: inline-block;
-  padding: 3px 8px;
+/* All stage badges in IDENTICAL EQUAL OVALS and ALL STUDIO BLUE! */
+.crm-stage-badge {
+  min-width: 96px;
+  width: 96px;
+  height: 26px;
   border-radius: var(--pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: #FFFFFF;
   font-size: 0.72rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  text-align: center;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 102, 255, 0.25);
 }
-
-.status-chip.offer { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); }
-.status-chip.in_progress { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(0, 102, 255, 0.3); }
-.status-chip.working { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
-.status-chip.closed { background: var(--gray); color: var(--black); border: 1px solid var(--border); }
-.status-chip.follow_up { background: rgba(139, 92, 246, 0.1); color: #8B5CF6; border: 1px solid rgba(139, 92, 246, 0.3); }
 
 .crm-amount {
   font-family: var(--ffh);
   font-weight: 800;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--black);
+  text-align: right;
+  min-height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 /* ============================================================

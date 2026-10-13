@@ -329,5 +329,58 @@ export const db = {
     data.sources = sources;
     writeDb(data);
     return data.sources;
+  },
+
+  // ---- MULTI-DEVICE ACCOUNTS & SYNC ----
+  getAccountData(accountKey = 'default') {
+    const data = readDb();
+    if (!data.accounts) data.accounts = {};
+    const cleanKey = String(accountKey).trim().toLowerCase().replace(/^@/, '') || 'default';
+    if (!data.accounts[cleanKey]) {
+      data.accounts[cleanKey] = {
+        crm: data.crm || [],
+        income: data.income || { records: [], currency: '₴' },
+        profile: data.profile || {},
+        takenLeadIds: (data.leads || []).filter(l => l.inCrm).map(l => l.id)
+      };
+      writeDb(data);
+    }
+    return data.accounts[cleanKey];
+  },
+
+  syncAccount(accountKey = 'default', payload = {}) {
+    const data = readDb();
+    if (!data.accounts) data.accounts = {};
+    const cleanKey = String(accountKey).trim().toLowerCase().replace(/^@/, '') || 'default';
+    const acc = data.accounts[cleanKey] || {
+      crm: data.crm || [],
+      income: data.income || { records: [], currency: '₴' },
+      profile: data.profile || {},
+      takenLeadIds: []
+    };
+    if (Array.isArray(payload.crm)) {
+      acc.crm = payload.crm;
+      data.crm = payload.crm;
+    }
+    if (payload.income && Array.isArray(payload.income.records)) {
+      acc.income = payload.income;
+      data.income = payload.income;
+    }
+    if (payload.profile) {
+      acc.profile = { ...acc.profile, ...payload.profile };
+      data.profile = { ...data.profile, ...payload.profile };
+    }
+    if (Array.isArray(payload.takenLeadIds)) {
+      acc.takenLeadIds = payload.takenLeadIds;
+      const takenSet = new Set(payload.takenLeadIds);
+      (data.leads || []).forEach(l => {
+        if (takenSet.has(l.id)) l.inCrm = true;
+      });
+    }
+    if (payload.username) acc.username = payload.username;
+    if (payload.name) acc.name = payload.name;
+    data.accounts[cleanKey] = acc;
+    writeDb(data);
+    return acc;
   }
 };

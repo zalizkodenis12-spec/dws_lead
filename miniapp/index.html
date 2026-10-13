@@ -102,24 +102,28 @@
            ============================================================ -->
       <section id="tab-crm" class="tab-view">
         <div class="view-header">
-          <div class="view-title-wrap">
-            <h1 class="view-title">CRM</h1>
-            <span class="count-badge" id="crmTotalCount">15 лідів</span>
+          <h1 class="view-title">CRM</h1>
+          <div class="leads-today-stat" id="crmLeadsStat">
+            <span class="leads-count-num" id="crmTotalCountNum">0</span>
+            <span class="leads-count-label" id="crmTotalCountLabel">лідів</span>
           </div>
         </div>
 
-        <!-- Horizontal Status Filter Tabs (Kanban status selector) -->
-        <div class="status-scroll-bar">
-          <button class="status-tab active" data-status="all">Всі <span class="st-num" id="st-all-count">14</span></button>
-          <button class="status-tab" data-status="in_progress">В процесі <span class="st-num" id="st-in_progress-count">8</span></button>
-          <button class="status-tab" data-status="working">Працюєм <span class="st-num" id="st-working-count">3</span></button>
-          <button class="status-tab" data-status="offer">Оффер <span class="st-num" id="st-offer-count">4</span></button>
-          <button class="status-tab" data-status="closed">Закриті <span class="st-num" id="st-closed-count">7</span></button>
-          <button class="status-tab" data-status="follow_up">Follow-up <span class="st-num" id="st-follow_up-count">2</span></button>
-          <button class="status-tab" data-status="discuss_later">Обговорити пізніше</button>
-          <button class="status-tab" data-status="ignoring">Ігнорує</button>
-          <button class="status-tab" data-status="rejected">Відмова</button>
-          <button class="status-tab" data-status="cancelled">Не співпрацюєм</button>
+        <!-- Single-row 4-stage tabs + Settings Filter button (Fits in one line, no horizontal scroll) -->
+        <div class="crm-stages-row">
+          <div class="crm-stages-box" id="crmStagesBox">
+            <!-- 4 stage tabs rendered via JS: Всі, В процесі, Оффер, Оплата -->
+          </div>
+          <button id="openCrmFilterBtn" class="crm-filter-settings-btn" title="Фільтри CRM">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="4" y1="6" x2="20" y2="6"></line>
+              <circle cx="8" cy="6" r="2.5" fill="currentColor"></circle>
+              <line x1="4" y1="12" x2="20" y2="12"></line>
+              <circle cx="16" cy="12" r="2.5" fill="currentColor"></circle>
+              <line x1="4" y1="18" x2="20" y2="18"></line>
+              <circle cx="10" cy="18" r="2.5" fill="currentColor"></circle>
+            </svg>
+          </button>
         </div>
 
         <!-- CRM Clients List -->
@@ -875,6 +879,80 @@
       </div>
       <div class="modal-footer justify-center">
         <button id="saveSourcesBtn" class="btn btn--fill btn--block">ДОДАТИ ДЖЕРЕЛА</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ФІЛЬТРИ CRM -->
+  <div id="modalCrmFilter" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title text-center" style="flex: 1; text-align: center;">Фільтри CRM</h3>
+        <button class="modal-close" data-close="modalCrmFilter">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- 1. СТАТУС / ЕТАП РОБОТИ -->
+        <div class="form-group">
+          <label class="form-label">ЕТАП РОБОТИ (СТАТУС):</label>
+          <div class="filter-options-grid" id="crmFilterStatusGrid">
+            <button type="button" class="opt-btn active" data-status="all">Всі (Всі клієнти)</button>
+            <button type="button" class="opt-btn" data-status="in_progress">В процесі</button>
+            <button type="button" class="opt-btn" data-status="offer">Оффер</button>
+            <button type="button" class="opt-btn" data-status="paid">Оплата</button>
+            <button type="button" class="opt-btn" data-status="working">Працюєм</button>
+            <button type="button" class="opt-btn" data-status="closed">Закриті</button>
+            <button type="button" class="opt-btn" data-status="follow_up">Follow-up</button>
+            <button type="button" class="opt-btn" data-status="rejected">Відмова</button>
+          </div>
+        </div>
+
+        <!-- 2. ПОСЛУГА (НАПРЯМОК) -->
+        <div class="form-group">
+          <label class="form-label">ПОСЛУГА:</label>
+          <div class="filter-options-grid" id="crmFilterServiceGrid">
+            <button type="button" class="opt-btn active" data-service="all">Всі послуги</button>
+            <button type="button" class="opt-btn" data-service="development">Розробка</button>
+            <button type="button" class="opt-btn" data-service="marketing">Реклама</button>
+            <button type="button" class="opt-btn" data-service="montage">Монтаж</button>
+          </div>
+        </div>
+
+        <!-- 3. БЮДЖЕТ (ВІД СУМИ) -->
+        <div class="form-group">
+          <label class="form-label">БЮДЖЕТ (ВІД ЯКОЇ СУМИ, ₴):</label>
+          <input type="number" id="crmFilterMinBudget" class="form-input" placeholder="0" min="0">
+        </div>
+
+      </div>
+      <div class="modal-footer flex-col gap-2">
+        <button type="button" id="applyCrmFilterBtn" class="btn btn--fill btn--block">ЗАСТОСУВАТИ ФІЛЬТРИ</button>
+        <button type="button" id="resetCrmFilterBtn" class="btn btn--out btn--block">Скинути фільтри</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ВХІД / СИНХРОНІЗАЦІЯ АКАУНТА TELEGRAM -->
+  <div id="modalAccountLink" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title text-center" style="flex: 1; text-align: center;">Вхід у DWS Lead</h3>
+        <button class="modal-close" data-close="modalAccountLink">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--muted); margin-bottom: 14px; text-align: center; line-height: 1.4;">
+          Вкажіть ваш Telegram @username або ID, щоб синхронізувати заявки, CRM та доходи між усіма вашими пристроями (ПК, телефон, браузер):
+        </p>
+        <div class="form-group">
+          <label class="form-label">TELEGRAM @USERNAME АБО CHAT ID:</label>
+          <input type="text" id="accountUserInput" class="form-input" placeholder="@username або 5278970111">
+        </div>
+        <button type="button" id="quickLoginDenisBtn" class="btn btn--out btn--block mt-2" style="font-size: 0.82rem;">
+          ⚡ Увійти як Денис Залізко (@zalizkodenis12)
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="submitAccountBtn" class="btn btn--fill btn--block">СИНХРОНІЗУВАТИ ДАНІ</button>
       </div>
     </div>
   </div>
