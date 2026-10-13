@@ -2043,7 +2043,7 @@ function handleOpenCrmDetail(item) {
     tgLink.href = u ? ('https://t.me/' + u) : '#';
   }
 
-  // 4 Additional Contact fields
+  // 5 Additional Contact fields
   const links = item.links || {};
   const phoneInput = document.getElementById('crmLinkPhone');
   if (phoneInput) phoneInput.value = links.phone || '';
@@ -2056,6 +2056,9 @@ function handleOpenCrmDetail(item) {
 
   const tgChanInput = document.getElementById('crmLinkTgChannel');
   if (tgChanInput) tgChanInput.value = links.tgChannel || '';
+
+  const siteInput = document.getElementById('crmLinkSite');
+  if (siteInput) siteInput.value = links.site || '';
 
   // Service (full-width)
   const servSelect = document.getElementById('crmDetailService');
@@ -2141,11 +2144,29 @@ function renderCrmOrdersList() {
       const amtInput = document.getElementById('crmOrderAmountInput');
       if (amtInput) amtInput.value = ord.amount > 0 ? ord.amount : '';
 
-      const startInput = document.getElementById('crmOrderDateStart');
-      if (startInput) startInput.value = ord.dateStart || '';
+      const startHidden = document.getElementById('crmOrderDateStart');
+      const startLabel = document.getElementById('crmOrderStartDateLabel');
+      if (startHidden) startHidden.value = ord.dateStart || '';
+      if (startLabel) {
+        if (ord.dateStart) {
+          const p = ord.dateStart.split('-');
+          startLabel.textContent = `${p[2]}.${p[1]}.${p[0]}`;
+        } else {
+          startLabel.textContent = 'Оберіть дату';
+        }
+      }
 
-      const endInput = document.getElementById('crmOrderDateEnd');
-      if (endInput) endInput.value = ord.dateEnd || '';
+      const endHidden = document.getElementById('crmOrderDateEnd');
+      const endLabel = document.getElementById('crmOrderEndDateLabel');
+      if (endHidden) endHidden.value = ord.dateEnd || '';
+      if (endLabel) {
+        if (ord.dateEnd) {
+          const p = ord.dateEnd.split('-');
+          endLabel.textContent = `${p[2]}.${p[1]}.${p[0]}`;
+        } else {
+          endLabel.textContent = 'Оберіть дедлайн';
+        }
+      }
 
       document.querySelectorAll('#crmOrderStatusSegment .crm-order-status-btn').forEach(b => {
         b.classList.toggle('active', b.dataset.paid === (ord.paidStatus || 'unpaid'));
@@ -2176,6 +2197,8 @@ function renderCrmOrdersList() {
 
 // Setup handlers for CRM Lead detail modal buttons (pencil, orders, save, delete)
 function setupCrmDetailHandlers() {
+  setupOrderCalendarModal();
+
   // Pencil button click: toggles edit name menu
   const pencilBtn = document.getElementById('crmDetailEditNameBtn');
   if (pencilBtn) {
@@ -2254,8 +2277,18 @@ function setupCrmDetailHandlers() {
       state.editingOrderId = null;
       document.getElementById('crmOrderServiceInput').value = 'Створення сайту';
       document.getElementById('crmOrderAmountInput').value = '';
-      document.getElementById('crmOrderDateStart').value = new Date().toISOString().split('T')[0];
-      document.getElementById('crmOrderDateEnd').value = '';
+
+      const today = new Date().toISOString().split('T')[0];
+      const todayParts = today.split('-');
+      const startHidden = document.getElementById('crmOrderDateStart');
+      if (startHidden) startHidden.value = today;
+      const startLabel = document.getElementById('crmOrderStartDateLabel');
+      if (startLabel) startLabel.textContent = `${todayParts[2]}.${todayParts[1]}.${todayParts[0]}`;
+
+      const endHidden = document.getElementById('crmOrderDateEnd');
+      if (endHidden) endHidden.value = '';
+      const endLabel = document.getElementById('crmOrderEndDateLabel');
+      if (endLabel) endLabel.textContent = 'Оберіть дедлайн';
 
       document.querySelectorAll('#crmOrderStatusSegment .crm-order-status-btn').forEach(b => {
         b.classList.toggle('active', b.dataset.paid === 'unpaid');
@@ -2362,7 +2395,8 @@ function setupCrmDetailHandlers() {
         phone: document.getElementById('crmLinkPhone')?.value || '',
         instagram: document.getElementById('crmLinkInsta')?.value || '',
         tiktok: document.getElementById('crmLinkTiktok')?.value || '',
-        tgChannel: document.getElementById('crmLinkTgChannel')?.value || ''
+        tgChannel: document.getElementById('crmLinkTgChannel')?.value || '',
+        site: document.getElementById('crmLinkSite')?.value || ''
       };
 
       const orders = Array.isArray(state.activeCrmLead.orders) ? state.activeCrmLead.orders : [];
@@ -2429,6 +2463,197 @@ function setupCrmDetailHandlers() {
       syncAccountToServer();
     });
   }
+}
+
+// ============================================================
+// INTERACTIVE CALENDAR FOR CRM ORDER DATES
+// ============================================================
+let orderCalTarget = 'start'; // 'start' or 'end'
+let tempOrderCalStart = null;
+let tempOrderCalEnd = null;
+let orderCalViewDate = new Date();
+
+function setupOrderCalendarModal() {
+  const startBtn = document.getElementById('crmOrderStartDateBtn');
+  const endBtn = document.getElementById('crmOrderEndDateBtn');
+  const prevBtn = document.getElementById('orderCalPrevMonthBtn');
+  const nextBtn = document.getElementById('orderCalNextMonthBtn');
+  const resetBtn = document.getElementById('orderCalResetBtn');
+  const applyBtn = document.getElementById('orderCalApplyBtn');
+
+  if (startBtn) {
+    startBtn.addEventListener('click', () => {
+      orderCalTarget = 'start';
+      tempOrderCalStart = document.getElementById('crmOrderDateStart')?.value || new Date().toISOString().split('T')[0];
+      tempOrderCalEnd = document.getElementById('crmOrderDateEnd')?.value || null;
+      orderCalViewDate = tempOrderCalStart ? new Date(tempOrderCalStart) : new Date();
+      const titleEl = document.getElementById('orderCalTitle');
+      if (titleEl) titleEl.textContent = 'Вибір дати початку';
+      renderOrderCalendarGrid();
+      openModal('modalOrderCalendar');
+      haptic('light');
+    });
+  }
+
+  if (endBtn) {
+    endBtn.addEventListener('click', () => {
+      orderCalTarget = 'end';
+      tempOrderCalStart = document.getElementById('crmOrderDateStart')?.value || null;
+      tempOrderCalEnd = document.getElementById('crmOrderDateEnd')?.value || null;
+      orderCalViewDate = tempOrderCalEnd ? new Date(tempOrderCalEnd) : (tempOrderCalStart ? new Date(tempOrderCalStart) : new Date());
+      const titleEl = document.getElementById('orderCalTitle');
+      if (titleEl) titleEl.textContent = 'Вибір дати дедлайну';
+      renderOrderCalendarGrid();
+      openModal('modalOrderCalendar');
+      haptic('light');
+    });
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      orderCalViewDate = new Date(orderCalViewDate.getFullYear(), orderCalViewDate.getMonth() - 1, 1);
+      renderOrderCalendarGrid();
+      haptic('light');
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      orderCalViewDate = new Date(orderCalViewDate.getFullYear(), orderCalViewDate.getMonth() + 1, 1);
+      renderOrderCalendarGrid();
+      haptic('light');
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (orderCalTarget === 'start') {
+        tempOrderCalStart = null;
+      } else if (orderCalTarget === 'end') {
+        tempOrderCalEnd = null;
+      } else {
+        tempOrderCalStart = null;
+        tempOrderCalEnd = null;
+      }
+      renderOrderCalendarGrid();
+      haptic('light');
+    });
+  }
+
+  if (applyBtn) {
+    applyBtn.addEventListener('click', () => {
+      const startHidden = document.getElementById('crmOrderDateStart');
+      const startLabel = document.getElementById('crmOrderStartDateLabel');
+      if (startHidden && startLabel) {
+        if (tempOrderCalStart) {
+          startHidden.value = tempOrderCalStart;
+          const p = tempOrderCalStart.split('-');
+          startLabel.textContent = `${p[2]}.${p[1]}.${p[0]}`;
+        } else {
+          startHidden.value = '';
+          startLabel.textContent = 'Оберіть дату';
+        }
+      }
+
+      const endHidden = document.getElementById('crmOrderDateEnd');
+      const endLabel = document.getElementById('crmOrderEndDateLabel');
+      if (endHidden && endLabel) {
+        if (tempOrderCalEnd) {
+          endHidden.value = tempOrderCalEnd;
+          const p = tempOrderCalEnd.split('-');
+          endLabel.textContent = `${p[2]}.${p[1]}.${p[0]}`;
+        } else {
+          endHidden.value = '';
+          endLabel.textContent = 'Оберіть дедлайн';
+        }
+      }
+
+      haptic('success');
+      closeModal('modalOrderCalendar');
+    });
+  }
+}
+
+function renderOrderCalendarGrid() {
+  const titleEl = document.getElementById('orderCalMonthYearTitle');
+  const gridEl = document.getElementById('orderCalDaysGrid');
+  const previewEl = document.getElementById('orderCalPreviewRange');
+  if (!gridEl) return;
+
+  const monthFullNames = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+  const curY = orderCalViewDate.getFullYear();
+  const curM = orderCalViewDate.getMonth();
+
+  if (titleEl) {
+    titleEl.textContent = `${monthFullNames[curM]} ${curY}`;
+  }
+
+  const todayIso = new Date().toISOString().slice(0, 10);
+
+  const firstDay = new Date(curY, curM, 1);
+  const startDay = firstDay.getDay();
+  const padDays = startDay === 0 ? 6 : startDay - 1;
+  const daysInMonth = new Date(curY, curM + 1, 0).getDate();
+
+  let html = '';
+  for (let i = 0; i < padDays; i++) {
+    html += '<div class="cal-day-cell empty"></div>';
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dayStr = `${curY}-${String(curM + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const isToday = dayStr === todayIso;
+    const isStart = dayStr === tempOrderCalStart;
+    const isEnd = dayStr === tempOrderCalEnd;
+    const inRange = Boolean(tempOrderCalStart && tempOrderCalEnd && dayStr > tempOrderCalStart && dayStr < tempOrderCalEnd);
+
+    let classes = ['cal-day-cell'];
+    if (isToday) classes.push('is-today');
+    if (isStart) classes.push('is-start');
+    if (isEnd) classes.push('is-end');
+    if (inRange) classes.push('in-range');
+
+    html += `<div class="${classes.join(' ')}" data-date="${dayStr}">${d}</div>`;
+  }
+
+  gridEl.innerHTML = html;
+
+  if (previewEl) {
+    if (tempOrderCalStart && tempOrderCalEnd) {
+      const sParts = tempOrderCalStart.split('-');
+      const eParts = tempOrderCalEnd.split('-');
+      const diffDays = Math.round((new Date(tempOrderCalEnd) - new Date(tempOrderCalStart)) / (24 * 3600 * 1000)) + 1;
+      previewEl.textContent = `${sParts[2]}.${sParts[1]}.${sParts[0]} → ${eParts[2]}.${eParts[1]}.${eParts[0]} (${diffDays} дн.)`;
+    } else if (tempOrderCalStart) {
+      const sParts = tempOrderCalStart.split('-');
+      previewEl.textContent = `Початок: ${sParts[2]}.${sParts[1]}.${sParts[0]}`;
+    } else if (tempOrderCalEnd) {
+      const eParts = tempOrderCalEnd.split('-');
+      previewEl.textContent = `Дедлайн: ${eParts[2]}.${eParts[1]}.${eParts[0]}`;
+    } else {
+      previewEl.textContent = 'Оберіть дату на календарі';
+    }
+  }
+
+  gridEl.querySelectorAll('.cal-day-cell:not(.empty)').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const selectedDate = cell.dataset.date;
+      haptic('light');
+
+      if (orderCalTarget === 'start') {
+        tempOrderCalStart = selectedDate;
+        if (tempOrderCalEnd && tempOrderCalEnd < tempOrderCalStart) {
+          tempOrderCalEnd = null;
+        }
+      } else if (orderCalTarget === 'end') {
+        tempOrderCalEnd = selectedDate;
+        if (tempOrderCalStart && tempOrderCalStart > tempOrderCalEnd) {
+          tempOrderCalStart = selectedDate;
+        }
+      }
+      renderOrderCalendarGrid();
+    });
+  });
 }
 
 // Add CRM client modal (+)

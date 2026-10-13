@@ -567,13 +567,14 @@
           Написати
         </a>
 
-        <!-- Блок Додаткові контакти та посилання (4 рядки) -->
+        <!-- Блок Додаткові контакти та посилання (5 необов'язкових полів) -->
         <div class="form-group">
           <label class="form-label">ДОДАТКОВІ КОНТАКТИ ТА ПОСИЛАННЯ:</label>
           <input type="tel" id="crmLinkPhone" class="form-input mb-2" placeholder="Номер телефону (+380...)">
           <input type="text" id="crmLinkInsta" class="form-input mb-2" placeholder="Instagram (@ або посилання)">
           <input type="text" id="crmLinkTiktok" class="form-input mb-2" placeholder="TikTok (@ або посилання)">
-          <input type="text" id="crmLinkTgChannel" class="form-input" placeholder="Telegram-канал (ТГК)">
+          <input type="text" id="crmLinkTgChannel" class="form-input mb-2" placeholder="Telegram-канал (ТГК)">
+          <input type="url" id="crmLinkSite" class="form-input" placeholder="Вебсайт (https://...)">
         </div>
 
         <!-- Послуга на всю ширину (100%) -->
@@ -620,15 +621,23 @@
               <input type="number" id="crmOrderAmountInput" class="form-input" placeholder="0" min="0">
             </div>
 
-            <!-- Дві дати дедлайну в одній строці: початок зліва, кінець справа -->
+            <!-- Дві дати дедлайну в одній строці: вибір календарем -->
             <div class="form-row gap-2 mb-3">
               <div class="flex-1">
                 <label class="form-sublabel">ПОЧАТОК:</label>
-                <input type="date" id="crmOrderDateStart" class="form-input">
+                <button type="button" id="crmOrderStartDateBtn" class="form-input crm-date-picker-btn">
+                  <span class="cal-icon">📅</span>
+                  <span id="crmOrderStartDateLabel">Оберіть дату</span>
+                </button>
+                <input type="hidden" id="crmOrderDateStart" value="">
               </div>
               <div class="flex-1">
                 <label class="form-sublabel">КІНЕЦЬ (ДЕДЛАЙН):</label>
-                <input type="date" id="crmOrderDateEnd" class="form-input">
+                <button type="button" id="crmOrderEndDateBtn" class="form-input crm-date-picker-btn">
+                  <span class="cal-icon">📅</span>
+                  <span id="crmOrderEndDateLabel">Оберіть дедлайн</span>
+                </button>
+                <input type="hidden" id="crmOrderDateEnd" value="">
               </div>
             </div>
 
@@ -911,6 +920,56 @@
       <div class="modal-footer gap-2">
         <button type="button" id="calResetBtn" class="btn btn--out flex-1">Скинути</button>
         <button type="button" id="calApplyBtn" class="btn btn--fill flex-1">ЗАСТОСУВАТИ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: КАЛЕНДАР ДЛЯ ЗАМОВЛЕННЯ КЛІЄНТА (ПОЧАТОК ТА ДЕДЛАЙН) -->
+  <div id="modalOrderCalendar" class="modal-overlay" style="z-index: 1200;">
+    <div class="modal-sheet modal-calendar-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title" id="orderCalTitle">Вибір дати замовлення</h3>
+        <button class="modal-close" data-close="modalOrderCalendar">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Month / Year Navigation -->
+        <div class="cal-nav-bar">
+          <button type="button" id="orderCalPrevMonthBtn" class="cal-nav-btn" title="Попередній місяць">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <div class="cal-month-year-title" id="orderCalMonthYearTitle">Жовтень 2026</div>
+          <button type="button" id="orderCalNextMonthBtn" class="cal-nav-btn" title="Наступний місяць">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+
+        <!-- Weekdays Header -->
+        <div class="cal-weekdays-row">
+          <span>Пн</span>
+          <span>Вт</span>
+          <span>Ср</span>
+          <span>Чт</span>
+          <span>Пт</span>
+          <span>Сб</span>
+          <span>Нд</span>
+        </div>
+
+        <!-- Days Grid -->
+        <div class="cal-days-grid" id="orderCalDaysGrid">
+          <!-- Rendered dynamically via JS -->
+        </div>
+
+        <!-- Range Selection Preview Box -->
+        <div class="cal-preview-box">
+          <div class="cal-preview-label">ОБРАНІ ДАТИ:</div>
+          <div class="cal-preview-val" id="orderCalPreviewRange">Оберіть дату на календарі</div>
+        </div>
+
+      </div>
+      <div class="modal-footer gap-2">
+        <button type="button" id="orderCalResetBtn" class="btn btn--out flex-1">Очистити</button>
+        <button type="button" id="orderCalApplyBtn" class="btn btn--fill flex-1">ЗАСТОСУВАТИ ДАТИ</button>
       </div>
     </div>
   </div>

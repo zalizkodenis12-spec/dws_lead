@@ -1021,6 +1021,42 @@ body.dark-theme .crm-pencil-btn {
   box-shadow: var(--shadow-sm);
 }
 
+.crm-date-picker-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-align: left;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--black);
+  font-family: var(--ff);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  transition: var(--trans);
+  width: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.crm-date-picker-btn:hover {
+  border-color: var(--accent);
+}
+
+.crm-date-picker-btn:active {
+  transform: scale(0.98);
+}
+
+body.dark-theme .crm-date-picker-btn {
+  color: #FFFFFF;
+}
+
+.crm-date-picker-btn .cal-icon {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
 .crm-order-status-bar {
   display: flex;
   background: var(--card-bg);
