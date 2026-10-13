@@ -2765,12 +2765,12 @@ if (addCrmBtn) {
   });
 }
 
+// Explicitly remove legacy header button if old cached HTML was served
 const headerAddCrmBtn = document.getElementById('headerAddCrmBtn');
 if (headerAddCrmBtn) {
-  headerAddCrmBtn.addEventListener('click', () => {
-    openModal('modalAddCrm');
-  });
+  headerAddCrmBtn.remove();
 }
+document.querySelectorAll('.view-header button').forEach(btn => btn.remove());
 
 const submitAddCrmBtn = document.getElementById('submitAddCrmBtn');
 if (submitAddCrmBtn) {

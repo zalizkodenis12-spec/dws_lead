@@ -222,6 +222,19 @@ html, body {
   margin-bottom: 14px;
 }
 
+#headerAddCrmBtn,
+.view-header button.btn,
+.view-header button.btn--out {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
 .view-title-wrap {
   display: flex;
   align-items: center;
