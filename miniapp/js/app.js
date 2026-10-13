@@ -743,13 +743,70 @@ async function fetchLeads() {
   filterAndRenderLeads();
 }
 
-function cleanCountryName(country) {
-  if (!country) return 'Україна';
-  const cleaned = String(country)
-    .replace(/[\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF]/g, '')
-    .replace(/[\uD83C-\uDBFF\uDC00-\uDFFF\u200D\uFE0F🌐]/g, '')
-    .trim();
-  return cleaned || 'Україна';
+function getExactCountry(lead) {
+  if (!lead) return 'Україна';
+  const text = ((lead.text || '') + ' ' + (lead.title || '') + ' ' + (lead.sourceName || '')).toLowerCase();
+
+  // 1. Точні перевірки по містах, валютах та згадках
+  if (/(?:сша|usa|америк|штати|штатах|new york|нью-йорк|калифорн|каліфорн|майами|маямі|техас|лос-анджелес)/i.test(text)) {
+    return 'США';
+  }
+  if (/(?:польщ|польша|poland|polska|варшав|warszaw|краків|krakow|вроцлав|wroclaw|zł|pln|злотих|злоті)/i.test(text)) {
+    return 'Польща';
+  }
+  if (/(?:німеччин|герман|germany|deutschland|берлін|berlin|мюнхен|munich|гамбург)/i.test(text)) {
+    return 'Німеччина';
+  }
+  if (/(?:великобритан|британія|британия|england|лондон|london|gbp|фунтів|фунти|£)/i.test(text)) {
+    return 'Велика Британія';
+  }
+  if (/(?:казахстан|казах|алмати|астана|шимкент|тенге|kzt|₸)/i.test(text)) {
+    return 'Казахстан';
+  }
+  if (/(?:чехія|чехия|czech|прага|prague|czk|крон)/i.test(text)) {
+    return 'Чехія';
+  }
+  if (/(?:канада|canada|торонто|ванкувер|cad)/i.test(text)) {
+    return 'Канада';
+  }
+  if (/(?:іспанія|испания|spain|мадрид|барселона)/i.test(text)) {
+    return 'Іспанія';
+  }
+  if (/(?:ізраїль|израиль|israel|тель-авів|шекел|ils)/i.test(text)) {
+    return 'Ізраїль';
+  }
+  if (/(?:рф|россия|росія|руб|rub|₽|москва|спб|питер|петербург|тинькофф|сбер|тинькоф)/i.test(text)) {
+    return 'РФ';
+  }
+  if (/(?:україна|украина|ukraine|грн|uah|₴|київ|львів|одес|харків|дніпро|запоріжж|вінниц|тернопіль|франківськ|ужгород|полтав|чернівц|луцьк|рівне|миколаїв|житомир)/i.test(text)) {
+    return 'Україна';
+  }
+
+  // 2. Перевірка збереженого поля lead.country
+  if (lead.country) {
+    const raw = String(lead.country)
+      .replace(/[\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF]/g, '')
+      .replace(/[\uD83C-\uDBFF\uDC00-\uDFFF\u200D\uFE0F🌐🌍🌎🌏]/g, '')
+      .trim();
+    if (raw === 'СНД') return 'РФ';
+    if (raw === 'Global') {
+      if (/(?:\$|usd|english)/i.test(text)) return 'США';
+      return 'Україна';
+    }
+    if (raw && raw !== 'Global' && raw !== 'СНД') {
+      return raw;
+    }
+  }
+
+  // 3. За замовчуванням
+  if (/(?:usd|\$)/i.test(text) && !/(?:укра|грн|uah|₴|київ)/i.test(text)) {
+    return 'США';
+  }
+  if (/(?:eur|€)/i.test(text)) {
+    return 'Німеччина';
+  }
+
+  return 'Україна';
 }
 
 function filterAndRenderLeads() {
@@ -872,7 +929,7 @@ function renderLeads() {
         <!-- Badges: Budget and Country/Market (Без прапорця, тільки назва країни) -->
         <div class="lead-tags-row">
           <span class="lead-tag budget">Бюджет: ${budgetTxt}</span>
-          <span class="lead-tag country">${escapeHtml(cleanCountryName(lead.country))}</span>
+          <span class="lead-tag country">${escapeHtml(getExactCountry(lead))}</span>
         </div>
 
         <!-- Action button -->

@@ -282,14 +282,34 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
   const requiresPortfolio = lower.includes('портфоліо') || lower.includes('кейси') || lower.includes('приклади');
   const experienceRequired = lower.includes('досвід') || lower.includes('мідл') || lower.includes('досвідчений');
 
-  // Country & Market detection (без прапорців, тільки назва країни)
+  // Country & Market detection (тільки точна назва країни, без узагальнень як СНД/Global і без прапорців)
   let country = 'Україна';
-  if (/(?:₽|руб|rub|спб|москва|мск|снг|рф|россия|тинькофф|сбер)/i.test(clean)) {
-    country = 'СНД';
-  } else if (/(?:\$|usd|eur|€|remote global|worldwide|europe|english)/i.test(clean) && !/(?:грн|uah|₴|київ|львів|україна|дніпро|одес)/i.test(clean)) {
-    country = 'Global';
-  } else if (/(?:zł|pln|польщ|варшав|warszaw)/i.test(clean)) {
+  if (/(?:сша|usa|америк|штати|штатах|new york|нью-йорк|калифорн|каліфорн|майами|маямі|техас)/i.test(clean)) {
+    country = 'США';
+  } else if (/(?:zł|pln|польщ|польша|варшав|warszaw|краків|krakow|вроцлав|wroclaw)/i.test(clean)) {
     country = 'Польща';
+  } else if (/(?:німеччин|герман|germany|deutschland|берлін|berlin|мюнхен|munich)/i.test(clean)) {
+    country = 'Німеччина';
+  } else if (/(?:великобритан|британія|британия|england|лондон|london|gbp|£)/i.test(clean)) {
+    country = 'Велика Британія';
+  } else if (/(?:казахстан|казах|алмати|астана|шимкент|тенге|kzt|₸)/i.test(clean)) {
+    country = 'Казахстан';
+  } else if (/(?:чехія|чехия|czech|прага|prague|czk)/i.test(clean)) {
+    country = 'Чехія';
+  } else if (/(?:канада|canada|торонто|cad)/i.test(clean)) {
+    country = 'Канада';
+  } else if (/(?:іспанія|испания|spain|мадрид|барселона)/i.test(clean)) {
+    country = 'Іспанія';
+  } else if (/(?:ізраїль|израиль|israel|тель-авів|шекел)/i.test(clean)) {
+    country = 'Ізраїль';
+  } else if (/(?:₽|руб|rub|спб|москва|мск|рф|россия|тинькофф|сбер|тинькоф|петербург)/i.test(clean)) {
+    country = 'РФ';
+  } else if (/(?:грн|uah|₴|київ|львів|україна|дніпро|одес|харків|вінниц|запоріжж)/i.test(clean)) {
+    country = 'Україна';
+  } else if (/(?:\$|usd|english)/i.test(clean) && !/(?:грн|uah|₴|укра)/i.test(clean)) {
+    country = 'США';
+  } else if (/(?:€|eur)/i.test(clean)) {
+    country = 'Німеччина';
   }
 
   // 7. Calculate honest AI initial heuristic score (42-89)
