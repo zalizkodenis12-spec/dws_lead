@@ -1025,29 +1025,116 @@ body.dark-theme .crm-pencil-btn {
   margin-bottom: 6px;
 }
 
+/* ============================================================
+   GLOBAL SPACING & LAYOUT UTILITIES
+   ============================================================ */
+.mb-0 { margin-bottom: 0 !important; }
+.mb-1 { margin-bottom: 6px !important; }
+.mb-2 { margin-bottom: 12px !important; }
+.mb-3 { margin-bottom: 18px !important; }
+.mb-4 { margin-bottom: 24px !important; }
+.mb-5 { margin-bottom: 32px !important; }
+
+.mt-0 { margin-top: 0 !important; }
+.mt-1 { margin-top: 6px !important; }
+.mt-2 { margin-top: 12px !important; }
+.mt-3 { margin-top: 18px !important; }
+.mt-4 { margin-top: 24px !important; }
+.mt-5 { margin-top: 32px !important; }
+
+.gap-1 { gap: 6px !important; }
+.gap-2 { gap: 12px !important; }
+.gap-3 { gap: 16px !important; }
+.gap-4 { gap: 24px !important; }
+
 /* Order Section & Card Box */
+.crm-orders-section {
+  margin-top: 8px;
+  margin-bottom: 22px;
+}
+
+.crm-orders-heading-label {
+  display: block;
+  font-family: var(--ffh);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.crm-add-order-btn {
+  width: 100%;
+  height: 44px;
+  border-radius: var(--pill);
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.88rem;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid var(--accent);
+  color: var(--accent);
+  background: var(--card-bg);
+  margin-bottom: 18px;
+  transition: var(--trans);
+  cursor: pointer;
+}
+
+.crm-add-order-btn:hover {
+  background: var(--accent-bg);
+}
+
+.crm-add-order-btn:active {
+  transform: scale(0.98);
+}
+
 .crm-order-card-box {
   background: var(--card-sub);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  padding: 16px;
-  margin-top: 8px;
+  padding: 22px 18px;
+  margin-bottom: 22px;
   box-shadow: var(--shadow-sm);
+}
+
+.crm-order-card-box .form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.crm-order-card-box .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.crm-order-card-box .form-sublabel {
+  display: block;
+  font-family: var(--ffh);
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--muted);
+  letter-spacing: 0.6px;
+  margin-bottom: 4px;
 }
 
 .crm-date-picker-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   cursor: pointer;
   text-align: left;
   background: var(--card-bg);
   border: 1px solid var(--border);
   color: var(--black);
   font-family: var(--ff);
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 600;
-  padding: 10px 12px;
+  padding: 12px 14px;
+  min-height: 46px;
   border-radius: var(--r-sm);
   transition: var(--trans);
   width: 100%;
@@ -1082,12 +1169,12 @@ body.dark-theme .crm-date-picker-btn {
 }
 
 .crm-order-status-bar--lg {
-  padding: 4px;
-  min-height: 48px;
+  padding: 5px;
+  min-height: 50px;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  gap: 4px;
+  gap: 5px;
 }
 
 .crm-order-status-btn {
@@ -1107,33 +1194,34 @@ body.dark-theme .crm-date-picker-btn {
 }
 
 .crm-order-status-bar--lg .crm-order-status-btn {
-  padding: 12px 6px;
+  padding: 12px 8px;
   font-size: 0.82rem;
   font-weight: 800;
   border-radius: calc(var(--r) - 3px);
+  color: var(--muted);
 }
 
 .crm-order-status-btn.active {
   background: var(--accent);
   color: #FFFFFF;
-  box-shadow: 0 2px 6px rgba(0, 102, 255, 0.25);
+  box-shadow: 0 3px 10px rgba(0, 102, 255, 0.3);
 }
 
-/* Modern Order Card in List (NO EMOJIS, Clean DenisWeb Studio Style) */
+/* Modern Order Card in List (Clean DenisWeb Studio Style) */
 .crm-orders-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
 }
 
 .crm-order-card-item {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  padding: 12px 14px;
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
   transition: var(--trans);
   box-shadow: var(--shadow-sm);
 }
@@ -1142,88 +1230,93 @@ body.dark-theme .crm-date-picker-btn {
   border-color: var(--accent);
 }
 
-.crm-order-card-header {
+/* Middle wrap: Two-column layout where Left has Title & Dates, and Right has the Status Pill */
+.crm-order-card-middle-wrap {
   display: flex;
-  align-items: center;
+  align-items: center; /* Exactly vertically centered between Title and Dates */
   justify-content: space-between;
-  gap: 8px;
+  gap: 14px;
+}
+
+.crm-order-card-texts {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .crm-order-card-title {
   font-family: var(--ffh);
   font-weight: 800;
-  font-size: 0.94rem;
+  font-size: 0.98rem;
   color: var(--black);
-  line-height: 1.25;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.32;
+  word-break: break-word;
 }
 
 body.dark-theme .crm-order-card-title {
   color: #FFFFFF;
 }
 
-.crm-order-status-pill {
-  padding: 3px 9px;
-  border-radius: var(--pill);
-  font-size: 0.7rem;
-  font-weight: 700;
-  background: var(--card-sub);
-  color: var(--muted);
-  border: 1px solid var(--border);
-  white-space: nowrap;
-}
-
-.crm-order-status-pill.paid {
-  background: var(--accent);
-  color: #FFFFFF;
-  border-color: var(--accent);
-}
-
-.crm-order-status-pill.partial {
-  background: var(--accent-bg);
-  color: var(--accent);
-  border-color: rgba(0, 102, 255, 0.3);
-}
-
 .crm-order-card-dates {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   color: var(--muted);
+  font-weight: 500;
 }
 
 .crm-order-card-dates svg {
-  color: var(--muted);
+  color: var(--accent);
   flex-shrink: 0;
+}
+
+/* Status Pill: ALWAYS BLUE OVAL REGARDLESS OF STATUS, NO NUMBERS, VERTICALLY CENTERED */
+.crm-order-status-pill {
+  padding: 7px 16px;
+  border-radius: var(--pill);
+  font-family: var(--ffh);
+  font-size: 0.76rem;
+  font-weight: 800;
+  background: var(--accent) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+  box-shadow: 0 3px 10px rgba(0, 102, 255, 0.35);
+  white-space: nowrap;
+  flex-shrink: 0;
+  align-self: center;
+  letter-spacing: 0.3px;
+  text-align: center;
 }
 
 .crm-order-card-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 6px;
+  padding-top: 12px;
   border-top: 1px solid var(--border);
+  gap: 10px;
 }
 
 .crm-order-card-amount {
   font-family: var(--ffh);
   font-weight: 800;
-  font-size: 0.95rem;
+  font-size: 1.12rem;
   color: var(--accent);
+  letter-spacing: 0.2px;
 }
 
 .crm-order-card-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .btn-order-action {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--pill);
   background: var(--card-sub);
   border: 1px solid var(--border);
@@ -1238,6 +1331,7 @@ body.dark-theme .crm-order-card-title {
 .btn-order-action:hover {
   border-color: var(--accent);
   color: var(--accent);
+  background: var(--accent-bg);
 }
 
 .btn-order-action:active {

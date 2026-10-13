@@ -2107,10 +2107,10 @@ function renderCrmOrdersList() {
     return;
   }
 
-  const statusLabels = { unpaid: '1) Не оплачено', partial: '2) Частково', paid: '3) Оплачено' };
+  const statusLabels = { unpaid: 'Не оплачено', partial: 'Частково', paid: 'Оплачено' };
 
   list.innerHTML = orders.map((ord, idx) => {
-    const stText = statusLabels[ord.paidStatus] || '1) Не оплачено';
+    const stText = statusLabels[ord.paidStatus] || 'Не оплачено';
     const amtText = Number(ord.amount) > 0 ? (Number(ord.amount).toLocaleString('uk-UA') + ' ₴') : '0 ₴';
     let datesText = '';
     if (ord.dateStart && ord.dateEnd) {
@@ -2127,26 +2127,28 @@ function renderCrmOrdersList() {
       datesText = 'Терміни не вказані';
     }
 
-    const pillClass = ord.paidStatus === 'paid' ? 'paid' : ord.paidStatus === 'partial' ? 'partial' : '';
-
     return `
       <div class="crm-order-card-item" data-idx="${idx}">
-        <div class="crm-order-card-header">
-          <div class="crm-order-card-title">${escapeHtml(ord.title || 'Створення сайту')}</div>
-          <span class="crm-order-status-pill ${pillClass}">${stText}</span>
-        </div>
-        <div class="crm-order-card-dates">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-          <span>${datesText}</span>
+        <div class="crm-order-card-middle-wrap">
+          <div class="crm-order-card-texts">
+            <div class="crm-order-card-title">${escapeHtml(ord.title || 'Створення сайту')}</div>
+            <div class="crm-order-card-dates">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span>${datesText}</span>
+            </div>
+          </div>
+          <div class="crm-order-status-pill">
+            ${stText}
+          </div>
         </div>
         <div class="crm-order-card-footer">
           <div class="crm-order-card-amount">${amtText}</div>
           <div class="crm-order-card-actions">
             <button type="button" class="btn-order-action btn-order-edit" data-idx="${idx}" title="Редагувати">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
             </button>
             <button type="button" class="btn-order-action btn-order-del" data-idx="${idx}" title="Видалити">
-              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
           </div>
         </div>
