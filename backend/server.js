@@ -201,6 +201,15 @@ app.post('/api/income', (req, res) => {
   }
 });
 
+app.delete('/api/income/:id', (req, res) => {
+  try {
+    const updated = db.deleteIncomeRecord(req.params.id);
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // 4. PROFILE & SETTINGS
 app.get('/api/profile', (req, res) => {
   try {

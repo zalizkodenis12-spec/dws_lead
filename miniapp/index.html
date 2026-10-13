@@ -138,9 +138,10 @@
            ============================================================ -->
       <section id="tab-income" class="tab-view">
         <div class="view-header">
-          <div class="view-title-wrap">
-            <h1 class="view-title">Дохід</h1>
-            <span class="count-badge" id="incomeOrdersCount">15 заявок</span>
+          <h1 class="view-title">Дохід</h1>
+          <div class="leads-today-stat" id="incomeOrdersStat">
+            <span class="leads-count-num" id="incomeOrdersCountNum">0</span>
+            <span class="leads-count-label" id="incomeOrdersCountLabel">замовлень</span>
           </div>
         </div>
 
@@ -148,12 +149,12 @@
         <div class="income-stats-grid">
           <div class="income-stat-card">
             <span class="stat-label">ЗАРОБЛЕНО</span>
-            <div class="stat-value" id="totalEarnedVal">120 500 ₴</div>
-            <span class="stat-sub">За весь час</span>
+            <div class="stat-value" id="totalEarnedVal">0 ₴</div>
+            <span class="stat-sub" id="totalEarnedSub">За весь час</span>
           </div>
           <div class="income-stat-card">
             <span class="stat-label">ОЧІКУВАНО</span>
-            <div class="stat-value text-accent" id="totalExpectedVal">20 000 ₴</div>
+            <div class="stat-value text-accent" id="totalExpectedVal">0 ₴</div>
             <span class="stat-sub">В процесі роботи</span>
           </div>
         </div>
@@ -162,23 +163,23 @@
         <div class="income-chart-card">
           <div class="chart-header">
             <span class="chart-title">Динаміка оплат</span>
-            <span class="chart-active-month" id="chartActiveMonthLabel">Жов: 12 000 ₴</span>
+            <span class="chart-active-month" id="chartActiveMonthLabel">Жовтень: 0 ₴</span>
           </div>
           <div class="bars-container" id="incomeBars">
             <!-- Bars rendered via JS -->
           </div>
         </div>
 
-        <!-- Filter Time Pills -->
+        <!-- Filter Time Pills (Stretched 50% / 50% across full row) -->
         <div class="income-filters-row">
-          <button id="openTimeFilterBtn" class="filter-pill flex-1">
+          <button id="openTimeFilterBtn" class="filter-pill flex-1" type="button">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12" y1="6" x2="12" y2="12"></polyline><polyline points="12 6 12 12 16 14"></polyline></svg>
-            <span id="activeTimeLabel">За весь час</span>
+            <span id="activeTimeLabel">Фільтр часу</span>
             <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
           </button>
-          <button id="openCalendarBtn" class="filter-pill">
+          <button id="openCalendarBtn" class="filter-pill flex-1" type="button">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            <span>По даті</span>
+            <span id="activeCalendarLabel">По даті</span>
           </button>
         </div>
 
@@ -707,6 +708,11 @@
           </div>
         </div>
 
+        <div class="form-group">
+          <label class="form-label">ДАТА ЗАМОВЛЕННЯ:</label>
+          <input type="date" id="newIncomeDate" class="form-input">
+        </div>
+
       </div>
       <div class="modal-footer">
         <button class="btn btn--out" data-close="modalAddIncome">Відхилити</button>
@@ -724,17 +730,82 @@
       </div>
       <div class="modal-body">
         <div class="time-filter-list">
-          <button class="time-choice-item active" data-period="all"><span>За весь час</span> <span class="check">✓</span></button>
-          <button class="time-choice-item" data-period="year"><span>За останній рік</span></button>
-          <button class="time-choice-item" data-period="6m"><span>За останні 6 місяців</span></button>
-          <button class="time-choice-item" data-period="3m"><span>За останні 3 місяці</span></button>
-          <button class="time-choice-item" data-period="1m"><span>За останній місяць</span></button>
-          <button class="time-choice-item" data-period="1w"><span>За останній тиждень</span></button>
-          <button class="time-choice-item" data-period="1d"><span>За останній день</span></button>
+          <button class="time-choice-item active" data-period="all">
+            <span>За весь час</span>
+            <span class="check">✓</span>
+          </button>
+          <button class="time-choice-item" data-period="year">
+            <span>За останній рік</span>
+          </button>
+          <button class="time-choice-item" data-period="6m">
+            <span>За останні 6 міс</span>
+          </button>
+          <button class="time-choice-item" data-period="3m">
+            <span>За останні 3 міс</span>
+          </button>
+          <button class="time-choice-item" data-period="1m">
+            <span>За останній міс</span>
+          </button>
+          <button class="time-choice-item" data-period="1w">
+            <span>За останній тиж</span>
+          </button>
+          <button class="time-choice-item" data-period="1d">
+            <span>За останній день</span>
+          </button>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn--fill btn--block" data-close="modalTimeFilter">ГОТОВО</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: КАЛЕНДАР ДЛЯ ВИБОРУ ПЕРІОДУ ДАТ (ПО ДАТІ) -->
+  <div id="modalDateRange" class="modal-overlay">
+    <div class="modal-sheet modal-calendar-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Вибір періоду дат</h3>
+        <button class="modal-close" data-close="modalDateRange">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Month / Year Navigation -->
+        <div class="cal-nav-bar">
+          <button type="button" id="calPrevMonthBtn" class="cal-nav-btn" title="Попередній місяць">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <div class="cal-month-year-title" id="calMonthYearTitle">Жовтень 2026</div>
+          <button type="button" id="calNextMonthBtn" class="cal-nav-btn" title="Наступний місяць">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+
+        <!-- Weekdays Header -->
+        <div class="cal-weekdays-row">
+          <span>Пн</span>
+          <span>Вт</span>
+          <span>Ср</span>
+          <span>Чт</span>
+          <span>Пт</span>
+          <span>Сб</span>
+          <span>Нд</span>
+        </div>
+
+        <!-- Days Grid -->
+        <div class="cal-days-grid" id="calDaysGrid">
+          <!-- Rendered dynamically via JS -->
+        </div>
+
+        <!-- Range Selection Preview Box -->
+        <div class="cal-preview-box">
+          <div class="cal-preview-label">ОБРАНИЙ ПЕРІОД:</div>
+          <div class="cal-preview-val" id="calPreviewRange">Оберіть початкову дату</div>
+        </div>
+
+      </div>
+      <div class="modal-footer gap-2">
+        <button type="button" id="calResetBtn" class="btn btn--out flex-1">Скинути</button>
+        <button type="button" id="calApplyBtn" class="btn btn--fill flex-1">ЗАСТОСУВАТИ</button>
       </div>
     </div>
   </div>

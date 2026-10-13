@@ -511,51 +511,8 @@ const DEFAULT_DATA = {
     }
   ],
   income: {
-    totalEarned: 120500,
-    totalExpected: 20000,
-    currency: "₴",
-    chart: [
-      { month: "Чер", amount: 18000 },
-      { month: "Лип", amount: 24000 },
-      { month: "Сер", amount: 29000 },
-      { month: "Вер", amount: 37500 },
-      { month: "Жов", amount: 12000 }
-    ],
-    history: [
-      {
-        id: "inc-w1",
-        period: "1-7 жов 2026",
-        weekLabel: "1–7 жовтня",
-        total: 4500,
-        days: [
-          { date: "1 жов", dayName: "Пн", amount: 1000, client: "Кафе 'Затишок'" },
-          { date: "4 жов", dayName: "Чт", amount: 2500, client: "Андрій" },
-          { date: "6 жов", dayName: "Сб", amount: 500, client: "Ольга" },
-          { date: "7 жов", dayName: "Нд", amount: 500, client: "Дмитро" }
-        ]
-      },
-      {
-        id: "inc-w2",
-        period: "8-14 жов 2026",
-        weekLabel: "8–14 жовтня",
-        total: 2000,
-        days: [{ date: "8 жов", dayName: "Пн", amount: 2000, client: "Beauty Studio" }]
-      },
-      {
-        id: "inc-w3",
-        period: "15-21 жов 2026",
-        weekLabel: "15–21 жовтня",
-        total: 0,
-        days: []
-      },
-      {
-        id: "inc-w4",
-        period: "22-31 жов 2026",
-        weekLabel: "22–31 жовтня",
-        total: 5500,
-        days: [{ date: "24 жов", dayName: "Ср", amount: 5500, client: "Віктор" }]
-      }
-    ]
+    records: [],
+    currency: "₴"
   },
   profile: {
     agencyName: "DenisWeb Studio",
@@ -576,6 +533,14 @@ const normalizedSources = (savedSourcesRaw && Array.isArray(savedSourcesRaw.chat
 
 const savedTakenIds = JSON.parse(localStorage.getItem('dws_taken_leads') || '[]');
 
+let savedIncomeRaw = null;
+try {
+  savedIncomeRaw = JSON.parse(localStorage.getItem('dws_income'));
+} catch (e) {}
+const normalizedIncome = (savedIncomeRaw && Array.isArray(savedIncomeRaw.records))
+  ? savedIncomeRaw
+  : { records: [], currency: "₴" };
+
 const state = {
   currentTab: 'tab-leads',
   theme: localStorage.getItem('dws_theme') || 'light',
@@ -584,7 +549,10 @@ const state = {
   takenLeadIds: new Set(Array.isArray(savedTakenIds) ? savedTakenIds : []),
   justTakenSessionIds: new Set(),
   crm: JSON.parse(localStorage.getItem('dws_crm') || 'null') || [...DEFAULT_DATA.crm],
-  income: JSON.parse(localStorage.getItem('dws_income') || 'null') || JSON.parse(JSON.stringify(DEFAULT_DATA.income)),
+  income: normalizedIncome,
+  incomeFilterPeriod: 'all',
+  incomeDateRange: null,
+  incomeActiveChartMonthIdx: null,
   profile: JSON.parse(localStorage.getItem('dws_profile') || 'null') || { ...DEFAULT_DATA.profile },
   sources: normalizedSources,
   activeCrmLead: null,
@@ -640,6 +608,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupNav();
   setupModals();
   setupProfileCounters();
+  setupCalendarModal();
   setupEventListeners();
   loadAllData();
 });
@@ -1111,96 +1080,235 @@ async function fetchIncome() {
   try {
     const res = await fetch('/api/income');
     const json = await res.json();
-    if (json.success) {
+    if (json.success && json.data) {
       state.income = json.data;
+      if (!Array.isArray(state.income.records)) {
+        state.income.records = [];
+      }
       localStorage.setItem('dws_income', JSON.stringify(state.income));
-      renderIncome();
     }
   } catch (err) {
     console.warn('Error fetching income:', err);
-    renderIncome();
   }
+  renderIncome();
+}
+
+function getOrdersNoun(n) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 19) return 'замовлень';
+  if (mod10 === 1) return 'замовлення';
+  if (mod10 >= 2 && mod10 <= 4) return 'замовлення';
+  return 'замовлень';
 }
 
 function renderIncome() {
   const earnedEl = document.getElementById('totalEarnedVal');
+  const earnedSubEl = document.getElementById('totalEarnedSub');
   const expectedEl = document.getElementById('totalExpectedVal');
+  const countNumEl = document.getElementById('incomeOrdersCountNum');
+  const countLabelEl = document.getElementById('incomeOrdersCountLabel');
   const barsContainer = document.getElementById('incomeBars');
+  const chartLabelEl = document.getElementById('chartActiveMonthLabel');
   const accordionContainer = document.getElementById('incomeAccordion');
 
-  if (earnedEl) earnedEl.textContent = (state.income.totalEarned || 0).toLocaleString('uk-UA') + ' ₴';
-  if (expectedEl) expectedEl.textContent = (state.income.totalExpected || 0).toLocaleString('uk-UA') + ' ₴';
+  const allRecords = (state.income && Array.isArray(state.income.records)) ? state.income.records : [];
 
-  // Render Bar Chart
-  if (barsContainer && state.income.chart) {
-    const maxVal = Math.max(...state.income.chart.map(c => c.amount || 0), 40000);
-    barsContainer.innerHTML = state.income.chart.map((c, idx) => {
-      const isCurrentMonth = idx === state.income.chart.length - 1;
-      const heightPercent = Math.round(((c.amount || 0) / maxVal) * 100);
+  // Update real count in header (all-time real orders count, large bold black text without badge background)
+  if (countNumEl) countNumEl.textContent = allRecords.length;
+  if (countLabelEl) countLabelEl.textContent = getOrdersNoun(allRecords.length);
+
+  // 1. FILTER RECORDS
+  let filteredRecords = [...allRecords];
+  let periodLabel = 'За весь час';
+
+  if (state.incomeDateRange && state.incomeDateRange.start) {
+    const startStr = state.incomeDateRange.start;
+    const endStr = state.incomeDateRange.end || state.incomeDateRange.start;
+    filteredRecords = filteredRecords.filter(r => {
+      const dStr = (r.date ? new Date(r.date) : new Date()).toISOString().slice(0, 10);
+      return dStr >= startStr && dStr <= endStr;
+    });
+    const sParts = startStr.split('-');
+    const eParts = endStr.split('-');
+    periodLabel = `${sParts[2]}.${sParts[1]} – ${eParts[2]}.${eParts[1]}`;
+  } else if (state.incomeFilterPeriod && state.incomeFilterPeriod !== 'all') {
+    const nowMs = Date.now();
+    const periodMsMap = {
+      'year': 365 * 24 * 3600 * 1000,
+      '6m': 180 * 24 * 3600 * 1000,
+      '3m': 90 * 24 * 3600 * 1000,
+      '1m': 30 * 24 * 3600 * 1000,
+      '1w': 7 * 24 * 3600 * 1000,
+      '1d': 24 * 3600 * 1000
+    };
+    const periodMs = periodMsMap[state.incomeFilterPeriod] || 0;
+
+    const periodLabels = {
+      'year': 'За останній рік',
+      '6m': 'За останні 6 міс',
+      '3m': 'За останні 3 міс',
+      '1m': 'За останній міс',
+      '1w': 'За останній тиж',
+      '1d': 'За останній день'
+    };
+    periodLabel = periodLabels[state.incomeFilterPeriod] || 'За весь час';
+
+    if (periodMs > 0) {
+      filteredRecords = filteredRecords.filter(r => {
+        const rMs = new Date(r.date).getTime();
+        return (nowMs - rMs) <= periodMs;
+      });
+    }
+  }
+
+  // 2. SUM TOTALS FROM FILTERED RECORDS
+  let totalEarned = 0;
+  let totalExpected = 0;
+  for (const r of filteredRecords) {
+    const amt = Number(r.amount) || 0;
+    if (r.isPaid) totalEarned += amt;
+    else totalExpected += amt;
+  }
+
+  if (earnedEl) earnedEl.textContent = totalEarned.toLocaleString('uk-UA') + ' ₴';
+  if (earnedSubEl) earnedSubEl.textContent = periodLabel;
+  if (expectedEl) expectedEl.textContent = totalExpected.toLocaleString('uk-UA') + ' ₴';
+
+  // 3. DYNAMIC MONTHLY BAR CHART (Last 5 calendar months ending in real current month)
+  const now = new Date();
+  const monthShortNames = ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'];
+  const monthFullNames = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+
+  const last5Months = [];
+  for (let i = 4; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const y = d.getFullYear();
+    const m = d.getMonth();
+    last5Months.push({
+      year: y,
+      monthIdx: m,
+      shortName: monthShortNames[m],
+      fullName: monthFullNames[m],
+      amount: 0
+    });
+  }
+
+  // Aggregate paid sums from allRecords
+  for (const r of allRecords) {
+    if (r.isPaid) {
+      const rd = new Date(r.date);
+      if (!isNaN(rd.getTime())) {
+        const ry = rd.getFullYear();
+        const rm = rd.getMonth();
+        const targetM = last5Months.find(item => item.year === ry && item.monthIdx === rm);
+        if (targetM) {
+          targetM.amount += (Number(r.amount) || 0);
+        }
+      }
+    }
+  }
+
+  const maxVal = Math.max(...last5Months.map(m => m.amount), 5000);
+  const currentMonthIdx = 4;
+  let activeChartIdx = state.incomeActiveChartMonthIdx !== null ? state.incomeActiveChartMonthIdx : currentMonthIdx;
+  if (activeChartIdx < 0 || activeChartIdx > 4) activeChartIdx = currentMonthIdx;
+
+  const activeMonthData = last5Months[activeChartIdx];
+  if (chartLabelEl && activeMonthData) {
+    chartLabelEl.textContent = `${activeMonthData.fullName}: ${activeMonthData.amount.toLocaleString('uk-UA')} ₴`;
+  }
+
+  if (barsContainer) {
+    barsContainer.innerHTML = last5Months.map((m, idx) => {
+      const isActive = idx === activeChartIdx;
+      const heightPercent = m.amount > 0 ? Math.max(Math.round((m.amount / maxVal) * 100), 15) : 8;
       return `
-        <div class="chart-bar-group">
-          <div class="chart-bar-wrap">
-            <div class="chart-bar ${isCurrentMonth ? 'active' : ''}"
-                 style="height: ${Math.max(heightPercent, 8)}%;"
-                 title="${c.month}: ${c.amount.toLocaleString('uk-UA')} ₴"
-                 data-amount="${c.amount}"
-                 data-month="${c.month}"></div>
-          </div>
-          <span class="chart-label ${isCurrentMonth ? 'active' : ''}">${c.month}</span>
+        <div class="bar-col ${isActive ? 'active' : ''}" data-idx="${idx}" title="${m.fullName}: ${m.amount.toLocaleString('uk-UA')} ₴">
+          <div class="bar-pill" style="height: ${heightPercent}%;"></div>
+          <span class="bar-month-name">${m.shortName}</span>
         </div>
       `;
     }).join('');
 
-    barsContainer.querySelectorAll('.chart-bar').forEach(bar => {
-      bar.addEventListener('click', () => {
-        barsContainer.querySelectorAll('.chart-bar').forEach(b => b.classList.remove('active'));
-        bar.classList.add('active');
-        const activeMonthEl = document.getElementById('activeChartMonth');
-        if (activeMonthEl) {
-          activeMonthEl.textContent = bar.dataset.month + ': ' + Number(bar.dataset.amount).toLocaleString('uk-UA') + ' ₴';
+    barsContainer.querySelectorAll('.bar-col').forEach(col => {
+      col.addEventListener('click', () => {
+        const idx = Number(col.dataset.idx);
+        state.incomeActiveChartMonthIdx = idx;
+        barsContainer.querySelectorAll('.bar-col').forEach(c => c.classList.remove('active'));
+        col.classList.add('active');
+        const mData = last5Months[idx];
+        if (chartLabelEl && mData) {
+          chartLabelEl.textContent = `${mData.fullName}: ${mData.amount.toLocaleString('uk-UA')} ₴`;
         }
         haptic('light');
       });
     });
   }
 
-  // Render Weekly History Accordion
-  if (accordionContainer && state.income.history) {
-    accordionContainer.innerHTML = state.income.history.map((week, idx) => {
-      const isOpen = idx === 0;
-      const daysHtml = (week.days || []).map(day => `
-        <div class="income-day-row">
-          <div>
-            <div class="day-date">${day.date} (${day.dayName})</div>
-            <div class="day-client">${escapeHtml(day.client)}</div>
+  // 4. RENDER HISTORY RECORDS LIST
+  if (accordionContainer) {
+    if (filteredRecords.length === 0) {
+      if (allRecords.length === 0) {
+        accordionContainer.innerHTML = `
+          <div class="empty-state" style="padding: 30px 16px; text-align: center; background: var(--card-bg); border: 1px dashed var(--border); border-radius: var(--r-lg);">
+            <div style="font-size: 2.2rem; margin-bottom: 8px;">💰</div>
+            <h4 style="font-family: var(--ffh); font-size: 1.05rem; font-weight: 700; color: var(--black); margin-bottom: 4px;">Доходів ще не зафіксовано</h4>
+            <p style="font-size: 0.85rem; color: var(--muted); max-width: 270px; margin: 0 auto; line-height: 1.4;">Натисніть на синій плюс (+) знизу, щоб додати перше замовлення та вести реальний облік.</p>
           </div>
-          <span class="day-amount">+${day.amount.toLocaleString('uk-UA')} ₴</span>
-        </div>
-      `).join('');
-
-      return `
-        <div class="accordion-item ${isOpen ? 'open' : ''}">
-          <div class="week-header">
-            <div>
-              <span class="week-title">${week.weekLabel}</span>
-              <span class="week-total">Всього: ${(week.total || 0).toLocaleString('uk-UA')} ₴</span>
+        `;
+      } else {
+        accordionContainer.innerHTML = `
+          <div class="empty-state" style="padding: 26px 16px; text-align: center; background: var(--card-bg); border: 1px dashed var(--border); border-radius: var(--r-lg);">
+            <div style="font-size: 2rem; margin-bottom: 8px;">📅</div>
+            <h4 style="font-family: var(--ffh); font-size: 1rem; font-weight: 700; color: var(--black); margin-bottom: 4px;">Немає записів за цей період</h4>
+            <p style="font-size: 0.82rem; color: var(--muted); max-width: 260px; margin: 0 auto; line-height: 1.4;">Спробуйте змінити фільтр часу або обрати інші дати в календарі.</p>
+          </div>
+        `;
+      }
+    } else {
+      accordionContainer.innerHTML = filteredRecords.map(r => {
+        const dObj = r.date ? new Date(r.date) : new Date();
+        const dFmt = `${dObj.getDate()} ${monthShortNames[dObj.getMonth()] || ''} ${dObj.getFullYear()}`;
+        return `
+          <div class="income-record-card" data-id="${r.id}">
+            <div class="income-rec-info">
+              <div class="income-rec-title">${escapeHtml(r.project)}</div>
+              <div class="income-rec-meta">
+                <span>${escapeHtml(r.client)}</span>
+                <span>•</span>
+                <span>${dFmt}</span>
+                <span>•</span>
+                <span class="income-rec-badge ${r.isPaid ? 'paid' : 'expected'}">${r.isPaid ? 'Оплачено' : 'Очікувано'}</span>
+              </div>
             </div>
-            <svg class="chevron-down" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <div class="income-rec-amount-box">
+              <span class="income-rec-amount ${r.isPaid ? 'paid' : ''}">${r.isPaid ? '+' : ''}${(Number(r.amount) || 0).toLocaleString('uk-UA')} ₴</span>
+              <button class="income-rec-del-btn" title="Видалити запис" data-id="${r.id}">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
           </div>
-          <div class="week-body">
-            ${daysHtml}
-          </div>
-        </div>
-      `;
-    }).join('');
+        `;
+      }).join('');
 
-    accordionContainer.querySelectorAll('.week-header').forEach(hdr => {
-      hdr.addEventListener('click', () => {
-        const item = hdr.parentElement;
-        item.classList.toggle('open');
-        haptic('light');
+      accordionContainer.querySelectorAll('.income-rec-del-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const recId = btn.dataset.id;
+          if (!confirm('Видалити цей запис доходу?')) return;
+          haptic('medium');
+          state.income.records = state.income.records.filter(item => item.id !== recId);
+          localStorage.setItem('dws_income', JSON.stringify(state.income));
+          renderIncome();
+          try {
+            await fetch(`/api/income/${recId}`, { method: 'DELETE' });
+          } catch (err) {
+            console.warn('Error deleting income record:', err);
+          }
+        });
       });
-    });
+    }
   }
 }
 
@@ -1777,10 +1885,15 @@ document.querySelectorAll('#modalAddIncome .opt-btn').forEach(btn => {
 
 const submitAddIncomeBtn = document.getElementById('submitAddIncomeBtn');
 if (submitAddIncomeBtn) {
+  const dInput = document.getElementById('newIncomeDate');
+  if (dInput) dInput.value = new Date().toISOString().slice(0, 10);
+
   submitAddIncomeBtn.addEventListener('click', async () => {
     const project = document.getElementById('newIncomeProject').value.trim();
     const client = document.getElementById('newIncomeClient').value.trim();
     const amount = Number(document.getElementById('newIncomeAmount').value) || 0;
+    const dateInput = document.getElementById('newIncomeDate')?.value;
+    const date = dateInput ? new Date(dateInput).toISOString() : new Date().toISOString();
 
     if (!project || !amount) {
       alert('Введіть назву замовлення та суму');
@@ -1788,15 +1901,42 @@ if (submitAddIncomeBtn) {
     }
 
     haptic('medium');
-    await fetch('/api/income', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ project, client, amount, isPaid: newIncomePaidStatus })
-    });
+    const newRecord = {
+      id: `inc-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      project,
+      client: client || 'Клієнт',
+      amount,
+      currency: '₴',
+      isPaid: newIncomePaidStatus,
+      date
+    };
+
+    if (!Array.isArray(state.income.records)) {
+      state.income.records = [];
+    }
+    state.income.records.unshift(newRecord);
+    localStorage.setItem('dws_income', JSON.stringify(state.income));
+
+    // Clear inputs
+    document.getElementById('newIncomeProject').value = '';
+    document.getElementById('newIncomeClient').value = '';
+    document.getElementById('newIncomeAmount').value = '';
+    const dEl = document.getElementById('newIncomeDate');
+    if (dEl) dEl.value = new Date().toISOString().slice(0, 10);
 
     haptic('success');
     closeModal('modalAddIncome');
-    fetchIncome();
+    renderIncome();
+
+    try {
+      await fetch('/api/income', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newRecord)
+      });
+    } catch (err) {
+      console.warn('Error syncing income record to server:', err);
+    }
   });
 }
 
@@ -1809,21 +1949,219 @@ if (openTimeFilterBtn) {
   });
 }
 
-document.querySelectorAll('.time-choice-item').forEach(btn => {
+document.querySelectorAll('#modalTimeFilter .time-choice-item').forEach(btn => {
   btn.addEventListener('click', () => {
-    document.querySelectorAll('.time-choice-item').forEach(b => {
+    document.querySelectorAll('#modalTimeFilter .time-choice-item').forEach(b => {
       b.classList.remove('active');
       const ch = b.querySelector('.check');
       if (ch) ch.remove();
     });
     btn.classList.add('active');
     btn.insertAdjacentHTML('beforeend', '<span class="check">✓</span>');
-    const label = btn.querySelector('span')?.textContent || 'За весь час';
+
+    const period = btn.dataset.period || 'all';
+    state.incomeFilterPeriod = period;
+    state.incomeDateRange = null;
+
+    const label = btn.querySelector('span')?.textContent || 'Фільтр часу';
     const activeLabel = document.getElementById('activeTimeLabel');
     if (activeLabel) activeLabel.textContent = label;
+
+    const calLabel = document.getElementById('activeCalendarLabel');
+    if (calLabel) calLabel.textContent = 'По даті';
+
     haptic('light');
+    renderIncome();
+    setTimeout(() => {
+      closeModal('modalTimeFilter');
+    }, 150);
   });
 });
+
+// ============================================================
+// INTERACTIVE CALENDAR MODAL (ПО ДАТІ)
+// ============================================================
+let calViewDate = new Date();
+let tempCalStart = null;
+let tempCalEnd = null;
+
+function setupCalendarModal() {
+  const openCalendarBtn = document.getElementById('openCalendarBtn');
+  const calPrevMonthBtn = document.getElementById('calPrevMonthBtn');
+  const calNextMonthBtn = document.getElementById('calNextMonthBtn');
+  const calResetBtn = document.getElementById('calResetBtn');
+  const calApplyBtn = document.getElementById('calApplyBtn');
+
+  if (openCalendarBtn) {
+    openCalendarBtn.addEventListener('click', () => {
+      flashButtonBlue(openCalendarBtn);
+      if (state.incomeDateRange && state.incomeDateRange.start) {
+        tempCalStart = state.incomeDateRange.start;
+        tempCalEnd = state.incomeDateRange.end;
+        calViewDate = new Date(tempCalStart);
+      } else {
+        tempCalStart = null;
+        tempCalEnd = null;
+        calViewDate = new Date();
+      }
+      renderCalendarGrid();
+      openModal('modalDateRange');
+    });
+  }
+
+  if (calPrevMonthBtn) {
+    calPrevMonthBtn.addEventListener('click', () => {
+      calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth() - 1, 1);
+      renderCalendarGrid();
+      haptic('light');
+    });
+  }
+
+  if (calNextMonthBtn) {
+    calNextMonthBtn.addEventListener('click', () => {
+      calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth() + 1, 1);
+      renderCalendarGrid();
+      haptic('light');
+    });
+  }
+
+  if (calResetBtn) {
+    calResetBtn.addEventListener('click', () => {
+      tempCalStart = null;
+      tempCalEnd = null;
+      state.incomeDateRange = null;
+      state.incomeFilterPeriod = 'all';
+
+      const calLabel = document.getElementById('activeCalendarLabel');
+      if (calLabel) calLabel.textContent = 'По даті';
+      const timeLabel = document.getElementById('activeTimeLabel');
+      if (timeLabel) timeLabel.textContent = 'Фільтр часу';
+
+      document.querySelectorAll('#modalTimeFilter .time-choice-item').forEach(b => {
+        const isAll = b.dataset.period === 'all';
+        b.classList.toggle('active', isAll);
+        const ch = b.querySelector('.check');
+        if (ch) ch.remove();
+        if (isAll) b.insertAdjacentHTML('beforeend', '<span class="check">✓</span>');
+      });
+
+      haptic('medium');
+      closeModal('modalDateRange');
+      renderIncome();
+    });
+  }
+
+  if (calApplyBtn) {
+    calApplyBtn.addEventListener('click', () => {
+      if (!tempCalStart) {
+        closeModal('modalDateRange');
+        return;
+      }
+      const finalStart = tempCalStart;
+      const finalEnd = tempCalEnd || tempCalStart;
+      state.incomeDateRange = { start: finalStart, end: finalEnd };
+      state.incomeFilterPeriod = null;
+
+      const sParts = finalStart.split('-');
+      const eParts = finalEnd.split('-');
+      const labelText = `${sParts[2]}.${sParts[1]} – ${eParts[2]}.${eParts[1]}`;
+
+      const calLabel = document.getElementById('activeCalendarLabel');
+      if (calLabel) calLabel.textContent = labelText;
+      const timeLabel = document.getElementById('activeTimeLabel');
+      if (timeLabel) timeLabel.textContent = 'Фільтр часу';
+
+      document.querySelectorAll('#modalTimeFilter .time-choice-item').forEach(b => {
+        b.classList.remove('active');
+        const ch = b.querySelector('.check');
+        if (ch) ch.remove();
+      });
+
+      haptic('success');
+      closeModal('modalDateRange');
+      renderIncome();
+    });
+  }
+}
+
+function renderCalendarGrid() {
+  const titleEl = document.getElementById('calMonthYearTitle');
+  const gridEl = document.getElementById('calDaysGrid');
+  const previewEl = document.getElementById('calPreviewRange');
+  if (!gridEl) return;
+
+  const monthFullNames = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+  const curY = calViewDate.getFullYear();
+  const curM = calViewDate.getMonth();
+
+  if (titleEl) {
+    titleEl.textContent = `${monthFullNames[curM]} ${curY}`;
+  }
+
+  const todayIso = new Date().toISOString().slice(0, 10);
+
+  const firstDay = new Date(curY, curM, 1);
+  const startDay = firstDay.getDay();
+  const padDays = startDay === 0 ? 6 : startDay - 1;
+  const daysInMonth = new Date(curY, curM + 1, 0).getDate();
+
+  let html = '';
+  for (let i = 0; i < padDays; i++) {
+    html += '<div class="cal-day-cell empty"></div>';
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dayStr = `${curY}-${String(curM + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const isToday = dayStr === todayIso;
+    const isStart = dayStr === tempCalStart;
+    const isEnd = dayStr === tempCalEnd;
+    const inRange = Boolean(tempCalStart && tempCalEnd && dayStr > tempCalStart && dayStr < tempCalEnd);
+
+    let classes = ['cal-day-cell'];
+    if (isToday) classes.push('is-today');
+    if (isStart) classes.push('is-start');
+    if (isEnd) classes.push('is-end');
+    if (inRange) classes.push('in-range');
+
+    html += `<div class="${classes.join(' ')}" data-date="${dayStr}">${d}</div>`;
+  }
+
+  gridEl.innerHTML = html;
+
+  if (previewEl) {
+    if (!tempCalStart) {
+      previewEl.textContent = 'Оберіть початкову дату';
+    } else if (!tempCalEnd || tempCalStart === tempCalEnd) {
+      const sParts = tempCalStart.split('-');
+      previewEl.textContent = `${sParts[2]}.${sParts[1]}.${sParts[0]} (оберіть кінцеву дату)`;
+    } else {
+      const sParts = tempCalStart.split('-');
+      const eParts = tempCalEnd.split('-');
+      const diffDays = Math.round((new Date(tempCalEnd) - new Date(tempCalStart)) / (24 * 3600 * 1000)) + 1;
+      previewEl.textContent = `${sParts[2]}.${sParts[1]}.${sParts[0]} – ${eParts[2]}.${eParts[1]}.${eParts[0]} (${diffDays} дн.)`;
+    }
+  }
+
+  gridEl.querySelectorAll('.cal-day-cell:not(.empty)').forEach(cell => {
+    cell.addEventListener('click', () => {
+      const selectedDate = cell.dataset.date;
+      haptic('light');
+
+      if (!tempCalStart || (tempCalStart && tempCalEnd)) {
+        tempCalStart = selectedDate;
+        tempCalEnd = null;
+      } else {
+        if (selectedDate < tempCalStart) {
+          tempCalEnd = tempCalStart;
+          tempCalStart = selectedDate;
+        } else {
+          tempCalEnd = selectedDate;
+        }
+      }
+      renderCalendarGrid();
+    });
+  });
+}
 
 // Niches modal
 const openNichesBtn = document.getElementById('openNichesBtn');

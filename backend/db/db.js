@@ -15,7 +15,7 @@ function readDb() {
     return JSON.parse(data);
   } catch (err) {
     console.error('Error reading database:', err);
-    return { leads: [], crm: [], income: { totalEarned: 0, totalExpected: 0, chart: [], history: [] }, profile: {}, sources: { chats: [], channels: [] } };
+    return { leads: [], crm: [], income: { records: [], currency: '₴' }, profile: {}, sources: { chats: [], channels: [] } };
   }
 }
 
@@ -233,54 +233,62 @@ export const db = {
   // ---- INCOME ----
   getIncome() {
     const data = readDb();
-    return data.income || { totalEarned: 0, totalExpected: 0, chart: [], history: [] };
+    if (!data.income) {
+      data.income = { records: [], currency: '₴' };
+    }
+    if (!Array.isArray(data.income.records)) {
+      data.income.records = [];
+    }
+    let totalEarned = 0;
+    let totalExpected = 0;
+    for (const r of data.income.records) {
+      const amt = Number(r.amount) || 0;
+      if (r.isPaid) totalEarned += amt;
+      else totalExpected += amt;
+    }
+    return {
+      records: data.income.records,
+      totalEarned,
+      totalExpected,
+      currency: data.income.currency || '₴'
+    };
   },
 
   addIncomeRecord(record) {
     const data = readDb();
     if (!data.income) {
-      data.income = { totalEarned: 0, totalExpected: 0, chart: [], history: [] };
+      data.income = { records: [], currency: '₴' };
+    }
+    if (!Array.isArray(data.income.records)) {
+      data.income.records = [];
     }
 
     const amount = Number(record.amount) || 0;
-    if (record.isPaid) {
-      data.income.totalEarned += amount;
-    } else {
-      data.income.totalExpected += amount;
-    }
+    const isPaid = record.isPaid === true || record.isPaid === 'true';
+    const date = record.date ? new Date(record.date).toISOString() : new Date().toISOString();
 
-    // Append to current history week or create week
-    const now = new Date();
-    const day = now.getDate();
-    const monthNames = ['січ', 'лют', 'бер', 'кві', 'тра', 'чер', 'лип', 'сер', 'вер', 'жов', 'лис', 'гру'];
-    const curMonth = monthNames[now.getMonth()];
-    const dateFormatted = `${day} ${curMonth}`;
-
-    const newDayEntry = {
-      date: dateFormatted,
-      dayName: ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'][now.getDay()],
-      amount,
+    const newRecord = {
+      id: `inc-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      project: record.project || 'Замовлення',
       client: record.client || 'Клієнт',
-      project: record.project || 'Проєкт'
+      amount,
+      currency: '₴',
+      isPaid,
+      date
     };
 
-    if (data.income.history && data.income.history.length > 0) {
-      data.income.history[0].days.unshift(newDayEntry);
-      data.income.history[0].total += amount;
-    } else {
-      data.income.history = [
-        {
-          id: `inc-${Date.now()}`,
-          period: `Поточний тиждень`,
-          weekLabel: `Поточний тиждень`,
-          total: amount,
-          days: [newDayEntry]
-        }
-      ];
-    }
-
+    data.income.records.unshift(newRecord);
     writeDb(data);
-    return data.income;
+    return this.getIncome();
+  },
+
+  deleteIncomeRecord(id) {
+    const data = readDb();
+    if (data.income && Array.isArray(data.income.records)) {
+      data.income.records = data.income.records.filter(r => r.id !== id);
+      writeDb(data);
+    }
+    return this.getIncome();
   },
 
   // ---- PROFILE ----
