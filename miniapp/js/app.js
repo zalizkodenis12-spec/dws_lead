@@ -1406,10 +1406,10 @@ function setupEventListeners() {
     });
   });
 
-  // Refresh button (circle arrows next to sun/moon) -> hides leads marked "В РОБОТІ ✓" and refreshes data
+  // Refresh button (circle arrows next to sun/moon) -> hides leads marked "В РОБОТІ ✓", scans for new leads and refreshes data
   const refreshBtn = document.getElementById('refreshBtn');
   if (refreshBtn) {
-    refreshBtn.addEventListener('click', () => {
+    refreshBtn.addEventListener('click', async () => {
       haptic('medium');
       flashButtonBlue(refreshBtn);
       refreshBtn.style.transform = 'rotate(360deg)';
@@ -1417,6 +1417,18 @@ function setupEventListeners() {
       // Clear session taken IDs so all "В РОБОТІ ✓" leads disappear from the Заявки list
       state.justTakenSessionIds.clear();
       filterAndRenderLeads();
+
+      try {
+        const scanRes = await fetch('/api/leads/scan', { method: 'POST' });
+        const scanJson = await scanRes.json();
+        if (scanJson.success && Array.isArray(scanJson.data) && scanJson.data.length > 0) {
+          state.allLeads = scanJson.data;
+          filterAndRenderLeads();
+        }
+      } catch (err) {
+        // Server might be in static mode or offline, fallback to loadAllData
+      }
+
       loadAllData().finally(() => {
         setTimeout(() => {
           refreshBtn.style.transform = '';

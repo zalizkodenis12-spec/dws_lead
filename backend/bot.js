@@ -16,17 +16,28 @@ if (!TOKEN) {
   console.log('[DWS Lead Bot] Будь ласка, вкажіть токен у файлі .env для запуску Telegram бота.');
 }
 
-async function tgRequest(method, payload = {}) {
+async function tgRequest(method, payload = {}, timeoutMs = 35000) {
   if (!TOKEN) return null;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+
   try {
     const res = await fetch(`https://api.telegram.org/bot${TOKEN}/${method}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: controller.signal
     });
+    clearTimeout(timer);
     return await res.json();
   } catch (err) {
-    console.error(`Telegram API error (${method}):`, err.message);
+    clearTimeout(timer);
+    if (err.name === 'AbortError') {
+      return null;
+    }
+    if (method !== 'getUpdates') {
+      console.warn(`[DWS Lead Bot] Помилка Telegram API (${method}):`, err.message);
+    }
     return null;
   }
 }
@@ -140,8 +151,9 @@ function startDailySummaryScheduler() {
 let offset = 0;
 async function pollUpdates() {
   if (!TOKEN) return;
+  let nextDelay = 1500;
   try {
-    const res = await tgRequest('getUpdates', { offset, timeout: 25 });
+    const res = await tgRequest('getUpdates', { offset, timeout: 25 }, 35000);
     if (res && res.ok && Array.isArray(res.result)) {
       for (const update of res.result) {
         offset = update.update_id + 1;
@@ -170,11 +182,16 @@ async function pollUpdates() {
           }
         }
       }
+    } else if (res && !res.ok) {
+      if (res.error_code === 409) {
+        console.warn('[DWS Lead Bot] ⚠️ Інший екземпляр або фоновий процес уже читає оновлення бота (Conflict 409). Пауза 10 сек...');
+        nextDelay = 10000;
+      }
     }
   } catch (err) {
-    console.error('Polling error:', err.message);
+    nextDelay = 5000;
   }
-  setTimeout(pollUpdates, 1500);
+  setTimeout(pollUpdates, nextDelay);
 }
 
 if (TOKEN) {
