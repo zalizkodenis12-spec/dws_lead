@@ -1133,16 +1133,8 @@ function renderIncome() {
     const eParts = endStr.split('-');
     periodLabel = `${sParts[2]}.${sParts[1]} – ${eParts[2]}.${eParts[1]}`;
   } else if (state.incomeFilterPeriod && state.incomeFilterPeriod !== 'all') {
-    const nowMs = Date.now();
-    const periodMsMap = {
-      'year': 365 * 24 * 3600 * 1000,
-      '6m': 180 * 24 * 3600 * 1000,
-      '3m': 90 * 24 * 3600 * 1000,
-      '1m': 30 * 24 * 3600 * 1000,
-      '1w': 7 * 24 * 3600 * 1000,
-      '1d': 24 * 3600 * 1000
-    };
-    const periodMs = periodMsMap[state.incomeFilterPeriod] || 0;
+    const now = new Date();
+    const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
     const periodLabels = {
       'year': 'За останній рік',
@@ -1150,15 +1142,39 @@ function renderIncome() {
       '3m': 'За останні 3 міс',
       '1m': 'За останній міс',
       '1w': 'За останній тиж',
-      '1d': 'За останній день'
+      '1d': 'Сьогодні'
     };
     periodLabel = periodLabels[state.incomeFilterPeriod] || 'За весь час';
 
-    if (periodMs > 0) {
+    if (state.incomeFilterPeriod === '1d') {
       filteredRecords = filteredRecords.filter(r => {
-        const rMs = new Date(r.date).getTime();
-        return (nowMs - rMs) <= periodMs;
+        const rd = r.date ? new Date(r.date) : new Date();
+        const rIso = `${rd.getFullYear()}-${String(rd.getMonth() + 1).padStart(2, '0')}-${String(rd.getDate()).padStart(2, '0')}`;
+        return rIso === todayIso;
       });
+    } else if (state.incomeFilterPeriod === '1w') {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      oneWeekAgo.setHours(0, 0, 0, 0);
+      filteredRecords = filteredRecords.filter(r => {
+        const rd = r.date ? new Date(r.date) : new Date();
+        return rd.getTime() >= oneWeekAgo.getTime();
+      });
+    } else {
+      const periodMsMap = {
+        'year': 365 * 24 * 3600 * 1000,
+        '6m': 180 * 24 * 3600 * 1000,
+        '3m': 90 * 24 * 3600 * 1000,
+        '1m': 30 * 24 * 3600 * 1000
+      };
+      const periodMs = periodMsMap[state.incomeFilterPeriod] || 0;
+      if (periodMs > 0) {
+        const nowMs = Date.now();
+        filteredRecords = filteredRecords.filter(r => {
+          const rMs = new Date(r.date).getTime();
+          return (nowMs - rMs) <= periodMs;
+        });
+      }
     }
   }
 
@@ -1295,10 +1311,13 @@ function renderIncome() {
 
       let treeHtml = `<div class="income-tree-wrap">`;
 
-      sortedMonthKeys.forEach((mKey, mIdx) => {
+      const isFiltered = Boolean((state.incomeFilterPeriod && state.incomeFilterPeriod !== 'all') || (state.incomeDateRange && state.incomeDateRange.start));
+
+      sortedMonthKeys.forEach((mKey) => {
         const mObj = monthsMap.get(mKey);
         const mTotal = mObj.records.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
-        const isMonthOpen = mIdx === 0; // Newest month open by default
+        // All months start CLOSED by default as requested by user
+        const isMonthOpen = false;
 
         // 4 standard weeks
         const weeks = [
@@ -1317,6 +1336,10 @@ function renderIncome() {
           else weeks[3].records.push(r);
         }
 
+        // When filtered by period or calendar, show ONLY weeks that actually have records!
+        // (e.g. for 1w only that week, for 1d only the week containing today)
+        const displayWeeks = isFiltered ? weeks.filter(w => w.records.length > 0) : weeks;
+
         treeHtml += `
           <div class="income-tree-card level-month ${isMonthOpen ? 'is-open' : ''}">
             <div class="tree-node-header" data-level="month">
@@ -1329,9 +1352,10 @@ function renderIncome() {
             <div class="tree-node-content">
         `;
 
-        weeks.forEach((w) => {
+        displayWeeks.forEach((w) => {
           const wTotal = w.records.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
-          const isWeekOpen = isMonthOpen && w.records.length > 0;
+          // Weeks start CLOSED by default
+          const isWeekOpen = false;
 
           // Group week records by day
           const daysMap = new Map();
@@ -1369,7 +1393,8 @@ function renderIncome() {
           } else {
             sortedDays.forEach((dObj) => {
               const dTotal = dObj.records.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
-              const isDayOpen = true;
+              // Days start CLOSED by default
+              const isDayOpen = false;
 
               treeHtml += `
                 <div class="income-tree-card level-day ${isDayOpen ? 'is-open' : ''}">
