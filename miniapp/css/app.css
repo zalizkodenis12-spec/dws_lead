@@ -2662,6 +2662,38 @@ body.dark-theme .order-leaf-badge.expected {
 /* ============================================================
    TAB 5: СКРАПІНГ (B2B бізнеси -> таблиці для обдзвону)
    ============================================================ */
+.scrape-api-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--card-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--pill);
+  font-family: var(--ffh);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  transition: var(--trans);
+}
+
+.scrape-api-badge:hover {
+  border-color: var(--accent);
+}
+
+.scrape-api-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--warning);
+}
+
+.scrape-api-dot.active {
+  background: var(--success);
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.45);
+}
+
 .scrape-sources {
   display: grid;
   grid-template-columns: 1fr 1fr;

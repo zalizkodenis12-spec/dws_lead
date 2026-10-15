@@ -3751,6 +3751,18 @@ function renderScrapes() {
 
 
 
+  const dot = document.getElementById('scrapeApiDot');
+  const lbl = document.getElementById('scrapeApiLabel');
+  if (dot && lbl) {
+    if (scrapeState.mode === 'live') {
+      dot.classList.add('active');
+      lbl.textContent = 'Apify Live';
+    } else {
+      dot.classList.remove('active');
+      lbl.textContent = 'Підключити API';
+    }
+  }
+
   if (!scrapeState.jobs.length) {
     list.innerHTML = '<div class="scrape-empty">Оберіть Google Maps або Instagram вище, щоб запустити перший пошук бізнесів.</div>';
     return;
@@ -4017,6 +4029,49 @@ function setupScrapeTab() {
   });
 
 
+
+  // Apify Token settings modal
+  document.getElementById('openApifyTokenBtn')?.addEventListener('click', async () => {
+    try {
+      const res = await fetch('/api/scrapes/token');
+      const json = await res.json();
+      const input = document.getElementById('apifyTokenInput');
+      if (input && json.masked) {
+        input.placeholder = json.masked;
+      }
+    } catch {}
+    openModal('modalApifyToken');
+  });
+
+  document.getElementById('saveApifyTokenBtn')?.addEventListener('click', async () => {
+    const input = document.getElementById('apifyTokenInput');
+    const token = (input?.value || '').trim();
+    if (!token) {
+      alert('Будь ласка, вставте токен Apify (починається на apify_api_...)');
+      return;
+    }
+    const btn = document.getElementById('saveApifyTokenBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'ЗБЕРІГАЮ…'; }
+    try {
+      const res = await fetch('/api/scrapes/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error || 'error');
+      haptic('success');
+      scrapeState.mode = json.mode;
+      closeModal('modalApifyToken');
+      if (input) input.value = '';
+      fetchScrapes();
+      alert('✅ Apify API токен успішно підключено! Тепер Google Maps та Instagram скрапери працюють наживо.');
+    } catch (err) {
+      alert('Не вдалося зберегти токен: ' + err.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'ЗБЕРЕГТИ ТОКЕН'; }
+    }
+  });
 
   document.getElementById('submitScrapeBtn')?.addEventListener('click', submitScrape);
 

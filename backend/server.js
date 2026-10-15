@@ -7,7 +7,7 @@ import { db } from './db/db.js';
 import { analyzeLeadAi, generatePersonalizedOffer } from './ai/gemini.js';
 import { ingestMessage, loadSources, saveSourcesToFile, scanPublicChannels, startMonitor } from './parser/monitor.js';
 import './bot.js';
-import { startScrape, listJobs, getJob, deleteJob, buildCsv, csvFileName, sendCsvToTelegram, scraperMode } from './scraper/scraper.js';
+import { startScrape, listJobs, getJob, deleteJob, buildCsv, csvFileName, sendCsvToTelegram, scraperMode, setApifyToken, getApifyToken } from './scraper/scraper.js';
 
 dotenv.config();
 
@@ -346,6 +346,23 @@ app.post('/api/account/sync', (req, res) => {
 // 8. B2B SCRAPING (Google Maps / Instagram -> таблиці по послугах -> Vapi CSV)
 app.get('/api/scrapes', (req, res) => {
   res.json({ success: true, mode: scraperMode(), data: listJobs() });
+});
+
+app.get('/api/scrapes/token', (req, res) => {
+  const token = getApifyToken();
+  const masked = token ? token.slice(0, 8) + '...' + token.slice(-4) : '';
+  res.json({ success: true, hasToken: !!token, masked, mode: scraperMode() });
+});
+
+app.post('/api/scrapes/token', (req, res) => {
+  try {
+    const { token } = req.body || {};
+    const saved = setApifyToken(token);
+    const masked = saved ? saved.slice(0, 8) + '...' + saved.slice(-4) : '';
+    res.json({ success: true, hasToken: !!saved, masked, mode: scraperMode() });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
 
 app.post('/api/scrapes', (req, res) => {

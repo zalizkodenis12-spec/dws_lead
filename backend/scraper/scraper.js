@@ -17,7 +17,32 @@ dotenv.config();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STORE_PATH = path.join(__dirname, 'scrapes.json');
 
-const APIFY_TOKEN = process.env.APIFY_TOKEN || '';
+export function getApifyToken() {
+  return (process.env.APIFY_TOKEN || '').trim();
+}
+
+export function setApifyToken(token) {
+  token = String(token || '').trim();
+  process.env.APIFY_TOKEN = token;
+  try {
+    const envPath = path.join(__dirname, '..', '..', '.env');
+    if (fs.existsSync(envPath)) {
+      let content = fs.readFileSync(envPath, 'utf-8');
+      if (content.includes('APIFY_TOKEN=')) {
+        content = content.replace(/APIFY_TOKEN=.*/, `APIFY_TOKEN=${token}`);
+      } else {
+        content += `\nAPIFY_TOKEN=${token}\n`;
+      }
+      fs.writeFileSync(envPath, content, 'utf-8');
+    }
+  } catch (err) {
+    console.warn('[Scraper] Could not update .env:', err.message);
+  }
+  return token;
+}
+
+export const scraperMode = () => (getApifyToken() ? 'live' : 'demo');
+
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN;
 const ADMIN_CHAT_ID = process.env.TELEGRAM_CHAT_ID || process.env.CHAT_ID;
 
@@ -170,25 +195,64 @@ function normalizeInstagram(item, niche, city) {
 }
 
 // ---------------- APIFY ----------------
-async function runApifyActor(actorId, input, timeoutMs = 9 * 60 * 1000) {
-  const url = `https://api.apify.com/v2/acts/${actorId}/run-sync-get-dataset-items?token=${APIFY_TOKEN}&timeout=${Math.floor(timeoutMs / 1000) - 20}`;
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input),
-      signal: controller.signal
-    });
-    if (!res.ok) {
-      const txt = await res.text();
-      throw new Error(`Apify ${res.status}: ${txt.slice(0, 200)}`);
-    }
-    return await res.json();
-  } finally {
-    clearTimeout(timer);
+async function runApifyActor(actorId, input, timeoutMs = 8 * 60 * 1000) {
+  const token = getApifyToken();
+  if (!token) throw new Error('APIFY_TOKEN не вказано. Додайте токен у налаштуваннях скрапінгу.');
+
+  // 1. Запуск актора в асинхронному режимі через офіційне API
+  const startUrl = `https://api.apify.com/v2/acts/${actorId}/runs?token=${token}`;
+  const startRes = await fetch(startUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input)
+  });
+
+  if (!startRes.ok) {
+    const txt = await startRes.text();
+    let msg = `Apify помилка (${startRes.status})`;
+    try {
+      const errJson = JSON.parse(txt);
+      if (errJson.error?.message) msg = errJson.error.message;
+    } catch {}
+    throw new Error(msg);
   }
+
+  const startData = await startRes.json();
+  const runId = startData.data?.id;
+  const datasetId = startData.data?.defaultDatasetId;
+
+  if (!runId || !datasetId) {
+    throw new Error('Не вдалося отримати ID запуску від Apify');
+  }
+
+  // 2. Опитування статусу кожні 3.5 секунди (без ризику тайм-ауту HTTP)
+  const startTime = Date.now();
+  while (Date.now() - startTime < timeoutMs) {
+    await new Promise(r => setTimeout(r, 3500));
+    try {
+      const statusRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${token}`);
+      if (!statusRes.ok) continue;
+      const statusData = await statusRes.json();
+      const status = statusData.data?.status;
+
+      if (status === 'SUCCEEDED') {
+        break;
+      }
+      if (status === 'FAILED' || status === 'TIMED-OUT' || status === 'ABORTED') {
+        throw new Error(`Парсер завершився зі статусом: ${status}`);
+      }
+    } catch (e) {
+      if (e.message.includes('Парсер завершився')) throw e;
+    }
+  }
+
+  // 3. Завантаження зібраних даних з датасету
+  const itemsUrl = `https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}&clean=true&format=json`;
+  const itemsRes = await fetch(itemsUrl);
+  if (!itemsRes.ok) {
+    throw new Error(`Не вдалося завантажити зібрані дані з датасету (${itemsRes.status})`);
+  }
+  return await itemsRes.json();
 }
 
 function buildDemoItems(source, niche, city, limit) {
@@ -231,7 +295,7 @@ export function startScrape({ source = 'gmaps', niche = '', city = '', limit = 5
     city,
     limit,
     status: 'running',
-    demo: !APIFY_TOKEN,
+    demo: !getApifyToken(),
     createdAt: new Date().toISOString(),
     finishedAt: null,
     total: 0,
@@ -258,7 +322,7 @@ async function processJob(job) {
   const query = [niche, city].filter(Boolean).join(' ');
   let items;
 
-  if (!APIFY_TOKEN) {
+  if (!getApifyToken()) {
     await new Promise(r => setTimeout(r, 2500));
     items = buildDemoItems(source, niche, city || 'Київ', limit);
   } else if (source === 'gmaps') {
@@ -345,4 +409,3 @@ export async function sendCsvToTelegram(job, category = 'all') {
   return { count };
 }
 
-export const scraperMode = () => (APIFY_TOKEN ? 'live' : 'demo');
