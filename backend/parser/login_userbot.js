@@ -77,7 +77,8 @@ async function main() {
   const updates = {
     TELEGRAM_API_ID: String(apiId),
     TELEGRAM_API_HASH: apiHash,
-    TELEGRAM_SESSION: sessionSaved
+    TELEGRAM_SESSION: sessionSaved,
+    TELEGRAM_SESSION_STRING: sessionSaved
   };
 
   let newEnv = envContent;

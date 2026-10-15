@@ -307,12 +307,12 @@ export async function startMonitor() {
   // 3. MTProto client for realtime supergroup & chat monitoring
   const apiId = process.env.TELEGRAM_API_ID;
   const apiHash = process.env.TELEGRAM_API_HASH;
-  const sessionString = process.env.TELEGRAM_SESSION;
+  const sessionString = process.env.TELEGRAM_SESSION || process.env.TELEGRAM_SESSION_STRING;
 
   if (!apiId || !apiHash || !sessionString) {
-    console.log(`[DWS Lead Monitor] ℹ️ TELEGRAM_API_ID/HASH/SESSION не знайдено в .env.`);
+    console.log(`[DWS Lead Monitor] ℹ️ TELEGRAM_SESSION не знайдено в .env.`);
     console.log(`[DWS Lead Monitor] ℹ️ Активний Web Channel Ingestion для 24 публічних каналів України.`);
-    console.log(`[DWS Lead Monitor] 💡 Щоб увімкнути моніторинг усіх 79 суперчатів у реальному часі, запустіть: node backend/parser/login_userbot.js`);
+    console.log(`[DWS Lead Monitor] 💡 Щоб увімкнути моніторинг усіх 79 суперчатів у реальному часі, запустіть: npm run login`);
     return;
   }
 
