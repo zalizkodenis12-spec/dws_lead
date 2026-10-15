@@ -745,6 +745,21 @@ async function fetchLeads() {
 
 function getExactCountry(lead) {
   if (!lead) return 'Україна';
+
+  // 0. If lead is from a freelance exchange, show the exact exchange name instead of country!
+  const exchangeNames = ['Freelancehunt', 'Freelance.ua', 'Djinni', 'Kabanchik', 'Upwork', 'Weblancer'];
+  if (lead.sourceName && exchangeNames.includes(lead.sourceName)) {
+    return lead.sourceName;
+  }
+  if (lead.country && exchangeNames.includes(lead.country)) {
+    return lead.country;
+  }
+  if (lead.sourceType === 'freelancehunt') return 'Freelancehunt';
+  if (lead.sourceType === 'freelance_ua') return 'Freelance.ua';
+  if (lead.sourceType === 'djinni') return 'Djinni';
+  if (lead.sourceType === 'kabanchik') return 'Kabanchik';
+  if (lead.sourceType === 'upwork') return 'Upwork';
+
   const text = ((lead.text || '') + ' ' + (lead.title || '') + ' ' + (lead.sourceName || '')).toLowerCase();
 
   // 1. Точні перевірки по містах, валютах та згадках
@@ -1009,15 +1024,25 @@ function openTakeCrmModal(lead, btn) {
     }
   }
 
-  // Direct TG button click handler
+  // Action buttons: Direct contact or open on exchange
   if (directTgBtn) {
-    directTgBtn.onclick = () => {
-      haptic('light');
-      openTelegramContact(lead, '');
-    };
+    const isExchange = !!lead.url && (!lead.authorUsername || lead.authorUsername.startsWith('@freelance') || lead.authorUsername.startsWith('@djinni') || lead.authorUsername.startsWith('@kabanchik'));
+    if (isExchange) {
+      directTgBtn.textContent = `ВІДКРИТИ НА ${lead.sourceName || 'БІРЖІ'} ↗`;
+      directTgBtn.onclick = () => {
+        haptic('light');
+        window.open(lead.url, '_blank');
+      };
+    } else {
+      directTgBtn.textContent = 'НАПИСАТИ В ЛІЧКУ';
+      directTgBtn.onclick = () => {
+        haptic('light');
+        openTelegramContact(lead, '');
+      };
+    }
   }
 
-  // AI offer button click handler
+  // AI offer button click handler (Copies pitch and opens dialog/exchange)
   if (aiOfferBtn) {
     aiOfferBtn.onclick = () => {
       haptic('success');
@@ -1032,7 +1057,11 @@ function openTakeCrmModal(lead, btn) {
       aiOfferBtn.textContent = 'СКОПІЙОВАНО ✓';
       setTimeout(() => { aiOfferBtn.textContent = 'AI-ВІДГУК'; }, 2000);
 
-      openTelegramContact(lead, pitch);
+      if (lead.url) {
+        window.open(lead.url, '_blank');
+      } else {
+        openTelegramContact(lead, pitch);
+      }
     };
   }
 

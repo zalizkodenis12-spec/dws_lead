@@ -59,9 +59,16 @@ async function main() {
 
   console.log('\nПідключення до Telegram серверів...');
   await client.start({
-    phoneNumber: async () => await question('Введіть номер телефону (+380...): '),
+    phoneNumber: async () => {
+      let raw = await question('Введіть номер телефону (+380...): ');
+      raw = raw.trim().replace(/[\s()-]/g, '');
+      if (raw.startsWith('0') && raw.length === 10) raw = '+38' + raw;
+      else if (!raw.startsWith('+') && !raw.startsWith('380') && raw.length === 9) raw = '+380' + raw;
+      else if (!raw.startsWith('+')) raw = '+' + raw;
+      return raw;
+    },
     password: async () => await question('Введіть пароль двофакторної автентифікації 2FA (якщо є): '),
-    phoneCode: async () => await question('Введіть код підтвердження з Telegram: '),
+    phoneCode: async () => (await question('Введіть код підтвердження з Telegram: ')).trim(),
     onError: (err) => console.error('Помилка авторизації:', err.message)
   });
 

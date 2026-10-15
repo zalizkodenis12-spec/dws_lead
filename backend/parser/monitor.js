@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { db } from '../db/db.js';
 import { classifyLeadRuleBased } from './filter.js';
+import { scanAllExchanges } from './exchanges.js';
 
 dotenv.config();
 
@@ -282,7 +283,17 @@ export async function scanPublicChannels() {
     }));
   }
 
-  console.log(`[DWS Lead Monitor] ✅ Сканування завершено. Додано ${newLeadsCount} нових актуальних лідів.`);
+  // Also scan freelance exchanges (Freelancehunt, Djinni, Freelance.ua, Kabanchik)
+  try {
+    const exchangeResult = await scanAllExchanges();
+    if (exchangeResult?.newLeads) {
+      newLeadsCount += exchangeResult.newLeads;
+    }
+  } catch (err) {
+    console.error('[DWS Lead Monitor] Exchange scan error:', err.message);
+  }
+
+  console.log(`[DWS Lead Monitor] ✅ Повне сканування завершено (Телеграм + Біржі). Додано ${newLeadsCount} нових актуальних лідів.`);
   return { scanned: targetHandles.length, newLeads: newLeadsCount };
 }
 
