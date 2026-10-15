@@ -64,6 +64,33 @@ function getFirstSentence(text) {
 const DEFAULT_DATA = {
   leads: [
   {
+    "id": "lead-ex-1792099017336-5964",
+    "category": "marketing",
+    "categoryName": "Маркетинг",
+    "subcategory": "meta_target",
+    "subcategoryName": "Таргетована реклама (Meta)",
+    "sourceType": "freelancehunt",
+    "sourceName": "Freelancehunt",
+    "sourceUsername": "@freelancehunt",
+    "authorName": "Замовник на Freelancehunt",
+    "authorUsername": "@freelancehunt",
+    "title": "Нужен СММ",
+    "text": "Нужен СММ - 5000UAH\n\nНужен SMM для ведения проекта в Facebook/Instagram. В неделю нужно делать 2 поста на стену по принципу карусели. И делать 4-5 рилсов. Делать нужно будет в стилистике, как уже выполнялось ранее. Будет плюсом, если вы умеете настраивать таргетированную рекламу, но это не обязательно. Главное умение SMM....",
+    "url": "https://freelancehunt.com/project/potriben-smm/1659283.html",
+    "date": "2026-10-15T21:16:57.336Z",
+    "dateFormatted": "Сьогодні, 00:16",
+    "budget": 5000,
+    "currency": "₴",
+    "country": "Freelancehunt",
+    "isUrgent": false,
+    "requiresPortfolio": false,
+    "experienceRequired": false,
+    "aiRating": 59,
+    "aiSummary": "Замовлення на Freelancehunt: таргетована реклама (meta) з бюджетом 5000 ₴.",
+    "aiAnalysis": null,
+    "inCrm": false
+  },
+  {
     "id": "lead-ex-1792098910545-8823",
     "category": "development",
     "categoryName": "Веброзробка",
@@ -2555,7 +2582,7 @@ async function fetchLeads() {
     if (state.filters.query) params.set('query', state.filters.query);
     if (state.filters.sortBy) params.set('sortBy', state.filters.sortBy);
 
-    let res = await fetch('/leads-data.json').catch(() => null);
+    let res = await fetch('/leads-data.json?t=' + Date.now()).catch(() => null);
     if (!res || !res.ok) {
       res = await fetch('/api/leads?' + params.toString()).catch(() => null);
     }
