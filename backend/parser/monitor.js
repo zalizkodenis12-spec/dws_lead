@@ -127,17 +127,84 @@ export function ingestMessage({ text, authorName, authorUsername, sourceTitle, s
   return savedLead;
 }
 
+const IGNORED_AUTHOR_HANDLES = new Set([
+  'share', 'joinchat', 'iv', 'addstickers', 'proxy', 'telegram', 'icloud', 'gmail', 'ukr',
+  'rethink', 'manager_jecontact', 'channel', 'admin', 'support', 'bot', 'feedback', 'comments',
+  'contact', 'job', 'jobs', 'work', 'info', 'news', 'help', 'app', 'android', 'ios'
+]);
+
+export function extractAuthorHandle(cleanText, rawBodyHtml = '', sourceHandle = '') {
+  const srcLower = (sourceHandle || '').toLowerCase().replace('@', '');
+
+  // 1. Explicit contact keywords in text (e.g. "Контакт: @...", "Пишіть @...", "HR: @...", "Резюме: @...")
+  const contactPattern = /(?:контакт[иа]?|пиш[іі]ть|зв['’]?язок|відгук(?:нутися)?|резюме|відправляйте|надсилайте|hr|recruiter|pm|лічка|лс)[\s:—–-]+@?([a-zA-Z0-9_]{4,32})\b/gi;
+  let match;
+  while ((match = contactPattern.exec(cleanText)) !== null) {
+    const handle = match[1];
+    const hLower = handle.toLowerCase();
+    if (!hLower.endsWith('bot') && hLower !== srcLower && !IGNORED_AUTHOR_HANDLES.has(hLower)) {
+      return '@' + handle;
+    }
+  }
+
+  // 2. All @mentions in text and t.me/ links in html
+  const mentions = [...cleanText.matchAll(/(?:^|[\s(,:;>«"'])@([a-zA-Z0-9_]{4,32})\b/g)].map(x => x[1]);
+  const links = [...(rawBodyHtml || '').matchAll(/href="https:\/\/t\.me\/([a-zA-Z0-9_]{4,32})"/g)].map(x => x[1]);
+  const all = [...mentions, ...links];
+
+  // Pick candidates from bottom to top (contacts are typically at the end of vacancy posts)
+  for (let i = all.length - 1; i >= 0; i--) {
+    const candidate = all[i];
+    const cLower = candidate.toLowerCase();
+    if (candidate.startsWith('s_') || cLower.endsWith('bot') || cLower === srcLower || IGNORED_AUTHOR_HANDLES.has(cLower)) {
+      continue;
+    }
+    return '@' + candidate;
+  }
+
+  // 3. Fallback to channel itself so user can open source channel and see vacancy
+  return '@' + srcLower;
+}
+
 /**
- * Scans all accessible public Ukrainian channels and chats from sources.json
+ * Scans all accessible public Ukrainian broadcast channels from sources.json
  */
 export async function scanPublicChannels() {
   const sources = loadSources();
-  const allList = [...(sources.chats || []), ...(sources.channels || [])];
+  // Filter for broadcast channels (t.me/s/ works exclusively for channels, not discussion groups)
+  const channelList = (sources.channels && sources.channels.length > 0)
+    ? sources.channels
+    : [
+        { username: '@workplaceinukraine', title: 'Work Place UA', category: 'general' },
+        { username: '@aplaywork', title: 'A-Play Work UA', category: 'general' },
+        { username: '@jecontact', title: 'Je Contact IT & Digital', category: 'development' },
+        { username: '@adgoodashell', title: 'Ad Good as Hell', category: 'marketing' },
+        { username: '@top_vacansii', title: 'Топ Вакансії UA', category: 'general' },
+        { username: '@work_in_ukraine_golovne', title: 'Робота в Україні', category: 'general' },
+        { username: '@jobzy', title: 'Jobzy UA', category: 'general' },
+        { username: '@freelance_projects', title: 'Фріланс проєкти UA', category: 'development' },
+        { username: '@remote_jobs_ua', title: 'Віддалена робота UA', category: 'general' },
+        { username: '@ua_work', title: 'Робота UA', category: 'general' },
+        { username: '@it_jobs_ukraine', title: 'IT Вакансії Україна', category: 'development' },
+        { username: '@robota_viddaleno', title: 'Робота віддалено', category: 'general' },
+        { username: '@remote_work_ukraine', title: 'Remote Work Ukraine', category: 'general' },
+        { username: '@it_work_ua', title: 'IT Робота Україна', category: 'development' },
+        { username: '@smm_work_ua', title: 'SMM Вакансії та Маркетинг', category: 'marketing' },
+        { username: '@freelance_hub_ua', title: 'Freelance Hub UA', category: 'development' },
+        { username: '@robota_v_it', title: 'Робота в IT & Digital', category: 'development' },
+        { username: '@zaichenkoteam', title: 'Zaichenko Team', category: 'general' },
+        { username: '@lobbyx', title: 'Lobby X', category: 'general' },
+        { username: '@happymonday', title: 'Happy Monday', category: 'general' },
+        { username: '@kievy_rabota', title: 'Київ Робота', category: 'general' },
+        { username: '@you_can_know_more', title: 'Ти можеш більше', category: 'general' },
+        { username: '@remote_it_ua', title: 'Remote IT Ukraine', category: 'development' },
+        { username: '@digital_work_ua', title: 'Digital Work UA', category: 'marketing' }
+      ];
 
   const targetHandles = [];
   const seenHandles = new Set();
 
-  for (const item of allList) {
+  for (const item of channelList) {
     let raw = (typeof item === 'string' ? item : (item.username || '')).trim();
     if (!raw || raw.startsWith('joinchat') || raw.includes('/joinchat/')) continue;
     let clean = raw.replace('https://t.me/', '').replace('@', '').split('/')[0].trim();
@@ -150,70 +217,35 @@ export async function scanPublicChannels() {
     });
   }
 
-  console.log(`[DWS Lead Monitor] 🔎 Початок сканування ${targetHandles.length} джерел України...`);
+  console.log(`[DWS Lead Monitor] 🔎 Початок сканування ${targetHandles.length} активних каналів України...`);
   let newLeadsCount = 0;
 
-  const ignoredHandles = new Set([
-    ...seenHandles,
-    'share', 'joinchat', 'iv', 'addstickers', 'proxy', 'telegram', 'icloud', 'gmail', 'ukr', 'rethink', 'manager_jecontact'
-  ]);
-
-  const userVerifyCache = new Map();
-  async function isRealPersonalTelegramUser(handle) {
-    const key = handle.toLowerCase();
-    if (userVerifyCache.has(key)) return userVerifyCache.get(key);
-    try {
-      const r = await fetch(`https://t.me/${handle}`, {
-        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
-      });
-      if (!r.ok) {
-        userVerifyCache.set(key, false);
-        return false;
-      }
-      const pageHtml = await r.text();
-      const exists = pageHtml.includes('tgme_page_title');
-      const isChannelOrGroup = /subscribers|members/i.test(pageHtml);
-      const isValidPerson = exists && !isChannelOrGroup;
-      userVerifyCache.set(key, isValidPerson);
-      return isValidPerson;
-    } catch {
-      userVerifyCache.set(key, false);
-      return false;
-    }
-  }
-
-  for (const src of targetHandles) {
-    try {
-      let urlsToFetch = [`https://t.me/s/${src.handle}`];
-      for (let pageIdx = 0; pageIdx < urlsToFetch.length; pageIdx++) {
-        const res = await fetch(urlsToFetch[pageIdx], {
+  // Process channels in small concurrent batches for speed without getting rate-limited
+  const BATCH_SIZE = 4;
+  for (let i = 0; i < targetHandles.length; i += BATCH_SIZE) {
+    const batch = targetHandles.slice(i, i + BATCH_SIZE);
+    await Promise.allSettled(batch.map(async (src) => {
+      try {
+        const res = await fetch(`https://t.me/s/${src.handle}`, {
           headers: {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'Accept-Language': 'uk-UA,uk;q=0.9,en;q=0.8'
-          }
+          },
+          signal: AbortSignal.timeout(8000)
         });
-        if (!res.ok) continue;
+        if (!res.ok) return;
 
         const html = await res.text();
-        if (pageIdx === 0) {
-          const beforeMatches = [...html.matchAll(/data-before="(\d+)"/g)];
-          if (beforeMatches.length > 0) {
-            const oldestId = beforeMatches[0][1];
-            urlsToFetch.push(`https://t.me/s/${src.handle}?before=${oldestId}`);
-          }
-        }
-
         const parts = html.split('tgme_widget_message_wrap');
-        if (parts.length <= 1) continue;
+        if (parts.length <= 1) return;
 
-        for (let i = 1; i < parts.length; i++) {
-          const block = parts[i];
+        for (let pIdx = 1; pIdx < parts.length; pIdx++) {
+          const block = parts[pIdx];
           const textMatch = block.match(/<div[^>]*class="[^"]*tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<(?:div class="tgme_widget_message_footer"|\/div)/i) ||
                             block.match(/<div[^>]*class="[^"]*tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
           if (!textMatch) continue;
 
           const rawBodyHtml = textMatch[1];
-
           let cleanText = rawBodyHtml
             .replace(/<br\s*[\/]?>/gi, '\n')
             .replace(/<[^>]+>/g, '')
@@ -228,30 +260,7 @@ export async function scanPublicChannels() {
           cleanText = cleanTelegramPostText(cleanText);
           if (cleanText.length < 25) continue;
 
-          // Collect all candidate @usernames from text and body links (checking bottom-most contact links first)
-          const candidates = [];
-          const mentionMatches = [...cleanText.matchAll(/(?:^|[\s(,:;>«"'])@([a-zA-Z0-9_]{4,32})\b/g)];
-          for (const m of mentionMatches) {
-            candidates.push(m[1]);
-          }
-          const linkMatches = [...rawBodyHtml.matchAll(/href="https:\/\/t\.me\/([a-zA-Z0-9_]{4,32})"/g)];
-          for (const lm of linkMatches) {
-            candidates.push(lm[1]);
-          }
-
-          let authorUsername = '';
-          for (let cIdx = candidates.length - 1; cIdx >= 0; cIdx--) {
-            const candidate = candidates[cIdx];
-            if (candidate.startsWith('s_') || ignoredHandles.has(candidate.toLowerCase()) || candidate.toLowerCase().endsWith('bot')) {
-              continue;
-            }
-            if (await isRealPersonalTelegramUser(candidate)) {
-              authorUsername = '@' + candidate;
-              break;
-            }
-          }
-
-          // Only ingest if we have a verified real personal Telegram account to message in PM!
+          const authorUsername = extractAuthorHandle(cleanText, rawBodyHtml, src.handle);
           if (!authorUsername) continue;
 
           const lead = ingestMessage({
@@ -260,17 +269,17 @@ export async function scanPublicChannels() {
             authorUsername,
             sourceTitle: src.title,
             sourceUsername: '@' + src.handle,
-            sourceType: 'chat'
+            sourceType: 'channel'
           });
 
           if (lead) {
             newLeadsCount++;
           }
         }
+      } catch (err) {
+        // Quiet fail per channel so scan continues smoothly
       }
-    } catch (err) {
-      // Quiet fail per channel so other channels proceed
-    }
+    }));
   }
 
   console.log(`[DWS Lead Monitor] ✅ Сканування завершено. Додано ${newLeadsCount} нових актуальних лідів.`);

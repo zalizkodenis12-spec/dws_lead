@@ -559,100 +559,170 @@
   ],
   "channels": [
     {
-      "username": "@business_chat_ua",
-      "title": "business_chat_ua UA",
+      "username": "@workplaceinukraine",
+      "title": "Work Place UA | Вакансії",
       "category": "general",
       "active": true,
       "type": "channel"
     },
     {
-      "username": "@flschat",
-      "title": "flschat UA",
+      "username": "@aplaywork",
+      "title": "A-Play | Робота та кар'єра",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@jecontact",
+      "title": "Je Contact | IT & Digital Вакансії",
       "category": "development",
       "active": true,
       "type": "channel"
     },
     {
-      "username": "@rabota_kieve_chate",
-      "title": "rabota_kieve_chate UA",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "joinchat/woxZIzaWi-syNzBi",
-      "title": "Закритий чат UA (Invite)",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@Marketing_chat_UA",
-      "title": "Marketing_chat_UA UA",
+      "username": "@adgoodashell",
+      "title": "Ad Good as Hell | Маркетинг & Креатив",
       "category": "marketing",
       "active": true,
       "type": "channel"
     },
     {
-      "username": "@chat_robota",
-      "title": "chat_robota UA",
+      "username": "@top_vacansii",
+      "title": "Топ Вакансії UA",
       "category": "general",
       "active": true,
       "type": "channel"
     },
     {
-      "username": "@lviv_ua_group",
-      "title": "lviv_ua_group UA",
+      "username": "@work_in_ukraine_golovne",
+      "title": "Робота в Україні | Головне",
       "category": "general",
       "active": true,
       "type": "channel"
     },
     {
-      "username": "@kyiv_ua_group",
-      "title": "kyiv_ua_group UA",
+      "username": "@jobzy",
+      "title": "Jobzy | Вакансії",
       "category": "general",
       "active": true,
       "type": "channel"
     },
     {
-      "username": "@lvova_chat",
-      "title": "lvova_chat UA",
+      "username": "@freelance_projects",
+      "title": "Фріланс проєкти та замовлення UA",
+      "category": "development",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@remote_jobs_ua",
+      "title": "Віддалена робота UA",
       "category": "general",
       "active": true,
       "type": "channel"
     },
     {
-      "username": "@vinnytsia_ua_group",
-      "title": "vinnytsia_ua_group UA",
+      "username": "@ua_work",
+      "title": "Робота UA | Вакансії",
       "category": "general",
       "active": true,
       "type": "channel"
     },
     {
-      "username": "@dnipro_ua_group",
-      "title": "dnipro_ua_group UA",
+      "username": "@it_jobs_ukraine",
+      "title": "IT Вакансії Україна",
+      "category": "development",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@robota_viddaleno",
+      "title": "Робота віддалено | Freelance",
       "category": "general",
       "active": true,
       "type": "channel"
     },
     {
-      "username": "@odesa_ua_group",
-      "title": "odesa_ua_group UA",
+      "username": "@remote_work_ukraine",
+      "title": "Remote Work Ukraine",
       "category": "general",
       "active": true,
       "type": "channel"
     },
     {
-      "username": "@kharkiv_ua_group",
-      "title": "kharkiv_ua_group UA",
+      "username": "@it_work_ua",
+      "title": "IT Робота Україна",
+      "category": "development",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@smm_work_ua",
+      "title": "SMM Вакансії та Маркетинг",
+      "category": "marketing",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@freelance_hub_ua",
+      "title": "Freelance Hub UA",
+      "category": "development",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@robota_v_it",
+      "title": "Робота в IT & Digital UA",
+      "category": "development",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@zaichenkoteam",
+      "title": "Zaichenko Team | Вакансії",
       "category": "general",
       "active": true,
       "type": "channel"
     },
     {
-      "username": "@bazarUkrain",
-      "title": "bazarUkrain UA",
+      "username": "@lobbyx",
+      "title": "Lobby X | Вакансії",
       "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@happymonday",
+      "title": "Happy Monday | Кар'єра",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@kievy_rabota",
+      "title": "Київ Робота",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@you_can_know_more",
+      "title": "Ти можеш більше | Вакансії",
+      "category": "general",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@remote_it_ua",
+      "title": "Remote IT Ukraine",
+      "category": "development",
+      "active": true,
+      "type": "channel"
+    },
+    {
+      "username": "@digital_work_ua",
+      "title": "Digital Work UA",
+      "category": "marketing",
       "active": true,
       "type": "channel"
     }
