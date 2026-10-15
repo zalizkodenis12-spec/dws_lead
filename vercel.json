@@ -8,13 +8,20 @@
         { "key": "Pragma", "value": "no-cache" },
         { "key": "Expires", "value": "0" }
       ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Content-Type", "value": "application/json; charset=utf-8" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" }
+      ]
     }
   ],
   "rewrites": [
-    { "source": "/api/leads/scan", "destination": "/api/leads/scan" },
-    { "source": "/api/leads", "destination": "/api/leads" },
-    { "source": "/api/leads/(.*)", "destination": "/api/leads/$1" },
-    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/api/leads.json", "destination": "/miniapp/api/leads.json" },
+    { "source": "/api/leads", "destination": "/miniapp/api/leads.json" },
+    { "source": "/api/leads/scan", "destination": "/miniapp/api/leads.json" },
     { "source": "/(.*)", "destination": "/miniapp/$1" }
   ]
 }

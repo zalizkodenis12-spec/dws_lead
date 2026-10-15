@@ -2555,12 +2555,17 @@ async function fetchLeads() {
     if (state.filters.query) params.set('query', state.filters.query);
     if (state.filters.sortBy) params.set('sortBy', state.filters.sortBy);
 
-    const res = await fetch('/api/leads?' + params.toString());
-    const json = await res.json();
-    if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-      state.allLeads = json.data;
-      filterAndRenderLeads();
-      return;
+    let res = await fetch('/api/leads.json').catch(() => null);
+    if (!res || !res.ok) {
+      res = await fetch('/api/leads?' + params.toString()).catch(() => null);
+    }
+    if (res && res.ok) {
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+        state.allLeads = json.data;
+        filterAndRenderLeads();
+        return;
+      }
     }
   } catch (err) {
     console.warn('Using embedded dataset for leads:', err);
@@ -3628,6 +3633,44 @@ function setupEventListeners() {
       state.justTakenSessionIds.clear();
       filterAndRenderLeads();
 
+      // Dispatch Telegram report on refresh
+      try {
+        const nowTime = new Intl.DateTimeFormat('uk-UA', {
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZone: 'Europe/Kyiv'
+        }).format(new Date());
+
+        const fhCount = state.allLeads.filter(l => l.country === 'Freelancehunt' || l.sourceName === 'Freelancehunt').length;
+        const djCount = state.allLeads.filter(l => l.country === 'Djinni' || l.sourceName === 'Djinni').length;
+        const remCount = state.allLeads.filter(l => (l.country || '').includes('Upwork') || (l.sourceName || '').includes('Upwork')).length;
+        const wwrCount = state.allLeads.filter(l => (l.country || '').includes('WeWork') || (l.sourceName || '').includes('WeWork')).length;
+        const tgCount = state.allLeads.length - (fhCount + djCount + remCount + wwrCount);
+
+        const reportMsg = `🔄 <b>Звіт оновлення DWS Lead [${nowTime}]</b>\n\n` +
+          `Активні замовлення в системі:\n` +
+          `• <b>Freelancehunt:</b> ${fhCount} проєктів\n` +
+          `• <b>Djinni:</b> ${djCount} вакансій\n` +
+          `• <b>Upwork / Remote:</b> ${remCount} замовлень\n` +
+          `• <b>WeWorkRemotely:</b> ${wwrCount} проєктів\n` +
+          `• <b>Telegram канали:</b> ${tgCount} лідів\n\n` +
+          `📦 Всього заявок у базі: <b>${state.allLeads.length}</b>\n\n` +
+          `Всі замовлення відображаються у першому меню «Заявки» з тегом біржі замість країни.`;
+
+        fetch('https://api.telegram.org/bot8953225581:AAG7lpvh6JHCbyMKfsz4qEucd_7qqgh6koM/sendMessage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: '5278970111',
+            text: reportMsg,
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [[{ text: 'Відкрити DWSlead ↗', web_app: { url: 'https://dwslead-miniapp.vercel.app' } }]]
+            }
+          })
+        }).catch(() => {});
+      } catch (_) {}
+
       try {
         const scanRes = await fetch('/api/leads/scan', { method: 'POST' });
         const scanJson = await scanRes.json();
@@ -3636,7 +3679,7 @@ function setupEventListeners() {
           filterAndRenderLeads();
         }
       } catch (err) {
-        // Server might be in static mode or offline, fallback to loadAllData
+        // Fallback smooth
       }
 
       loadAllData().finally(() => {
