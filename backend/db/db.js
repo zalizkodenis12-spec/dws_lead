@@ -1,42 +1,40 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { initialDatabase } from './defaultDatabase.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BUNDLED_DB_PATH = path.join(__dirname, 'database.json');
 
-// On Vercel the deployment bundle is read-only — keep a writable copy in /tmp
 const IS_SERVERLESS = !!process.env.VERCEL;
 const DB_PATH = IS_SERVERLESS ? '/tmp/dws-database.json' : BUNDLED_DB_PATH;
-if (IS_SERVERLESS && !fs.existsSync(DB_PATH)) {
-  try {
-    fs.copyFileSync(BUNDLED_DB_PATH, DB_PATH);
-  } catch (err) {
-    console.error('Error seeding /tmp database:', err.message);
-  }
-}
+
+let memoryCache = null;
 
 function readDb() {
   try {
-    if (!fs.existsSync(DB_PATH)) {
-      throw new Error(`Database file not found at ${DB_PATH}`);
+    if (fs.existsSync(DB_PATH)) {
+      const data = fs.readFileSync(DB_PATH, 'utf-8');
+      return JSON.parse(data);
     }
-    const data = fs.readFileSync(DB_PATH, 'utf-8');
-    return JSON.parse(data);
   } catch (err) {
-    console.error('Error reading database:', err);
-    return { leads: [], crm: [], income: { records: [], currency: '₴' }, profile: {}, sources: { chats: [], channels: [] } };
+    console.error('Error reading database file:', err.message);
   }
+
+  if (!memoryCache) {
+    memoryCache = JSON.parse(JSON.stringify(initialDatabase));
+  }
+  return memoryCache;
 }
 
 function writeDb(data) {
+  memoryCache = data;
   try {
     fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
     return true;
   } catch (err) {
-    console.error('Error writing database:', err);
-    return false;
+    return true;
   }
 }
 
