@@ -1757,10 +1757,19 @@ body.dark-theme .crm-order-card-title {
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: flex-start;
   padding: 0 10px;
   z-index: 20;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.03);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.app-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .nav-btn {
@@ -1769,7 +1778,9 @@ body.dark-theme .crm-order-card-title {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  flex: 1;
+  /* 4 вкладки на екран, решта — гортанням вправо */
+  flex: 0 0 25%;
+  scroll-snap-align: start;
   height: 100%;
   color: var(--muted);
   cursor: pointer;
@@ -2646,3 +2657,362 @@ body.dark-theme .order-leaf-badge.expected {
   transform: translateX(-50%) scale(0.92);
   background: var(--accent-h);
 }
+
+
+/* ============================================================
+   TAB 5: СКРАПІНГ (B2B бізнеси -> таблиці для обдзвону)
+   ============================================================ */
+.scrape-sources {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.scrape-source-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--ff);
+  transition: var(--trans);
+}
+
+.scrape-source-btn:hover { border-color: var(--accent); }
+.scrape-source-btn:active { transform: scale(0.98); }
+
+.scrape-source-ico {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--pill);
+  background: var(--accent-bg);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.scrape-source-title {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 1.02rem;
+  color: var(--black);
+}
+
+.scrape-source-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.scrape-mode-note {
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: var(--card-sub);
+  border: 1px dashed var(--border);
+  border-radius: var(--r);
+  padding: 10px 12px;
+  margin-bottom: 18px;
+  line-height: 1.45;
+}
+
+.scrape-mode-note:empty { display: none; }
+
+.scrape-section-label {
+  font-family: var(--ffh);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.scrape-jobs {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 24px;
+}
+
+.scrape-empty {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.86rem;
+  padding: 28px 12px;
+}
+
+/* Job card */
+.scrape-job {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden;
+  transition: var(--trans);
+}
+
+.scrape-job.open { border-color: var(--accent); }
+
+.scrape-job-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  min-height: 76px;
+}
+
+.scrape-job-ico {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--pill);
+  background: var(--accent-bg);
+  border: 1px solid rgba(0, 102, 255, 0.25);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scrape-job-info { flex: 1; min-width: 0; }
+
+.scrape-job-title {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scrape-job-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.scrape-job-count {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.scrape-job-count b {
+  display: block;
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 1.3rem;
+  color: var(--black);
+  line-height: 1;
+}
+
+.scrape-job-count span {
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.scrape-chevron {
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: transform var(--trans);
+}
+
+.open > .scrape-job-head .scrape-chevron,
+.open > .scrape-cat-head .scrape-chevron {
+  transform: rotate(180deg);
+  color: var(--accent);
+}
+
+.scrape-status-pill {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: var(--pill);
+  font-size: 0.68rem;
+  font-weight: 700;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.scrape-status-pill.running { background: var(--accent-bg); color: var(--accent); }
+.scrape-status-pill.error { background: var(--danger-bg); color: var(--danger); }
+.scrape-status-pill.demo { background: var(--warning-bg); color: var(--warning); }
+
+.scrape-spinner {
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid var(--accent-bg);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: scrapeSpin 0.8s linear infinite;
+}
+
+@keyframes scrapeSpin { to { transform: rotate(360deg); } }
+
+/* Expanded body */
+.scrape-job-body {
+  display: none;
+  padding: 0 12px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.scrape-job.open .scrape-job-body { display: block; }
+
+.scrape-job-actions {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.scrape-job-actions .btn { flex: 1; justify-content: center; font-size: 0.78rem; }
+
+/* Category (service) block */
+.scrape-cat {
+  background: var(--card-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.scrape-cat-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+
+.scrape-cat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.scrape-cat-dot.site { background: var(--accent); }
+.scrape-cat-dot.ads { background: var(--warning); }
+.scrape-cat-dot.auto { background: var(--success); }
+.scrape-cat-dot.apps { background: #8B5CF6; }
+
+.scrape-cat-name {
+  flex: 1;
+  font-family: var(--ffh);
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--black);
+}
+
+.scrape-cat-num {
+  min-width: 30px;
+  padding: 3px 10px;
+  border-radius: var(--pill);
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.scrape-cat-body { display: none; padding: 0 10px 12px; }
+.scrape-cat.open .scrape-cat-body { display: block; }
+
+.scrape-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--card-bg);
+}
+
+.scrape-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+}
+
+.scrape-table th {
+  text-align: left;
+  font-family: var(--ffh);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.4px;
+  color: var(--muted);
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.scrape-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: top;
+}
+
+.scrape-table tr:last-child td { border-bottom: none; }
+
+.scrape-biz-name { font-weight: 700; color: var(--black); }
+.scrape-biz-reason { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+.scrape-table a { color: var(--accent); text-decoration: none; white-space: nowrap; }
+
+.scrape-cat-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.scrape-cat-actions .btn { flex: 1; justify-content: center; font-size: 0.74rem; padding: 8px 10px; }
+
+/* Modal controls */
+.scrape-seg {
+  display: flex;
+  gap: 6px;
+  background: var(--input-bg);
+  border-radius: var(--r);
+  padding: 4px;
+}
+
+.scrape-seg-btn {
+  flex: 1;
+  padding: 9px 6px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--ffh);
+  font-weight: 700;
+  font-size: 0.86rem;
+  cursor: pointer;
+  transition: var(--trans);
+}
+
+.scrape-seg-btn.active { background: var(--accent); color: #fff; }
+
+.scrape-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.scrape-chip {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--pill);
+  background: var(--card-bg);
+  color: var(--text);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--trans);
+}
+
+.scrape-chip.active,
+.scrape-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+#modalScrape .form-group { margin-bottom: 18px; }

@@ -7,6 +7,7 @@ import { db } from './db/db.js';
 import { analyzeLeadAi, generatePersonalizedOffer } from './ai/gemini.js';
 import { ingestMessage, loadSources, saveSourcesToFile, scanPublicChannels, startMonitor } from './parser/monitor.js';
 import './bot.js';
+import { startScrape, listJobs, getJob, deleteJob, buildCsv, csvFileName, sendCsvToTelegram, scraperMode } from './scraper/scraper.js';
 
 dotenv.config();
 
@@ -337,6 +338,50 @@ app.post('/api/account/sync', (req, res) => {
     const { accountKey, crm, income, profile, takenLeadIds, username, name } = req.body;
     const synced = db.syncAccount(accountKey, { crm, income, profile, takenLeadIds, username, name });
     res.json({ success: true, data: synced });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 8. B2B SCRAPING (Google Maps / Instagram -> таблиці по послугах -> Vapi CSV)
+app.get('/api/scrapes', (req, res) => {
+  res.json({ success: true, mode: scraperMode(), data: listJobs() });
+});
+
+app.post('/api/scrapes', (req, res) => {
+  try {
+    const job = startScrape(req.body || {});
+    res.json({ success: true, mode: scraperMode(), data: job });
+  } catch (err) {
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/scrapes/:id', (req, res) => {
+  const job = getJob(req.params.id);
+  if (!job) return res.status(404).json({ success: false, error: 'Not found' });
+  res.json({ success: true, data: job });
+});
+
+app.delete('/api/scrapes/:id', (req, res) => {
+  res.json({ success: deleteJob(req.params.id) });
+});
+
+app.get('/api/scrapes/:id/csv', (req, res) => {
+  const job = getJob(req.params.id);
+  if (!job) return res.status(404).send('Not found');
+  const category = req.query.category || 'all';
+  res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+  res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(csvFileName(job, category))}`);
+  res.send(buildCsv(job, category));
+});
+
+app.post('/api/scrapes/:id/send', async (req, res) => {
+  try {
+    const job = getJob(req.params.id);
+    if (!job) return res.status(404).json({ success: false, error: 'Not found' });
+    const result = await sendCsvToTelegram(job, req.body?.category || 'all');
+    res.json({ success: true, ...result });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }

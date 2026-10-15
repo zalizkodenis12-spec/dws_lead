@@ -3666,3 +3666,412 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
+
+// ============================================================
+// TAB 5: СКРАПІНГ — B2B бізнеси (Google Maps / Instagram)
+// Пошук -> сортування по послугах -> таблиці -> CSV для Vapi
+// ============================================================
+const SCRAPE_CATS = {
+  site: 'Розробка сайту',
+  ads: 'Реклама Meta / Google',
+  auto: 'ТГ-бот / Автоматизація',
+  apps: 'Програми / CRM'
+};
+const SCRAPE_SERVICE = {
+  site: 'Розробка сайту',
+  ads: 'Налаштування реклами',
+  auto: 'Telegram-бот та автоматизація запису',
+  apps: 'CRM-система / програма під бізнес'
+};
+const SCRAPE_SOURCE_LABEL = { gmaps: 'Google Maps', instagram: 'Instagram' };
+const SCRAPE_ICONS = {
+  gmaps: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
+  instagram: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>'
+};
+const SCRAPE_CHEVRON = '<svg class="scrape-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+
+const scrapeState = {
+  jobs: [],
+  mode: 'demo',
+  offline: false,
+  openJobs: new Set(),
+  openCats: new Set(),
+  pollTimer: null,
+  form: { source: 'gmaps', limit: 100 }
+};
+
+function loadLocalScrapes() {
+  try { return JSON.parse(localStorage.getItem('dws_scrapes') || '[]'); } catch { return []; }
+}
+function saveLocalScrapes(jobs) {
+  localStorage.setItem('dws_scrapes', JSON.stringify(jobs.filter(j => j.local)));
+}
+
+async function fetchScrapes() {
+  try {
+    const res = await fetch('/api/scrapes');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    if (!json.success) throw new Error('bad');
+    scrapeState.offline = false;
+    scrapeState.mode = json.mode;
+    scrapeState.jobs = [...(json.data || []), ...loadLocalScrapes()];
+  } catch {
+    scrapeState.offline = true;
+    scrapeState.mode = 'demo';
+    scrapeState.jobs = loadLocalScrapes();
+  }
+  renderScrapes();
+  scheduleScrapePoll();
+}
+
+function scheduleScrapePoll() {
+  clearTimeout(scrapeState.pollTimer);
+  if (scrapeState.jobs.some(j => j.status === 'running' && !j.local)) {
+    scrapeState.pollTimer = setTimeout(fetchScrapes, 4000);
+  }
+}
+
+function pluralBiz(n) {
+  const m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return 'бізнес';
+  if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return 'бізнеси';
+  return 'бізнесів';
+}
+
+function renderScrapes() {
+  const list = document.getElementById('scrapeJobsList');
+  if (!list) return;
+
+  const total = scrapeState.jobs.reduce((s, j) => s + (j.status === 'done' ? (j.total || 0) : 0), 0);
+  const numEl = document.getElementById('scrapeTotalNum');
+  const lblEl = document.getElementById('scrapeTotalLabel');
+  if (numEl) numEl.textContent = total;
+  if (lblEl) lblEl.textContent = pluralBiz(total);
+
+  const note = document.getElementById('scrapeModeNote');
+  if (note) {
+    if (scrapeState.offline) {
+      note.textContent = 'Сервер недоступний — пошук працює в демо-режимі з тестовими бізнесами.';
+    } else if (scrapeState.mode === 'demo') {
+      note.textContent = 'Демо-режим: додайте APIFY_TOKEN у змінні середовища сервера, щоб збирати реальні бізнеси з Google Maps та Instagram.';
+    } else {
+      note.textContent = '';
+    }
+  }
+
+  if (!scrapeState.jobs.length) {
+    list.innerHTML = '<div class="scrape-empty">Оберіть Google Maps або Instagram вище, щоб запустити перший пошук бізнесів.</div>';
+    return;
+  }
+
+  list.innerHTML = scrapeState.jobs.map(job => {
+    const isOpen = scrapeState.openJobs.has(job.id);
+    const date = new Date(job.createdAt).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
+    let pill = '';
+    if (job.status === 'running') pill = '<span class="scrape-status-pill running">Шукаю…</span>';
+    else if (job.status === 'error') pill = '<span class="scrape-status-pill error">Помилка</span>';
+    else if (job.demo) pill = '<span class="scrape-status-pill demo">Демо</span>';
+
+    const right = job.status === 'running'
+      ? '<div class="scrape-spinner"></div>'
+      : `<div class="scrape-job-count"><b>${job.total || 0}</b><span>${pluralBiz(job.total || 0)}</span></div>`;
+
+    let body = '';
+    if (job.status === 'done') {
+      const cats = Object.keys(SCRAPE_CATS).map(c => renderScrapeCat(job, c)).join('');
+      body = `
+        <div class="scrape-job-body">
+          <div class="scrape-job-actions">
+            <button type="button" class="btn btn--fill btn--sm" data-scrape-act="csv" data-job="${job.id}" data-cat="all">CSV для Vapi (всі)</button>
+            <button type="button" class="btn btn--out btn--sm" data-scrape-act="send" data-job="${job.id}" data-cat="all">В Telegram</button>
+          </div>
+          ${cats}
+          ${job.skippedNoPhone ? `<div class="scrape-biz-reason" style="margin-top:10px;">Відсіяно без телефону: ${job.skippedNoPhone}</div>` : ''}
+          <div class="scrape-job-actions">
+            <button type="button" class="btn btn--out btn--sm" data-scrape-act="delete" data-job="${job.id}" style="color:var(--danger);">Видалити пошук</button>
+          </div>
+        </div>`;
+    } else if (job.status === 'error') {
+      body = `
+        <div class="scrape-job-body">
+          <div class="scrape-biz-reason" style="margin:12px 0;">${escapeHtml(job.error || 'Невідома помилка')}</div>
+          <div class="scrape-job-actions">
+            <button type="button" class="btn btn--out btn--sm" data-scrape-act="delete" data-job="${job.id}" style="color:var(--danger);">Видалити</button>
+          </div>
+        </div>`;
+    }
+
+    return `
+      <div class="scrape-job ${isOpen ? 'open' : ''}" data-job-id="${job.id}">
+        <div class="scrape-job-head" data-scrape-toggle-job="${job.id}">
+          <div class="scrape-job-ico">${SCRAPE_ICONS[job.source] || SCRAPE_ICONS.gmaps}</div>
+          <div class="scrape-job-info">
+            <div class="scrape-job-title">${escapeHtml(job.niche)}${job.city ? ' · ' + escapeHtml(job.city) : ''}</div>
+            <div class="scrape-job-sub">${SCRAPE_SOURCE_LABEL[job.source] || ''} · ${date}${pill}</div>
+          </div>
+          ${right}
+          ${job.status === 'running' ? '' : SCRAPE_CHEVRON}
+        </div>
+        ${body}
+      </div>`;
+  }).join('');
+}
+
+function renderScrapeCat(job, cat) {
+  const items = job.groups?.[cat] || [];
+  const key = job.id + ':' + cat;
+  const isOpen = scrapeState.openCats.has(key);
+  const rows = items.map(b => `
+    <tr>
+      <td>
+        <div class="scrape-biz-name">${escapeHtml(b.name)}</div>
+        <div class="scrape-biz-reason">${escapeHtml(b.reason || '')}</div>
+      </td>
+      <td><a href="tel:${escapeHtml(b.phone)}">${escapeHtml(b.phone)}</a></td>
+      <td>${b.website ? `<a href="${escapeHtml(b.website)}" target="_blank" rel="noopener">сайт</a>` : '—'}</td>
+      <td>${b.source === 'instagram' ? (b.followers || 0) : `${b.rating ? Number(b.rating).toFixed(1) : '—'} · ${b.reviews || 0}`}</td>
+    </tr>`).join('');
+
+  return `
+    <div class="scrape-cat ${isOpen ? 'open' : ''}">
+      <div class="scrape-cat-head" data-scrape-toggle-cat="${key}">
+        <span class="scrape-cat-dot ${cat}"></span>
+        <span class="scrape-cat-name">${SCRAPE_CATS[cat]}</span>
+        <span class="scrape-cat-num">${items.length}</span>
+        ${SCRAPE_CHEVRON}
+      </div>
+      <div class="scrape-cat-body">
+        ${items.length ? `
+          <div class="scrape-table-wrap">
+            <table class="scrape-table">
+              <thead><tr><th>БІЗНЕС</th><th>ТЕЛЕФОН</th><th>САЙТ</th><th>${job.source === 'instagram' ? 'ПІДП.' : 'РЕЙТ. · ВІДГ.'}</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+          <div class="scrape-cat-actions">
+            <button type="button" class="btn btn--fill btn--sm" data-scrape-act="csv" data-job="${job.id}" data-cat="${cat}">CSV для Vapi</button>
+            <button type="button" class="btn btn--out btn--sm" data-scrape-act="send" data-job="${job.id}" data-cat="${cat}">В Telegram</button>
+          </div>` : '<div class="scrape-biz-reason" style="padding:4px 4px 0;">У цій категорії поки порожньо.</div>'}
+      </div>
+    </div>`;
+}
+
+// ---- Local (offline) demo engine ----
+function classifyBizLocal(b) {
+  const site = (b.website || '').trim();
+  const social = /(instagram\.com|facebook\.com|linktr\.ee|taplink|t\.me|tiktok\.com)/i.test(site);
+  const reviews = Number(b.reviews) || 0;
+  if (!site || social) return { category: 'site', reason: site ? 'Замість сайту — соцмережа/лінк' : 'Немає сайту' };
+  if (reviews >= 300) return { category: 'apps', reason: `Великий бізнес (${reviews} відгуків) — потрібна CRM` };
+  if (reviews >= 40) return { category: 'auto', reason: `Багато клієнтів (${reviews} відгуків) — бот/автозапис` };
+  return { category: 'ads', reason: `Мало відгуків (${reviews}) — потрібна реклама` };
+}
+
+function buildLocalDemoJob({ source, niche, city, limit }) {
+  const groups = { site: [], ads: [], auto: [], apps: [] };
+  const n = Math.min(limit, 30);
+  for (let i = 1; i <= n; i++) {
+    const noSite = i % 3 === 0;
+    const b = {
+      id: 'b-' + i,
+      name: `${niche} «Демо ${i}»`,
+      phone: `+38067${String(1000000 + i * 7919).slice(-7)}`,
+      website: noSite ? '' : `https://demo-${i}.com.ua`,
+      city, niche, source,
+      rating: 3.8 + ((i * 13) % 12) / 10,
+      reviews: (i * 37) % 520,
+      followers: source === 'instagram' ? (i * 431) % 9000 : 0
+    };
+    const { category, reason } = classifyBizLocal(b);
+    groups[category].push({ ...b, category, reason, service: SCRAPE_SERVICE[category] });
+  }
+  return {
+    id: 'local-' + Date.now(), local: true, demo: true, source, niche, city, limit,
+    status: 'done', createdAt: new Date().toISOString(), total: n, skippedNoPhone: 0, groups
+  };
+}
+
+function buildCsvLocal(job, cat) {
+  const cats = cat === 'all' ? Object.keys(SCRAPE_CATS) : [cat];
+  const cell = v => { const s = String(v ?? ''); return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  const rows = ['number,name,niche,service,reason,city,website,rating,reviews,source'];
+  cats.forEach(c => (job.groups?.[c] || []).forEach(b => {
+    rows.push([b.phone, b.name, b.niche, b.service, b.reason, b.city, b.website, b.rating || '', b.reviews || '', b.source].map(cell).join(','));
+  }));
+  return '\uFEFF' + rows.join('\n');
+}
+
+// ---- Actions ----
+async function submitScrape() {
+  const niche = (document.getElementById('scrapeNicheInput')?.value || '').trim();
+  const city = (document.getElementById('scrapeCityInput')?.value || '').trim();
+  if (!niche) {
+    alert('Вкажіть нішу бізнесу');
+    return;
+  }
+  const payload = { source: scrapeState.form.source, niche, city, limit: scrapeState.form.limit };
+  const btn = document.getElementById('submitScrapeBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'ЗАПУСКАЮ…'; }
+
+  try {
+    if (scrapeState.offline) throw new Error('offline');
+    const res = await fetch('/api/scrapes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'error');
+    scrapeState.openJobs.add(json.data.id);
+  } catch (err) {
+    if (err.message !== 'offline' && !scrapeState.offline) {
+      // сервер є, але повернув помилку
+      alert('Помилка запуску: ' + err.message);
+    } else {
+      const job = buildLocalDemoJob(payload);
+      const local = loadLocalScrapes();
+      local.unshift(job);
+      saveLocalScrapes(local);
+      scrapeState.openJobs.add(job.id);
+    }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'ЗАПУСТИТИ ПОШУК'; }
+  }
+
+  haptic('success');
+  closeModal('modalScrape');
+  fetchScrapes();
+}
+
+function downloadScrapeCsv(job, cat) {
+  if (!job.local) {
+    const url = `${location.origin}/api/scrapes/${encodeURIComponent(job.id)}/csv?category=${cat}`;
+    const fileName = `vapi_${job.niche}_${cat}.csv`.replace(/\s+/g, '_');
+    if (tg && typeof tg.downloadFile === 'function') {
+      try { tg.downloadFile({ url, file_name: fileName }); return; } catch (e) { /* fallback */ }
+    }
+    window.open(url, '_blank');
+    return;
+  }
+  const blob = new Blob([buildCsvLocal(job, cat)], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `vapi_${job.niche}_${cat}.csv`.replace(/\s+/g, '_');
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+async function sendScrapeToTelegram(job, cat, btn) {
+  if (job.local) {
+    alert('Відправка в Telegram працює тільки коли сервер онлайн.');
+    return;
+  }
+  const old = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Надсилаю…';
+  try {
+    const res = await fetch(`/api/scrapes/${encodeURIComponent(job.id)}/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ category: cat })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error);
+    haptic('success');
+    btn.textContent = `Надіслано (${json.count})`;
+    setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 2500);
+  } catch (err) {
+    alert('Не вдалося надіслати: ' + err.message);
+    btn.textContent = old;
+    btn.disabled = false;
+  }
+}
+
+async function deleteScrapeJob(job) {
+  if (!confirm('Видалити цей пошук?')) return;
+  if (job.local) {
+    saveLocalScrapes(loadLocalScrapes().filter(j => j.id !== job.id));
+  } else {
+    await fetch(`/api/scrapes/${encodeURIComponent(job.id)}`, { method: 'DELETE' }).catch(() => {});
+  }
+  scrapeState.openJobs.delete(job.id);
+  fetchScrapes();
+}
+
+function setupScrapeTab() {
+  // Source buttons -> open form with preselected source
+  document.querySelectorAll('[data-scrape-source]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      scrapeState.form.source = btn.dataset.scrapeSource;
+      document.querySelectorAll('#scrapeSourceSeg .scrape-seg-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.value === scrapeState.form.source));
+      openModal('modalScrape');
+    });
+  });
+
+  // Segments
+  document.querySelectorAll('#scrapeSourceSeg .scrape-seg-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      scrapeState.form.source = b.dataset.value;
+      document.querySelectorAll('#scrapeSourceSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
+    });
+  });
+  document.querySelectorAll('#scrapeLimitSeg .scrape-seg-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      scrapeState.form.limit = Number(b.dataset.value);
+      document.querySelectorAll('#scrapeLimitSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
+    });
+  });
+
+  // Quick chips fill inputs
+  document.querySelectorAll('.scrape-chips').forEach(group => {
+    const input = document.getElementById(group.dataset.target);
+    group.querySelectorAll('.scrape-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        if (input) input.value = chip.textContent.trim();
+        group.querySelectorAll('.scrape-chip').forEach(c => c.classList.toggle('active', c === chip));
+      });
+    });
+  });
+
+  document.getElementById('submitScrapeBtn')?.addEventListener('click', submitScrape);
+
+  // Delegated clicks in jobs list
+  document.getElementById('scrapeJobsList')?.addEventListener('click', (e) => {
+    const actBtn = e.target.closest('[data-scrape-act]');
+    if (actBtn) {
+      const job = scrapeState.jobs.find(j => j.id === actBtn.dataset.job);
+      if (!job) return;
+      const act = actBtn.dataset.scrapeAct;
+      if (act === 'csv') downloadScrapeCsv(job, actBtn.dataset.cat);
+      else if (act === 'send') sendScrapeToTelegram(job, actBtn.dataset.cat, actBtn);
+      else if (act === 'delete') deleteScrapeJob(job);
+      return;
+    }
+    if (e.target.closest('a')) return;
+
+    const catHead = e.target.closest('[data-scrape-toggle-cat]');
+    if (catHead) {
+      const key = catHead.dataset.scrapeToggleCat;
+      scrapeState.openCats.has(key) ? scrapeState.openCats.delete(key) : scrapeState.openCats.add(key);
+      catHead.parentElement.classList.toggle('open');
+      haptic('light');
+      return;
+    }
+    const jobHead = e.target.closest('[data-scrape-toggle-job]');
+    if (jobHead) {
+      const id = jobHead.dataset.scrapeToggleJob;
+      const job = scrapeState.jobs.find(j => j.id === id);
+      if (!job || job.status === 'running') return;
+      scrapeState.openJobs.has(id) ? scrapeState.openJobs.delete(id) : scrapeState.openJobs.add(id);
+      jobHead.parentElement.classList.toggle('open');
+      haptic('light');
+    }
+  });
+
+  fetchScrapes();
+}
+
+setupScrapeTab();

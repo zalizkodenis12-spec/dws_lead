@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/app.css?v=2.0.1">
+  <link rel="stylesheet" href="css/app.css?v=2.1.0">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -271,6 +271,42 @@
         </div>
       </section>
 
+      <!-- ============================================================
+           TAB 5: СКРАПІНГ (B2B бізнеси -> таблиці для обдзвону)
+           ============================================================ -->
+      <section id="tab-scrape" class="tab-view">
+        <div class="view-header">
+          <h1 class="view-title">Скрапінг</h1>
+          <div class="leads-today-stat">
+            <span class="leads-count-num" id="scrapeTotalNum">0</span>
+            <span class="leads-count-label" id="scrapeTotalLabel">бізнесів</span>
+          </div>
+        </div>
+
+        <!-- Source launch buttons -->
+        <div class="scrape-sources">
+          <button type="button" class="scrape-source-btn" data-scrape-source="gmaps">
+            <span class="scrape-source-ico">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            </span>
+            <span class="scrape-source-title">Google Maps</span>
+            <span class="scrape-source-sub">Бізнеси з карт</span>
+          </button>
+          <button type="button" class="scrape-source-btn" data-scrape-source="instagram">
+            <span class="scrape-source-ico">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </span>
+            <span class="scrape-source-title">Instagram</span>
+            <span class="scrape-source-sub">Бізнес-профілі</span>
+          </button>
+        </div>
+
+        <div class="scrape-mode-note" id="scrapeModeNote"></div>
+
+        <div class="scrape-section-label">МОЇ ПОШУКИ</div>
+        <div id="scrapeJobsList" class="scrape-jobs"></div>
+      </section>
+
     </main>
 
     <!-- ============================================================
@@ -293,9 +329,73 @@
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"></circle><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path></svg>
         <span>Профіль</span>
       </button>
+      <button class="nav-btn" data-tab="tab-scrape">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+        <span>Скрапінг</span>
+      </button>
     </nav>
 
   </div> <!-- End .app-wrap -->
+
+  <!-- MODAL: НОВИЙ СКРАПІНГ -->
+  <div id="modalScrape" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title" style="flex: 1; text-align: center;">Новий пошук</h3>
+        <button class="modal-close" data-close="modalScrape">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">ДЖЕРЕЛО:</label>
+          <div class="scrape-seg" id="scrapeSourceSeg">
+            <button type="button" class="scrape-seg-btn active" data-value="gmaps">Google Maps</button>
+            <button type="button" class="scrape-seg-btn" data-value="instagram">Instagram</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">НІША БІЗНЕСУ:</label>
+          <input type="text" id="scrapeNicheInput" class="form-input" placeholder="Стоматологія">
+          <div class="scrape-chips" data-target="scrapeNicheInput">
+            <button type="button" class="scrape-chip">Стоматологія</button>
+            <button type="button" class="scrape-chip">Салон краси</button>
+            <button type="button" class="scrape-chip">Автосервіс</button>
+            <button type="button" class="scrape-chip">Ресторан</button>
+            <button type="button" class="scrape-chip">Барбершоп</button>
+            <button type="button" class="scrape-chip">Фітнес клуб</button>
+            <button type="button" class="scrape-chip">Косметологія</button>
+            <button type="button" class="scrape-chip">Нерухомість</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">МІСТО / РЕГІОН:</label>
+          <input type="text" id="scrapeCityInput" class="form-input" placeholder="Київ">
+          <div class="scrape-chips" data-target="scrapeCityInput">
+            <button type="button" class="scrape-chip">Київ</button>
+            <button type="button" class="scrape-chip">Львів</button>
+            <button type="button" class="scrape-chip">Одеса</button>
+            <button type="button" class="scrape-chip">Дніпро</button>
+            <button type="button" class="scrape-chip">Харків</button>
+            <button type="button" class="scrape-chip">Варшава</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">КІЛЬКІСТЬ БІЗНЕСІВ:</label>
+          <div class="scrape-seg" id="scrapeLimitSeg">
+            <button type="button" class="scrape-seg-btn" data-value="20">20</button>
+            <button type="button" class="scrape-seg-btn" data-value="50">50</button>
+            <button type="button" class="scrape-seg-btn active" data-value="100">100</button>
+            <button type="button" class="scrape-seg-btn" data-value="200">200</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="submitScrapeBtn" class="btn btn--fill btn--block">ЗАПУСТИТИ ПОШУК</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ============================================================
        MODALS & BOTTOM SHEETS
@@ -1083,6 +1183,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=2.0.1"></script>
+  <script src="js/app.js?v=2.1.0"></script>
 </body>
 </html>
