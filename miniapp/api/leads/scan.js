@@ -4,15 +4,16 @@ const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8953225581:AAG7lpvh6JHCbyMK
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID || '5278970111';
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
   try {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+      res.statusCode = 200;
+      return res.end();
+    }
+
     let fhCount = 5;
     let djCount = 14;
     let remCount = 11;
@@ -65,7 +66,7 @@ export default async function handler(req, res) {
       })
     }).catch(() => {});
 
-    return res.status(200).json({
+    const json = JSON.stringify({
       success: true,
       scanResult: {
         scanned: 24,
@@ -80,7 +81,13 @@ export default async function handler(req, res) {
       count: initialLeads.length,
       data: initialLeads
     });
+
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    return res.end(json);
   } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
+    res.statusCode = 500;
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify({ success: false, error: err.message }));
   }
 }
