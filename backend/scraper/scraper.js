@@ -31,7 +31,7 @@ export const CATEGORIES = {
   site: { label: 'Розробка сайту', service: 'Розробка сайту' },
   ads: { label: 'Реклама Meta / Google', service: 'Налаштування реклами' },
   auto: { label: 'ТГ-бот / Автоматизація', service: 'Telegram-бот та автоматизація запису' },
-  apps: { label: 'Програми / CRM', service: 'CRM-система / програма під бізнес' }
+  apps: { label: 'Програми та веб-сервіси', service: 'Розробка програми / веб-сервісу' }
 };
 
 // ---------------- STORAGE ----------------
@@ -111,7 +111,7 @@ export function classifyBusiness(b) {
     };
   }
   if (reviews >= 300) {
-    return { category: 'apps', reason: `Великий бізнес (${reviews} відгуків) — потрібна CRM` };
+    return { category: 'apps', reason: `Великий бізнес (${reviews} відгуків) — потрібна власна програма / веб-сервіс` };
   }
   if (BOOKING_NICHE_RE.test(nicheText) && reviews >= 40) {
     return { category: 'auto', reason: `Багато клієнтів (${reviews} відгуків), запис вручну — бот/автозапис` };

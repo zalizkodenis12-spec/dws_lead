@@ -3675,13 +3675,13 @@ const SCRAPE_CATS = {
   site: 'Розробка сайту',
   ads: 'Реклама Meta / Google',
   auto: 'ТГ-бот / Автоматизація',
-  apps: 'Програми / CRM'
+  apps: 'Програми та веб-сервіси'
 };
 const SCRAPE_SERVICE = {
   site: 'Розробка сайту',
   ads: 'Налаштування реклами',
   auto: 'Telegram-бот та автоматизація запису',
-  apps: 'CRM-система / програма під бізнес'
+  apps: 'Розробка програми / веб-сервісу'
 };
 const SCRAPE_SOURCE_LABEL = { gmaps: 'Google Maps', instagram: 'Instagram' };
 const SCRAPE_ICONS = {
@@ -3854,7 +3854,7 @@ function classifyBizLocal(b) {
   const social = /(instagram\.com|facebook\.com|linktr\.ee|taplink|t\.me|tiktok\.com)/i.test(site);
   const reviews = Number(b.reviews) || 0;
   if (!site || social) return { category: 'site', reason: site ? 'Замість сайту — соцмережа/лінк' : 'Немає сайту' };
-  if (reviews >= 300) return { category: 'apps', reason: `Великий бізнес (${reviews} відгуків) — потрібна CRM` };
+  if (reviews >= 300) return { category: 'apps', reason: `Великий бізнес (${reviews} відгуків) — потрібна власна програма / веб-сервіс` };
   if (reviews >= 40) return { category: 'auto', reason: `Багато клієнтів (${reviews} відгуків) — бот/автозапис` };
   return { category: 'ads', reason: `Мало відгуків (${reviews}) — потрібна реклама` };
 }
