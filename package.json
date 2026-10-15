@@ -8,6 +8,7 @@
     "start": "node backend/server.js",
     "bot": "node backend/bot.js",
     "monitor": "node backend/parser/monitor.js",
+    "login": "node backend/parser/login_userbot.js",
     "dev": "node backend/server.js"
   },
   "dependencies": {

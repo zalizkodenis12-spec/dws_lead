@@ -304,17 +304,60 @@ export async function startMonitor() {
   }, ONE_HOUR_MS);
   console.log('[DWS Lead Monitor] ⏰ Автоматичний парсинг активний: кожну 1 годину + миттєво при натисканні "Оновити" в додатку.');
 
-  // 3. Optional MTProto client for private chats
+  // 3. MTProto client for realtime supergroup & chat monitoring
   const apiId = process.env.TELEGRAM_API_ID;
   const apiHash = process.env.TELEGRAM_API_HASH;
+  const sessionString = process.env.TELEGRAM_SESSION;
 
-  if (!apiId || !apiHash) {
-    console.log(`[DWS Lead Monitor] ℹ️ TELEGRAM_API_ID або TELEGRAM_API_HASH не задано в .env.`);
-    console.log(`[DWS Lead Monitor] ℹ️ Активний Web Channel Ingestion для публічних каналів України.`);
+  if (!apiId || !apiHash || !sessionString) {
+    console.log(`[DWS Lead Monitor] ℹ️ TELEGRAM_API_ID/HASH/SESSION не знайдено в .env.`);
+    console.log(`[DWS Lead Monitor] ℹ️ Активний Web Channel Ingestion для 24 публічних каналів України.`);
+    console.log(`[DWS Lead Monitor] 💡 Щоб увімкнути моніторинг усіх 79 суперчатів у реальному часі, запустіть: node backend/parser/login_userbot.js`);
     return;
   }
 
-  console.log(`[DWS Lead Monitor] 🚀 MTProto API ID (${apiId}) знайдено. Готово до підключення сесій.`);
+  try {
+    console.log(`[DWS Lead Monitor] 🚀 Підключення MTProto Юзербота (API ID: ${apiId})...`);
+    const { TelegramClient } = await import('telegram');
+    const { StringSession } = await import('telegram/sessions/index.js');
+    const { NewMessage } = await import('telegram/events/index.js');
+
+    const client = new TelegramClient(new StringSession(sessionString), Number(apiId), apiHash, {
+      connectionRetries: 5
+    });
+
+    await client.connect();
+    console.log('[DWS Lead Monitor] ✅ MTProto Юзербот успішно підключено! Слухаємо всі суперчати в реальному часі.');
+
+    client.addEventHandler(async (event) => {
+      try {
+        const message = event.message;
+        if (!message || !message.message) return;
+
+        const chat = await message.getChat().catch(() => null);
+        const sender = await message.getSender().catch(() => null);
+
+        const text = message.message;
+        const authorUsername = sender?.username ? '@' + sender.username : '';
+        const authorName = [sender?.firstName, sender?.lastName].filter(Boolean).join(' ') || 'Замовник';
+        const sourceTitle = chat?.title || 'Telegram суперчат';
+        const sourceUsername = chat?.username ? '@' + chat.username : '';
+
+        ingestMessage({
+          text,
+          authorName,
+          authorUsername,
+          sourceTitle,
+          sourceUsername,
+          sourceType: 'chat'
+        });
+      } catch (err) {
+        // Quiet fail on malformed message events
+      }
+    }, new NewMessage({}));
+  } catch (err) {
+    console.error('[DWS Lead Monitor] ❌ Помилка запуску MTProto юзербота:', err.message);
+  }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
