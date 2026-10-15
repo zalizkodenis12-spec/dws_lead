@@ -3749,16 +3749,7 @@ function renderScrapes() {
   if (numEl) numEl.textContent = total;
   if (lblEl) lblEl.textContent = pluralBiz(total);
 
-  const note = document.getElementById('scrapeModeNote');
-  if (note) {
-    if (scrapeState.offline) {
-      note.textContent = 'Сервер недоступний — пошук працює в демо-режимі з тестовими бізнесами.';
-    } else if (scrapeState.mode === 'demo') {
-      note.textContent = 'Демо-режим: додайте APIFY_TOKEN у змінні середовища сервера, щоб збирати реальні бізнеси з Google Maps та Instagram.';
-    } else {
-      note.textContent = '';
-    }
-  }
+
 
   if (!scrapeState.jobs.length) {
     list.innerHTML = '<div class="scrape-empty">Оберіть Google Maps або Instagram вище, щоб запустити перший пошук бізнесів.</div>';
@@ -4025,16 +4016,7 @@ function setupScrapeTab() {
     });
   });
 
-  // Quick chips fill inputs
-  document.querySelectorAll('.scrape-chips').forEach(group => {
-    const input = document.getElementById(group.dataset.target);
-    group.querySelectorAll('.scrape-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        if (input) input.value = chip.textContent.trim();
-        group.querySelectorAll('.scrape-chip').forEach(c => c.classList.toggle('active', c === chip));
-      });
-    });
-  });
+
 
   document.getElementById('submitScrapeBtn')?.addEventListener('click', submitScrape);
 

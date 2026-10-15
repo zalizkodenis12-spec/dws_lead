@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/app.css?v=2.1.0">
+  <link rel="stylesheet" href="css/app.css?v=2.1.2">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -301,8 +301,6 @@
           </button>
         </div>
 
-        <div class="scrape-mode-note" id="scrapeModeNote"></div>
-
         <div class="scrape-section-label">МОЇ ПОШУКИ</div>
         <div id="scrapeJobsList" class="scrape-jobs"></div>
       </section>
@@ -355,30 +353,12 @@
 
         <div class="form-group">
           <label class="form-label">НІША БІЗНЕСУ:</label>
-          <input type="text" id="scrapeNicheInput" class="form-input" placeholder="Стоматологія">
-          <div class="scrape-chips" data-target="scrapeNicheInput">
-            <button type="button" class="scrape-chip">Стоматологія</button>
-            <button type="button" class="scrape-chip">Салон краси</button>
-            <button type="button" class="scrape-chip">Автосервіс</button>
-            <button type="button" class="scrape-chip">Ресторан</button>
-            <button type="button" class="scrape-chip">Барбершоп</button>
-            <button type="button" class="scrape-chip">Фітнес клуб</button>
-            <button type="button" class="scrape-chip">Косметологія</button>
-            <button type="button" class="scrape-chip">Нерухомість</button>
-          </div>
+          <input type="text" id="scrapeNicheInput" class="form-input" placeholder="Наприклад: Автосервіс, Стоматологія, Салон краси...">
         </div>
 
         <div class="form-group">
           <label class="form-label">МІСТО / РЕГІОН:</label>
-          <input type="text" id="scrapeCityInput" class="form-input" placeholder="Київ">
-          <div class="scrape-chips" data-target="scrapeCityInput">
-            <button type="button" class="scrape-chip">Київ</button>
-            <button type="button" class="scrape-chip">Львів</button>
-            <button type="button" class="scrape-chip">Одеса</button>
-            <button type="button" class="scrape-chip">Дніпро</button>
-            <button type="button" class="scrape-chip">Харків</button>
-            <button type="button" class="scrape-chip">Варшава</button>
-          </div>
+          <input type="text" id="scrapeCityInput" class="form-input" placeholder="Наприклад: Київ, Львів, Одеса, Варшава...">
         </div>
 
         <div class="form-group">
@@ -1183,6 +1163,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=2.1.0"></script>
+  <script src="js/app.js?v=2.1.2"></script>
 </body>
 </html>
