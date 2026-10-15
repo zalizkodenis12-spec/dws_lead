@@ -10,18 +10,16 @@
       ]
     },
     {
-      "source": "/api/(.*)",
+      "source": "/(.*).json",
       "headers": [
         { "key": "Content-Type", "value": "application/json; charset=utf-8" },
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" }
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
       ]
     }
   ],
   "rewrites": [
-    { "source": "/api/leads.json", "destination": "/miniapp/api/leads.json" },
-    { "source": "/api/leads", "destination": "/miniapp/api/leads.json" },
-    { "source": "/api/leads/scan", "destination": "/miniapp/api/leads.json" },
+    { "source": "/api/leads(.*)", "destination": "/miniapp/leads-data.json" },
+    { "source": "/leads-data.json", "destination": "/miniapp/leads-data.json" },
     { "source": "/(.*)", "destination": "/miniapp/$1" }
   ]
 }

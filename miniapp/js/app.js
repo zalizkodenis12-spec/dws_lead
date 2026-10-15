@@ -2555,7 +2555,7 @@ async function fetchLeads() {
     if (state.filters.query) params.set('query', state.filters.query);
     if (state.filters.sortBy) params.set('sortBy', state.filters.sortBy);
 
-    let res = await fetch('/api/leads.json').catch(() => null);
+    let res = await fetch('/leads-data.json').catch(() => null);
     if (!res || !res.ok) {
       res = await fetch('/api/leads?' + params.toString()).catch(() => null);
     }
