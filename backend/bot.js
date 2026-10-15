@@ -7,9 +7,9 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-const TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN;
-const APP_URL = process.env.TELEGRAM_APP_URL || process.env.WEBAPP_URL || 'http://localhost:3000';
-const ADMIN_CHAT_ID = process.env.TELEGRAM_CHAT_ID || process.env.CHAT_ID;
+const TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN || '8953225581:AAG7lpvh6JHCbyMKfsz4qEucd_7qqgh6koM';
+const APP_URL = process.env.TELEGRAM_APP_URL || process.env.WEBAPP_URL || 'https://dwslead-miniapp.vercel.app';
+const ADMIN_CHAT_ID = process.env.TELEGRAM_CHAT_ID || process.env.CHAT_ID || '5278970111';
 
 if (!TOKEN) {
   console.log('[DWS Lead Bot] ⚠️ TELEGRAM_BOT_TOKEN не задано в .env.');
@@ -47,6 +47,8 @@ async function tgRequest(method, payload = {}, timeoutMs = 35000) {
  */
 export async function setupMenuButton() {
   if (!TOKEN) return;
+  // Telegram WebApps require https — never overwrite the production button with localhost
+  if (!/^https:\/\//i.test(APP_URL)) return;
   const res = await tgRequest('setChatMenuButton', {
     menu_button: {
       type: 'web_app',
@@ -146,7 +148,63 @@ function startDailySummaryScheduler() {
 }
 
 /**
- * Simple Long-polling loop for /start
+ * Handle a single Telegram update (used by both long-polling and the Vercel webhook)
+ */
+const WEBAPP_BUTTON_URL = /^https:\/\//i.test(APP_URL) ? APP_URL : 'https://dwslead-miniapp.vercel.app/';
+
+export async function handleTelegramUpdate(update) {
+  if (!update || !update.message || !update.message.text) return;
+  const chatId = update.message.chat.id;
+  subscribedChats.add(String(chatId));
+  const text = update.message.text.trim();
+
+  if (text.startsWith('/start')) {
+    await tgRequest('sendMessage', {
+      chat_id: chatId,
+      text: `Привіт, це <b>DWS Lead</b> — бот, який закриває три задачі фрілансера:\n\n` +
+        `• знайти замовлення\n` +
+        `• не втратити клієнта\n` +
+        `• зрозуміти скільки заробив\n\n` +
+        `Ловлю вакансії та замовлення з Telegram-каналів і фріланс-бірж (Freelancehunt, Djinni, Freelance.ua), веду по них CRM і рахую доходи.`,
+      parse_mode: 'HTML',
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: 'Відкрити DWSlead', web_app: { url: WEBAPP_BUTTON_URL } }
+          ]
+        ]
+      }
+    });
+  }
+}
+
+/**
+ * Send a scan report (where new leads came from) to the admin chat
+ */
+export async function sendScanReport(result, title = '📊 Звіт DWS Lead') {
+  if (!TOKEN || !ADMIN_CHAT_ID || !result) return false;
+  const lines = [`<b>${title}</b>`, ''];
+  lines.push(`Нових заявок: <b>${result.newLeads || 0}</b>`);
+  lines.push(`• Telegram-канали (${result.scanned || 0}): ${result.telegramNew || 0}`);
+  for (const [name, s] of Object.entries(result.exchanges || {})) {
+    lines.push(`• ${name}: ${s.new} нових (знайдено ${s.found})`);
+  }
+  const total = (db.getLeads() || []).length;
+  lines.push('', `Всього в базі: ${total}`);
+
+  const res = await tgRequest('sendMessage', {
+    chat_id: ADMIN_CHAT_ID,
+    text: lines.join('\n'),
+    parse_mode: 'HTML',
+    reply_markup: {
+      inline_keyboard: [[{ text: 'Відкрити DWSlead', web_app: { url: WEBAPP_BUTTON_URL } }]]
+    }
+  });
+  return !!(res && res.ok);
+}
+
+/**
+ * Simple Long-polling loop for /start (local long-lived process only)
  */
 let offset = 0;
 async function pollUpdates() {
@@ -157,35 +215,13 @@ async function pollUpdates() {
     if (res && res.ok && Array.isArray(res.result)) {
       for (const update of res.result) {
         offset = update.update_id + 1;
-        if (update.message && update.message.text) {
-          const chatId = update.message.chat.id;
-          subscribedChats.add(String(chatId));
-          const text = update.message.text.trim();
-
-          if (text.startsWith('/start')) {
-            await tgRequest('sendMessage', {
-              chat_id: chatId,
-              text: `Привіт, це <b>DWS Lead</b> — бот, який закриває три задачі фрілансера:\n\n` +
-                `• знайти замовлення\n` +
-                `• не втратити клієнта\n` +
-                `• зрозуміти скільки заробив\n\n` +
-                `Ловлю вакансії та замовлення з 79 тг-чатів і 14 каналів України, веду по них CRM і рахую доходи по тижнях і місяцях.`,
-              parse_mode: 'HTML',
-              reply_markup: {
-                inline_keyboard: [
-                  [
-                    { text: 'Відкрити DWSlead', web_app: { url: APP_URL } }
-                  ]
-                ]
-              }
-            });
-          }
-        }
+        await handleTelegramUpdate(update);
       }
     } else if (res && !res.ok) {
       if (res.error_code === 409) {
-        console.warn('[DWS Lead Bot] ⚠️ Інший екземпляр або фоновий процес уже читає оновлення бота (Conflict 409). Пауза 10 сек...');
-        nextDelay = 10000;
+        // 409 = webhook is active (production on Vercel handles updates) — stop polling locally
+        console.warn('[DWS Lead Bot] ℹ️ Вебхук активний (оновлення обробляє Vercel). Локальний polling вимкнено.');
+        return;
       }
     }
   } catch (err) {
@@ -194,7 +230,8 @@ async function pollUpdates() {
   setTimeout(pollUpdates, nextDelay);
 }
 
-if (TOKEN) {
+// On Vercel (serverless) there is no long-lived process: updates arrive via webhook, reports via cron
+if (TOKEN && !process.env.VERCEL) {
   setupMenuButton();
   pollUpdates();
   startDailySummaryScheduler();

@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { db } from './db/db.js';
 import { analyzeLeadAi, generatePersonalizedOffer } from './ai/gemini.js';
 import { ingestMessage, loadSources, saveSourcesToFile, scanPublicChannels, startMonitor } from './parser/monitor.js';
+import { sendScanReport } from './bot.js';
 import './bot.js';
 import { startScrape, listJobs, getJob, deleteJob, buildCsv, csvFileName, sendCsvToTelegram, scraperMode, setApifyToken, getApifyToken } from './scraper/scraper.js';
 
@@ -43,6 +44,11 @@ app.get('/api/leads', (req, res) => {
 app.post('/api/leads/scan', async (req, res) => {
   try {
     const result = await scanPublicChannels();
+    try {
+      await sendScanReport(result);
+    } catch (reportErr) {
+      console.error('[Server] sendScanReport error:', reportErr.message);
+    }
     const leads = db.getLeads();
     res.json({ success: true, scanResult: result, count: leads.length, data: leads });
   } catch (err) {
@@ -409,13 +415,17 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(MINIAPP_DIR, 'index.html'));
 });
 
-app.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(`🚀 DWS Lead Server running at http://localhost:${PORT}`);
-  console.log(`📱 Mini App UI available at http://localhost:${PORT}`);
-  console.log(`⚡ DenisWeb Studio Design System & Ukrainian Engine`);
-  console.log(`====================================================`);
-  
-  // Launch live channel monitor & scheduler
-  startMonitor();
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`====================================================`);
+    console.log(`🚀 DWS Lead Server running at http://localhost:${PORT}`);
+    console.log(`📱 Mini App UI available at http://localhost:${PORT}`);
+    console.log(`⚡ DenisWeb Studio Design System & Ukrainian Engine`);
+    console.log(`====================================================`);
+    
+    // Launch live channel monitor & scheduler
+    startMonitor();
+  });
+}
+
+export default app;

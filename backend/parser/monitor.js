@@ -17,9 +17,14 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const SOURCES_PATH = path.join(__dirname, 'sources.json');
+const IS_SERVERLESS = !!process.env.VERCEL;
+const WRITABLE_SOURCES_PATH = IS_SERVERLESS ? '/tmp/dws-sources.json' : SOURCES_PATH;
 
 export function loadSources() {
   try {
+    if (IS_SERVERLESS && fs.existsSync(WRITABLE_SOURCES_PATH)) {
+      return JSON.parse(fs.readFileSync(WRITABLE_SOURCES_PATH, 'utf-8'));
+    }
     if (fs.existsSync(SOURCES_PATH)) {
       return JSON.parse(fs.readFileSync(SOURCES_PATH, 'utf-8'));
     }
@@ -31,7 +36,7 @@ export function loadSources() {
 
 export function saveSourcesToFile(sourcesData) {
   try {
-    fs.writeFileSync(SOURCES_PATH, JSON.stringify(sourcesData, null, 2), 'utf-8');
+    fs.writeFileSync(WRITABLE_SOURCES_PATH, JSON.stringify(sourcesData, null, 2), 'utf-8');
     return true;
   } catch (err) {
     console.error('Error saving sources:', err);
@@ -284,8 +289,10 @@ export async function scanPublicChannels() {
   }
 
   // Also scan freelance exchanges (Freelancehunt, Djinni, Freelance.ua, Kabanchik)
+  const telegramNew = newLeadsCount;
+  let exchangeResult = null;
   try {
-    const exchangeResult = await scanAllExchanges();
+    exchangeResult = await scanAllExchanges();
     if (exchangeResult?.newLeads) {
       newLeadsCount += exchangeResult.newLeads;
     }
@@ -294,7 +301,12 @@ export async function scanPublicChannels() {
   }
 
   console.log(`[DWS Lead Monitor] ✅ Повне сканування завершено (Телеграм + Біржі). Додано ${newLeadsCount} нових актуальних лідів.`);
-  return { scanned: targetHandles.length, newLeads: newLeadsCount };
+  return {
+    scanned: targetHandles.length,
+    newLeads: newLeadsCount,
+    telegramNew,
+    exchanges: exchangeResult?.bySource || {}
+  };
 }
 
 /**

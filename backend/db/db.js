@@ -4,7 +4,18 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DB_PATH = path.join(__dirname, 'database.json');
+const BUNDLED_DB_PATH = path.join(__dirname, 'database.json');
+
+// On Vercel the deployment bundle is read-only — keep a writable copy in /tmp
+const IS_SERVERLESS = !!process.env.VERCEL;
+const DB_PATH = IS_SERVERLESS ? '/tmp/dws-database.json' : BUNDLED_DB_PATH;
+if (IS_SERVERLESS && !fs.existsSync(DB_PATH)) {
+  try {
+    fs.copyFileSync(BUNDLED_DB_PATH, DB_PATH);
+  } catch (err) {
+    console.error('Error seeding /tmp database:', err.message);
+  }
+}
 
 function readDb() {
   try {
