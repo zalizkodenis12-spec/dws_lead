@@ -11,6 +11,10 @@
     }
   ],
   "rewrites": [
-    { "source": "/((?!api/).*)", "destination": "/miniapp/$1" }
+    { "source": "/api/leads/scan", "destination": "/api/leads/scan" },
+    { "source": "/api/leads", "destination": "/api/leads" },
+    { "source": "/api/leads/(.*)", "destination": "/api/leads/$1" },
+    { "source": "/api/(.*)", "destination": "/api/$1" },
+    { "source": "/(.*)", "destination": "/miniapp/$1" }
   ]
 }
