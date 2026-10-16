@@ -32,6 +32,16 @@ function writeDb(data) {
   memoryCache = data;
   try {
     fs.writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+    const miniappLeadsPath = path.join(__dirname, '..', '..', 'miniapp', 'leads-data.json');
+    if (data.leads && Array.isArray(data.leads)) {
+      try {
+        fs.writeFileSync(miniappLeadsPath, JSON.stringify({
+          success: true,
+          count: data.leads.length,
+          data: data.leads
+        }, null, 2), 'utf-8');
+      } catch (e) {}
+    }
     return true;
   } catch (err) {
     return true;
