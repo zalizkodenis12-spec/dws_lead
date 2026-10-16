@@ -574,12 +574,17 @@
           <div class="take-modal-text" id="takeModalFullText"></div>
         </div>
       </div>
-      <div class="modal-footer flex-row gap-2">
-        <button id="takeModalDirectTgBtn" class="btn btn--out flex-1">
-          ВІДГУК
-        </button>
-        <button id="takeModalAiOfferBtn" class="btn btn--fill flex-1">
-          AI-ВІДГУК
+      <div class="modal-footer flex-col gap-2" style="display: flex; flex-direction: column; width: 100%;">
+        <div style="display: flex; gap: 8px; width: 100%;">
+          <button id="takeModalDirectTgBtn" class="btn btn--out" style="flex: 1;">
+            НАПИСАТИ В ЛІЧКУ
+          </button>
+          <button id="takeModalAiOfferBtn" class="btn btn--fill" style="flex: 1;">
+            AI-ВІДГУК
+          </button>
+        </div>
+        <button id="takeModalSourceBtn" class="btn btn--out" style="width: 100%; display: none; font-size: 0.85rem; padding: 10px 14px; background: rgba(0, 102, 255, 0.05); border-color: rgba(0, 102, 255, 0.25); color: var(--brand); font-weight: 600;">
+          🔗 ВІДКРИТИ В ДЖЕРЕЛІ ↗
         </button>
       </div>
     </div>
@@ -1199,6 +1204,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=3.5.0"></script>
+  <script src="js/app.js?v=3.6.0"></script>
 </body>
 </html>

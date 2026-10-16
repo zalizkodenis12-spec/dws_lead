@@ -2889,28 +2889,32 @@ function openTakeCrmModal(lead, btn) {
     }
   }
 
-  // Action buttons: Direct contact or open on exchange
+  // 1. Action buttons: Direct contact or open on exchange
   if (directTgBtn) {
-    const isExchange = !!lead.url && (!lead.authorUsername || lead.authorUsername.startsWith('@freelance') || lead.authorUsername.startsWith('@djinni') || lead.authorUsername.startsWith('@kabanchik'));
+    const isExchange = !!lead.url && (!lead.authorUsername || lead.authorUsername.startsWith('@freelance') || lead.authorUsername.startsWith('@djinni') || lead.authorUsername.startsWith('@kabanchik') || lead.authorUsername.startsWith('@upwork') || lead.authorUsername.startsWith('@wework'));
     if (isExchange) {
       directTgBtn.textContent = `ВІДКРИТИ НА ${lead.sourceName || 'БІРЖІ'} ↗`;
       directTgBtn.onclick = () => {
         haptic('light');
+        markLeadTakenToCrm(lead, btn);
         window.open(lead.url, '_blank');
       };
     } else {
-      directTgBtn.textContent = 'НАПИСАТИ В ЛІЧКУ';
+      const handleClean = (lead.authorUsername && lead.authorUsername !== '@telegram') ? lead.authorUsername : '';
+      directTgBtn.textContent = handleClean ? `НАПИСАТИ (${handleClean})` : 'НАПИСАТИ В ЛІЧКУ';
       directTgBtn.onclick = () => {
         haptic('light');
+        markLeadTakenToCrm(lead, btn);
         openTelegramContact(lead, '');
       };
     }
   }
 
-  // AI offer button click handler (Copies pitch and opens dialog/exchange)
+  // 2. AI offer button click handler (Copies pitch and opens dialog/exchange)
   if (aiOfferBtn) {
     aiOfferBtn.onclick = () => {
       haptic('success');
+      markLeadTakenToCrm(lead, btn);
       const clientName = lead.authorName || (lead.authorUsername ? lead.authorUsername.replace('@', '') : 'замовнику');
       const taskName = lead.subcategoryName || lead.title || 'розробка проєкту';
       const template = state.profile?.responseTemplate || DEFAULT_DATA.profile.responseTemplate;
@@ -2930,54 +2934,90 @@ function openTakeCrmModal(lead, btn) {
     };
   }
 
-  // Automatically add lead to CRM if not yet added
-  if (!lead.inCrm) {
-    lead.inCrm = true;
-    state.takenLeadIds.add(lead.id);
-    state.justTakenSessionIds.add(lead.id);
-    localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
+  // 3. Open in Source button (Check original channel message or exchange project)
+  const sourceBtn = document.getElementById('takeModalSourceBtn');
+  if (sourceBtn) {
+    let sourceUrl = '';
+    let sourceLabel = lead.sourceName || 'ДЖЕРЕЛІ';
 
-    if (btn) {
-      btn.textContent = 'В РОБОТІ ✓';
-      btn.classList.add('btn--out');
-      btn.classList.remove('btn--fill');
+    if (lead.url) {
+      sourceUrl = lead.url;
+    } else if (lead.sourceUsername) {
+      const cleanHandle = lead.sourceUsername.replace(/^@/, '');
+      sourceUrl = `https://t.me/${cleanHandle}`;
     }
 
-    // Add to local CRM state as well so it works offline/static
-    const alreadyInCrm = state.crm.some(c => c.leadId === lead.id);
-    if (!alreadyInCrm) {
-      const authorClean = lead.authorUsername ? lead.authorUsername.replace('@', '') : 'Клієнт';
-      state.crm.unshift({
-        id: 'crm-' + Date.now(),
-        leadId: lead.id,
-        name: lead.authorName && lead.authorName !== 'Клієнт / Роботодавець' ? lead.authorName : authorClean,
-        username: lead.authorUsername || '@username',
-        avatarLetter: authorClean.charAt(0).toUpperCase(),
-        status: 'in_progress',
-        statusLabel: 'В процесі',
-        service: lead.category || 'development',
-        serviceLabel: lead.categoryName || 'Розробка',
-        niche: lead.subcategoryName || lead.title,
-        budget: lead.budget || 0,
-        currency: '₴',
-        source: 'tg_leads',
-        sourceLabel: lead.sourceName || 'DWS Lead',
-        notes: cleanVacancyText(lead.text),
-        orders: []
-      });
-      localStorage.setItem('dws_crm', JSON.stringify(state.crm));
-      renderCrm();
+    if (sourceUrl) {
+      sourceBtn.style.display = 'block';
+      sourceBtn.textContent = `🔗 ВІДКРИТИ В ДЖЕРЕЛІ (${sourceLabel}) ↗`;
+      sourceBtn.onclick = () => {
+        haptic('light');
+        if (tg?.openTelegramLink && sourceUrl.includes('t.me/')) {
+          tg.openTelegramLink(sourceUrl);
+        } else {
+          window.open(sourceUrl, '_blank');
+        }
+      };
+    } else {
+      sourceBtn.style.display = 'none';
     }
-
-    fetch('/api/leads/' + lead.id + '/take-to-crm', { method: 'POST' })
-      .then(res => res.json())
-      .then(json => {
-        if (json.success) fetchCrm();
-      })
-      .catch(() => {});
   }
 
   openModal('modalTakeCrmLead');
+}
+
+// Mark lead as "В РОБОТІ ✓" and add to CRM ONLY when user actually takes contact action
+function markLeadTakenToCrm(lead, btn) {
+  if (!lead || lead.inCrm) return;
+  lead.inCrm = true;
+  state.takenLeadIds.add(lead.id);
+  state.justTakenSessionIds.add(lead.id);
+  localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
+
+  if (btn) {
+    btn.textContent = 'В РОБОТІ ✓';
+    btn.classList.add('btn--out');
+    btn.classList.remove('btn--fill');
+  }
+
+  const domBtn = document.querySelector(`.lead-card[data-id="${lead.id}"] .btn--take-crm`);
+  if (domBtn) {
+    domBtn.textContent = 'В РОБОТІ ✓';
+    domBtn.classList.add('btn--out');
+    domBtn.classList.remove('btn--fill');
+  }
+
+  const alreadyInCrm = state.crm.some(c => c.leadId === lead.id);
+  if (!alreadyInCrm) {
+    const authorClean = lead.authorUsername ? lead.authorUsername.replace('@', '') : 'Клієнт';
+    state.crm.unshift({
+      id: 'crm-' + Date.now(),
+      leadId: lead.id,
+      name: lead.authorName && lead.authorName !== 'Клієнт / Роботодавець' ? lead.authorName : authorClean,
+      username: lead.authorUsername || '@username',
+      avatarLetter: authorClean.charAt(0).toUpperCase(),
+      status: 'in_progress',
+      statusLabel: 'В процесі',
+      service: lead.category || 'development',
+      serviceLabel: lead.categoryName || 'Розробка',
+      niche: lead.subcategoryName || lead.title,
+      budget: lead.budget || 0,
+      currency: lead.currency || '₴',
+      source: lead.sourceType || 'tg_leads',
+      sourceLabel: lead.sourceName || 'DWS Lead',
+      notes: cleanVacancyText(lead.text),
+      orders: []
+    });
+    localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+    renderCrm();
+  }
+
+  fetch('/api/leads/' + lead.id + '/take-to-crm', { method: 'POST' })
+    .then(res => res.json())
+    .then(json => {
+      if (json.success) fetchCrm();
+    })
+    .catch(() => {});
 }
 
 const CRM_STATUSES = {
