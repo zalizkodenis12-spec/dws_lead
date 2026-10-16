@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1792182155567-5466",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "google_ads",
+      "subcategoryName": "Google реклама",
+      "sourceType": "freelancehunt",
+      "sourceName": "Freelancehunt",
+      "sourceUsername": "@freelancehunt",
+      "authorName": "Замовник на Freelancehunt",
+      "authorUsername": "@freelancehunt",
+      "title": "Ищу специалиста по Google Ads для запуска рекламы в США",
+      "text": "Ищу специалиста по Google Ads для запуска рекламы в США - 200USD\n\nОписание проекта\n\n\nИщу опытного специалиста по контекстной рекламе Google Ads для продвижения проекта на рынке США.\n\n\nОсновная задача — разработать стратегию и запустить эффективную рекламу в Google для привлечения целевой аудитории, увеличения количества переходов на сайт и получения заявок или ...",
+      "url": "https://freelancehunt.com/project/shukayu-spetsialista-google-ads-dlya/1659439.html",
+      "date": "2026-10-16T20:22:35.566Z",
+      "dateFormatted": "Сьогодні, 23:22",
+      "budget": 200,
+      "currency": "₴",
+      "country": "Freelancehunt",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 59,
+      "aiSummary": "Замовлення на Freelancehunt: google реклама з бюджетом 200 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792175027901-413",
       "category": "montage",
       "categoryName": "Монтаж",
