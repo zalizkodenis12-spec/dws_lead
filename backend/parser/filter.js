@@ -292,13 +292,13 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
   const requiresPortfolio = lower.includes('портфоліо') || lower.includes('кейси') || lower.includes('приклади');
   const experienceRequired = lower.includes('досвід') || lower.includes('мідл') || lower.includes('досвідчений');
 
-  // Country & Market detection (тільки точна назва країни, без узагальнень як СНД/Global і без прапорців)
+  // Country & Market detection (реальна країна клієнта/вакансії)
   let country = 'Україна';
-  if (/(?:сша|usa|америк|штати|штатах|new york|нью-йорк|калифорн|каліфорн|майами|маямі|техас)/i.test(clean)) {
+  if (/(?:ринок сша|клієнт зі сша|клієнти зі сша|замовник зі сша|компанія зі сша|us market|us client|usa|new york|нью-йорк|калифорн|каліфорн|майами|маямі|техас|лос-анджелес)/i.test(clean)) {
     country = 'США';
   } else if (/(?:zł|pln|польщ|польша|варшав|warszaw|краків|krakow|вроцлав|wroclaw)/i.test(clean)) {
     country = 'Польща';
-  } else if (/(?:німеччин|герман|germany|deutschland|берлін|berlin|мюнхен|munich)/i.test(clean)) {
+  } else if (/(?:німеччин|герман|germany|deutschland|берлін|berlin|мюнхен|munich|гамбург)/i.test(clean)) {
     country = 'Німеччина';
   } else if (/(?:великобритан|британія|британия|england|лондон|london|gbp|£)/i.test(clean)) {
     country = 'Велика Британія';
@@ -314,12 +314,12 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
     country = 'Ізраїль';
   } else if (/(?:₽|руб|rub|спб|москва|мск|рф|россия|тинькофф|сбер|тинькоф|петербург)/i.test(clean)) {
     country = 'РФ';
-  } else if (/(?:грн|uah|₴|київ|львів|україна|дніпро|одес|харків|вінниц|запоріжж)/i.test(clean)) {
+  } else if (/(?:грн|uah|₴|київ|львів|україна|дніпро|одес|харків|вінниц|запоріжж|полтав|черкас|тернопіль|ужгород)/i.test(clean) || /[іїєґ]/.test(clean)) {
     country = 'Україна';
-  } else if (/(?:\$|usd|english)/i.test(clean) && !/(?:грн|uah|₴|укра)/i.test(clean)) {
+  } else if (/(?:upwork|weworkremotely)/i.test(clean)) {
     country = 'США';
-  } else if (/(?:€|eur)/i.test(clean)) {
-    country = 'Німеччина';
+  } else if (/^[a-zA-Z0-9\s.,!?'"():;$-]+$/.test(clean.slice(0, 100)) && /(?:\$|usd)/i.test(clean)) {
+    country = 'США';
   }
 
   // 7. Calculate honest AI initial heuristic score (42-89)

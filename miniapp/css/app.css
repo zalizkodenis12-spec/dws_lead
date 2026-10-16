@@ -1757,13 +1757,14 @@ body.dark-theme .crm-order-card-title {
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 4px;
+  justify-content: flex-start;
+  padding: 0;
   z-index: 20;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.03);
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -1778,9 +1779,12 @@ body.dark-theme .crm-order-card-title {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  flex: 1 1 0;
-  min-width: 52px;
-  padding: 0 2px;
+  flex: 0 0 25%;
+  width: 25%;
+  min-width: 25%;
+  max-width: 25%;
+  padding: 0 4px;
+  box-sizing: border-box;
   white-space: nowrap;
   scroll-snap-align: start;
   height: 100%;

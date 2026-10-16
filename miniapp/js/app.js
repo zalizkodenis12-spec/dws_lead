@@ -64,6 +64,738 @@ function getFirstSentence(text) {
 const DEFAULT_DATA = {
   leads: [
     {
+      "id": "lead-1792175027901-413",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Vitalik",
+      "authorUsername": "@smmbunker",
+      "title": "‼️Монтаж reels який тримає увагу.",
+      "text": "‼️Монтаж reels який тримає увагу.\nЗмонтую ваше відео за 1 день та з безкоштовними правками. Приклади відео в портфоліо.\n\nЩо буде зрблено?\nКольорокорекція ✅\nВирізання пауз ✅\nДинамічні субтитри ✅\nПереходи ✅\nСтокові відео ✅\nСаунд дизайн ✅\n\nПишіть в особисті, якщо зацікавило",
+      "date": "2026-10-16T18:23:47.900Z",
+      "dateFormatted": "Сьогодні, 21:23",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 51,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-ex-1792174333648-7381",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "freelance_ua",
+      "sourceName": "Freelance.ua",
+      "sourceUsername": "@freelance_ua",
+      "authorName": "Замовник на Freelance.ua",
+      "authorUsername": "@freelance_ua",
+      "title": "Шукаємо комплексного Маркетолога / SMM + Google Ads фахівця для компанії в США",
+      "text": "Шукаємо комплексного Маркетолога / SMM + Google Ads фахівця для компанії в США\n\nШукаємо тямущого спеціаліста (або медіабайера/таргетолога з навичками) для будівельної компанії (Genesis...",
+      "url": "https://freelance.ua/orders/297990-shukajemo-kompleksnogo-marketologa-smm-google-ads-fahivca-dla-kompaniji-v-ssha.html",
+      "date": "2026-10-16T18:12:13.558Z",
+      "dateFormatted": "Сьогодні, 21:12",
+      "budget": 10000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення на Freelance.ua: таргетована реклама (meta) з бюджетом 10000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-ex-1792174333621-277",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "djinni",
+      "sourceName": "Djinni",
+      "sourceUsername": "@djinni",
+      "authorName": "Рекрутер на Djinni",
+      "authorUsername": "@djinni",
+      "title": "Facebook Media Buyer (iGaming)",
+      "text": "Facebook Media Buyer (iGaming)\n\nEver wanted to run Meta Ads campaigns where performance actually matters - generating high-quality leads, driving conversions, and scaling campaigns that deliver real results?\nWhere your decisions directly impact ROI, not just clicks and impressions?\nWhere you’re not just launching ads - you’re testing, optimizing, and scaling campaigns in a highly competitive performance marketing environment?\nIf you know how to turn Meta Ads into a predictable lead generation channel and have experience with casino or iGaming offers, this role is for you.\n \nAbout the Company\nWe are an international marketing company focused on performance-driven growth across multiple geographies.\nWe don’t chase vanity metrics. We build campaigns designed to generate measurable results and profitable growth.\nOur team works across different traffic sources, funnels, and offers, constantly testing new approaches and optimizing performance to unlock new growth opportunities.\n \nThe Role\nWe’re looking for a Facebook Media Buyer with strong hands-on experience in Facebook and Instagram advertising, lead generation, and performance marketing.\nThis is not an entry-level role. We’re looking for someone who knows how to build campaigns from the ground up, optimize performance based on data, and scale successful strategies.\nExperience with casino and iGaming offers is a strong advantage. You should understand how to work with competitive offers, test different approaches, and focus on lead quality and campaign profitability.\n\nWhat You’ll Do\nLaunch & Manage Campaigns\nCreate, launch, and manage Meta Ads campaigns across Facebook and Instagram.\nBuild lead generation campaigns focused on acquiring high-quality leads.\nManage campaign performance and budgets with a strong focus on ROI and CPL targets.\nMonitor delivery and troubleshoot performance issues.\nOptimize & Scale\nTest creatives, audiences, targeting strategies, and campaign structures.\nAnalyze performance metrics, identify winning combinations, and scale successful campaigns.\nOptimize campaigns to improve lead quality, reduce CPL, and increase overall profitability.\nMake fast, data-driven decisions to improve campaign performance.\nWork with Data & Tracking \nMonitor key performance indicators, including CPL, CPA, conversion rates, and ROI.\nWork with Meta Pixel, conversion tracking, and analytics tools to measure campaign effectiveness.\nIdentify performance trends and opportunities for further optimization.\nEnsure campaign decisions are based on reliable data and business results.\nDrive Performance & Growth\nContinuously experiment with new creatives, audiences, and campaign strategies.\nIdentify opportunities to improve acquisition efficiency and scale lead generation.\nApply performance marketing best practices to achieve sustainable results.\nStay up to date with Meta Ads platform changes, advertising policies, and optimization techniques.\n \nWhat You Bring\nProven hands-on experience managing and scaling Meta Ads campaigns.\nStrong background in lead generation and performance marketing.\nExperience optimizing campaigns for CPL, CPA, conversion rates, and ROI.\nA solid understanding of campaign structures, audience targeting, retargeting, and scaling strategies.\nPractical knowledge of Meta Pixel, conversion tracking, and analytics.\nExperience testing creatives and audiences to identify profitable campaign combinations.\nCasino/iGaming experience is a major plus.\nStrong analytical thinking, ownership, and a results-driven mindset.\nAbility to work independently, troubleshoot issues, and make decisions based on data.\n \nWhat You Get\nPerformance-Driven Environment: Work with a team focused on measurable results, optimization, and growth.\nReal Impact: Your decisions directly influence campaign performance and lead generation outcomes.\nRoom to Scale: Explore new strategies, test different approaches, and unlock growth opportunities.\nInternational Team: Collaborate with marketing professionals across multiple markets.\nChallenge & Ownership: Take responsibility for campaign performance and contribute your expertise to business growth.\n \nReady to Scale What Works?\nIIf you know how to turn Meta Ads campaigns into a high-performing lead generation channel and want to work in an environment where results, data, and profitability come first.\n \n👉 Apply now and let’s scale campaigns that deliver.",
+      "url": "https://djinni.co/jobs/853823-facebook-media-buyer-igaming/",
+      "date": "2026-10-16T18:12:13.558Z",
+      "dateFormatted": "Сьогодні, 21:12",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення на Djinni: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-ex-1792174333571-8590",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "freelancehunt",
+      "sourceName": "Freelancehunt",
+      "sourceUsername": "@freelancehunt",
+      "authorName": "Замовник на Freelancehunt",
+      "authorUsername": "@freelancehunt",
+      "title": "Видеокреатив для рекламы в facebook ads",
+      "text": "Видеокреатив для рекламы в facebook ads - 700UAH\n\nНеобходимо создать 2 видеокреатива для рекламной кампании Facebook.\n\nХронометраж видео: 15 и 30 секунд.\n\nТематика: услуги (сезонное предложение для новых клиентов).\n\nФормат видео: 9:16.\n\nКонтент для видео нужно будет сгенерировать с помощью ИИ.\nМы предоставим референсы предыдущих видеороликов.\nПодробное...",
+      "url": "https://freelancehunt.com/project/video-kreativ-dlya-reklami-facebook/1659420.html",
+      "date": "2026-10-16T18:12:13.558Z",
+      "dateFormatted": "Сьогодні, 21:12",
+      "budget": 700,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 59,
+      "aiSummary": "Замовлення на Freelancehunt: таргетована реклама (meta) з бюджетом 700 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-ex-1792174333558-6959",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "freelancehunt",
+      "sourceName": "Freelancehunt",
+      "sourceUsername": "@freelancehunt",
+      "authorName": "Замовник на Freelancehunt",
+      "authorUsername": "@freelancehunt",
+      "title": "Таргетолог Meta Ads (Facebook/Instagram): лидогенерация для локального бизнеса",
+      "text": "Таргетолог Meta Ads (Facebook/Instagram): лидогенерация для локального бизнеса\n\nО проектеСервисный бизнес в сегменте умных жалюзи. Модель: реклама → заявка → SMS-квалификация → бесплатный выездной замер → продажа.Реклама уже работает. Ищу человека, который возьмет кабинет на ведение и снизит стоимость качественного лида. Гео, название и детали проекта раскрою после первого разговора.Что...",
+      "url": "https://freelancehunt.com/project/targetolog-meta-ads-facebook-instagram-lidogeneratsiya-dlya/1659422.html",
+      "date": "2026-10-16T18:12:13.558Z",
+      "dateFormatted": "Сьогодні, 21:12",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення на Freelancehunt: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792171094208-932",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "RudenkoSMM UA",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Rudenko_Job",
+      "authorUsername": "@Rudenko_Job",
+      "title": "💅 💼 Вакансія: SMM для бренду професійної аромакосметики для волосся | роб...",
+      "text": "💅 💼 Вакансія: SMM для бренду професійної аромакосметики для волосся | робота у Львові, гібрид\n\n📍Львів, гібрид\n\nNa Gólov[y] - український виробник професійної аромакосметики для волосся\n\n🌐 сторінка бренду https://www.nagolovy.pro/\n🌐 сторінка власниці https://www.instagram.com/nataliagolovchenko.ua?stkn=MWNhN3A5bjJxMThwYg==\n\n\nШукаємо людину, яка допоможе перетворити життя, досвід і роботу власниці бренду на сильний особистий блог.\n\nТи будеш працювати напряму з власницею: розуміти її ритм життя, бачити цікаві моменти, знаходити теми, формувати рубрики, планувати Stories і Reels та координувати створення контенту.\n\nЩо очікуємо:\n• досвід у SMM та Instagram\n• досвід із особистими брендами\n• сильний сторітелінг\n• самостійність та ініціативність\n• вміння генерувати контентні ідеї\n• досвід організації зйомок\n• розуміння Instagram-аналітики\n• Figma, Canva, CapCut\n\n30000 грн, для сильного кандидата - готові обговорити більше! ✨\n\nЛьвів, гібридний формат - близько 2−3 дні в офісі + виїзди на зйомки\nОфіційне працевлаштування\nКорпоративні знижки та подарунки\nКорпоративний психолог\n\nДля відгуку @Recruiter_Diana  ✉️\n\n#SMM #маркетолог #Львів #роботаЛьвів #роботаУкраїна #вакансія",
+      "date": "2026-10-16T17:18:14.208Z",
+      "dateFormatted": "Сьогодні, 20:18",
+      "budget": 30000,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 71,
+      "aiSummary": "Замовлення: монтаж reels/tiktok з бюджетом 30000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792171094183-878",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "RudenkoSMM UA",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Irina_MK26",
+      "authorUsername": "@Irina_MK26",
+      "title": "💜 Вакансія: SMM для VST OIL | робота в Одесі, гібрид",
+      "text": "💜 Вакансія: SMM для VST OIL | робота в Одесі, гібрид\n\n📍Одеса, офіс / гібрид\nвід 25 000 грн\n\nШукаємо креативного SMM спеціаліста для VST OIL (мережа АЗС),  який допоможе розвивати соціальні мережі бренду, створювати цікавий контент, і реалізовувати маркетингові проєкти\n\nЩо потрібно робити:\n• Вести Instagram, Facebook, TikTok, Telegram і Threads.\n• Розробляти контент-стратегію та контент-план.\n• Створювати Reels, Stories, відео, дописи та інший контент.\n• Планувати публікації та налаштовувати кроспостинг.\n• Взаємодіяти з аудиторією в соціальних мережах.\n• Брати участь у налаштуванні таргетованої реклами.\n• Координувати рекламні активності та комунікувати з підрядниками.\n• Долучатися до маркетингових проєктів компанії.\n\nНаш кандидат:\n• Має досвід роботи в SMM.\n• Вміє планувати контент і комплексно вести соціальні мережі.\n• Розуміє принципи створення візуального контенту та роботи з графічними редакторами.\n• Має базові знання рекламних кабінетів та аналітики.\n\nДля відгуку @Irina_kocharyan ✉️\n\n#SMM #Odesa #Одеса #вакансія #роботаУкраїна\n\n🔗 Більше вакансій в нашому чаті\nРозмістити вакансію @Irina_MK26",
+      "date": "2026-10-16T17:18:14.182Z",
+      "dateFormatted": "Сьогодні, 20:18",
+      "budget": 25000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 87,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 25000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792171094092-650",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "RudenkoSMM UA",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "hr_manager_af",
+      "authorUsername": "@hr_manager_af",
+      "title": "🚀 Вакансія: Media Buyer | віддалена робота, full time / part time",
+      "text": "🚀 Вакансія: Media Buyer | віддалена робота, full time / part time\n\n📍 Віддалено\n\nШукаємо досвідченого Media Buyer для запуску та масштабування рекламних кампаній на Telegram Ads\n\nЩо потрібно:\n- Практичний досвід запуску та ведення реклами\n- Досвід роботи Telegram Ads\n- Глибоке розуміння аналітики, оптимізації та масштабування кампаній\n- Досвід у вертикалях: форекс, крипто, бінарні опціони\n\nЩо пропонуємо:\n- Віддалений графік роботи\n- Спільне з керівником прийняття рішень щодо масштабування\n- Онбординг відбувається одразу в процесі роботи\n\nОплата:\nУмови обговорюємо індивідуально з кандидатом залежно від досвіду, кейсів та формату співпраці.\n\nДля відгуку @hr_manager_af 📩\n\n#баєр #вакансія #віддаленаробота",
+      "date": "2026-10-16T17:18:14.091Z",
+      "dateFormatted": "Сьогодні, 20:18",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792171094079-676",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "RudenkoSMM UA",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "rudenkosmm",
+      "authorUsername": "@rudenkosmm",
+      "title": "Шукаємо команду для комплексного просування бізнесу: SMM + Meta Ads + Googl...",
+      "text": "Шукаємо команду для комплексного просування бізнесу: SMM + Meta Ads + Google Ads 🤝 💼\n\nПотрібно закрити весь цикл:\n• контент-план і сценарії;\n• виїзні зйомки Reels у Києві та монтаж;\n• публікації й ведення сторіс;\n• таргетовану рекламу в Instagram/Facebook;\n• Google-рекламу;\n• аналітику та звітність.\n\nВажливо, щоб усе це робила одна команда з узгодженою стратегією!\n\nФорма для співпраці : https://forms.gle/kvZSoyMBgbHXMPL16",
+      "date": "2026-10-16T17:18:14.078Z",
+      "dateFormatted": "Сьогодні, 20:18",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792171091807-46",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "rabota_zhutomere UA",
+      "sourceUsername": "@rabota_zhutomere",
+      "authorName": "rabota_zhutomere",
+      "authorUsername": "@rabota_zhutomere",
+      "title": "🔍Викладач з 3D-моделювання (Blender, для дітей)💼",
+      "text": "🔍Викладач з 3D-моделювання (Blender, для дітей)💼\n\n🥇Привіт! Ми — IT FUTURE Online — шукаємо викладачів з 3D моделювання в Blender.\nЗа 8+ років ми навчили 15 000 учнів, і наша команда вже налічує понад 350 крутих викладачів та продовжуємо зростати далі.\nТому, у зв’язку з динамічним розвитком нашої школи, оголошуємо набір викладачів з програмування на 3D моделювання в Blender для проведення індивідуальних уроків онлайн, для дітей віком від 10 років.\n\n🔢Що ми пропонуємо?\nДистанційну роботу: працюй дистанційно з будь-якої точки світу та самостійно формуй свій графік роботи;\nКонкурентну заробітню плату: близько 45 000₴ на повній зайнятості, та біля 16 000−20 000₴ на частковій;\nЗручність: комунікація з клієнтами тільки через школу і в робочий час;\nГотова програма: покрокові уроки вже підготовлені для тебе;\nПідтримка: ментор та менеджери на зв’язку 7 днів на тиждень;\nЗручний особистий кабінет з інформацією про твоїх учнів та реєстром проведених/запланованих занять.\n\n❗️Чим ти будеш займатись?\nПроводити індивідуальні уроки, для учнів, віком від 10 до 17 років, по підготовленій програмі навчання;\nНадавати зворотній звʼязок, про успіхи учнів;\nЗаповнення проведених уроків у CRM cистемі;\nКомунікувати з менеджерами, в чаті\n\n🖥Хто нам підходить?\nТи маєш досвід в IT та бажання навчатись;\nУ тебе є комп’ютер з веб-камерою та надійний інтернет;\nТи маєш такі якості як: відповідальність, самоорганізованість, комунікабельність;\nТобі подобається працювати з дітьми;\nГотовність працювати від 20 годин на тиждень;\nТи знаєш, і можеш викладати один або декілька з даних напрямків: Scratch, Roblox, Minecraft Education, Minecraft Python, Python, Web-програмування, Photoshop, Відеомонтаж/Відеоблогінг, 3D Blender, Unity, Construct, AI, СapCut.\n\n⌨️Залишай резюме, а краще відразу заповнюй форму https://docs.google.com/forms/d/1-z3VzLYZsqwt95Kr8xE_JD_XNyt2ykLIKyV1mRxR3XA/edit та приєднуйся до нашої дружньої команди!",
+      "date": "2026-10-16T17:18:11.806Z",
+      "dateFormatted": "Сьогодні, 20:18",
+      "budget": 45000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 78,
+      "aiSummary": "Замовлення: монтаж з бюджетом 45000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792171091796-92",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "rabota_zhutomere UA",
+      "sourceUsername": "@rabota_zhutomere",
+      "authorName": "rabota_zhutomere",
+      "authorUsername": "@rabota_zhutomere",
+      "title": "🔍Таргетолог💼",
+      "text": "🔍Таргетолог💼\n\nПривіт!\nШукаємо амбітного та цілеспрямованого спеціаліста, який розуміє, що рекламний креатив та комплексний підхід до проєкту вирішує більше, а ніж просто клацання кнопок в рекламному кабінеті😉\n🖥Що ти отримаєш:\nСтабільну кількість цікавих проєктів і роботу з досить відомими брендами 😊\nДоступ до бази знань, яка постійно поповнюється (Targetorium, Matveev, Filatov та інші курси топів ринку)\nМожливість вирости до Team Lead та Head of Dep.\nРоботу з бюджетами від 10 000$ на місяць сумарно\nчітку та прозору систему мотивації у % від чека проєкту\nв команді є Team Lead, Project Manager, дизайнери та монтажери, відповідно за комунікацію та створення рекламних креативів тобі відповідати не потрібно.\n🔢Що від тебе:\nРобота з бюджетом понад 3.000$ на місяць\nДосвід роботи від 6 місяців\nАналітичне мислення та креативність\nІніціативність та бажання постійно розвиватись\n⌨️Якщо цікаво — заповнюй форму https://forms.gle/qM99mxRks8ZvwpEg7",
+      "date": "2026-10-16T17:18:11.795Z",
+      "dateFormatted": "Сьогодні, 20:18",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792171073150-12",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "mediabuers_cpa UA",
+      "sourceUsername": "@mediabuers_cpa",
+      "authorName": "ADS",
+      "authorUsername": "@fsfseffse_bot",
+      "title": "🚀 Media Buyer (Facebook, Influence-схемы) | Бинарные опционы",
+      "text": "🚀 Media Buyer (Facebook, Influence-схемы) | Бинарные опционы\n\nGolden Affiliates ищет опытного медиабайера на схемный инфлюенс-трафик через Facebook → Telegram-воронки.\nРаботаем в вертикали бинарок, с сильным продакшеном, крутыми агентами и реальными бюджетами.\n\n🎯 Что нужно делать:\n— Запуск и оптимизация схемных РК с FB на Telegram\n— Постановка задач дизайнерам и актёрам\n— Работа с Chatterfy, Keitaro и табличками\n— Ведение агентов и анализ их воронок\n— Присутствие на регулярных созвонах + отчётность\n\n💼 Что нам важно:\n— Опыт от 1–1,5 лет в Facebook (реальный, не теоретический)\n— Опыт от 6 месяцев в инфлюенс-схемах (гембла / бинарки)\n— Бюджеты: работал(а) с 1000–3000$ в сутки\n— Умеешь ставить ТЗ актёрам, писать сценарии и контролировать прод\n— Обязательно: кейсы. Хоть скрин, хоть таблица, но без них — не двигаемся\n\n🔍 Будет плюсом:\n— Опыт в бинарках\n— Знание Tier 3, особенно Индия\n\n🚫 Точно не подойдёт, если:\n— Никогда не работал(а) со схемным трафиком\n— Спендил до 500$ в день и считаешь это “опытом”\n— Не можешь показать ни одного кейса\n\n👤 Кто нам нужен:\nОткрытый, живой, инициативный человек, готовый работать быстро, точно и с интересом. Не ждун — а действующий.\n\n💰 Условия:\n— Удалёнка\n— Онлайн с 10:00 до 18:00 по МСК\n— ЗП: Индивидуально обсуждаемая сетка от профита. Сильным кандидатам — условия под вас.\n\n\n📩 Присылай кейсы и пиши в личку: @goldnaffhr",
+      "date": "2026-10-16T17:17:53.149Z",
+      "dateFormatted": "Сьогодні, 20:17",
+      "budget": 124500,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 78,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 124500 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792171070829-544",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "traffic_cpa_hr UA",
+      "sourceUsername": "@traffic_cpa_hr",
+      "authorName": "ADS",
+      "authorUsername": "@vscsbrgse_bot",
+      "title": "Вакансия: Media Buyer (TG/ FB/ TikTok)",
+      "text": "Вакансия: Media Buyer (TG/ FB/ TikTok)\n\nВертикаль: бинарные опционы\nФормат: удаленно\nГео: LATAM, CIS\nИсточники:Telegram Ads / Facebook Ads / TikTok Ads\n\nИщем Media Buyer’а под залив трафика в вертикали бинарных опционов.\nРассматриваем как специалистов по одному источнику, так и байеров с опытом работы сразу в нескольких: Telegram Ads, Facebook Ads, TikTok Ads.\n\nЧто ожидаем:\n\n• опыт работы с Telegram Ads, Facebook Ads или TikTok Ads в финансовой вертикали / бинарных опционах\n• актуальный коммерческий опыт залива по одному из источников за последние месяцы\n• понимание воронок, связок, креативов, аналитики и ключевых метрик\n• опыт работы с GEO LATAM / CIS будет преимуществом\n• умение работать с бюджетами от $1000 daily\n• самостоятельность в принятии решений и умение быстро тестировать гипотезы\n• готовность собирать каналы, ботов, прокладки и тестовые воронки при необходимости\n• умение работать со SPY-сервисами и анализировать рынок\n• подготовка регулярных отчетов по заливам и результатам тестов\n• готовность предоставить подтвержденную статистику за последние месяцы.\n\nЧто предлагаем:\n\n• быстрые и регулярные выплаты\n• индивидуальные условия\n• гибкие условия\n• готовую инфраструктуру и выстроенные процессы\n• быструю коммуникацию и оперативное принятие решений\n• эксклюзивные продуктовые решения, которых нет на рынке\n• возможность масштабироваться на больших бюджетах.\n\nНам важно реальный актуальный опыт закупки трафика, понимание своей статистики и готовность работать на результат, а не просто запускать тесты без аналитики.\n\nОткликайтесь с кратким описанием опыта: источник трафика, GEO, бюджеты, вертикаль, последние результаты и подтверждение статистики.\n\nКонтакт @alena_h_h 📲",
+      "date": "2026-10-16T17:17:50.829Z",
+      "dateFormatted": "Сьогодні, 20:17",
+      "budget": 41500,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 70,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 41500 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792171059226-983",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "freelance_workua UA",
+      "sourceUsername": "@freelance_workua",
+      "authorName": "Angelina",
+      "authorUsername": "@angelinaaahr5",
+      "title": "💰 ХОЧЕШЬ БОЛЬШЕ ЗАРАБАТЫВАТЬ?",
+      "text": "💰 ХОЧЕШЬ БОЛЬШЕ ЗАРАБАТЫВАТЬ?\n\n🚀 Тогда посмотри наши актуальные вакансии в  FOREX.\n\n━━━━━━━━━━━━━━\n\n🔥 ИЩЕМ:\n\n💼 Sales Manager\n📊 Retention Manager\n👑 Team Lead\n💬 Support Manager\n💻 Media Buyer\n🎓 Trainee / Junior\n\n━━━━━━━━━━━━━━\n\n🌍 НАПРАВЛЕНИЯ:\n\n🇷🇺 RU\n🇬🇧 ENG\n🇩🇪 DE\n🇵🇱 PL\n🇨🇿 CZ\n🇹🇷 TR\n🇦🇪 AR\n\n💵 УСЛОВИЯ:\n▪️ Ставка + % / бонусы\n▪️ Стабильный поток клиентов\n▪️ Регулярные выплаты\n▪️ Бонусы за KPI\n▪️ Обучение новичков\n▪️ Рост до Team Lead\n\n❗️ НУЖЕН ОПЫТ — ХОРОШО. НЕТ ОПЫТА — ТОЖЕ РАССМОТРИМ.\n\n📥 Пиши в ЛС — подберём позицию под тебя.",
+      "date": "2026-10-16T17:17:39.225Z",
+      "dateFormatted": "Сьогодні, 20:17",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792171059213-362",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "landing",
+      "subcategoryName": "Односторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "freelance_workua UA",
+      "sourceUsername": "@freelance_workua",
+      "authorName": "Bogdan",
+      "authorUsername": "@freelance_workua",
+      "title": "🤖 Telegram / WhatsApp бот для бізнесу",
+      "text": "🤖 Telegram / WhatsApp бот для бізнесу\n\n• відповідає клієнтам\n• приймає заявки\n• працює 24/7\n💰 Ціна: від 30€\n\n🌐 Сайт або лендінг під ключ\n\n• адаптивний\n• форма заявки\n• швидкий запуск\n\n💰 Ціна: від 40€\n\n⚙️ Автоматизація бізнесу\n\n• бот → Google Sheets\n• бот → CRM\n• бот → email\n\n💰 Ціна: від 50€\n\n🤖 GPT-бот для відповідей клієнтам\n\n• економить час\n• відповідає автоматично\n• під будь-яку нішу\n\n💰 Ціна: від 40€\n\n❓ Не знаєш, що краще?\n\nОпиши свою задачу —\nя підкажу рішення і ціну 👌@ bogdan_OP24",
+      "date": "2026-10-16T17:17:39.213Z",
+      "dateFormatted": "Сьогодні, 20:17",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: односторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170948224-657",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "facebook_25 UA",
+      "sourceUsername": "@facebook_25",
+      "authorName": "ARBI ADS 📌",
+      "authorUsername": "@arbi_ads_bot",
+      "title": "🇧🇪 ВЫСОКОКАЧЕСТВЕННЫЕ МОБИЛЬНЫЕ ПРОКСИ БЕЛЬГИИ (4G/5G) 🇧🇪",
+      "text": "🇧🇪 ВЫСОКОКАЧЕСТВЕННЫЕ МОБИЛЬНЫЕ ПРОКСИ БЕЛЬГИИ (4G/5G) 🇧🇪\n\nИщете стабильные, «чистые» и высокопроизводительные мобильные прокси Бельгии для своих проектов? Перестаньте терять аккаунты и тратить ресурсы впустую!\n\n⚡ Почему стоит выбрать нас?\n📱 100% реальные устройства: работают на настоящих физических мобильных телефонах и SIM-картах для максимального уровня доверия (без эмуляторов).\n🚀 Высокоскоростные сети 4G/5G (топовые бельгийские операторы).\n🔄 Простая ротация IP в 1 клик (мгновенная смена IP-адреса).\n♾️ Безлимитный трафик и максимальное время работы без перебоев.\n🛠️ Многоцелевое использование: идеально для арбитража, веб-скрейпинга, работы с несколькими аккаунтами, автоматизации, SEO, рекламы Meta Ads, Google Ads и любых задач, где нужен надёжный прокси!\n\n💥 Получите свои прокси сейчас и масштабируйте свой бизнес!\n\n👉 Заказать / Связаться: @proxyshine",
+      "date": "2026-10-16T17:15:48.224Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170942061-643",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "robota_kropyvnytskyi24 UA",
+      "sourceUsername": "@robota_kropyvnytskyi24",
+      "authorName": "robota_kropyvnytskyi24",
+      "authorUsername": "@robota_kropyvnytskyi24",
+      "title": "❗️Терміново потрібні співробітники на віддалену роботу!",
+      "text": "❗️Терміново потрібні співробітники на віддалену роботу!\n\nВиплата одразу - від 1700грн за день.\n\nХто без досвіду, проводимо навчання.\n\nДля роботи у цих напрямках:\n\n🟢 Редагування фото - від 24 000 грн\n\n🟢 Монтаж відео - від 28 000 грн\n\n🟢 Публікація постів - від 18 000 грн\n\n🟢 Менеджер з продажу - від 45 000 грн\n\n🟢 Відповідати на вхідні повідомлення - від 26 000 грн\n\nВстигни приєднатися, місця обмежені",
+      "date": "2026-10-16T17:15:42.060Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 1700,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 59,
+      "aiSummary": "Замовлення: монтаж з бюджетом 1700 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170936534-802",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "landing",
+      "subcategoryName": "Односторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "marketing_network1 UA",
+      "sourceUsername": "@marketing_network1",
+      "authorName": "Roman │ Розробка сайтів",
+      "authorUsername": "@diahilevr",
+      "title": "Розробляю сайти під ключ - від ідеї до запуску.",
+      "text": "Розробляю сайти під ключ - від ідеї до запуску.\n\nСтворюю лендінги, корпоративні сайти та інтернет-магазини, а також займаюся технічними доопрацюваннями та покращенням вже готових сайтів.\n\nДопомагаю бізнесу виглядати професійніше, викликати довіру та отримувати більше заявок.\n\nЯкщо вас цікавить розробка сайту або технічні доопрацювання - напишіть мені в особисті повідомлення. Проведу безкоштовну консультацію 📩",
+      "date": "2026-10-16T17:15:36.534Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: односторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170936509-503",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "marketing_network1 UA",
+      "sourceUsername": "@marketing_network1",
+      "authorName": "Альона Хмеленко",
+      "authorUsername": "@Alena_Chymshyr",
+      "title": "💼 вакансія: SMM Manager до  рекрутингової агенції HireStep! 📍 Віддалено,...",
+      "text": "💼 вакансія: SMM Manager до  рекрутингової агенції HireStep! 📍 Віддалено, гнучкий графік / Part-time або full-time 💰 Дохід — індивідуально, залежно від досвіду та домовленостей по зонам відповідальності.\n\n👋 Хто ми HireStep допомагає компаніям в Україні та Європі знаходити сильних людей — від менеджерів до C-level. За нашими плечима 400+ закритих вакансій і 250+ компаній-клієнтів. Ми ростемо і шукаємо SMM Manager, який зробить бренд HireStep впізнаваним і перетворить соцмережі на канал залучення клієнтів та кандидатів.\n\n🎯 Результат, якого чекаємо ▫️ системне зростання підписників і охоплень ▫️ впізнаваність HireStep серед бізнесу та кандидатів ▫️ залучення клієнтів і кандидатів через соцмережі ▫️ регулярна, жива присутність бренду на всіх майданчиках\n\n✍️ Задачі ▫️ SMM-стратегія та контент-план ▫️ контент повного циклу: ідея, текст, візуал, Reels, публікація ▫️ ведення Instagram і Telegram, адаптація під LinkedIn, Threads, Facebook, TikTok, YouTube ▫️ робота з таргетологом: креативи та рекламні кампанії ▫️ контент для сайту ▫️ аналітика: що працює, що ні і що змінюємо\n\n🔎 Вимоги ▫️ комерційний досвід у SMM від 1 року ▫️ портфоліо з власними роботами та результатами в цифрах ▫️ сильні, живі тексти ▫️ самостійний візуал і Reels ▫️ вміння будувати контент-стратегію і працювати з аналітикою ▫️ впевнене володіння інструментами досвідченого SMM — працюй у тих, що зручні тобі, головне швидко і якісно ▫️ самостійність: приходиш з ідеями, а не чекаєш ТЗ\n\n➕ Буде перевагою ▫️ досвід із LinkedIn, Threads, TikTok, YouTube ▫️ досвід роботи з таргетологом і Meta Ads ▫️ експертні, B2B або сервісні бренди ▫️ розуміння HR чи рекрутингу\n\n🌿 Що пропонуємо ▫️ повністю віддалений формат і гнучкий графік ▫️ part-time або full-time ▫️ жодного мікроменеджменту — оцінюємо за результатом ▫️ таргетолог і монтажер у команді ▫️ сотні реальних кейсів як основа для контенту ▫️ адаптацію, навчання і реальний вплив на розвиток компанії\n\n👉Надсилайте портфоліо в особисті )",
+      "date": "2026-10-16T17:15:36.508Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 65,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170924646-466",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Robota_ternopil24 UA",
+      "sourceUsername": "@Robota_ternopil24",
+      "authorName": "workhubautopost",
+      "authorUsername": "@workhubautopostbot",
+      "title": "Трафер/трафік менеджер",
+      "text": "Трафер/трафік менеджер\n\n✈️400-1000$\n✈️ Віддалено\n\n✈️Вимоги:\n▪️З досвідом чи без\n▪️Повна зайнятість\n▪️Наявність ПК або ноутбука\n\n✈️Умови:\n▪️Робота віддалено.\n▪️Кар'єрне зростання та премії.\n▪️Виплати раз на тиждень.\n▪️Усіма розхідниками забезпечуємо.\n\n✈️Контакти:\n@alinat28",
+      "date": "2026-10-16T17:15:24.645Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 41500,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 66,
+      "aiSummary": "Замовлення: маркетинг з бюджетом 41500 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170918561-308",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "smmpeople UA",
+      "sourceUsername": "@smmpeople",
+      "authorName": "Юлия Медведева 🧘🏻‍♀️",
+      "authorUsername": "@umedvedeva",
+      "title": "#рекламаВКонтакте #таргетВК #таргетологвк #помогу #ищупроект",
+      "text": "#рекламаВКонтакте #таргетВК #таргетологвк #помогу #ищупроект\n\nБолее 20 млн ₽ выручки заработала для своих клиентов 🔥\n\nЗдравствуйте! Я Юлия Медведева — сертифицированный таргетолог с опытом 5+ лет.\n\n🤩Мои результаты за 5 лет:\n• Принесла клиентам более 20 000 000 ₽ оборота\n• Привела более 25 000 заявок\n• Средний ежемесячный бюджет в управлении — 350 000 ₽\n• Самый долгий проект в работе — 2,5 года\n\n💡Наработаны рабочие связки и стратегии!\n\n🎁 Бесплатный бонус: экспресс-аудит вашего кабинета или посадочной страницы - дам 3 совета по росту конверсии.\n\n✍🏻 Пишите мне: хочу клиентов из ВК",
+      "date": "2026-10-16T17:15:18.560Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170918528-543",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "smmpeople UA",
+      "sourceUsername": "@smmpeople",
+      "authorName": "Алексей Малов",
+      "authorUsername": "@alexmylove",
+      "title": "#помогу #сайт #дизайнер #лендинг #тильда #taptop #wordpress",
+      "text": "#помогу #сайт #дизайнер #лендинг #тильда #taptop #wordpress\n\nПривет! Меня зовут Малов Алексей, я создаю сайты для бизнеса под ключ. Беру вашу идею и превращаю её в рабочий механизм. Делаю все работы, необходимые для запуска:\n\n— Анализирую целевую аудиторию и выявляю её потребности\n— Изучаю сайты конкурентов\n— Пишу тексты, которые продают и доносят вашу ценность\n— Разрабатываю дизайн, ориентированный на рост конверсии\n— Верстаю сайт на Тильде, Таптопе или WordPress  (для последнего у меня к батарее прикован верстальщик)\n— Делаю базовую SEO-оптимизацию\n— Настраиваю оплату, доставку, интеграции с CRM и другими сервисами\n— Готовлю макеты для передачи вашим верстальщикам (при необходимости)\n\n🔥 Портфолио, цены и отзывы на сайте в описании профиля.\n\nСохраните мой контакт на будущее, а ещё лучше — пишите в личку, я проведу для вас бесплатную консультацию. Обнял-приподнял, буду рад поработать вместе!❤️",
+      "date": "2026-10-16T17:15:18.527Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170918502-890",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот",
+      "sourceType": "chat",
+      "sourceName": "smmpeople UA",
+      "sourceUsername": "@smmpeople",
+      "authorName": "Арсений",
+      "authorUsername": "@SenkaMozgas",
+      "title": "Помогу экспертам, продюсерам кто хочет перестать вручную вести клиетов, нас...",
+      "text": "Помогу экспертам, продюсерам кто хочет перестать вручную вести клиетов, настроить систему, которая сделает все за вас: выдачу материалов, переходы на соцсети и мягко подведет клиента к продаже, даже если текущая воронка не работает\n\nЧто закрываю:\n-техническая реализация воронки продаж под ключ\n– настройка чат-ботов и рассылок\n–докрутка смыслов\n– система дожимных инструментов\n– интеграции, оплаты, автоматизация\n–сопровождение от А до Я\n\n⭐️Среди моих клиентов: Егор Пыриков, Вадим Демчог, Кристина Таспин, Надин Серовски, Татьяна Соло, Евгений Геранькин, Мадина Мусичова\n\nВсе мои проекты, с которыми работал, вышли на стабильные продажи через воронку без ручных действий\n\nГотов зайти в проект на запуск или выстроить систему с нуля, пиши @SenkaMozgas\n\n#техспец #воронкипродаж #автоматизация #запуск #getcourse #salebot",
+      "date": "2026-10-16T17:15:18.501Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170918458-522",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "smmpeople UA",
+      "sourceUsername": "@smmpeople",
+      "authorName": "Наталья | Трафик в Тг",
+      "authorUsername": "@NatalTarget",
+      "title": "#помогу #таргет #закупщик #telegram_ads #закупкарекламы #NatalTarget1610...",
+      "text": "#помогу #таргет #закупщик #telegram_ads #закупкарекламы #NatalTarget1610\n\n❌ НАДОЕЛО РАБОТАТЬ С ТАРГЕТОЛОГОМ БЕЗ ОПЫТА?!\n\nМеня зовут Наталья - и я\n😛😌😁☺️😌😛😉😍😉☺️😌😛☺️     😌    😉😌😚😋\n\nи 😛😌😚😌😋😛😌😚 в  телеграмм и макс с опытом 4+ лет 😎📱📱\n\nСо мной вы:\n✅ Забудете о проблемах с маркировкой\n\n✅ Будете спокойны за рекламный бюджет\n\n✅ Начнете получать ЦЕЛЕВУЮ аудиторию на ваши воронки\n\nРезультаты в цифрах 👇\n\n🔥 767 регистраций по 132 руб на вебинар по интимной гимнастике\n\n🔥 7 продаж по 200 000 руб при рекламном бюджете 200 000 руб в нише - выхода на маркетплейсы\n\n🔥 591 подписчик по 1,69€ на канал копии люксовых брендов\n\nПишите 👉 в лс\n\nРаспишу методы продвижения именно для вашего проекта !",
+      "date": "2026-10-16T17:15:18.457Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170917116-630",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "smmbunker UA",
+      "sourceUsername": "@smmbunker",
+      "authorName": "ViktoriiaBossAuto",
+      "authorUsername": "@Viktoriia_BossAuto",
+      "title": "📢 Шукаємо маркетолога | Варшава, центр",
+      "text": "📢 Шукаємо маркетолога | Варшава, центр\n\nBoss Auto (імпорт авто в Польщу, 8+ років) шукає digital-маркетолога, який хоче рости до керівника відділу 🚀\n\nЩо робитимеш:\n🔹 Google Ads, Meta Ads, YouTube, SEO\n🔹 GA4, GMB, e-mail маркетинг\n🔹 стратегія, нові канали, аналітика\n\nКого шукаємо:\n✔️ 4+ роки в digital-маркетингу\n✔️ польська B2+, українська вільно\n✔️ кейси з цифрами (CPA, ROAS)\n\nЩо даємо:\n💰 8 000 -12 000 PLN netto, в залежності від досвіду - готові також обговорювати індивідуально\n📈 шлях до керівника відділу\n🏢 офіс у центрі, пн-пт 10-19\n🤝 україномовна команда\n\n👉 Резюме або питання: @Viktoriia_BossAuto\nЗнаєш когось підходящого?\nПерешли, будь ласка 🙏",
+      "date": "2026-10-16T17:15:17.116Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Польща",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 56,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170917064-722",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "smmbunker UA",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Denys | Meta Ads | Google Ads",
+      "authorUsername": "@denivancad",
+      "title": "Шукаємо перспективного лідогенератора на підсилення в команду",
+      "text": "Шукаємо перспективного лідогенератора на підсилення в команду\n\nМи -  рекламна агенція VELAR, яка масштабується і розширює відділ лідогенерації. Шукаємо людину, яка максимально залучиться в процес, хоче зайти в digital та sales і рости разом з нами 🔥\n\nКого шукаємо:\nЛюдину з практичним досвідом у лідгені, продажах або digital від 6 місяців (буде класно, якщо більше)\nАбо без практики, але з класною теоретичною базою: розумієш, як працює лідогенерація і як залучати клієнтів\nЯка любить діяти й приносити ідеї\nЯка вміє (або хоче навчитися) писати рекламні скрипти\nЯка хоче бачити реальний результат\n\nЩо пропонуємо:\nСтавка + % від кожного приведеного клієнта (орієнтовно 20 000 грн, залежить від досвіду)\nНавчання: інвестуємо в твій розвиток, даємо бюджет та інструменти, щоб ти міг(-ла) втілювати свої ідеї🥇\nРеальний вплив на розвиток напрямку\nМожливість вирости до тім ліда\nСильну команду й підтримку🤝\n\nШукаємо людину на довгострок, з перспективою росту разом з нами\n\nХочеш обговорити? Пиши @Olgavelar",
+      "date": "2026-10-16T17:15:17.063Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 20000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 72,
+      "aiSummary": "Замовлення: маркетинг з бюджетом 20000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170917030-773",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "smmbunker UA",
+      "sourceUsername": "@smmbunker",
+      "authorName": "꧁𝙲𝙾𝚂𝙼𝙾꧂",
+      "authorUsername": "@Keydcg",
+      "title": "Привіт!",
+      "text": "Привіт!\nЯ Олена займаюся монтажем відео\n  Що саме я роблю:\n- Монтаж відео для YouTube / TikTok / Instagram\n- Вертикальні та горизонтальні відео під будь-яку платформу\n- Динамічні переходи, ефекти, субтитри, кольорокорекція.💫\n\n  Що отримаєте:\n✔ Креативний підхід до кожного замовлення\n✔ Роблю під ваш стиль і побажання",
+      "date": "2026-10-16T17:15:17.030Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792170917012-791",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "smmbunker UA",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Vita Valtner",
+      "authorUsername": "@vita_valtner",
+      "title": "Вітаю❤️",
+      "text": "Вітаю❤️\nЗараз проходжу навчання у Тані Стороженко й хочу взяти ще один цікавий проєкт у роботу!\n\nМожу запропонувати повне або часткове ведення Instagram.\n\nЯкщо ви власник бізнесу й давно шукаєте SMM-спеціаліста — давайте знайомитись!\n\nКому актуально?",
+      "date": "2026-10-16T17:15:17.010Z",
+      "dateFormatted": "Сьогодні, 20:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792167485691-5099",
       "category": "development",
       "categoryName": "Веброзробка",
@@ -108,7 +840,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 300,
       "currency": "₴",
-      "country": "Freelance.ua",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -135,7 +867,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 104000,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Канада",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -162,7 +894,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -189,7 +921,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Канада",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -216,7 +948,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -243,7 +975,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 21000,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "РФ",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -270,7 +1002,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": true,
       "experienceRequired": true,
@@ -297,7 +1029,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": true,
       "experienceRequired": true,
@@ -324,7 +1056,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "РФ",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -351,7 +1083,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Канада",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -378,7 +1110,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 29000,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "США",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -405,7 +1137,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 0,
       "currency": "₴",
-      "country": "Freelancehunt",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -432,7 +1164,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 0,
       "currency": "₴",
-      "country": "Freelancehunt",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -459,7 +1191,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 0,
       "currency": "₴",
-      "country": "Freelancehunt",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -486,7 +1218,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 2000,
       "currency": "₴",
-      "country": "Freelancehunt",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -513,7 +1245,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 0,
       "currency": "₴",
-      "country": "Freelancehunt",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -539,7 +1271,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 19:18",
       "budget": 83000,
       "currency": "₴",
-      "country": "США",
+      "country": "Україна",
       "isUrgent": true,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -644,7 +1376,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 00:16",
       "budget": 5000,
       "currency": "₴",
-      "country": "Freelancehunt",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -1076,7 +1808,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 00:15",
       "budget": 20000,
       "currency": "$",
-      "country": "Upwork / Remote",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -1184,7 +1916,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Канада",
       "isUrgent": true,
       "requiresPortfolio": true,
       "experienceRequired": true,
@@ -1211,7 +1943,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Україна",
       "isUrgent": true,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -1238,7 +1970,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Канада",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -1265,7 +1997,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 21000,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Польща",
       "isUrgent": false,
       "requiresPortfolio": true,
       "experienceRequired": true,
@@ -1292,7 +2024,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -1319,7 +2051,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "США",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -1346,7 +2078,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 41500,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": true,
       "experienceRequired": true,
@@ -1373,7 +2105,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Канада",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -1400,7 +2132,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -1427,7 +2159,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -1454,7 +2186,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "США",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -1481,7 +2213,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:53",
       "budget": 0,
       "currency": "₴",
-      "country": "Djinni",
+      "country": "РФ",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -1508,7 +2240,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:50",
       "budget": 5000,
       "currency": "₴",
-      "country": "Freelancehunt",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -1535,7 +2267,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:50",
       "budget": 10000,
       "currency": "₴",
-      "country": "Freelancehunt",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -1562,7 +2294,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:50",
       "budget": 110,
       "currency": "₴",
-      "country": "Freelancehunt",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -1589,7 +2321,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:50",
       "budget": 0,
       "currency": "₴",
-      "country": "Freelancehunt",
+      "country": "Іспанія",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -1616,7 +2348,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 23:50",
       "budget": 2000,
       "currency": "₴",
-      "country": "Freelancehunt",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -1694,7 +2426,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 21:45",
       "budget": 79000,
       "currency": "₴",
-      "country": "США",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": true,
       "experienceRequired": false,
@@ -1772,7 +2504,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 21:45",
       "budget": 4000,
       "currency": "₴",
-      "country": "США",
+      "country": "Канада",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -2136,7 +2868,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 21:45",
       "budget": 0,
       "currency": "₴",
-      "country": "США",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": false,
@@ -2266,7 +2998,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 21:45",
       "budget": 0,
       "currency": "₴",
-      "country": "США",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": true,
       "experienceRequired": true,
@@ -2292,7 +3024,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 21:45",
       "budget": 0,
       "currency": "₴",
-      "country": "США",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -2422,7 +3154,7 @@ const DEFAULT_DATA = {
       "dateFormatted": "Сьогодні, 21:36",
       "budget": 0,
       "currency": "₴",
-      "country": "США",
+      "country": "Україна",
       "isUrgent": false,
       "requiresPortfolio": false,
       "experienceRequired": true,
@@ -2480,7 +3212,8 @@ const DEFAULT_DATA = {
       "aiRating": 89,
       "aiSummary": "Замовлення: монтаж reels/tiktok з бюджетом 41500 ₴.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837179598-226",
@@ -2505,7 +3238,8 @@ const DEFAULT_DATA = {
       "aiRating": 56,
       "aiSummary": "Замовлення: монтаж reels/tiktok.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837178856-629",
@@ -2555,7 +3289,8 @@ const DEFAULT_DATA = {
       "aiRating": 87,
       "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 40000 ₴.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837178690-652",
@@ -2580,7 +3315,8 @@ const DEFAULT_DATA = {
       "aiRating": 49,
       "aiSummary": "Замовлення: монтаж reels/tiktok.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837177906-499",
@@ -2605,7 +3341,8 @@ const DEFAULT_DATA = {
       "aiRating": 78,
       "aiSummary": "Замовлення: youtube монтаж.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837177852-252",
@@ -2630,7 +3367,8 @@ const DEFAULT_DATA = {
       "aiRating": 73,
       "aiSummary": "Замовлення: таргетована реклама (meta).",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "РФ"
     },
     {
       "id": "lead-1791837176838-792",
@@ -2655,7 +3393,8 @@ const DEFAULT_DATA = {
       "aiRating": 63,
       "aiSummary": "Замовлення: маркетинг.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837173880-103",
@@ -2680,7 +3419,8 @@ const DEFAULT_DATA = {
       "aiRating": 54,
       "aiSummary": "Замовлення: телеграм-бот.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837172118-570",
@@ -2705,7 +3445,8 @@ const DEFAULT_DATA = {
       "aiRating": 87,
       "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 30000 ₴.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837172113-143",
@@ -2730,7 +3471,8 @@ const DEFAULT_DATA = {
       "aiRating": 71,
       "aiSummary": "Замовлення: онлайн-магазин з бюджетом 32000 ₴.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837171773-63",
@@ -2755,7 +3497,8 @@ const DEFAULT_DATA = {
       "aiRating": 89,
       "aiSummary": "Замовлення: монтаж reels/tiktok.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837170010-513",
@@ -2780,7 +3523,8 @@ const DEFAULT_DATA = {
       "aiRating": 65,
       "aiSummary": "Замовлення: таргетована реклама (meta).",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837169800-489",
@@ -2805,7 +3549,8 @@ const DEFAULT_DATA = {
       "aiRating": 65,
       "aiSummary": "Замовлення: маркетинг.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837169747-161",
@@ -2830,7 +3575,8 @@ const DEFAULT_DATA = {
       "aiRating": 57,
       "aiSummary": "Замовлення: монтаж reels/tiktok.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837169641-137",
@@ -2855,7 +3601,8 @@ const DEFAULT_DATA = {
       "aiRating": 65,
       "aiSummary": "Замовлення: маркетинг.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837169480-23",
@@ -2880,7 +3627,8 @@ const DEFAULT_DATA = {
       "aiRating": 65,
       "aiSummary": "Замовлення: монтаж reels/tiktok.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     },
     {
       "id": "lead-1791837169385-314",
@@ -2905,7 +3653,8 @@ const DEFAULT_DATA = {
       "aiRating": 65,
       "aiSummary": "Замовлення: рекламні креативи.",
       "aiAnalysis": null,
-      "inCrm": false
+      "inCrm": false,
+      "country": "Україна"
     }
   ],
   crm: [
@@ -3113,7 +3862,11 @@ function switchTab(tabId) {
   });
 
   document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.tab === tabId);
+    const isActive = btn.dataset.tab === tabId;
+    btn.classList.toggle('active', isActive);
+    if (isActive) {
+      btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    }
   });
 
   document.querySelector('.app-main').scrollTop = 0;
@@ -3188,10 +3941,10 @@ function getExactCountry(lead) {
   if (lead.sourceType === 'upwork') return 'Upwork / Remote';
   if (lead.sourceType === 'weworkremotely') return 'WeWorkRemotely';
 
-  const text = ((lead.text || '') + ' ' + (lead.title || '') + ' ' + (lead.sourceName || '')).toLowerCase();
+  const text = ((lead.text || '') + ' ' + (lead.title || '') + ' ' + (lead.sourceName || '') + ' ' + (lead.sourceUsername || '')).toLowerCase();
 
-  // 1. Точні перевірки по містах, валютах та згадках
-  if (/(?:сша|usa|америк|штати|штатах|new york|нью-йорк|калифорн|каліфорн|майами|маямі|техас|лос-анджелес)/i.test(text)) {
+  // 1. Точні міжнародні згадки (США, Польща, Німеччина, тощо)
+  if (/(?:ринок сша|клієнт зі сша|клієнти зі сша|замовник зі сша|компанія зі сша|us market|us client|usa|new york|нью-йорк|калифорн|каліфорн|майами|маямі|техас|лос-анджелес)/i.test(text)) {
     return 'США';
   }
   if (/(?:польщ|польша|poland|polska|варшав|warszaw|краків|krakow|вроцлав|wroclaw|zł|pln|злотих|злоті)/i.test(text)) {
@@ -3221,32 +3974,19 @@ function getExactCountry(lead) {
   if (/(?:рф|россия|росія|руб|rub|₽|москва|спб|питер|петербург|тинькофф|сбер|тинькоф)/i.test(text)) {
     return 'РФ';
   }
-  if (/(?:україна|украина|ukraine|грн|uah|₴|київ|львів|одес|харків|дніпро|запоріжж|вінниц|тернопіль|франківськ|ужгород|полтав|чернівц|луцьк|рівне|миколаїв|житомир)/i.test(text)) {
+
+  // 2. Український контекст (міста, мова, гривні, українські суперчати)
+  if (
+    /(?:україна|украина|ukraine|грн|uah|₴|київ|львів|одес|харків|дніпро|запоріжж|вінниц|тернопіль|франківськ|ужгород|полтав|чернівц|луцьк|рівне|миколаїв|житомир|черкас|суми|хмельницьк)/i.test(text) ||
+    /[іїєґ]/.test(lead.text || '') ||
+    /_ua\b|work_in_ukraine|kiev|kyiv|dnepr|uman|jecontact|aplaywork|adgoodashell|smmbunker|smmpeople/i.test(lead.sourceUsername || '')
+  ) {
     return 'Україна';
   }
 
-  // 2. Перевірка збереженого поля lead.country
-  if (lead.country) {
-    const raw = String(lead.country)
-      .replace(/[\uD83C][\uDDE6-\uDDFF][\uD83C][\uDDE6-\uDDFF]/g, '')
-      .replace(/[\uD83C-\uDBFF\uDC00-\uDFFF\u200D\uFE0F🌐🌍🌎🌏]/g, '')
-      .trim();
-    if (raw === 'СНД') return 'РФ';
-    if (raw === 'Global') {
-      if (/(?:\$|usd|english)/i.test(text)) return 'США';
-      return 'Україна';
-    }
-    if (raw && raw !== 'Global' && raw !== 'СНД') {
-      return raw;
-    }
-  }
-
-  // 3. За замовчуванням
-  if (/(?:usd|\$)/i.test(text) && !/(?:укра|грн|uah|₴|київ)/i.test(text)) {
-    return 'США';
-  }
-  if (/(?:eur|€)/i.test(text)) {
-    return 'Німеччина';
+  // 3. Якщо збережено конкретну валідну країну
+  if (lead.country && lead.country !== 'Global' && lead.country !== 'СНД') {
+    return lead.country;
   }
 
   return 'Україна';
@@ -6082,6 +6822,148 @@ function setupAccountSync() {
       haptic('success');
       closeModal('modalAccountLink');
       await loadAllData();
+    });
+  }
+
+  // Update accountKeyBadge in profile tab
+  const badge = document.getElementById('accountKeyBadge');
+  if (badge) {
+    badge.textContent = 'ID: ' + (state.accountKey || '5278970111');
+  }
+
+  // 1. Copy sync code / full backup
+  const copySyncBtn = document.getElementById('copySyncCodeBtn');
+  if (copySyncBtn) {
+    copySyncBtn.addEventListener('click', () => {
+      haptic('light');
+      const backupData = {
+        version: '3.9.0',
+        accountKey: state.accountKey || '5278970111',
+        crm: state.crm || [],
+        income: state.income || { records: [], currency: '₴' },
+        profile: state.profile || {},
+        takenLeadIds: [...(state.takenLeadIds || [])],
+        timestamp: Date.now()
+      };
+      const jsonStr = JSON.stringify(backupData);
+      const encoded = 'DWS_BACKUP_' + btoa(unescape(encodeURIComponent(jsonStr)));
+
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(encoded).catch(() => {});
+      }
+      copySyncBtn.textContent = 'СКОПІЙОВАНО ✓';
+      setTimeout(() => { copySyncBtn.textContent = '📤 СКОПІЮВАТИ БЕКАП'; }, 2500);
+      alert('Код синхронізації скопійовано! Вставте його на ноутбуці через кнопку "Ввести код на ноуті", щоб миттєво підтягнути всі дані.');
+    });
+  }
+
+  // 2. Open import sync code modal
+  const importSyncBtn = document.getElementById('importSyncCodeBtn');
+  if (importSyncBtn) {
+    importSyncBtn.addEventListener('click', () => {
+      haptic('light');
+      openModal('modalSyncCode');
+    });
+  }
+
+  // 3. Apply sync code on laptop / browser
+  const applySyncBtn = document.getElementById('applySyncCodeBtn');
+  const syncCodeInput = document.getElementById('syncCodeInput');
+  if (applySyncBtn && syncCodeInput) {
+    applySyncBtn.addEventListener('click', () => {
+      let raw = syncCodeInput.value.trim();
+      if (!raw) return;
+
+      try {
+        if (raw.startsWith('DWS_BACKUP_')) {
+          raw = raw.replace('DWS_BACKUP_', '');
+          raw = decodeURIComponent(escape(atob(raw)));
+        }
+        const data = JSON.parse(raw);
+
+        if (Array.isArray(data.crm)) {
+          state.crm = data.crm;
+          localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+        }
+        if (data.income && Array.isArray(data.income.records)) {
+          state.income = data.income;
+          localStorage.setItem('dws_income', JSON.stringify(state.income));
+        }
+        if (data.profile) {
+          state.profile = { ...state.profile, ...data.profile };
+          localStorage.setItem('dws_profile', JSON.stringify(state.profile));
+        }
+        if (Array.isArray(data.takenLeadIds)) {
+          state.takenLeadIds = new Set(data.takenLeadIds);
+          localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
+        }
+        if (data.accountKey) {
+          state.accountKey = data.accountKey;
+          localStorage.setItem('dws_account_key', state.accountKey);
+        }
+
+        haptic('success');
+        closeModal('modalSyncCode');
+        renderCrm();
+        renderIncome();
+        filterAndRenderLeads();
+        initProfileForm();
+        alert('✅ Успішно синхронізовано! Всі клієнти в CRM, доходи та налаштування перенесені на ноутбук.');
+      } catch (err) {
+        alert('Помилка читання коду. Переконайтеся, що ви скопіювали весь код без змін.');
+      }
+    });
+  }
+
+  // 4. Send backup to Telegram bot
+  const sendBackupTgBtn = document.getElementById('sendBackupTgBtn');
+  if (sendBackupTgBtn) {
+    sendBackupTgBtn.addEventListener('click', async () => {
+      haptic('light');
+      sendBackupTgBtn.textContent = 'Відправка...';
+
+      const backupData = {
+        version: '3.9.0',
+        accountKey: state.accountKey || '5278970111',
+        crm: state.crm || [],
+        income: state.income || { records: [], currency: '₴' },
+        profile: state.profile || {},
+        takenLeadIds: [...(state.takenLeadIds || [])],
+        timestamp: Date.now()
+      };
+      const jsonStr = JSON.stringify(backupData);
+      const encoded = 'DWS_BACKUP_' + btoa(unescape(encodeURIComponent(jsonStr)));
+
+      const botToken = '8953225581:AAG7lpvh6JHCbyMKfsz4qEucd_7qqgh6koM';
+      const chatId = state.accountKey && /^\d+$/.test(state.accountKey) ? state.accountKey : '5278970111';
+
+      const msg = `📦 <b>Резервна копія DWS Lead для ноутбука</b>\n\n` +
+        `Клієнтів у CRM: <b>${state.crm.length}</b>\n` +
+        `Записів доходу: <b>${state.income.records?.length || 0}</b>\n\n` +
+        `Скопіюйте код нижче та вставте його в додатку на ноутбуці (Профіль -> «Ввести код на ноуті»):\n\n` +
+        `<code>${encoded}</code>`;
+
+      try {
+        const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: msg,
+            parse_mode: 'HTML'
+          })
+        });
+        if (res.ok) {
+          sendBackupTgBtn.textContent = 'ВІДПРАВЛЕНО В ТЕЛЕГРАМ ✓';
+          setTimeout(() => { sendBackupTgBtn.textContent = '💬 Надіслати резервну копію в свій Telegram бот'; }, 3000);
+          alert('Резервну копію надіслано вам у Telegram-бот! Відкрийте бот на ноуті, скопіюйте код та вставте в додатку.');
+        } else {
+          throw new Error('Telegram API error');
+        }
+      } catch (err) {
+        sendBackupTgBtn.textContent = '💬 Надіслати резервну копію в свій Telegram бот';
+        alert('Не вдалося надіслати. Скористайтеся кнопкою "Скопіювати бекап".');
+      }
     });
   }
 }

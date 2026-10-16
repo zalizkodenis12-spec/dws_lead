@@ -78,7 +78,7 @@ export function ingestMessage({ text, authorName, authorUsername, sourceTitle, s
   }
 
   // Must have a direct personal username so the user can message the vacancy owner in PM
-  if (!authorUsername || !authorUsername.startsWith('@') || authorUsername.length < 5) {
+  if (!authorUsername || !authorUsername.startsWith('@') || authorUsername.length < 4) {
     return null;
   }
 
@@ -301,12 +301,155 @@ export async function scanPublicChannels() {
   }
 
   console.log(`[DWS Lead Monitor] ✅ Повне сканування завершено (Телеграм + Біржі). Додано ${newLeadsCount} нових актуальних лідів.`);
+  if (newLeadsCount > 0) {
+    autoSyncToCloud();
+  }
   return {
     scanned: targetHandles.length,
     newLeads: newLeadsCount,
     telegramNew,
     exchanges: exchangeResult?.bySource || {}
   };
+}
+
+let syncTimer = null;
+/**
+ * Automatically debounced push of new leads to GitHub / Vercel
+ */
+export async function autoSyncToCloud() {
+  if (syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(async () => {
+    try {
+      const projectRoot = path.join(__dirname, '..', '..');
+      const { exec } = await import('child_process');
+      const { promisify } = await import('util');
+      const execAsync = promisify(exec);
+
+      const { stdout: status } = await execAsync('git status --porcelain', { cwd: projectRoot });
+      if (status.includes('leads-data.json') || status.includes('database.json') || status.includes('app.js')) {
+        console.log('[DWS Lead Monitor] 🔄 Виявлено нові ліди! Автоматичний пуш на Vercel...');
+        await execAsync('git add miniapp/leads-data.json backend/db/database.json', { cwd: projectRoot });
+        await execAsync('git commit -m "auto: sync live leads from userbot and exchanges" && git push origin main', { cwd: projectRoot });
+        console.log('[DWS Lead Monitor] 🚀 Нові ліди успішно задеплоєно на Vercel!');
+      }
+    } catch (err) {
+      console.warn('[DWS Lead Monitor] Авто-деплой на Vercel:', err.message);
+    }
+  }, 12000);
+}
+
+let isSyncingSuperchats = false;
+
+/**
+ * Auto-join all target superchats and read recent messages in safe batches
+ */
+async function syncAndJoinSuperchats(client, sources) {
+  if (isSyncingSuperchats) return;
+  isSyncingSuperchats = true;
+  try {
+    const { Api } = await import('telegram');
+    const dialogs = await client.getDialogs({ limit: 500 });
+    const joinedUsernames = new Set();
+    for (const d of dialogs) {
+      if (d.entity?.username) joinedUsernames.add(d.entity.username.toLowerCase());
+    }
+
+    console.log(`[DWS Lead Monitor] 👥 Акаунт зараз у ${joinedUsernames.size} діалогах Telegram.`);
+
+    // Reload sources dynamically to include any newly added chats from other countries
+    const currentSources = loadSources();
+    const chatsToProcess = (currentSources.chats || []).filter(c => {
+      const clean = (c.username || '').replace('@', '').replace('https://t.me/', '').split('/')[0].trim();
+      return clean && !clean.startsWith('joinchat') && !clean.includes('+');
+    });
+
+    const unjoined = chatsToProcess.filter(c => {
+      const clean = c.username.replace('@', '').replace('https://t.me/', '').split('/')[0].trim();
+      return !joinedUsernames.has(clean.toLowerCase());
+    });
+
+    console.log(`[DWS Lead Monitor] 📋 Залишилося приєднати: ${unjoined.length} із ${chatsToProcess.length} суперчатів.`);
+
+    if (unjoined.length === 0) {
+      console.log('[DWS Lead Monitor] 🎉 Всі цільові суперчати успішно підключені!');
+      isSyncingSuperchats = false;
+      return;
+    }
+
+    let joinedCount = 0;
+    let historyLeadsCount = 0;
+    // Process in batches of 15 chats per cycle to stay safe from Telegram anti-spam limits
+    const BATCH_LIMIT = 15;
+
+    for (const chatInfo of unjoined) {
+      if (joinedCount >= BATCH_LIMIT) {
+        console.log(`[DWS Lead Monitor] ⏸ Досягнуто безпечний ліміт пачки (${BATCH_LIMIT} чатів). Наступні чати підключаться через 8 хвилин.`);
+        break;
+      }
+
+      const cleanHandle = chatInfo.username.replace('@', '').replace('https://t.me/', '').split('/')[0].trim();
+
+      try {
+        await client.invoke(new Api.channels.JoinChannel({ channel: cleanHandle }));
+        joinedCount++;
+        joinedUsernames.add(cleanHandle.toLowerCase());
+        console.log(`[DWS Lead Monitor] ➕ [${joinedCount}/${BATCH_LIMIT}] Приєднано до суперчату: @${cleanHandle}`);
+
+        // Read recent 15 messages from this newly joined chat
+        try {
+          const messages = await client.getMessages(cleanHandle, { limit: 15 });
+          for (const msg of messages) {
+            if (!msg || !msg.message) continue;
+            const text = msg.message;
+            const sender = await msg.getSender().catch(() => null);
+            let authorUsername = sender?.username ? '@' + sender.username : '';
+            if (!authorUsername) {
+              authorUsername = extractAuthorHandle(text, '', cleanHandle);
+            }
+            if (!authorUsername && sender?.id) {
+              authorUsername = `@tg_id_${sender.id}`;
+            }
+            const authorName = [sender?.firstName, sender?.lastName].filter(Boolean).join(' ') || (authorUsername ? authorUsername.replace('@', '') : 'Замовник');
+
+            const lead = ingestMessage({
+              text,
+              authorName,
+              authorUsername,
+              sourceTitle: chatInfo.title || cleanHandle,
+              sourceUsername: '@' + cleanHandle,
+              sourceType: 'chat'
+            });
+            if (lead) {
+              historyLeadsCount++;
+            }
+          }
+        } catch (msgErr) {
+          // Quiet fail per chat
+        }
+
+        // Wait 3.5 seconds between joins to avoid Telegram flood limits
+        await new Promise(r => setTimeout(r, 3500));
+      } catch (joinErr) {
+        const floodMatch = joinErr.message?.match(/FLOOD_WAIT_(\d+)/);
+        if (floodMatch) {
+          const waitSec = parseInt(floodMatch[1], 10);
+          console.warn(`[DWS Lead Monitor] ⏳ Telegram FloodWait: ${waitSec} секунд. Пауза перед наступною пачкою.`);
+          break;
+        } else {
+          console.warn(`[DWS Lead Monitor] ⚠️ Не вдалося приєднатися до @${cleanHandle}: ${joinErr.message}`);
+        }
+      }
+    }
+
+    console.log(`[DWS Lead Monitor] ✅ Цикл підключення завершено: приєднано нових: ${joinedCount}, нових лідів з історії: ${historyLeadsCount}`);
+    if (historyLeadsCount > 0) {
+      autoSyncToCloud();
+    }
+  } catch (err) {
+    console.error('[DWS Lead Monitor] Помилка синхронізації суперчатів:', err.message);
+  } finally {
+    isSyncingSuperchats = false;
+  }
 }
 
 /**
@@ -325,7 +468,7 @@ export async function startMonitor() {
   setInterval(() => {
     scanPublicChannels().catch(err => console.error('[DWS Lead Monitor] Periodic scan error:', err.message));
   }, ONE_HOUR_MS);
-  console.log('[DWS Lead Monitor] ⏰ Автоматичний парсинг активний: кожну 1 годину + миттєво при натисканні "Оновити" в додатку.');
+  console.log('[DWS Lead Monitor] ⏰ Автоматичний парсинг активний: щогодини + миттєво з суперчатів + при натисканні "Оновити".');
 
   // 3. MTProto client for realtime supergroup & chat monitoring
   const apiId = process.env.TELEGRAM_API_ID;
@@ -335,7 +478,6 @@ export async function startMonitor() {
   if (!apiId || !apiHash || !sessionString) {
     console.log(`[DWS Lead Monitor] ℹ️ TELEGRAM_SESSION не знайдено в .env.`);
     console.log(`[DWS Lead Monitor] ℹ️ Активний Web Channel Ingestion для 24 публічних каналів України.`);
-    console.log(`[DWS Lead Monitor] 💡 Щоб увімкнути моніторинг усіх 79 суперчатів у реальному часі, запустіть: npm run login`);
     return;
   }
 
@@ -352,6 +494,20 @@ export async function startMonitor() {
     await client.connect();
     console.log('[DWS Lead Monitor] ✅ MTProto Юзербот успішно підключено! Слухаємо всі суперчати в реальному часі.');
 
+    // Auto-join superchats in initial batch
+    syncAndJoinSuperchats(client, sources).catch(err => {
+      console.error('[DWS Lead Monitor] Superchats sync error:', err.message);
+    });
+
+    // Schedule regular superchat joins every 8 minutes to safely join all remaining and newly added foreign chats
+    const EIGHT_MIN_MS = 8 * 60 * 1000;
+    setInterval(() => {
+      syncAndJoinSuperchats(client, loadSources()).catch(err => {
+        console.error('[DWS Lead Monitor] Periodic superchats sync error:', err.message);
+      });
+    }, EIGHT_MIN_MS);
+
+    // Realtime message listener on all joined chats
     client.addEventHandler(async (event) => {
       try {
         const message = event.message;
@@ -361,12 +517,20 @@ export async function startMonitor() {
         const sender = await message.getSender().catch(() => null);
 
         const text = message.message;
-        const authorUsername = sender?.username ? '@' + sender.username : '';
-        const authorName = [sender?.firstName, sender?.lastName].filter(Boolean).join(' ') || 'Замовник';
-        const sourceTitle = chat?.title || 'Telegram суперчат';
         const sourceUsername = chat?.username ? '@' + chat.username : '';
+        let authorUsername = sender?.username ? '@' + sender.username : '';
 
-        ingestMessage({
+        if (!authorUsername) {
+          authorUsername = extractAuthorHandle(text, '', sourceUsername);
+        }
+        if (!authorUsername && sender?.id) {
+          authorUsername = `@tg_id_${sender.id}`;
+        }
+
+        const authorName = [sender?.firstName, sender?.lastName].filter(Boolean).join(' ') || (authorUsername ? authorUsername.replace('@', '') : 'Замовник');
+        const sourceTitle = chat?.title || 'Telegram суперчат';
+
+        const lead = ingestMessage({
           text,
           authorName,
           authorUsername,
@@ -374,6 +538,11 @@ export async function startMonitor() {
           sourceUsername,
           sourceType: 'chat'
         });
+
+        if (lead) {
+          console.log(`[DWS Lead] ⚡️ Новий лід з суперчату: "${lead.title}" (${authorUsername})`);
+          autoSyncToCloud();
+        }
       } catch (err) {
         // Quiet fail on malformed message events
       }

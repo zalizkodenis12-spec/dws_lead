@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/app.css?v=3.9.0">
+  <link rel="stylesheet" href="css/app.css?v=3.9.1">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -264,6 +264,28 @@
             <button id="openSourcesBtn" class="btn btn--out btn--block btn--sm mt-2">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
               <span>Керувати списком чатів та каналів</span>
+            </button>
+          </div>
+
+          <!-- MULTI-DEVICE CLOUD SYNC & LOGIN -->
+          <div class="form-group" style="margin-top: 16px; padding: 14px; background: rgba(0, 102, 255, 0.04); border: 1px solid rgba(0, 102, 255, 0.2); border-radius: var(--rad);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <label class="form-label" style="margin: 0; color: var(--brand); font-weight: 700;">🔄 СИНХРОНІЗАЦІЯ (ТЕЛЕФОН ↔ НОУТ):</label>
+              <span id="accountKeyBadge" style="font-size: 0.72rem; padding: 2px 6px; background: var(--brand); color: #fff; border-radius: 4px; font-weight: 600;">ID: 5278970111</span>
+            </div>
+            <p class="form-hint" style="margin-bottom: 12px; font-size: 0.75rem;">
+              Щоб відкрити цей самий профіль на ноутбоці або в іншому браузері і зберегти всі клієнти в CRM та доходи:
+            </p>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" id="copySyncCodeBtn" class="btn btn--fill btn--sm" style="flex: 1; font-size: 0.75rem; padding: 10px 4px;">
+                📤 СКОПІЮВАТИ БЕКАП
+              </button>
+              <button type="button" id="importSyncCodeBtn" class="btn btn--out btn--sm" style="flex: 1; font-size: 0.75rem; padding: 10px 4px;">
+                📥 ВВЕСТИ КОД НА НОУТІ
+              </button>
+            </div>
+            <button type="button" id="sendBackupTgBtn" class="btn btn--out btn--block btn--sm mt-2" style="font-size: 0.78rem;">
+              💬 Надіслати резервну копію в свій Telegram бот
             </button>
           </div>
 
@@ -1274,6 +1296,28 @@
     </div>
   </div>
 
+  <!-- MODAL: СИНХРОНІЗАЦІЯ З НОУТОМ (ВВЕДЕННЯ КОДУ) -->
+  <div id="modalSyncCode" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Синхронізація з ноутом</h3>
+        <button class="modal-close" data-close="modalSyncCode">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="form-hint">
+          Вставте сюди код синхронізації або резервну копію з телефону, щоб завантажити всі ваші клієнти в CRM, доходи та налаштування:
+        </p>
+        <div class="form-group">
+          <label class="form-label" for="syncCodeInput">КОД СИНХРОНІЗАЦІЇ / БЕКАП:</label>
+          <textarea id="syncCodeInput" class="form-textarea" rows="5" placeholder="Вставте скопійований код сюди..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer justify-center flex-col gap-2">
+        <button id="applySyncCodeBtn" class="btn btn--fill btn--block">📥 ЗАСТОСУВАТИ І СИНХРОНІЗУВАТИ</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: ФІЛЬТРИ CRM -->
   <div id="modalCrmFilter" class="modal-overlay">
     <div class="modal-sheet">
@@ -1487,6 +1531,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=3.9.0"></script>
+  <script src="js/app.js?v=3.9.1"></script>
 </body>
 </html>
