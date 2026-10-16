@@ -3709,6 +3709,45 @@ const normalizedIncome = (savedIncomeRaw && Array.isArray(savedIncomeRaw.records
   ? savedIncomeRaw
   : { records: [], currency: "₴" };
 
+let savedExpensesRaw = null;
+try {
+  savedExpensesRaw = JSON.parse(localStorage.getItem('dws_expenses'));
+} catch (e) {}
+
+const defaultExpensesRecords = [
+  {
+    id: "exp-1792170001-1",
+    title: "Реклама Meta (Instagram / Facebook)",
+    category: "Маркетинг",
+    amount: 4000,
+    isPaid: true,
+    currency: "₴",
+    date: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString()
+  },
+  {
+    id: "exp-1792170002-2",
+    title: "NFC акрил, заготовки та безконтактні чіпи",
+    category: "Виробництво",
+    amount: 3200,
+    isPaid: true,
+    currency: "₴",
+    date: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString()
+  },
+  {
+    id: "exp-1792170003-3",
+    title: "Підписка Cursor Pro + Vercel Pro",
+    category: "Сервіси",
+    amount: 1450,
+    isPaid: true,
+    currency: "₴",
+    date: new Date(Date.now() - 9 * 24 * 3600 * 1000).toISOString()
+  }
+];
+
+const normalizedExpenses = (savedExpensesRaw && Array.isArray(savedExpensesRaw.records) && savedExpensesRaw.records.length > 0)
+  ? savedExpensesRaw
+  : { records: defaultExpensesRecords, currency: "₴" };
+
 const state = {
   currentTab: 'tab-leads',
   theme: localStorage.getItem('dws_theme') || 'light',
@@ -3721,6 +3760,10 @@ const state = {
   incomeFilterPeriod: 'all',
   incomeDateRange: null,
   incomeActiveChartMonthIdx: null,
+  expenses: normalizedExpenses,
+  expensesFilterPeriod: 'all',
+  expensesDateRange: null,
+  expensesActiveChartMonthIdx: null,
   profile: JSON.parse(localStorage.getItem('dws_profile') || 'null') || { ...DEFAULT_DATA.profile },
   sources: normalizedSources,
   activeCrmLead: null,
@@ -3786,6 +3829,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupCrmFilterModal();
   setupCrmDetailHandlers();
   setupAccountSync();
+  setupExpensesHandlers();
   setupEventListeners();
   loadAllData();
 });
@@ -3869,6 +3913,12 @@ function switchTab(tabId) {
     }
   });
 
+  if (tabId === 'tab-income') {
+    renderIncome();
+  } else if (tabId === 'tab-expenses') {
+    renderExpenses();
+  }
+
   document.querySelector('.app-main').scrollTop = 0;
 }
 
@@ -3881,6 +3931,7 @@ async function loadAllData() {
     fetchLeads(),
     fetchCrm(),
     fetchIncome(),
+    fetchExpenses(),
     fetchProfile(),
     fetchSources()
   ]);
@@ -4887,6 +4938,406 @@ function renderIncome() {
           e.stopPropagation();
           const recId = leaf.dataset.id;
           openEditIncomeModal(recId);
+        });
+      });
+    }
+  }
+}
+
+// ---- 3B. EXPENSES TRACKER ----
+async function fetchExpenses() {
+  try {
+    const res = await fetch('/api/expenses').catch(() => null);
+    if (res && res.ok) {
+      const json = await res.json();
+      if (json.success && json.data) {
+        state.expenses = json.data;
+        if (!Array.isArray(state.expenses.records)) {
+          state.expenses.records = [];
+        }
+        localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
+      }
+    }
+  } catch (err) {
+    console.warn('Error fetching expenses:', err);
+  }
+  renderExpenses();
+}
+
+function getExpensesNoun(n) {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 19) return 'витрат';
+  if (mod10 === 1) return 'витрата';
+  if (mod10 >= 2 && mod10 <= 4) return 'витрати';
+  return 'витрат';
+}
+
+function renderExpenses() {
+  const totalExpEl = document.getElementById('totalExpensesVal');
+  const totalExpSubEl = document.getElementById('totalExpensesSub');
+  const monthExpEl = document.getElementById('monthExpensesVal');
+  const monthExpSubEl = document.getElementById('monthExpensesSub');
+  const countNumEl = document.getElementById('expensesCountNum');
+  const countLabelEl = document.getElementById('expensesCountLabel');
+  const barsContainer = document.getElementById('expensesBars');
+  const chartLabelEl = document.getElementById('chartExpensesActiveMonthLabel');
+  const accordionContainer = document.getElementById('expensesAccordion');
+
+  const allRecords = (state.expenses && Array.isArray(state.expenses.records)) ? state.expenses.records : [];
+
+  if (countNumEl) countNumEl.textContent = allRecords.length;
+  if (countLabelEl) countLabelEl.textContent = getExpensesNoun(allRecords.length);
+
+  // 1. FILTER RECORDS
+  let filteredRecords = [...allRecords];
+  let periodLabel = 'За весь час';
+
+  if (state.expensesDateRange && state.expensesDateRange.start) {
+    const startStr = state.expensesDateRange.start;
+    const endStr = state.expensesDateRange.end || state.expensesDateRange.start;
+    filteredRecords = filteredRecords.filter(r => {
+      const dStr = (r.date ? new Date(r.date) : new Date()).toISOString().slice(0, 10);
+      return dStr >= startStr && dStr <= endStr;
+    });
+    const sParts = startStr.split('-');
+    const eParts = endStr.split('-');
+    periodLabel = `${sParts[2]}.${sParts[1]} – ${eParts[2]}.${eParts[1]}`;
+  } else if (state.expensesFilterPeriod && state.expensesFilterPeriod !== 'all') {
+    const now = new Date();
+    const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+    const periodLabels = {
+      'year': 'За останній рік',
+      '6m': 'За останні 6 міс',
+      '3m': 'За останні 3 міс',
+      '1m': 'За останній міс',
+      '1w': 'За останній тиж',
+      '1d': 'Сьогодні'
+    };
+    periodLabel = periodLabels[state.expensesFilterPeriod] || 'За весь час';
+
+    if (state.expensesFilterPeriod === '1d') {
+      filteredRecords = filteredRecords.filter(r => {
+        const rd = r.date ? new Date(r.date) : new Date();
+        const rIso = `${rd.getFullYear()}-${String(rd.getMonth() + 1).padStart(2, '0')}-${String(rd.getDate()).padStart(2, '0')}`;
+        return rIso === todayIso;
+      });
+    } else if (state.expensesFilterPeriod === '1w') {
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      oneWeekAgo.setHours(0, 0, 0, 0);
+      filteredRecords = filteredRecords.filter(r => {
+        const rd = r.date ? new Date(r.date) : new Date();
+        return rd.getTime() >= oneWeekAgo.getTime();
+      });
+    } else {
+      const periodMsMap = {
+        'year': 365 * 24 * 3600 * 1000,
+        '6m': 180 * 24 * 3600 * 1000,
+        '3m': 90 * 24 * 3600 * 1000,
+        '1m': 30 * 24 * 3600 * 1000
+      };
+      const periodMs = periodMsMap[state.expensesFilterPeriod] || 0;
+      if (periodMs > 0) {
+        const nowMs = Date.now();
+        filteredRecords = filteredRecords.filter(r => {
+          const rMs = new Date(r.date).getTime();
+          return (nowMs - rMs) <= periodMs;
+        });
+      }
+    }
+  }
+
+  // 2. SUM TOTALS FROM FILTERED RECORDS
+  let totalSpent = 0;
+  for (const r of filteredRecords) {
+    if (r.isPaid) totalSpent += (Number(r.amount) || 0);
+  }
+
+  const now = new Date();
+  const curY = now.getFullYear();
+  const curM = now.getMonth();
+  let thisMonthSpent = 0;
+  for (const r of allRecords) {
+    if (r.isPaid) {
+      const rd = new Date(r.date);
+      if (rd.getFullYear() === curY && rd.getMonth() === curM) {
+        thisMonthSpent += (Number(r.amount) || 0);
+      }
+    }
+  }
+
+  if (totalExpEl) totalExpEl.textContent = '– ' + totalSpent.toLocaleString('uk-UA') + ' ₴';
+  if (totalExpSubEl) totalExpSubEl.textContent = periodLabel;
+  if (monthExpEl) monthExpEl.textContent = '– ' + thisMonthSpent.toLocaleString('uk-UA') + ' ₴';
+  if (monthExpSubEl) monthExpSubEl.textContent = 'Поточний місяць';
+
+  // 3. DYNAMIC MONTHLY BAR CHART
+  const monthShortNames = ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'];
+  const monthFullNames = ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'];
+
+  const last5Months = [];
+  for (let i = 4; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const y = d.getFullYear();
+    const m = d.getMonth();
+    last5Months.push({
+      year: y,
+      monthIdx: m,
+      shortName: monthShortNames[m],
+      fullName: monthFullNames[m],
+      amount: 0
+    });
+  }
+
+  for (const r of allRecords) {
+    if (r.isPaid) {
+      const rd = new Date(r.date);
+      if (!isNaN(rd.getTime())) {
+        const ry = rd.getFullYear();
+        const rm = rd.getMonth();
+        const targetM = last5Months.find(item => item.year === ry && item.monthIdx === rm);
+        if (targetM) {
+          targetM.amount += (Number(r.amount) || 0);
+        }
+      }
+    }
+  }
+
+  const maxVal = Math.max(...last5Months.map(m => m.amount), 5000);
+  const currentMonthIdx = 4;
+  let activeChartIdx = state.expensesActiveChartMonthIdx !== null ? state.expensesActiveChartMonthIdx : currentMonthIdx;
+  if (activeChartIdx < 0 || activeChartIdx > 4) activeChartIdx = currentMonthIdx;
+
+  const activeMonthData = last5Months[activeChartIdx];
+  if (chartLabelEl && activeMonthData) {
+    chartLabelEl.textContent = `${activeMonthData.fullName}: – ${activeMonthData.amount.toLocaleString('uk-UA')} ₴`;
+  }
+
+  if (barsContainer) {
+    barsContainer.innerHTML = last5Months.map((m, idx) => {
+      const isActive = idx === activeChartIdx;
+      const pxHeight = m.amount > 0 ? Math.max(Math.round((m.amount / maxVal) * 85), 14) : 8;
+      return `
+        <div class="bar-col expense ${isActive ? 'active' : ''}" data-idx="${idx}" title="${m.fullName}: – ${m.amount.toLocaleString('uk-UA')} ₴">
+          <div class="bar-pill-track">
+            <div class="bar-pill" style="height: ${pxHeight}px;"></div>
+          </div>
+          <span class="bar-month-name">${m.shortName}</span>
+        </div>
+      `;
+    }).join('');
+
+    barsContainer.querySelectorAll('.bar-col').forEach(col => {
+      col.addEventListener('click', () => {
+        const idx = Number(col.dataset.idx);
+        state.expensesActiveChartMonthIdx = idx;
+        barsContainer.querySelectorAll('.bar-col').forEach(c => c.classList.remove('active'));
+        col.classList.add('active');
+        const mData = last5Months[idx];
+        if (chartLabelEl && mData) {
+          chartLabelEl.textContent = `${mData.fullName}: – ${mData.amount.toLocaleString('uk-UA')} ₴`;
+        }
+        haptic('light');
+      });
+    });
+  }
+
+  // 4. RENDER 4-TIER HIERARCHICAL ACCORDION (Month -> Weeks -> Days -> Expense items)
+  if (accordionContainer) {
+    if (filteredRecords.length === 0) {
+      if (allRecords.length === 0) {
+        accordionContainer.innerHTML = `
+          <div class="empty-state" style="padding: 30px 16px; text-align: center; background: var(--card-bg); border: 1px dashed var(--border); border-radius: var(--r-lg);">
+            <div style="font-size: 2.2rem; margin-bottom: 8px;">💳</div>
+            <h4 style="font-family: var(--ffh); font-size: 1.05rem; font-weight: 700; color: var(--black); margin-bottom: 4px;">Витрат ще не зафіксовано</h4>
+            <p style="font-size: 0.85rem; color: var(--muted); max-width: 270px; margin: 0 auto; line-height: 1.4;">Натисніть на синій плюс (+) знизу, щоб додати першу витрату (реклама, сервіси, виробництво).</p>
+          </div>
+        `;
+      } else {
+        accordionContainer.innerHTML = `
+          <div class="empty-state" style="padding: 26px 16px; text-align: center; background: var(--card-bg); border: 1px dashed var(--border); border-radius: var(--r-lg);">
+            <div style="font-size: 2rem; margin-bottom: 8px;">📅</div>
+            <h4 style="font-family: var(--ffh); font-size: 1rem; font-weight: 700; color: var(--black); margin-bottom: 4px;">Немає витрат за цей період</h4>
+            <p style="font-size: 0.82rem; color: var(--muted); max-width: 260px; margin: 0 auto; line-height: 1.4;">Спробуйте змінити фільтр часу або обрати інші дати в календарі.</p>
+          </div>
+        `;
+      }
+    } else {
+      const monthsMap = new Map();
+      const monthShortGen = ['січ', 'лют', 'бер', 'кві', 'тра', 'чер', 'лип', 'сер', 'вер', 'жов', 'лис', 'гру'];
+      const dayNamesUk = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
+      for (const r of filteredRecords) {
+        const d = r.date ? new Date(r.date) : new Date();
+        const year = isNaN(d.getFullYear()) ? new Date().getFullYear() : d.getFullYear();
+        const month = isNaN(d.getMonth()) ? new Date().getMonth() : d.getMonth();
+        const monthKey = `${year}-${String(month + 1).padStart(2, '0')}`;
+
+        if (!monthsMap.has(monthKey)) {
+          monthsMap.set(monthKey, {
+            year,
+            month,
+            monthTitle: `${monthFullNames[month]} ${year}`,
+            records: []
+          });
+        }
+        monthsMap.get(monthKey).records.push(r);
+      }
+
+      const sortedMonthKeys = Array.from(monthsMap.keys()).sort((a, b) => b.localeCompare(a));
+      let treeHtml = `<div class="income-tree-wrap">`;
+      const isFiltered = Boolean((state.expensesFilterPeriod && state.expensesFilterPeriod !== 'all') || (state.expensesDateRange && state.expensesDateRange.start));
+
+      sortedMonthKeys.forEach((mKey) => {
+        const mObj = monthsMap.get(mKey);
+        const mTotal = mObj.records.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+        const isMonthOpen = false;
+
+        const weeks = [
+          { label: '1–7 число', min: 1, max: 7, records: [] },
+          { label: '8–14 число', min: 8, max: 14, records: [] },
+          { label: '15–21 число', min: 15, max: 21, records: [] },
+          { label: '22–31 число', min: 22, max: 31, records: [] }
+        ];
+
+        for (const r of mObj.records) {
+          const d = r.date ? new Date(r.date) : new Date();
+          const day = d.getDate();
+          if (day >= 1 && day <= 7) weeks[0].records.push(r);
+          else if (day >= 8 && day <= 14) weeks[1].records.push(r);
+          else if (day >= 15 && day <= 21) weeks[2].records.push(r);
+          else weeks[3].records.push(r);
+        }
+
+        const displayWeeks = isFiltered ? weeks.filter(w => w.records.length > 0) : weeks;
+
+        treeHtml += `
+          <div class="income-tree-card level-month ${isMonthOpen ? 'is-open' : ''}">
+            <div class="tree-node-header" data-level="month">
+              <div class="tree-node-left">
+                <svg class="tree-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <span class="tree-node-title">${escapeHtml(mObj.monthTitle)}</span>
+              </div>
+              <span class="tree-node-sum text-danger">– ${mTotal.toLocaleString('uk-UA')} ₴</span>
+            </div>
+            <div class="tree-node-content">
+        `;
+
+        displayWeeks.forEach((w) => {
+          const wTotal = w.records.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+          const isWeekOpen = false;
+
+          const daysMap = new Map();
+          for (const r of w.records) {
+            const d = r.date ? new Date(r.date) : new Date();
+            const dayIso = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+            if (!daysMap.has(dayIso)) {
+              const dName = dayNamesUk[d.getDay()] || 'Пн';
+              const mGen = monthShortGen[d.getMonth()] || 'жов';
+              daysMap.set(dayIso, {
+                iso: dayIso,
+                label: `${d.getDate()} ${mGen} (${dName})`,
+                records: []
+              });
+            }
+            daysMap.get(dayIso).records.push(r);
+          }
+
+          const sortedDays = Array.from(daysMap.values()).sort((a, b) => b.iso.localeCompare(a.iso));
+
+          treeHtml += `
+            <div class="income-tree-card level-week ${isWeekOpen ? 'is-open' : ''}">
+              <div class="tree-node-header" data-level="week">
+                <div class="tree-node-left">
+                  <svg class="tree-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  <span class="tree-node-title">${w.label}</span>
+                </div>
+                <span class="tree-node-sum text-danger">– ${wTotal.toLocaleString('uk-UA')} ₴</span>
+              </div>
+              <div class="tree-node-content">
+          `;
+
+          if (w.records.length === 0) {
+            treeHtml += `<div class="tree-empty-note">Витрат за цей період немає</div>`;
+          } else {
+            sortedDays.forEach((dObj) => {
+              const dTotal = dObj.records.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+              const isDayOpen = false;
+
+              treeHtml += `
+                <div class="income-tree-card level-day ${isDayOpen ? 'is-open' : ''}">
+                  <div class="tree-node-header" data-level="day">
+                    <div class="tree-node-left">
+                      <svg class="tree-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      <span class="tree-node-title">${escapeHtml(dObj.label)}</span>
+                    </div>
+                    <span class="tree-node-sum text-danger">– ${dTotal.toLocaleString('uk-UA')} ₴</span>
+                  </div>
+                  <div class="tree-node-content">
+              `;
+
+              dObj.records.forEach((r) => {
+                treeHtml += `
+                  <div class="order-leaf-card" data-expense-id="${r.id}">
+                    <div class="order-leaf-info">
+                      <div class="order-leaf-title">${escapeHtml(r.title || r.project || 'Витрата')}</div>
+                      <div class="order-leaf-meta">
+                        <span>${escapeHtml(r.category || r.client || 'Категорія')}</span>
+                        <span>•</span>
+                        <span class="order-leaf-badge ${r.isPaid ? 'expense-paid' : 'expected'}">${r.isPaid ? 'Оплачено' : 'В планах'}</span>
+                      </div>
+                    </div>
+                    <div class="order-leaf-amount expense">
+                      <span>– ${(Number(r.amount) || 0).toLocaleString('uk-UA')} ₴</span>
+                      <svg class="order-leaf-edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                    </div>
+                  </div>
+                `;
+              });
+
+              treeHtml += `
+                  </div>
+                </div>
+              `;
+            });
+          }
+
+          treeHtml += `
+              </div>
+            </div>
+          `;
+        });
+
+        treeHtml += `
+            </div>
+          </div>
+        `;
+      });
+
+      treeHtml += `</div>`;
+      accordionContainer.innerHTML = treeHtml;
+
+      accordionContainer.querySelectorAll('.tree-node-header').forEach(hdr => {
+        hdr.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const card = hdr.closest('.income-tree-card');
+          if (card) {
+            card.classList.toggle('is-open');
+            haptic('light');
+          }
+        });
+      });
+
+      accordionContainer.querySelectorAll('[data-expense-id]').forEach(leaf => {
+        leaf.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const recId = leaf.dataset.expenseId;
+          openEditExpenseModal(recId);
         });
       });
     }
@@ -6361,9 +6812,11 @@ document.querySelectorAll('#modalTimeFilter .time-choice-item').forEach(btn => {
 let calViewDate = new Date();
 let tempCalStart = null;
 let tempCalEnd = null;
+let activeCalendarTarget = 'income'; // 'income' | 'expenses'
 
 function setupCalendarModal() {
   const openCalendarBtn = document.getElementById('openCalendarBtn');
+  const openExpensesCalendarBtn = document.getElementById('openExpensesCalendarBtn');
   const calPrevMonthBtn = document.getElementById('calPrevMonthBtn');
   const calNextMonthBtn = document.getElementById('calNextMonthBtn');
   const calResetBtn = document.getElementById('calResetBtn');
@@ -6371,10 +6824,29 @@ function setupCalendarModal() {
 
   if (openCalendarBtn) {
     openCalendarBtn.addEventListener('click', () => {
+      activeCalendarTarget = 'income';
       flashButtonBlue(openCalendarBtn);
       if (state.incomeDateRange && state.incomeDateRange.start) {
         tempCalStart = state.incomeDateRange.start;
         tempCalEnd = state.incomeDateRange.end;
+        calViewDate = new Date(tempCalStart);
+      } else {
+        tempCalStart = null;
+        tempCalEnd = null;
+        calViewDate = new Date();
+      }
+      renderCalendarGrid();
+      openModal('modalDateRange');
+    });
+  }
+
+  if (openExpensesCalendarBtn) {
+    openExpensesCalendarBtn.addEventListener('click', () => {
+      activeCalendarTarget = 'expenses';
+      flashButtonBlue(openExpensesCalendarBtn);
+      if (state.expensesDateRange && state.expensesDateRange.start) {
+        tempCalStart = state.expensesDateRange.start;
+        tempCalEnd = state.expensesDateRange.end;
         calViewDate = new Date(tempCalStart);
       } else {
         tempCalStart = null;
@@ -6406,6 +6878,30 @@ function setupCalendarModal() {
     calResetBtn.addEventListener('click', () => {
       tempCalStart = null;
       tempCalEnd = null;
+
+      if (activeCalendarTarget === 'expenses') {
+        state.expensesDateRange = null;
+        state.expensesFilterPeriod = 'all';
+
+        const calLabel = document.getElementById('activeExpensesCalendarLabel');
+        if (calLabel) calLabel.textContent = 'По даті';
+        const timeLabel = document.getElementById('activeExpensesTimeLabel');
+        if (timeLabel) timeLabel.textContent = 'Фільтр часу';
+
+        document.querySelectorAll('#modalExpensesTimeFilter .time-choice-item').forEach(b => {
+          const isAll = b.dataset.period === 'all';
+          b.classList.toggle('active', isAll);
+          const ch = b.querySelector('.check');
+          if (ch) ch.remove();
+          if (isAll) b.insertAdjacentHTML('beforeend', '<span class="check">✓</span>');
+        });
+
+        haptic('medium');
+        closeModal('modalDateRange');
+        renderExpenses();
+        return;
+      }
+
       state.incomeDateRange = null;
       state.incomeFilterPeriod = 'all';
 
@@ -6436,12 +6932,33 @@ function setupCalendarModal() {
       }
       const finalStart = tempCalStart;
       const finalEnd = tempCalEnd || tempCalStart;
-      state.incomeDateRange = { start: finalStart, end: finalEnd };
-      state.incomeFilterPeriod = null;
-
       const sParts = finalStart.split('-');
       const eParts = finalEnd.split('-');
       const labelText = `${sParts[2]}.${sParts[1]} – ${eParts[2]}.${eParts[1]}`;
+
+      if (activeCalendarTarget === 'expenses') {
+        state.expensesDateRange = { start: finalStart, end: finalEnd };
+        state.expensesFilterPeriod = null;
+
+        const calLabel = document.getElementById('activeExpensesCalendarLabel');
+        if (calLabel) calLabel.textContent = labelText;
+        const timeLabel = document.getElementById('activeExpensesTimeLabel');
+        if (timeLabel) timeLabel.textContent = 'Фільтр часу';
+
+        document.querySelectorAll('#modalExpensesTimeFilter .time-choice-item').forEach(b => {
+          b.classList.remove('active');
+          const ch = b.querySelector('.check');
+          if (ch) ch.remove();
+        });
+
+        haptic('success');
+        closeModal('modalDateRange');
+        renderExpenses();
+        return;
+      }
+
+      state.incomeDateRange = { start: finalStart, end: finalEnd };
+      state.incomeFilterPeriod = null;
 
       const calLabel = document.getElementById('activeCalendarLabel');
       if (calLabel) calLabel.textContent = labelText;
@@ -6459,6 +6976,243 @@ function setupCalendarModal() {
       renderIncome();
     });
   }
+}
+
+// ============================================================
+// EXPENSES TAB & MODAL HANDLERS
+// ============================================================
+let newExpensePaidStatus = true;
+let editExpensePaidStatus = true;
+
+function openEditExpenseModal(recId) {
+  const rec = (state.expenses.records || []).find(r => r.id === recId);
+  if (!rec) return;
+
+  const idEl = document.getElementById('editExpenseId');
+  const titleEl = document.getElementById('editExpenseTitle');
+  const catEl = document.getElementById('editExpenseCategory');
+  const amountEl = document.getElementById('editExpenseAmount');
+  const dateEl = document.getElementById('editExpenseDate');
+  const paidBtn = document.getElementById('editExpensePaidBtn');
+  const expBtn = document.getElementById('editExpenseExpectedBtn');
+
+  if (idEl) idEl.value = rec.id;
+  if (titleEl) titleEl.value = rec.title || rec.project || '';
+  if (catEl) catEl.value = rec.category || rec.client || '';
+  if (amountEl) amountEl.value = rec.amount || '';
+  if (dateEl) {
+    const d = rec.date ? new Date(rec.date) : new Date();
+    dateEl.value = isNaN(d.getTime()) ? new Date().toISOString().slice(0, 10) : d.toISOString().slice(0, 10);
+  }
+
+  editExpensePaidStatus = Boolean(rec.isPaid);
+  if (paidBtn && expBtn) {
+    paidBtn.classList.toggle('active', editExpensePaidStatus);
+    expBtn.classList.toggle('active', !editExpensePaidStatus);
+  }
+
+  haptic('light');
+  openModal('modalEditExpense');
+}
+
+function setupExpensesHandlers() {
+  // Add Expense button (+)
+  const addExpenseBtn = document.getElementById('addExpenseBtn');
+  if (addExpenseBtn) {
+    addExpenseBtn.addEventListener('click', () => {
+      document.getElementById('newExpenseTitle').value = '';
+      document.getElementById('newExpenseCategory').value = '';
+      document.getElementById('newExpenseAmount').value = '';
+      const dInput = document.getElementById('newExpenseDate');
+      if (dInput) dInput.value = new Date().toISOString().slice(0, 10);
+      newExpensePaidStatus = true;
+      document.querySelectorAll('#modalAddExpense .opt-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.paid === 'true');
+      });
+      openModal('modalAddExpense');
+    });
+  }
+
+  // Toggle paid in Add modal
+  document.querySelectorAll('#modalAddExpense .opt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#modalAddExpense .opt-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      newExpensePaidStatus = btn.dataset.paid === 'true';
+    });
+  });
+
+  // Submit Add Expense
+  const submitAddExpenseBtn = document.getElementById('submitAddExpenseBtn');
+  if (submitAddExpenseBtn) {
+    submitAddExpenseBtn.addEventListener('click', async () => {
+      const title = document.getElementById('newExpenseTitle')?.value.trim();
+      const category = document.getElementById('newExpenseCategory')?.value.trim();
+      const amount = Number(document.getElementById('newExpenseAmount')?.value) || 0;
+      const dateInput = document.getElementById('newExpenseDate')?.value;
+      const date = dateInput ? new Date(dateInput).toISOString() : new Date().toISOString();
+
+      if (!title || !amount) {
+        alert('Введіть опис витрати та суму');
+        return;
+      }
+
+      haptic('medium');
+      const newRecord = {
+        id: `exp-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        title,
+        category: category || 'Загальне',
+        amount,
+        currency: '₴',
+        isPaid: newExpensePaidStatus,
+        date
+      };
+
+      if (!Array.isArray(state.expenses.records)) {
+        state.expenses.records = [];
+      }
+      state.expenses.records.unshift(newRecord);
+      localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
+
+      haptic('success');
+      closeModal('modalAddExpense');
+      renderExpenses();
+
+      try {
+        await fetch('/api/expenses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newRecord)
+        });
+      } catch (err) {
+        console.warn('Error syncing expense record to server:', err);
+      }
+    });
+  }
+
+  // Toggle paid in Edit modal
+  const editExpensePaidBtn = document.getElementById('editExpensePaidBtn');
+  const editExpenseExpectedBtn = document.getElementById('editExpenseExpectedBtn');
+  if (editExpensePaidBtn && editExpenseExpectedBtn) {
+    editExpensePaidBtn.addEventListener('click', () => {
+      editExpensePaidStatus = true;
+      editExpensePaidBtn.classList.add('active');
+      editExpenseExpectedBtn.classList.remove('active');
+    });
+    editExpenseExpectedBtn.addEventListener('click', () => {
+      editExpensePaidStatus = false;
+      editExpenseExpectedBtn.classList.add('active');
+      editExpensePaidBtn.classList.remove('active');
+    });
+  }
+
+  // Save edited expense
+  const saveEditExpenseBtn = document.getElementById('saveEditExpenseBtn');
+  if (saveEditExpenseBtn) {
+    saveEditExpenseBtn.addEventListener('click', async () => {
+      const id = document.getElementById('editExpenseId')?.value;
+      const title = document.getElementById('editExpenseTitle')?.value.trim();
+      const category = document.getElementById('editExpenseCategory')?.value.trim();
+      const amount = Number(document.getElementById('editExpenseAmount')?.value) || 0;
+      const dateInput = document.getElementById('editExpenseDate')?.value;
+      const date = dateInput ? new Date(dateInput).toISOString() : new Date().toISOString();
+
+      if (!id || !title || !amount) {
+        alert('Введіть опис витрати та суму');
+        return;
+      }
+
+      haptic('medium');
+      const idx = (state.expenses.records || []).findIndex(r => r.id === id);
+      if (idx !== -1) {
+        state.expenses.records[idx] = {
+          ...state.expenses.records[idx],
+          title,
+          category: category || 'Загальне',
+          amount,
+          isPaid: editExpensePaidStatus,
+          date
+        };
+        localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
+      }
+
+      haptic('success');
+      closeModal('modalEditExpense');
+      renderExpenses();
+
+      try {
+        await fetch(`/api/expenses/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, category, amount, isPaid: editExpensePaidStatus, date })
+        });
+      } catch (err) {
+        console.warn('Error syncing expense update to server:', err);
+      }
+    });
+  }
+
+  // Delete edited expense
+  const deleteEditExpenseBtn = document.getElementById('deleteEditExpenseBtn');
+  if (deleteEditExpenseBtn) {
+    deleteEditExpenseBtn.addEventListener('click', async () => {
+      const id = document.getElementById('editExpenseId')?.value;
+      if (!id) return;
+      if (!confirm('Видалити цю витрату?')) return;
+
+      haptic('medium');
+      state.expenses.records = (state.expenses.records || []).filter(r => r.id !== id);
+      localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
+
+      haptic('success');
+      closeModal('modalEditExpense');
+      renderExpenses();
+
+      try {
+        await fetch(`/api/expenses/${id}`, { method: 'DELETE' });
+      } catch (err) {
+        console.warn('Error deleting expense on server:', err);
+      }
+    });
+  }
+
+  // Time filter modal for expenses
+  const openExpensesTimeFilterBtn = document.getElementById('openExpensesTimeFilterBtn');
+  if (openExpensesTimeFilterBtn) {
+    openExpensesTimeFilterBtn.addEventListener('click', () => {
+      flashButtonBlue(openExpensesTimeFilterBtn);
+      openModal('modalExpensesTimeFilter');
+    });
+  }
+
+  document.querySelectorAll('#modalExpensesTimeFilter .time-choice-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#modalExpensesTimeFilter .time-choice-item').forEach(b => {
+        b.classList.remove('active');
+        const ch = b.querySelector('.check');
+        if (ch) ch.remove();
+      });
+      btn.classList.add('active');
+      btn.insertAdjacentHTML('beforeend', '<span class="check">✓</span>');
+
+      const period = btn.dataset.period || 'all';
+      state.expensesFilterPeriod = period;
+      state.expensesDateRange = null;
+
+      const label = btn.querySelector('span')?.textContent || 'Фільтр часу';
+      const activeLabel = document.getElementById('activeExpensesTimeLabel');
+      if (activeLabel) activeLabel.textContent = label;
+
+      const calLabel = document.getElementById('activeExpensesCalendarLabel');
+      if (calLabel) calLabel.textContent = 'По даті';
+
+      haptic('light');
+      renderExpenses();
+      setTimeout(() => {
+        closeModal('modalExpensesTimeFilter');
+      }, 150);
+    });
+  });
 }
 
 function renderCalendarGrid() {
@@ -6841,12 +7595,14 @@ function setupAccountSync() {
       const cs = window.Telegram?.WebApp?.CloudStorage;
       const crmStr = JSON.stringify(state.crm || []);
       const incStr = JSON.stringify(state.income || { records: [], currency: '₴' });
+      const expStr = JSON.stringify(state.expenses || { records: [], currency: '₴' });
       const profStr = JSON.stringify(state.profile || {});
       const takenStr = JSON.stringify([...(state.takenLeadIds || [])]);
 
       if (cs && cs.setItem) {
         cs.setItem('dws_crm', crmStr, () => {});
         cs.setItem('dws_income', incStr, () => {});
+        cs.setItem('dws_expenses', expStr, () => {});
         cs.setItem('dws_profile', profStr, () => {});
         cs.setItem('dws_taken_leads', takenStr, () => {
           cloudSyncBtn.textContent = 'ЗБЕРЕЖЕНО В ХМАРУ ✓';
@@ -6857,6 +7613,7 @@ function setupAccountSync() {
         // Fallback for browser
         localStorage.setItem('dws_crm', crmStr);
         localStorage.setItem('dws_income', incStr);
+        localStorage.setItem('dws_expenses', expStr);
         localStorage.setItem('dws_profile', profStr);
         localStorage.setItem('dws_taken_leads', takenStr);
         cloudSyncBtn.textContent = 'ЗБЕРЕЖЕНО ЛОКАЛЬНО ✓';
@@ -6876,10 +7633,11 @@ function setupAccountSync() {
       haptic('light');
       const backupData = {
         app: 'DWS Lead',
-        version: '3.9.1',
+        version: '3.9.4',
         accountKey: state.accountKey || '5278970111',
         crm: state.crm || [],
         income: state.income || { records: [], currency: '₴' },
+        expenses: state.expenses || { records: [], currency: '₴' },
         profile: state.profile || {},
         takenLeadIds: [...(state.takenLeadIds || [])],
         exportedAt: new Date().toISOString()
@@ -6935,28 +7693,37 @@ function setupAccountSync() {
               localStorage.setItem('dws_income', incRaw);
             } catch(e) {}
           }
-          cs.getItem('dws_profile', (err3, profRaw) => {
-            if (!err3 && profRaw) {
+          cs.getItem('dws_expenses', (errExp, expRaw) => {
+            if (!errExp && expRaw) {
               try {
-                state.profile = { ...state.profile, ...JSON.parse(profRaw) };
-                localStorage.setItem('dws_profile', profRaw);
+                state.expenses = JSON.parse(expRaw);
+                localStorage.setItem('dws_expenses', expRaw);
               } catch(e) {}
             }
-            cs.getItem('dws_taken_leads', (err4, takenRaw) => {
-              if (!err4 && takenRaw) {
+            cs.getItem('dws_profile', (err3, profRaw) => {
+              if (!err3 && profRaw) {
                 try {
-                  state.takenLeadIds = new Set(JSON.parse(takenRaw));
-                  localStorage.setItem('dws_taken_leads', takenRaw);
+                  state.profile = { ...state.profile, ...JSON.parse(profRaw) };
+                  localStorage.setItem('dws_profile', profRaw);
                 } catch(e) {}
               }
+              cs.getItem('dws_taken_leads', (err4, takenRaw) => {
+                if (!err4 && takenRaw) {
+                  try {
+                    state.takenLeadIds = new Set(JSON.parse(takenRaw));
+                    localStorage.setItem('dws_taken_leads', takenRaw);
+                  } catch(e) {}
+                }
 
-              haptic('success');
-              closeModal('modalSyncCode');
-              renderCrm();
-              renderIncome();
-              filterAndRenderLeads();
-              initProfileForm();
-              alert('Дані успішно завантажено з хмари Telegram! Усі клієнти та доходи на місці.');
+                haptic('success');
+                closeModal('modalSyncCode');
+                renderCrm();
+                renderIncome();
+                renderExpenses();
+                filterAndRenderLeads();
+                initProfileForm();
+                alert('Дані успішно завантажено з хмари Telegram! Усі клієнти, доходи та витрати на місці.');
+              });
             });
           });
         });
@@ -6988,6 +7755,10 @@ function setupAccountSync() {
             state.income = data.income;
             localStorage.setItem('dws_income', JSON.stringify(state.income));
           }
+          if (data.expenses && Array.isArray(data.expenses.records)) {
+            state.expenses = data.expenses;
+            localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
+          }
           if (data.profile) {
             state.profile = { ...state.profile, ...data.profile };
             localStorage.setItem('dws_profile', JSON.stringify(state.profile));
@@ -7001,9 +7772,10 @@ function setupAccountSync() {
           closeModal('modalSyncCode');
           renderCrm();
           renderIncome();
+          renderExpenses();
           filterAndRenderLeads();
           initProfileForm();
-          alert('Файл бекапу успішно застосовано! Усі клієнти в CRM та доходи завантажено на ноутбук.');
+          alert('Файл бекапу успішно застосовано! Усі клієнти в CRM, доходи та витрати завантажено.');
         } catch (err) {
           alert('Помилка читання файлу. Переконайтеся, що ви обрали файл бекапу у форматі .json.');
         }
@@ -7035,6 +7807,10 @@ function setupAccountSync() {
           state.income = data.income;
           localStorage.setItem('dws_income', JSON.stringify(state.income));
         }
+        if (data.expenses && Array.isArray(data.expenses.records)) {
+          state.expenses = data.expenses;
+          localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
+        }
         if (data.profile) {
           state.profile = { ...state.profile, ...data.profile };
           localStorage.setItem('dws_profile', JSON.stringify(state.profile));
@@ -7048,9 +7824,10 @@ function setupAccountSync() {
         closeModal('modalSyncCode');
         renderCrm();
         renderIncome();
+        renderExpenses();
         filterAndRenderLeads();
         initProfileForm();
-        alert('Дані успішно застосовано! Усі клієнти та доходи відновлено.');
+        alert('Дані успішно застосовано! Усі клієнти, доходи та витрати відновлено.');
       } catch (err) {
         alert('Помилка обробки тексту. Перевірте правильність введених даних.');
       }

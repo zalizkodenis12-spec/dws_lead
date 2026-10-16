@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/app.css?v=3.9.3">
+  <link rel="stylesheet" href="css/app.css?v=3.9.4">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -394,10 +394,71 @@
         <div id="nfcRadarJobsList" class="scrape-jobs"></div>
       </section>
 
+      <!-- ============================================================
+           TAB 7: ВИТРАТИ (EXPENSES)
+           ============================================================ -->
+      <section id="tab-expenses" class="tab-view">
+        <div class="view-header">
+          <h1 class="view-title">Витрати</h1>
+          <div class="leads-today-stat" id="expensesCountStat">
+            <span class="leads-count-num" id="expensesCountNum">0</span>
+            <span class="leads-count-label" id="expensesCountLabel">витрат</span>
+          </div>
+        </div>
+
+        <!-- Metric Stat Cards (Side-by-side) -->
+        <div class="income-stats-grid">
+          <div class="income-stat-card">
+            <span class="stat-label">ВИТРАЧЕНО</span>
+            <div class="stat-value text-danger" id="totalExpensesVal">0 ₴</div>
+            <span class="stat-sub" id="totalExpensesSub">За весь час</span>
+          </div>
+          <div class="income-stat-card">
+            <span class="stat-label">ЗА ЦЕЙ МІСЯЦЬ</span>
+            <div class="stat-value text-accent" id="monthExpensesVal">0 ₴</div>
+            <span class="stat-sub" id="monthExpensesSub">Поточний місяць</span>
+          </div>
+        </div>
+
+        <!-- Interactive Monthly Bar Chart Card -->
+        <div class="income-chart-card">
+          <div class="chart-header">
+            <span class="chart-title">Динаміка витрат</span>
+            <span class="chart-active-month" id="chartExpensesActiveMonthLabel">Жовтень: 0 ₴</span>
+          </div>
+          <div class="bars-container" id="expensesBars">
+            <!-- Bars rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Filter Time Pills (Stretched 50% / 50% across full row) -->
+        <div class="income-filters-row">
+          <button id="openExpensesTimeFilterBtn" class="filter-pill flex-1" type="button">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12" y1="6" x2="12" y2="12"></polyline><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span id="activeExpensesTimeLabel">Фільтр часу</span>
+            <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <button id="openExpensesCalendarBtn" class="filter-pill flex-1" type="button">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span id="activeExpensesCalendarLabel">По даті</span>
+          </button>
+        </div>
+
+        <!-- Weekly & Daily Expenses Accordion List -->
+        <div class="income-accordion-wrap" id="expensesAccordion">
+          <!-- Weeks with collapsible day items -->
+        </div>
+
+        <!-- Centered round blue plus button right above bottom nav -->
+        <button id="addExpenseBtn" class="fab-center-add" title="Додати витрату">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+      </section>
+
     </main>
 
     <!-- ============================================================
-         BOTTOM NAVIGATION BAR (6 TABS)
+         BOTTOM NAVIGATION BAR (7 TABS)
          ============================================================ -->
     <nav class="app-nav">
       <button class="nav-btn active" data-tab="tab-leads">
@@ -411,6 +472,10 @@
       <button class="nav-btn" data-tab="tab-income">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
         <span>Дохід</span>
+      </button>
+      <button class="nav-btn" data-tab="tab-expenses">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+        <span>Витрати</span>
       </button>
       <button class="nav-btn" data-tab="tab-profile">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"></circle><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path></svg>
@@ -1169,6 +1234,137 @@
     </div>
   </div>
 
+  <!-- MODAL: ДОДАТИ ВИТРАТУ (+) -->
+  <div id="modalAddExpense" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Додати витрату</h3>
+        <button class="modal-close" data-close="modalAddExpense">&times;</button>
+      </div>
+      <div class="modal-body">
+        
+        <div class="form-group">
+          <label class="form-label">КУДИ ВИТРАЧЕНО (ОПИС):</label>
+          <input type="text" id="newExpenseTitle" class="form-input" placeholder="Реклама в Instagram">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">КАТЕГОРІЯ / КОМУ:</label>
+            <input type="text" id="newExpenseCategory" class="form-input" placeholder="Маркетинг">
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">СУМА (₴):</label>
+            <input type="number" id="newExpenseAmount" class="form-input" placeholder="4 000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">СТАТУС ОПЛАТИ:</label>
+          <div class="filter-options-grid">
+            <button class="opt-btn active" data-paid="true">Оплачено (У витрати)</button>
+            <button class="opt-btn" data-paid="false">В планах (Очікувано)</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ДАТА ВИТРАТИ:</label>
+          <input type="date" id="newExpenseDate" class="form-input">
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--out" data-close="modalAddExpense">Відхилити</button>
+        <button id="submitAddExpenseBtn" class="btn btn--fill">ДОДАТИ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: РЕДАГУВАННЯ ВИТРАТИ -->
+  <div id="modalEditExpense" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Редагувати витрату</h3>
+        <button class="modal-close" data-close="modalEditExpense">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editExpenseId">
+        <div class="form-group">
+          <label class="form-label">КУДИ ВИТРАЧЕНО (ОПИС):</label>
+          <input type="text" id="editExpenseTitle" class="form-input" placeholder="Опис витрати">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">КАТЕГОРІЯ / КОМУ:</label>
+            <input type="text" id="editExpenseCategory" class="form-input" placeholder="Категорія">
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">СУМА (₴):</label>
+            <input type="number" id="editExpenseAmount" class="form-input" placeholder="0">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">СТАТУС ОПЛАТИ:</label>
+          <div class="filter-options-grid">
+            <button type="button" class="opt-btn" id="editExpensePaidBtn" data-paid="true">Оплачено (У витрати)</button>
+            <button type="button" class="opt-btn" id="editExpenseExpectedBtn" data-paid="false">В планах (Очікувано)</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ДАТА ВИТРАТИ:</label>
+          <input type="date" id="editExpenseDate" class="form-input">
+        </div>
+
+      </div>
+      <div class="modal-footer flex-col gap-2">
+        <button type="button" id="saveEditExpenseBtn" class="btn btn--fill btn--block">ЗБЕРЕГТИ ЗМІНИ</button>
+        <button type="button" id="deleteEditExpenseBtn" class="btn btn--danger btn--block">ВИДАЛИТИ ВИТРАТУ</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ФІЛЬТР ЧАСУ (ВИТРАТИ) -->
+  <div id="modalExpensesTimeFilter" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title">Фільтр часу</h3>
+        <button class="modal-close" data-close="modalExpensesTimeFilter">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="time-filter-list">
+          <button class="time-choice-item active" data-period="all">
+            <span>За весь час</span>
+            <span class="check">✓</span>
+          </button>
+          <button class="time-choice-item" data-period="year">
+            <span>За останній рік</span>
+          </button>
+          <button class="time-choice-item" data-period="6m">
+            <span>За останні 6 міс</span>
+          </button>
+          <button class="time-choice-item" data-period="3m">
+            <span>За останні 3 міс</span>
+          </button>
+          <button class="time-choice-item" data-period="1m">
+            <span>За останній міс</span>
+          </button>
+          <button class="time-choice-item" data-period="1w">
+            <span>За останній тиж</span>
+          </button>
+          <button class="time-choice-item" data-period="1d">
+            <span>За останній день</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn--fill btn--block" data-close="modalExpensesTimeFilter">ГОТОВО</button>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: КАЛЕНДАР ДЛЯ ВИБОРУ ПЕРІОДУ ДАТ (ПО ДАТІ) -->
   <div id="modalDateRange" class="modal-overlay">
     <div class="modal-sheet modal-calendar-sheet">
@@ -1504,6 +1700,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=3.9.3"></script>
+  <script src="js/app.js?v=3.9.4"></script>
 </body>
 </html>

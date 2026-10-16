@@ -226,6 +226,43 @@ app.delete('/api/income/:id', (req, res) => {
   }
 });
 
+// 3B. EXPENSES TRACKER
+app.get('/api/expenses', (req, res) => {
+  try {
+    const expenses = db.getExpenses();
+    res.json({ success: true, data: expenses });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/expenses', (req, res) => {
+  try {
+    const updated = db.addExpenseRecord(req.body);
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.put('/api/expenses/:id', (req, res) => {
+  try {
+    const updated = db.updateExpenseRecord(req.params.id, req.body);
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.delete('/api/expenses/:id', (req, res) => {
+  try {
+    const updated = db.deleteExpenseRecord(req.params.id);
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // 4. PROFILE & SETTINGS
 app.get('/api/profile', (req, res) => {
   try {

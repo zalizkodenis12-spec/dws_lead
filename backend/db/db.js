@@ -314,6 +314,109 @@ export const db = {
     return this.getIncome();
   },
 
+  // ---- EXPENSES ----
+  getExpenses() {
+    const data = readDb();
+    if (!data.expenses) {
+      data.expenses = {
+        records: [
+          {
+            id: "exp-1792170001-1",
+            title: "Реклама Meta (Instagram / Facebook)",
+            category: "Маркетинг",
+            amount: 4000,
+            isPaid: true,
+            currency: "₴",
+            date: new Date(Date.now() - 2 * 24 * 3600 * 1000).toISOString()
+          },
+          {
+            id: "exp-1792170002-2",
+            title: "NFC акрил, заготовки та безконтактні чіпи",
+            category: "Виробництво",
+            amount: 3200,
+            isPaid: true,
+            currency: "₴",
+            date: new Date(Date.now() - 5 * 24 * 3600 * 1000).toISOString()
+          },
+          {
+            id: "exp-1792170003-3",
+            title: "Підписка Cursor Pro + Vercel Pro",
+            category: "Сервіси",
+            amount: 1450,
+            isPaid: true,
+            currency: "₴",
+            date: new Date(Date.now() - 9 * 24 * 3600 * 1000).toISOString()
+          }
+        ],
+        currency: '₴'
+      };
+    }
+    if (!Array.isArray(data.expenses.records)) {
+      data.expenses.records = [];
+    }
+    let totalSpent = 0;
+    for (const r of data.expenses.records) {
+      const amt = Number(r.amount) || 0;
+      if (r.isPaid) totalSpent += amt;
+    }
+    return {
+      records: data.expenses.records,
+      totalSpent,
+      currency: data.expenses.currency || '₴'
+    };
+  },
+
+  addExpenseRecord(record) {
+    const data = readDb();
+    if (!data.expenses) {
+      data.expenses = { records: [], currency: '₴' };
+    }
+    if (!Array.isArray(data.expenses.records)) {
+      data.expenses.records = [];
+    }
+
+    const amount = Number(record.amount) || 0;
+    const isPaid = record.isPaid === true || record.isPaid === 'true';
+    const date = record.date ? new Date(record.date).toISOString() : new Date().toISOString();
+
+    const newRecord = {
+      id: `exp-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      title: record.title || 'Витрата',
+      category: record.category || 'Загальне',
+      amount,
+      currency: '₴',
+      isPaid,
+      date
+    };
+
+    data.expenses.records.unshift(newRecord);
+    writeDb(data);
+    return this.getExpenses();
+  },
+
+  deleteExpenseRecord(id) {
+    const data = readDb();
+    if (data.expenses && Array.isArray(data.expenses.records)) {
+      data.expenses.records = data.expenses.records.filter(r => r.id !== id);
+      writeDb(data);
+    }
+    return this.getExpenses();
+  },
+
+  updateExpenseRecord(id, updates) {
+    const data = readDb();
+    if (data.expenses && Array.isArray(data.expenses.records)) {
+      const idx = data.expenses.records.findIndex(r => r.id === id);
+      if (idx !== -1) {
+        if (updates.amount !== undefined) updates.amount = Number(updates.amount) || 0;
+        if (updates.isPaid !== undefined) updates.isPaid = Boolean(updates.isPaid);
+        data.expenses.records[idx] = { ...data.expenses.records[idx], ...updates };
+        writeDb(data);
+      }
+    }
+    return this.getExpenses();
+  },
+
   // ---- PROFILE ----
   getProfile() {
     const data = readDb();
@@ -349,6 +452,7 @@ export const db = {
       data.accounts[cleanKey] = {
         crm: data.crm || [],
         income: data.income || { records: [], currency: '₴' },
+        expenses: data.expenses || { records: [], currency: '₴' },
         profile: data.profile || {},
         takenLeadIds: (data.leads || []).filter(l => l.inCrm).map(l => l.id)
       };
@@ -364,6 +468,7 @@ export const db = {
     const acc = data.accounts[cleanKey] || {
       crm: data.crm || [],
       income: data.income || { records: [], currency: '₴' },
+      expenses: data.expenses || { records: [], currency: '₴' },
       profile: data.profile || {},
       takenLeadIds: []
     };
@@ -374,6 +479,10 @@ export const db = {
     if (payload.income && Array.isArray(payload.income.records)) {
       acc.income = payload.income;
       data.income = payload.income;
+    }
+    if (payload.expenses && Array.isArray(payload.expenses.records)) {
+      acc.expenses = payload.expenses;
+      data.expenses = payload.expenses;
     }
     if (payload.profile) {
       acc.profile = { ...acc.profile, ...payload.profile };
