@@ -3080,18 +3080,18 @@ body.dark-theme .order-leaf-badge.expected {
 }
 
 .nfc-tools-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  display: flex;
+  width: 100%;
   margin-bottom: 14px;
 }
 
 .nfc-tool-pill {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 14px;
+  gap: 10px;
+  padding: 13px 16px;
   border-radius: var(--r);
   border: 1px solid var(--border);
   background: var(--card-bg);

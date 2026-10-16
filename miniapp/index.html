@@ -269,9 +269,8 @@
 
           <!-- MULTI-DEVICE CLOUD SYNC & LOGIN -->
           <div class="form-group" style="margin-top: 16px; padding: 16px; background: var(--white); border: 1px solid var(--border); border-radius: var(--rad); box-shadow: var(--shadow-sm);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <label class="form-label" style="margin: 0; color: var(--brand); font-weight: 700; letter-spacing: 0.3px;">СИНХРОНІЗАЦІЯ (ТЕЛЕФОН / НОУТБУК):</label>
-              <span id="accountKeyBadge" style="font-size: 0.74rem; color: var(--muted); font-weight: 600;">ID: 5278970111</span>
+            <div style="margin-bottom: 8px;">
+              <label class="form-label" style="display: block; width: 100%; margin: 0; color: var(--brand); font-weight: 700; letter-spacing: 0.3px;">СИНХРОНІЗАЦІЯ (ТЕЛЕФОН / НОУТБУК):</label>
             </div>
             <p class="form-hint" style="margin-bottom: 14px; font-size: 0.76rem; line-height: 1.4;">
               Збережіть дані в хмару Telegram або завантажте файл бекапу, щоб відкрити свій профіль на ноутбуці без втрати клієнтів у CRM та історії доходів:
@@ -350,14 +349,10 @@
         </div>
 
         <!-- Super Sales & ROI Tools Bar -->
-        <div class="nfc-tools-row">
-          <button id="openNfcRoiCalcBtn" class="nfc-tool-pill primary" type="button">
-            <span class="ico">📈</span>
-            <span class="txt">Калькулятор вигоди NFC</span>
-          </button>
-          <button id="openNfcCatalogBtn" class="nfc-tool-pill secondary" type="button">
-            <span class="ico">💎</span>
-            <span class="txt">Каталог карток & Прайс</span>
+        <div class="nfc-tools-row" style="grid-template-columns: 1fr; width: 100%;">
+          <button id="openNfcRoiCalcBtn" class="nfc-tool-pill primary" type="button" style="width: 100%; justify-content: center;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
+            <span class="txt">КАЛЬКУЛЯТОР ВИГОДИ NFC ТА ВАРТОСТІ ПАРТІЙ</span>
           </button>
         </div>
 
@@ -494,11 +489,11 @@
         <div class="form-group">
           <label class="form-label">КАТЕГОРІЯ / НІША:</label>
           <div class="nfc-quick-tags" id="nfcQuickNiches">
-            <button type="button" class="nfc-tag-btn active" data-val="Кафе, бари, ресторани">☕ Кафе / Бари</button>
-            <button type="button" class="nfc-tag-btn" data-val="Барбершопи, салони краси">💈 Салони / Барбери</button>
-            <button type="button" class="nfc-tag-btn" data-val="Стоматології, медклініки">🦷 Стоматології</button>
-            <button type="button" class="nfc-tag-btn" data-val="СТО, автомийки, детейлінг">🚗 СТО / Детейлінг</button>
-            <button type="button" class="nfc-tag-btn" data-val="Острівці в ТРЦ, магазини">🛍️ ТРЦ / Острівці</button>
+            <button type="button" class="nfc-tag-btn active" data-val="Кафе, бари, ресторани">Кафе / Бари</button>
+            <button type="button" class="nfc-tag-btn" data-val="Барбершопи, салони краси">Салони / Барбери</button>
+            <button type="button" class="nfc-tag-btn" data-val="Стоматології, медклініки">Стоматології</button>
+            <button type="button" class="nfc-tag-btn" data-val="СТО, автомийки, детейлінг">СТО / Детейлінг</button>
+            <button type="button" class="nfc-tag-btn" data-val="Острівці в ТРЦ, магазини">ТРЦ / Острівці</button>
           </div>
           <input type="text" id="nfcNicheInput" class="form-input mt-2" placeholder="Введіть нішу або оберіть згори..." value="Кафе, бари, ресторани">
         </div>
@@ -1400,7 +1395,7 @@
     </div>
   </div>
 
-  <!-- MODAL: КАЛЬКУЛЯТОР ВИГОДИ NFC (ROI ДЛЯ ЗАКЛАДУ) -->
+  <!-- MODAL: КАЛЬКУЛЯТОР ВИГОДИ NFC ТА ВАРТОСТІ ПАРТІЙ -->
   <div id="modalNfcRoiCalc" class="modal-overlay">
     <div class="modal-sheet">
       <div class="modal-header">
@@ -1408,33 +1403,79 @@
         <button class="modal-close" data-close="modalNfcRoiCalc">&times;</button>
       </div>
       <div class="modal-body">
-        <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 14px; text-align: center; line-height: 1.4;">
-          Розрахуйте, скільки додаткового прибутку отримає заклад від підвищення рейтингу в Google Maps та збору відгуків через NFC-стійки.
-        </p>
-
-        <!-- Dynamic Inputs -->
-        <div class="form-group">
-          <div class="label-row" style="display:flex; justify-content:space-between;">
-            <label class="form-label">ПОТОЧНИЙ РЕЙТИНГ ЗАКЛАДУ:</label>
-            <span id="roiCurrentRatingVal" style="font-family:var(--ffh); font-weight:800; color:var(--warning);">4.2 ★</span>
+        
+        <!-- SECTION 1: ТИП ТА КІЛЬКІСТЬ КАРТОК -->
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label">ТИП КАРТОК / МАТЕРІАЛ:</label>
+          <div class="scrape-seg" id="nfcCardTypeSeg" style="display: flex; gap: 4px;">
+            <button type="button" class="scrape-seg-btn active" data-type="stock" style="font-size: 0.74rem; padding: 8px 6px;">З асортименту</button>
+            <button type="button" class="scrape-seg-btn" data-type="color" style="font-size: 0.74rem; padding: 8px 6px;">Кольоровий акрил</button>
+            <button type="button" class="scrape-seg-btn" data-type="custom" style="font-size: 0.74rem; padding: 8px 6px;">Своя партія</button>
           </div>
-          <input type="range" id="roiCurrentRating" min="3.5" max="4.7" step="0.1" value="4.2" class="form-range" style="width:100%;">
+          <div id="nfcCardTypeHint" style="font-size: 0.74rem; color: var(--muted); margin-top: 6px; line-height: 1.35;">
+            З асортименту: до 10 шт — 400 ₴/шт | від 10 шт — 300 ₴/шт
+          </div>
         </div>
 
-        <div class="form-group">
-          <div class="label-row" style="display:flex; justify-content:space-between;">
-            <label class="form-label">ГОСТЕЙ НА ДЕНЬ:</label>
-            <span id="roiGuestsVal" style="font-family:var(--ffh); font-weight:800; color:var(--accent);">60 гостей</span>
+        <div class="form-group" style="margin-bottom: 14px;">
+          <div class="label-row" style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="form-label" style="margin: 0;">КІЛЬКІСТЬ КАРТОК:</label>
+            <span id="nfcCardQtyVal" style="font-family:var(--ffh); font-weight:800; color:var(--brand); font-size: 0.95rem;">10 шт</span>
           </div>
-          <input type="range" id="roiGuests" min="15" max="250" step="5" value="60" class="form-range" style="width:100%;">
+          <div class="scrape-seg" id="nfcQtySeg" style="margin: 8px 0 10px;">
+            <button type="button" class="scrape-seg-btn" data-qty="3">3</button>
+            <button type="button" class="scrape-seg-btn" data-qty="5">5</button>
+            <button type="button" class="scrape-seg-btn active" data-qty="10">10</button>
+            <button type="button" class="scrape-seg-btn" data-qty="20">20</button>
+            <button type="button" class="scrape-seg-btn" data-qty="50">50</button>
+          </div>
+          <input type="range" id="nfcCardQtyRange" min="1" max="100" step="1" value="10" class="form-range" style="width:100%;">
         </div>
 
-        <div class="form-group">
-          <div class="label-row" style="display:flex; justify-content:space-between;">
-            <label class="form-label">СЕРЕДНІЙ ЧЕК ЗАКЛАДУ:</label>
-            <span id="roiCheckVal" style="font-family:var(--ffh); font-weight:800; color:var(--black);">250 ₴</span>
+        <!-- Card Price Live Result Box -->
+        <div class="nfc-roi-metric-card" style="margin-bottom: 16px; background: var(--card-sub); border: 1px solid var(--brand); border-radius: var(--rad); padding: 12px 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <span class="lbl" style="font-size: 0.72rem; color: var(--muted); font-weight: 700;">ЦІНА ЗА 1 ШТ:</span>
+              <div id="nfcPricePerCardVal" style="font-family: var(--ffh); font-weight: 900; font-size: 1.15rem; color: var(--brand);">300 ₴ / шт</div>
+            </div>
+            <div style="text-align: right;">
+              <span class="lbl" style="font-size: 0.72rem; color: var(--muted); font-weight: 700;">СУМА ПАРТІЇ:</span>
+              <div id="nfcTotalPriceVal" style="font-family: var(--ffh); font-weight: 900; font-size: 1.25rem; color: var(--accent);">3 000 ₴</div>
+            </div>
           </div>
-          <input type="range" id="roiCheck" min="80" max="1200" step="20" value="250" class="form-range" style="width:100%;">
+          <div id="nfcPricingTierNote" style="font-size: 0.74rem; color: var(--muted); margin-top: 6px;">
+            Оптова ціна застосована (партія від 10 шт)
+          </div>
+        </div>
+
+        <!-- SECTION 2: ROI ДЛЯ ЗАКЛАДУ (ОКУПНІСТЬ) -->
+        <div style="border-top: 1px solid var(--border); padding-top: 12px; margin-bottom: 12px;">
+          <div class="form-label" style="color: var(--black); font-weight: 800; margin-bottom: 8px;">ПАРАМЕТРИ ЗАКЛАДУ КЛІЄНТА:</div>
+          
+          <div class="form-group" style="margin-bottom: 10px;">
+            <div class="label-row" style="display:flex; justify-content:space-between;">
+              <label class="form-label" style="font-size: 0.75rem;">ПОТОЧНИЙ РЕЙТИНГ У MAPS:</label>
+              <span id="roiCurrentRatingVal" style="font-family:var(--ffh); font-weight:800; color:var(--warning);">4.2 ★</span>
+            </div>
+            <input type="range" id="roiCurrentRating" min="3.5" max="4.7" step="0.1" value="4.2" class="form-range" style="width:100%;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 10px;">
+            <div class="label-row" style="display:flex; justify-content:space-between;">
+              <label class="form-label" style="font-size: 0.75rem;">ГОСТЕЙ НА ДЕНЬ:</label>
+              <span id="roiGuestsVal" style="font-family:var(--ffh); font-weight:800; color:var(--accent);">60 гостей</span>
+            </div>
+            <input type="range" id="roiGuests" min="15" max="250" step="5" value="60" class="form-range" style="width:100%;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <div class="label-row" style="display:flex; justify-content:space-between;">
+              <label class="form-label" style="font-size: 0.75rem;">СЕРЕДНІЙ ЧЕК ЗАКЛАДУ:</label>
+              <span id="roiCheckVal" style="font-family:var(--ffh); font-weight:800; color:var(--black);">250 ₴</span>
+            </div>
+            <input type="range" id="roiCheck" min="80" max="1200" step="20" value="250" class="form-range" style="width:100%;">
+          </div>
         </div>
 
         <!-- Calculated Live Metrics -->
@@ -1442,7 +1483,7 @@
           <div class="nfc-roi-metric-card">
             <span class="lbl">ПРИРІСТ ВІДГУКІВ</span>
             <div class="val text-accent" id="roiReviewsDelta">+54 відг / міс</div>
-            <span class="sub">100% живі оцінки 5★ від реальних гостей</span>
+            <span class="sub">Живі оцінки 5★ від реальних гостей закладу</span>
           </div>
           <div class="nfc-roi-metric-card">
             <span class="lbl">НОВИЙ РЕЙТИНГ GOOGLE</span>
@@ -1452,94 +1493,17 @@
           <div class="nfc-roi-metric-card highlight">
             <span class="lbl">ДОДАТКОВИЙ ПРИБУТОК ЗАКЛАДУ</span>
             <div class="val text-accent-huge" id="roiExtraIncome">+81 000 ₴ / міс</div>
-            <span class="sub">Окупність 5 акрилових стійок (1 250 ₴) — всього за 12 годин!</span>
+            <span class="sub" id="roiPaybackText">Окупність партії карток (3 000 ₴) — всього за 1–2 дні!</span>
           </div>
         </div>
+
       </div>
       <div class="modal-footer flex-col gap-2">
-        <button type="button" id="copyRoiPitchBtn" class="btn btn--fill btn--block">📋 СКОПІЮВАТИ РОЗРАХУНОК ДЛЯ КЛІЄНТА</button>
+        <button type="button" id="copyRoiPitchBtn" class="btn btn--fill btn--block">СКОПІЮВАТИ РОЗРАХУНОК ТА КП ДЛЯ КЛІЄНТА</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: КАТАЛОГ NFC-ПРОДУКЦІЇ & ПРАЙС -->
-  <div id="modalNfcCatalog" class="modal-overlay">
-    <div class="modal-sheet">
-      <div class="modal-header">
-        <h3 class="modal-title" style="flex: 1; text-align: center;">Каталог NFC & Прайс партій</h3>
-        <button class="modal-close" data-close="modalNfcCatalog">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="nfc-catalog-intro">
-          Ми виготовляємо індивідуальні NFC-стійки та картки з будь-яким дизайном, фірмовими кольорами та логотипом закладу.
-        </div>
-
-        <!-- Products Showcase -->
-        <div class="nfc-products-list">
-          <div class="nfc-product-item">
-            <div class="nfc-product-ico">💎</div>
-            <div class="nfc-product-info">
-              <div class="title">Акрилові стійки на столики (L-подібні)</div>
-              <div class="sub">Преміум литий акрил 3 мм, стійкий УФ-друк, захист від вологи та спирту. Чіп NTAG213/215 + QR-код.</div>
-              <div class="price">від 250 ₴ / шт (найпопулярніше для кафе та ресторанів)</div>
-            </div>
-          </div>
-
-          <div class="nfc-product-item">
-            <div class="nfc-product-ico">💳</div>
-            <div class="nfc-product-info">
-              <div class="title">ПВХ NFC-картки з індивідуальним дизайном</div>
-              <div class="sub">Формат банківської карти, матове або глянцеве покриття, двосторонній повноколір. Для барберів, офіціантів, ресепшн.</div>
-              <div class="price">від 120 ₴ / шт</div>
-            </div>
-          </div>
-
-          <div class="nfc-product-item">
-            <div class="nfc-product-ico">✨</div>
-            <div class="nfc-product-info">
-              <div class="title">Фігурні підставки за контуром логотипу</div>
-              <div class="sub">Будь-яка складна форма з акрилу або композиту за індивідуальним ескізом замовника.</div>
-              <div class="price">від 320 ₴ / шт</div>
-            </div>
-          </div>
-
-          <div class="nfc-product-item">
-            <div class="nfc-product-ico">🪵</div>
-            <div class="nfc-product-info">
-              <div class="title">Дерев'яні еко-холдери з гравіюванням</div>
-              <div class="sub">Масив ясена/дуба, лазерне гравіювання лого, вбудований безконтактний чіп.</div>
-              <div class="price">від 290 ₴ / шт</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Batches -->
-        <div class="nfc-batches-box">
-          <div class="nfc-batch-title">ОПТОВІ ПАРТІЇ ТА ЗНИЖКИ:</div>
-          <div class="nfc-batch-row">
-            <span>🧪 1–2 шт (Тестовий зразок):</span>
-            <b>без націнки</b>
-          </div>
-          <div class="nfc-batch-row">
-            <span>☕ 5–10 шт (Кафе / Салон):</span>
-            <b>знижка 10%</b>
-          </div>
-          <div class="nfc-batch-row">
-            <span>🍽️ 20–50 шт (Ресторан / Готель):</span>
-            <b>знижка 20% + безкоштовний дизайн</b>
-          </div>
-          <div class="nfc-batch-row">
-            <span>🏢 100+ шт (Мережа закладів):</span>
-            <b>індивідуальний опт + прошивка</b>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer flex-col gap-2">
-        <button type="button" id="copyNfcKpBtn" class="btn btn--fill btn--block">📋 СКОПІЮВАТИ КП (КОМЕРЦІЙНУ ПРОПОЗИЦІЮ)</button>
-      </div>
-    </div>
-  </div>
-
-  <script src="js/app.js?v=3.9.2"></script>
+  <script src="js/app.js?v=3.9.3"></script>
 </body>
 </html>

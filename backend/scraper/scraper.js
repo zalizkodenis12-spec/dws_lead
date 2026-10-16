@@ -400,7 +400,7 @@ export async function sendCsvToTelegram(job, category = 'all') {
 
   const form = new FormData();
   form.append('chat_id', String(ADMIN_CHAT_ID));
-  form.append('caption', `📞 База для обдзвону (Vapi)\n${job.niche}${job.city ? ' · ' + job.city : ''}\n${label}: ${count} контактів`);
+  form.append('caption', `База для обдзвону (Vapi)\n${job.niche}${job.city ? ' · ' + job.city : ''}\n${label}: ${count} контактів`);
   form.append('document', new Blob([csv], { type: 'text/csv' }), csvFileName(job, category));
 
   const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendDocument`, { method: 'POST', body: form });

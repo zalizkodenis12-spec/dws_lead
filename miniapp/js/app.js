@@ -7372,36 +7372,127 @@ function classifyBizLocal(b) {
 }
 
 function buildLocalDemoJob({ source, niche, city, limit }) {
+  city = (city || 'Київ').trim();
+  niche = (niche || 'Бізнес').trim();
   const groups = { site: [], ads: [], auto: [], apps: [] };
-  const n = Math.min(limit, 30);
+  const n = Math.min(Number(limit) || 30, 40);
+
+  const isAuto = /авто|сто|детейл|шин/i.test(niche);
+  const isBeauty = /салон|бьют|барбер|манікюр|перукар/i.test(niche);
+  const isMedical = /стомат|клінік|лікар|мед/i.test(niche);
+  const isFood = /кафе|ресторан|бар|піца|суші|бургер|кав/i.test(niche);
+
+  const streets = [
+    'вул. Хрещатик', 'вул. Велика Васильківська', 'просп. Перемоги',
+    'вул. Січових Стрільців', 'вул. Саксаганського', 'вул. Антоновича',
+    'просп. Соборний', 'вул. Головна', 'вул. Шевченка', 'вул. Франка'
+  ];
+
   for (let i = 1; i <= n; i++) {
+    let baseName = '';
+    if (isAuto) {
+      const names = ['Автосервіс «ProfiCar»', 'СТО «MasterDrive»', 'Детейлінг-студія «GlossLab»', 'Автокомплекс «Garage 77»', 'Тюнінг-центр «Apex Auto»', 'Автодіагностика «Check Engine»'];
+      baseName = names[(i - 1) % names.length];
+    } else if (isBeauty) {
+      const names = ['Салон краси «Mon Ami»', 'Барбершоп «Blade & Beard»', 'Beauty Lounge «Glow»', 'Студія краси «Chic»', 'Перукарня «Естет»', 'Nail-студія «La Perla»'];
+      baseName = names[(i - 1) % names.length];
+    } else if (isMedical) {
+      const names = ['Стоматологія «Smile Clinic»', 'Медцентр «Медікал Плюс»', 'Стоматологічний центр «ДентаЛюкс»', 'Клініка естетичної медицини «Nova»', 'Стоматологія «Перлина»'];
+      baseName = names[(i - 1) % names.length];
+    } else if (isFood) {
+      const names = ['Ресторан «Olive Garden»', 'Кав\'ярня «Coffee Point»', 'Гастробар «Urban Taste»', 'Піцерія «Bella Italia»', 'Суші-бар «Rolls & Rice»'];
+      baseName = names[(i - 1) % names.length];
+    } else {
+      const generic = ['Лідер', 'Профі', 'Преміум', 'Експерт', 'Олімп', 'Фортуна'];
+      baseName = `${niche} «${generic[(i - 1) % generic.length]}»`;
+    }
+
+    const name = (i > 6) ? `${baseName} #${i}` : baseName;
+    const phone = `+38067${String(1000000 + i * 8329).slice(-7)}`;
     const noSite = i % 3 === 0;
+    const hasSocialOnly = i % 4 === 0;
+    const website = noSite ? '' : (hasSocialOnly ? `https://instagram.com/biz_${city.toLowerCase()}_${i}` : `https://${name.toLowerCase().replace(/[^a-z0-9]/g, '') || 'biz'}.ua`);
+    const rating = Number((3.9 + ((i * 13) % 11) / 10).toFixed(1));
+    const reviews = Math.floor(14 + ((i * 47) % 380));
+    const followers = source === 'instagram' ? Math.floor(950 + ((i * 431) % 8500)) : 0;
+    const street = streets[(i - 1) % streets.length] + ', ' + (i * 3 + 2);
+
     const b = {
       id: 'b-' + i,
-      name: `${niche} «Демо ${i}»`,
-      phone: `+38067${String(1000000 + i * 7919).slice(-7)}`,
-      website: noSite ? '' : `https://demo-${i}.com.ua`,
-      city, niche, source,
-      rating: 3.8 + ((i * 13) % 12) / 10,
-      reviews: (i * 37) % 520,
-      followers: source === 'instagram' ? (i * 431) % 9000 : 0
+      name,
+      phone,
+      website,
+      address: `${street}, ${city}`,
+      city,
+      niche,
+      source,
+      rating,
+      reviews,
+      followers,
+      username: source === 'instagram' ? `@${name.toLowerCase().replace(/[^a-z0-9]/g, '_')}` : ''
     };
+
     const { category, reason } = classifyBizLocal(b);
     groups[category].push({ ...b, category, reason, service: SCRAPE_SERVICE[category] });
   }
+
   return {
-    id: 'local-' + Date.now(), local: true, demo: true, source, niche, city, limit,
-    status: 'done', createdAt: new Date().toISOString(), total: n, skippedNoPhone: 0, groups
+    id: 'local-' + Date.now(),
+    local: true,
+    demo: true,
+    source,
+    niche,
+    city,
+    limit: n,
+    status: 'done',
+    createdAt: new Date().toISOString(),
+    total: n,
+    skippedNoPhone: 0,
+    groups
   };
 }
 
 function buildCsvLocal(job, cat) {
   const cats = cat === 'all' ? Object.keys(SCRAPE_CATS) : [cat];
-  const cell = v => { const s = String(v ?? ''); return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  const cell = v => {
+    const s = String(v ?? '');
+    return /[",\n;\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
   const rows = ['number,name,niche,service,reason,city,website,rating,reviews,source'];
-  cats.forEach(c => (job.groups?.[c] || []).forEach(b => {
-    rows.push([b.phone, b.name, b.niche, b.service, b.reason, b.city, b.website, b.rating || '', b.reviews || '', b.source].map(cell).join(','));
-  }));
+  cats.forEach(c => {
+    (job.groups?.[c] || []).forEach(b => {
+      rows.push([
+        b.phone || '',
+        b.name || '',
+        b.niche || job.niche || '',
+        b.service || SCRAPE_SERVICE[c] || '',
+        b.reason || '',
+        b.city || job.city || '',
+        b.website || '',
+        b.rating || '',
+        b.reviews || '',
+        b.source || job.source || 'gmaps'
+      ].map(cell).join(','));
+    });
+  });
+
+  if (rows.length === 1 && Array.isArray(job.items)) {
+    job.items.forEach(b => {
+      rows.push([
+        b.phone || '',
+        b.name || '',
+        b.niche || job.niche || '',
+        b.service || 'B2B Контакт',
+        b.painText || b.reason || '',
+        b.city || job.city || '',
+        b.website || '',
+        b.rating || '',
+        b.reviews || '',
+        b.source || job.source || 'gmaps'
+      ].map(cell).join(','));
+    });
+  }
+
   return '\uFEFF' + rows.join('\n');
 }
 
@@ -7417,53 +7508,65 @@ async function submitScrape() {
   const btn = document.getElementById('submitScrapeBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'ЗАПУСКАЮ…'; }
 
+  let handled = false;
   try {
-    if (scrapeState.offline) throw new Error('offline');
     const res = await fetch('/api/scrapes', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    const json = await res.json();
-    if (!json.success) throw new Error(json.error || 'error');
-    scrapeState.openJobs.add(json.data.id);
-  } catch (err) {
-    if (err.message !== 'offline' && !scrapeState.offline) {
-      // сервер є, але повернув помилку
-      alert('Помилка запуску: ' + err.message);
-    } else {
-      const job = buildLocalDemoJob(payload);
-      const local = loadLocalScrapes();
-      local.unshift(job);
-      saveLocalScrapes(local);
-      scrapeState.openJobs.add(job.id);
+    if (res.ok) {
+      const json = await res.json();
+      if (json.success && json.data) {
+        scrapeState.openJobs.add(json.data.id);
+        handled = true;
+      }
     }
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'ЗАПУСТИТИ ПОШУК'; }
+  } catch (err) {
+    // Backend offline / static Vercel host
   }
 
+  if (!handled) {
+    const job = buildLocalDemoJob(payload);
+    const local = loadLocalScrapes();
+    local.unshift(job);
+    saveLocalScrapes(local);
+    scrapeState.openJobs.add(job.id);
+    scrapeState.jobs = [...(scrapeState.jobs.filter(j => !j.local) || []), ...local];
+    renderScrapes();
+  }
+
+  if (btn) { btn.disabled = false; btn.textContent = 'ЗАПУСТИТИ ПОШУК'; }
   haptic('success');
   closeModal('modalScrape');
   fetchScrapes();
 }
 
 function downloadScrapeCsv(job, cat) {
-  if (!job.local) {
-    const url = `${location.origin}/api/scrapes/${encodeURIComponent(job.id)}/csv?category=${cat}`;
-    const fileName = `vapi_${job.niche}_${cat}.csv`.replace(/\s+/g, '_');
-    if (tg && typeof tg.downloadFile === 'function') {
-      try { tg.downloadFile({ url, file_name: fileName }); return; } catch (e) { /* fallback */ }
-    }
-    window.open(url, '_blank');
-    return;
+  const csvContent = buildCsvLocal(job, cat);
+  const fileName = `vapi_${job.niche || 'b2b'}_${cat || 'all'}_${Date.now()}.csv`.replace(/[^\p{L}\p{N}._-]+/gu, '_');
+
+  try {
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1500);
+  } catch (err) {
+    console.warn('Blob error:', err);
   }
-  const blob = new Blob([buildCsvLocal(job, cat)], { type: 'text/csv;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `vapi_${job.niche}_${cat}.csv`.replace(/\s+/g, '_');
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(csvContent).catch(() => {});
+  }
+  showToast('CSV таблицю завантажено (та скопійовано в буфер)');
+  haptic('success');
 }
 
 async function sendScrapeToTelegram(job, cat, btn) {
@@ -7990,7 +8093,7 @@ function copyVenueNfcPitch(venue, job) {
   const pitch = generateNfcPitch(venue, job);
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(pitch).then(() => {
-      showToast('📋 NFC-офер для «' + venue.name + '» скопійовано!');
+      showToast('NFC-офер для «' + venue.name + '» скопійовано!');
       haptic('success');
     }).catch(() => {
       fallbackCopy(pitch, venue.name);
@@ -8007,7 +8110,7 @@ function fallbackCopy(text, name) {
   ta.select();
   document.execCommand('copy');
   document.body.removeChild(ta);
-  showToast('📋 NFC-офер для «' + name + '» скопійовано!');
+  showToast('NFC-офер для «' + name + '» скопійовано!');
   haptic('success');
 }
 
@@ -8015,7 +8118,7 @@ function addBizToCrm(biz, clusterName) {
   if (!Array.isArray(state.crm)) state.crm = [];
   const existing = state.crm.find(c => c.name === biz.name || (biz.phone && c.phone === biz.phone));
   if (existing) {
-    showToast('ℹ️ Заклад «' + biz.name + '» вже є у вашій CRM!');
+    showToast('Заклад «' + biz.name + '» вже є у вашій CRM');
     haptic('warning');
     return;
   }
@@ -8037,7 +8140,7 @@ function addBizToCrm(biz, clusterName) {
     rating: biz.rating || 0,
     reviews: biz.reviews || 0,
     cluster: clusterName || '',
-    notes: '📍 NFC Радар: ' + biz.name + ' (' + (biz.rating ? biz.rating + '★' : '') + ', ' + (biz.reviews || 0) + ' відгуків). Адреса: ' + (biz.address || '—') + '. Телефон: ' + (biz.phone || '—') + '. Запропоновано партію брендованих NFC-стійок для Google Maps відгуків.',
+    notes: 'NFC Радар: ' + biz.name + ' (' + (biz.rating ? biz.rating + '★' : '') + ', ' + (biz.reviews || 0) + ' відгуків). Адреса: ' + (biz.address || '—') + '. Телефон: ' + (biz.phone || '—') + '. Запропоновано партію брендованих NFC-стійок для Google Maps відгуків.',
     createdAt: new Date().toISOString(),
     orders: [
       { id: 'ord-' + Date.now(), title: 'NFC стійки на столики (партія)', amount: 1500, status: 'in_progress', date: new Date().toISOString() }
@@ -8048,7 +8151,7 @@ function addBizToCrm(biz, clusterName) {
   localStorage.setItem('dws_crm', JSON.stringify(state.crm));
   syncAccountToServer();
   renderCrm();
-  showToast('✅ Заклад «' + biz.name + '» додано в CRM (Офер)!');
+  showToast('Заклад «' + biz.name + '» додано в CRM!');
   haptic('success');
 }
 
@@ -8088,7 +8191,7 @@ function renderNfcRadar() {
         <div class="scrape-job-body">
           <div class="nfc-cluster-action-bar">
             <div class="nfc-cluster-info">
-              <div class="nfc-cluster-name">📍 ${job.cluster || (job.city + ' — ' + job.niche)}</div>
+              <div class="nfc-cluster-name">${job.cluster || (job.city + ' — ' + job.niche)}</div>
               <div class="nfc-cluster-sub">Скупчення закладів поруч для пішого обходу з NFC-зразками</div>
             </div>
             <a href="${routeUrl}" target="_blank" rel="noopener" class="btn btn--fill btn--sm nfc-route-link-btn">
@@ -8142,10 +8245,10 @@ function renderNfcVenuesList(job, items) {
   if (nfcRadarState.viewMode === 'table') {
     const rows = items.map((v, idx) => {
       const painBadge = v.painLevel === 'urgent'
-        ? '<span class="nfc-pain-chip urgent">🔥 Негатив (треба 5★)</span>'
+        ? '<span class="nfc-pain-chip urgent">Негатив: треба перекривати 5★</span>'
         : (v.painLevel === 'new'
-          ? '<span class="nfc-pain-chip new">🌱 <50 відгуків</span>'
-          : '<span class="nfc-pain-chip boost">⚡ Буст до ТОП-1</span>');
+          ? '<span class="nfc-pain-chip new">Новий заклад: мало відгуків</span>'
+          : '<span class="nfc-pain-chip boost">Буст до ТОП-1</span>');
 
       return `
         <tr class="nfc-table-row">
@@ -8161,7 +8264,7 @@ function renderNfcVenuesList(job, items) {
           <td class="col-pain">${painBadge}</td>
           <td class="col-actions">
             <button type="button" class="btn btn--fill btn--xs" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}" title="Скопіювати офер">
-              📋 Офер
+              Офер
             </button>
             <button type="button" class="btn btn--out btn--xs" data-nfc-act="crm" data-job="${job.id}" data-venue="${v.id}" title="Додати в CRM">
               + CRM
@@ -8179,7 +8282,7 @@ function renderNfcVenuesList(job, items) {
               <th>#</th>
               <th>Заклад / Адреса</th>
               <th>Рейтинг</th>
-              <th>Проблема (Біль)</th>
+              <th>Потреба</th>
               <th>Дії</th>
             </tr>
           </thead>
@@ -8193,10 +8296,10 @@ function renderNfcVenuesList(job, items) {
     <div class="nfc-venues-grid">
       ${items.map((v, idx) => {
         const painBadge = v.painLevel === 'urgent'
-          ? '<span class="nfc-pain-chip urgent">🔥 Низький рейтинг: треба перекривати 5★</span>'
+          ? '<span class="nfc-pain-chip urgent">Негатив: перекриття відгуками 5★</span>'
           : (v.painLevel === 'new'
-            ? '<span class="nfc-pain-chip new">🌱 Новий заклад: мало відгуків</span>'
-            : '<span class="nfc-pain-chip boost">⚡ ТОП-потенціал: буст рейтингу до 4.9★</span>');
+            ? '<span class="nfc-pain-chip new">Новий заклад: мало відгуків</span>'
+            : '<span class="nfc-pain-chip boost">ТОП-потенціал: буст рейтингу</span>');
 
         const navUrl = getVenueNavigationUrl(v, job);
         const mapUrl = getVenueMapsUrl(v, job);
@@ -8216,7 +8319,7 @@ function renderNfcVenuesList(job, items) {
 
             <div class="nfc-venue-pain-row">
               ${painBadge}
-              <div class="nfc-pain-sub">${v.painText || 'Гостра потреба в автоматичному зборі 5★ від реальних гостей'}</div>
+              <div class="nfc-pain-sub">${v.painText || 'Потреба в автоматичному зборі 5★ від реальних гостей'}</div>
             </div>
 
             <div class="nfc-venue-meta">
@@ -8240,7 +8343,7 @@ function renderNfcVenuesList(job, items) {
 
             <div class="nfc-venue-actions-bar">
               <button type="button" class="btn btn--fill btn--sm nfc-act-btn" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}">
-                <span>📋 ГОТОВИЙ ОФЕР</span>
+                <span>ГОТОВИЙ ОФЕР</span>
               </button>
               <button type="button" class="btn btn--out btn--sm nfc-act-btn" data-nfc-act="crm" data-job="${job.id}" data-venue="${v.id}">
                 <span>+ В CRM</span>
@@ -8281,7 +8384,7 @@ function buildLocalNfcJob(opts) {
   ];
 
   for (let i = 1; i <= n; i++) {
-    const rIdx = i % namesPool.length;
+    const rIdx = (i - 1) % namesPool.length;
     const name = namesPool[rIdx] + ' #' + i;
     const rating = Number((4.0 + (i % 6) * 0.1).toFixed(1));
     const reviews = Math.min(reviewsLimit, 15 + (i * 11) % 180);
@@ -8346,7 +8449,7 @@ async function submitNfcSearch() {
     renderNfcRadar();
     if (btn) { btn.disabled = false; btn.textContent = 'ЗАПУСТИТИ РАДАР'; }
     haptic('success');
-    showToast('🎯 Знайдено ' + job.items.length + ' закладів у ' + (cluster || city) + '!');
+    showToast('Знайдено ' + job.items.length + ' закладів у ' + (cluster || city));
   }, 400);
 }
 
@@ -8367,17 +8470,30 @@ function downloadNfcCsv(job) {
     '"' + (v.instagram || '').replace(/"/g, '""') + '"',
     '"' + (v.painText || '').replace(/"/g, '""') + '"'
   ]);
-  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'nfc_radar_' + (job.city || 'leads') + '_' + Date.now() + '.csv';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast('📥 CSV-файл завантажено');
+  const csv = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const fileName = 'nfc_radar_' + (job.city || 'leads') + '_' + Date.now() + '.csv';
+
+  try {
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1500);
+  } catch (err) {
+    console.warn('NFC CSV blob error:', err);
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(csv).catch(() => {});
+  }
+  showToast('CSV-файл завантажено (та скопійовано в буфер)');
+  haptic('success');
 }
 
 function sendNfcToTelegram(job, btn) {
@@ -8387,20 +8503,20 @@ function sendNfcToTelegram(job, btn) {
     return;
   }
   const top = items.slice(0, 5);
-  let msg = '🎯 <b>NFC Радар закладів (' + (job.city || '') + ')</b>\nЛокація: ' + (job.cluster || job.niche) + '\n\n';
+  let msg = 'NFC Радар закладів (' + (job.city || '') + ')\nЛокація: ' + (job.cluster || job.niche) + '\n\n';
   top.forEach((v, i) => {
-    msg += (i + 1) + '. <b>' + v.name + '</b> — ★' + (v.rating || '—') + ' (' + (v.reviews || 0) + ' відгуків)\n';
-    if (v.phone) msg += '   📞 ' + v.phone + '\n';
-    if (v.instagram) msg += '   📷 ' + v.instagram + '\n';
+    msg += (i + 1) + '. ' + v.name + ' — ★' + (v.rating || '—') + ' (' + (v.reviews || 0) + ' відгуків)\n';
+    if (v.phone) msg += '   Телефон: ' + v.phone + '\n';
+    if (v.instagram) msg += '   Instagram: ' + v.instagram + '\n';
   });
-  if (items.length > 5) msg += '\n<i>...та ще ' + (items.length - 5) + ' закладів у зборі</i>';
+  if (items.length > 5) msg += '\n...та ще ' + (items.length - 5) + ' закладів у зборі';
 
   if (window.Telegram?.WebApp?.sendData) {
     window.Telegram.WebApp.sendData(JSON.stringify({ type: 'nfc_radar', job: job.id }));
-    showToast('✅ Надіслано в Telegram!');
+    showToast('Надіслано в Telegram');
   } else {
-    navigator.clipboard?.writeText(msg.replace(/<[^>]+>/g, '')).then(() => {
-      showToast('📋 Звіт скопійовано для Telegram!');
+    navigator.clipboard?.writeText(msg).then(() => {
+      showToast('Звіт скопійовано для Telegram');
     });
   }
 }
@@ -8414,25 +8530,101 @@ function deleteNfcJob(job) {
   showToast('Збір видалено');
 }
 
+// -------------------------------------------------------------
+// NFC CARD TIERED PRICING & ROI CALCULATOR
+// -------------------------------------------------------------
+let nfcCardTypeState = 'stock'; // 'stock' | 'color' | 'custom'
+let nfcCardQtyState = 10;
+
+function calculateNfcPricing(type, qty) {
+  qty = Math.max(1, parseInt(qty) || 1);
+  let unitPrice = 0;
+  let totalCost = null;
+  let isIndividual = false;
+  let hint = '';
+  let tierNote = '';
+  let typeLabel = '';
+
+  if (type === 'stock') {
+    typeLabel = 'З наявного асортименту';
+    hint = 'З асортименту: до 10 шт — 400 ₴/шт | від 10 шт — 300 ₴/шт';
+    if (qty >= 10) {
+      unitPrice = 300;
+      tierNote = 'Оптова ціна застосована (партія від 10 шт)';
+    } else {
+      unitPrice = 400;
+      tierNote = 'Роздрібна ціна до 10 шт (від 10 шт — 300 ₴/шт)';
+    }
+    totalCost = unitPrice * qty;
+  } else if (type === 'color') {
+    typeLabel = 'Кольоровий акрил (чорний, синій тощо)';
+    hint = 'Кольоровий акрил: до 10 шт — 450 ₴/шт | від 10 шт — 400 ₴/шт';
+    if (qty >= 10) {
+      unitPrice = 400;
+      tierNote = 'Оптова ціна застосована (партія від 10 шт)';
+    } else {
+      unitPrice = 450;
+      tierNote = 'Ціна до 10 шт (від 10 шт — 400 ₴/шт)';
+    }
+    totalCost = unitPrice * qty;
+  } else if (type === 'custom') {
+    typeLabel = 'Виробництво власної партії під ключ';
+    hint = 'Своя партія: від 10 шт — 400 ₴/шт | до 10 шт — індивідуально';
+    if (qty >= 10) {
+      unitPrice = 400;
+      totalCost = unitPrice * qty;
+      tierNote = 'Оптова ціна власної партії від 10 шт (400 ₴/шт)';
+    } else {
+      isIndividual = true;
+      unitPrice = null;
+      totalCost = null;
+      tierNote = 'Партія до 10 шт прораховується індивідуально під дизайн';
+    }
+  }
+
+  return { type, typeLabel, qty, unitPrice, totalCost, isIndividual, hint, tierNote };
+}
+
 function initNfcRoiCalc() {
   const currentRatingInput = document.getElementById('roiCurrentRating');
   const guestsInput = document.getElementById('roiGuests');
   const checkInput = document.getElementById('roiCheck');
-
-  if (!currentRatingInput || !guestsInput || !checkInput) return;
+  const qtyRangeInput = document.getElementById('nfcCardQtyRange');
 
   function updateMath() {
-    const r = parseFloat(currentRatingInput.value) || 4.2;
-    const g = parseInt(guestsInput.value) || 60;
-    const c = parseInt(checkInput.value) || 250;
+    const r = parseFloat(currentRatingInput?.value) || 4.2;
+    const g = parseInt(guestsInput?.value) || 60;
+    const c = parseInt(checkInput?.value) || 250;
+    const q = parseInt(qtyRangeInput?.value) || nfcCardQtyState;
+    nfcCardQtyState = q;
 
     const currentRatingVal = document.getElementById('roiCurrentRatingVal');
     const guestsVal = document.getElementById('roiGuestsVal');
     const checkVal = document.getElementById('roiCheckVal');
+    const qtyVal = document.getElementById('nfcCardQtyVal');
+
     if (currentRatingVal) currentRatingVal.textContent = r.toFixed(1) + ' ★';
     if (guestsVal) guestsVal.textContent = g + ' гостей / день';
     if (checkVal) checkVal.textContent = c + ' ₴';
+    if (qtyVal) qtyVal.textContent = q + ' шт';
 
+    // Pricing math
+    const pricing = calculateNfcPricing(nfcCardTypeState, q);
+    const hintEl = document.getElementById('nfcCardTypeHint');
+    const pricePerCardEl = document.getElementById('nfcPricePerCardVal');
+    const totalPriceEl = document.getElementById('nfcTotalPriceVal');
+    const tierNoteEl = document.getElementById('nfcPricingTierNote');
+
+    if (hintEl) hintEl.textContent = pricing.hint;
+    if (pricePerCardEl) {
+      pricePerCardEl.textContent = pricing.isIndividual ? 'Індивідуально' : (pricing.unitPrice + ' ₴ / шт');
+    }
+    if (totalPriceEl) {
+      totalPriceEl.textContent = pricing.isIndividual ? 'За запитом' : (pricing.totalCost.toLocaleString('uk-UA') + ' ₴');
+    }
+    if (tierNoteEl) tierNoteEl.textContent = pricing.tierNote;
+
+    // ROI Math
     const monthlyGuests = g * 30;
     const nfcConversion = 0.03;
     const reviewsDelta = Math.round(monthlyGuests * nfcConversion);
@@ -8441,48 +8633,113 @@ function initNfcRoiCalc() {
     const boostPercent = r < 4.2 ? 0.22 : (r < 4.5 ? 0.16 : 0.10);
     const extraGuests = Math.round(monthlyGuests * boostPercent);
     const extraMoney = extraGuests * c;
+    const dailyExtraMoney = Math.max(1, Math.round(extraMoney / 30));
 
     const elDelta = document.getElementById('roiReviewsDelta');
     const elTarget = document.getElementById('roiTargetRating');
     const elIncome = document.getElementById('roiExtraIncome');
+    const paybackEl = document.getElementById('roiPaybackText');
 
     if (elDelta) elDelta.textContent = '+' + reviewsDelta + ' відг / міс';
     if (elTarget) elTarget.textContent = targetRating.toFixed(1) + ' ★ (ТОП-1)';
     if (elIncome) elIncome.textContent = '+' + extraMoney.toLocaleString('uk-UA') + ' ₴ / міс';
+
+    if (paybackEl) {
+      if (!pricing.isIndividual && pricing.totalCost) {
+        const days = Math.max(1, Math.ceil(pricing.totalCost / dailyExtraMoney));
+        paybackEl.textContent = 'Окупність партії (' + pricing.totalCost.toLocaleString('uk-UA') + ' ₴) — всього ' + days + (days === 1 ? ' день!' : (days < 5 ? ' дні!' : ' днів!'));
+      } else {
+        paybackEl.textContent = 'Окупність індивідуальної партії — від 1 до 3 днів роботи закладу';
+      }
+    }
   }
 
-  currentRatingInput.addEventListener('input', updateMath);
-  guestsInput.addEventListener('input', updateMath);
-  checkInput.addEventListener('input', updateMath);
+  // Segment: card type
+  document.querySelectorAll('#nfcCardTypeSeg .scrape-seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#nfcCardTypeSeg .scrape-seg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      nfcCardTypeState = btn.dataset.type || 'stock';
+      updateMath();
+      haptic('light');
+    });
+  });
+
+  // Segment: quick qty buttons
+  document.querySelectorAll('#nfcQtySeg .scrape-seg-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#nfcQtySeg .scrape-seg-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const val = parseInt(btn.dataset.qty) || 10;
+      if (qtyRangeInput) qtyRangeInput.value = val;
+      updateMath();
+      haptic('light');
+    });
+  });
+
+  // Slider: qty range
+  qtyRangeInput?.addEventListener('input', () => {
+    const val = parseInt(qtyRangeInput.value) || 10;
+    document.querySelectorAll('#nfcQtySeg .scrape-seg-btn').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.qty) === val);
+    });
+    updateMath();
+  });
+
+  currentRatingInput?.addEventListener('input', updateMath);
+  guestsInput?.addEventListener('input', updateMath);
+  checkInput?.addEventListener('input', updateMath);
   updateMath();
 
   document.getElementById('openNfcRoiCalcBtn')?.addEventListener('click', () => {
     openModal('modalNfcRoiCalc');
+    updateMath();
     haptic('light');
   });
 
   document.getElementById('copyRoiPitchBtn')?.addEventListener('click', () => {
-    const r = parseFloat(currentRatingInput.value) || 4.2;
-    const g = parseInt(guestsInput.value) || 60;
-    const c = parseInt(checkInput.value) || 250;
+    const r = parseFloat(currentRatingInput?.value) || 4.2;
+    const g = parseInt(guestsInput?.value) || 60;
+    const c = parseInt(checkInput?.value) || 250;
+    const q = parseInt(qtyRangeInput?.value) || nfcCardQtyState;
+    const pricing = calculateNfcPricing(nfcCardTypeState, q);
+
     const monthlyGuests = g * 30;
     const reviewsDelta = Math.round(monthlyGuests * 0.03);
     const boostPercent = r < 4.2 ? 22 : (r < 4.5 ? 16 : 10);
     const extraMoney = Math.round(monthlyGuests * (boostPercent / 100)) * c;
+    const dailyExtraMoney = Math.max(1, Math.round(extraMoney / 30));
 
-    const text = '📊 РОЗРАХУНОК ЕФЕКТИВНОСТІ NFC ДЛЯ ВАШОГО ЗАКЛАДУ:\n\n' +
+    let costLine = '';
+    let paybackLine = '';
+    if (pricing.isIndividual) {
+      costLine = '• Вартість: прораховується індивідуально під тираж і макет';
+      paybackLine = '• Окупність вкладень: 1–3 робочих дні закладу';
+    } else {
+      const days = Math.max(1, Math.ceil(pricing.totalCost / dailyExtraMoney));
+      costLine = '• Ціна: ' + pricing.unitPrice + ' ₴ / шт (разом за партію ' + pricing.totalCost.toLocaleString('uk-UA') + ' ₴)';
+      paybackLine = '• Окупність партії: менше ' + days + (days === 1 ? ' дня' : ' днів') + ' роботи закладу!';
+    }
+
+    const text = 'РОЗРАХУНОК ЕФЕКТИВНОСТІ ТА ВАРТОСТІ NFC ДЛЯ ВАШОГО ЗАКЛАДУ\n\n' +
+      '1. Параметри замовлення NFC-карток:\n' +
+      '• Тип: ' + pricing.typeLabel + '\n' +
+      '• Кількість: ' + pricing.qty + ' шт\n' +
+      costLine + '\n\n' +
+      '2. Показники закладу:\n' +
       '• Поточний рейтинг: ' + r.toFixed(1) + ' ★\n' +
       '• Потік гостей: ~' + g + ' на день (' + monthlyGuests + ' / міс)\n' +
       '• Середній чек: ' + c + ' ₴\n\n' +
-      '🔥 ЩО ДАЄ ВСТАНОВЛЕННЯ 5 NFC-СТІЙОК НА СТОЛИКАХ:\n' +
-      '1. +' + reviewsDelta + ' нових відгуків 5★ щомісяця на автопілоті\n' +
-      '2. Підйом у ТОП-1 видачі карт вашого району (+ ' + boostPercent + '% трафіку з пошуку)\n' +
-      '3. Орієнтовний додатковий прибуток закладу: +' + extraMoney.toLocaleString('uk-UA') + ' ₴ / місяць!\n\n' +
-      'Окупність комплекту з 5 акрилових стійок (1 250 ₴) — менше 24 годин роботи!';
+      '3. Результат від встановлення карток на столиках/ресепшн:\n' +
+      '• Приріст оцінок: +' + reviewsDelta + ' нових відгуків щомісяця\n' +
+      '• Очікуваний новий рейтинг: ' + Math.min(4.9, Number((r + (5.0 - r) * 0.7).toFixed(1))) + ' ★ (вихід у ТОП-1 карт міста)\n' +
+      '• Орієнтовний додатковий прибуток закладу: +' + extraMoney.toLocaleString('uk-UA') + ' ₴ / місяць\n' +
+      paybackLine + '\n\n' +
+      'Для погодження безкоштовного макету та запуску партії напишіть у відповідь.';
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(() => {
-        showToast('📋 Розрахунок ROI скопійовано для клієнта!');
+        showToast('Розрахунок ROI та КП скопійовано для клієнта');
         haptic('success');
       });
     } else {
@@ -8492,10 +8749,7 @@ function initNfcRoiCalc() {
 }
 
 function initNfcCatalog() {
-  document.getElementById('openNfcCatalogBtn')?.addEventListener('click', () => {
-    openModal('modalNfcCatalog');
-    haptic('light');
-  });
+  // Catalog tab combined into full-width pricing calculator
 }
 
 function setupNfcRadarTab() {
