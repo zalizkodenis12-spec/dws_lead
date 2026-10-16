@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792175027901-413",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Vitalik",
+      "authorUsername": "@smmbunker",
+      "title": "‼️Монтаж reels який тримає увагу.",
+      "text": "‼️Монтаж reels який тримає увагу.\nЗмонтую ваше відео за 1 день та з безкоштовними правками. Приклади відео в портфоліо.\n\nЩо буде зрблено?\nКольорокорекція ✅\nВирізання пауз ✅\nДинамічні субтитри ✅\nПереходи ✅\nСтокові відео ✅\nСаунд дизайн ✅\n\nПишіть в особисті, якщо зацікавило",
+      "date": "2026-10-16T18:23:47.900Z",
+      "dateFormatted": "Сьогодні, 21:23",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 51,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792174333648-7381",
       "category": "marketing",
       "categoryName": "Маркетинг",
