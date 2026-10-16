@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/app.css?v=2.1.4">
+  <link rel="stylesheet" href="css/app.css?v=3.8.0">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -65,10 +65,6 @@
         <!-- Filter Pills Bar -->
         <div class="filter-pills-bar">
           <div class="filter-pills-left">
-            <button id="openNfcRadarPillBtn" class="filter-pill nfc-radar-pill" title="NFC Радар закладів під відгуки">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 9 9"></path><path d="M12 7a5 5 0 0 1 5 5"></path><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle></svg>
-              <span>NFC B2B</span>
-            </button>
             <button id="openNichesBtn" class="filter-pill">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
               <span id="activeNicheLabel">Категорії</span>
@@ -276,13 +272,12 @@
       </section>
 
       <!-- ============================================================
-           TAB 5: NFC РАДАР (B2B пошук закладів під NFC-картки & відгуки)
+           TAB 5: СКРАПІНГ (B2B бізнеси -> таблиці для обдзвону)
            ============================================================ -->
       <section id="tab-scrape" class="tab-view">
         <div class="view-header">
           <div class="view-title-wrap">
-            <h1 class="view-title">NFC Радар</h1>
-            <span class="nfc-view-badge">B2B Відгуки</span>
+            <h1 class="view-title">Скрапінг</h1>
             <button id="openApifyTokenBtn" class="scrape-api-badge" type="button" title="Налаштування Apify API">
               <span class="scrape-api-dot" id="scrapeApiDot"></span>
               <span id="scrapeApiLabel">Apify API</span>
@@ -290,7 +285,44 @@
           </div>
           <div class="leads-today-stat">
             <span class="leads-count-num" id="scrapeTotalNum">0</span>
-            <span class="leads-count-label" id="scrapeTotalLabel">закладів</span>
+            <span class="leads-count-label" id="scrapeTotalLabel">бізнесів</span>
+          </div>
+        </div>
+
+        <!-- Source launch buttons -->
+        <div class="scrape-sources">
+          <button type="button" class="scrape-source-btn" data-scrape-source="gmaps">
+            <span class="scrape-source-ico">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            </span>
+            <span class="scrape-source-title">Google Maps</span>
+            <span class="scrape-source-sub">Бізнеси з карт</span>
+          </button>
+          <button type="button" class="scrape-source-btn" data-scrape-source="instagram">
+            <span class="scrape-source-ico">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            </span>
+            <span class="scrape-source-title">Instagram</span>
+            <span class="scrape-source-sub">Бізнес-профілі</span>
+          </button>
+        </div>
+
+        <div class="scrape-section-label">МОЇ ПОШУКИ</div>
+        <div id="scrapeJobsList" class="scrape-jobs"></div>
+      </section>
+
+      <!-- ============================================================
+           TAB 6: NFC РАДАР (B2B пошук закладів під NFC-картки & відгуки)
+           ============================================================ -->
+      <section id="tab-nfc-radar" class="tab-view">
+        <div class="view-header">
+          <div class="view-title-wrap">
+            <h1 class="view-title">NFC Радар</h1>
+            <span class="nfc-view-badge">B2B Відгуки</span>
+          </div>
+          <div class="leads-today-stat">
+            <span class="leads-count-num" id="nfcRadarTotalNum">0</span>
+            <span class="leads-count-label" id="nfcRadarTotalLabel">закладів</span>
           </div>
         </div>
 
@@ -341,13 +373,13 @@
             </button>
           </div>
         </div>
-        <div id="scrapeJobsList" class="scrape-jobs"></div>
+        <div id="nfcRadarJobsList" class="scrape-jobs"></div>
       </section>
 
     </main>
 
     <!-- ============================================================
-         BOTTOM NAVIGATION BAR (5 TABS)
+         BOTTOM NAVIGATION BAR (6 TABS)
          ============================================================ -->
     <nav class="app-nav">
       <button class="nav-btn active" data-tab="tab-leads">
@@ -367,6 +399,10 @@
         <span>Профіль</span>
       </button>
       <button class="nav-btn" data-tab="tab-scrape">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span>Скрапінг</span>
+      </button>
+      <button class="nav-btn" data-tab="tab-nfc-radar">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 9 9"></path><path d="M12 7a5 5 0 0 1 5 5"></path><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle></svg>
         <span>NFC Радар</span>
       </button>
@@ -374,17 +410,59 @@
 
   </div> <!-- End .app-wrap -->
 
-  <!-- MODAL: НОВИЙ ЗБІР ЗАКЛАДІВ (NFC РАДАР) -->
+  <!-- MODAL: НОВИЙ ПОШУК (СКРАПІНГ ДЛЯ АГЕНЦІЇ) -->
   <div id="modalScrape" class="modal-overlay">
     <div class="modal-sheet">
       <div class="modal-header">
-        <h3 class="modal-title" style="flex: 1; text-align: center;">Новий збір закладів (NFC Радар)</h3>
+        <h3 class="modal-title" style="flex: 1; text-align: center;">Новий пошук</h3>
         <button class="modal-close" data-close="modalScrape">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">ДЖЕРЕЛО ПОШУКУ:</label>
+          <label class="form-label">ДЖЕРЕЛО:</label>
           <div class="scrape-seg" id="scrapeSourceSeg">
+            <button type="button" class="scrape-seg-btn active" data-value="gmaps">Google Maps</button>
+            <button type="button" class="scrape-seg-btn" data-value="instagram">Instagram</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">НІША БІЗНЕСУ:</label>
+          <input type="text" id="scrapeNicheInput" class="form-input" placeholder="Наприклад: Автосервіс, Стоматологія, Салон краси...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">МІСТО / РЕГІОН:</label>
+          <input type="text" id="scrapeCityInput" class="form-input" placeholder="Наприклад: Київ, Львів, Одеса, Варшава...">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">КІЛЬКІСТЬ БІЗНЕСІВ:</label>
+          <div class="scrape-seg" id="scrapeLimitSeg">
+            <button type="button" class="scrape-seg-btn" data-value="20">20</button>
+            <button type="button" class="scrape-seg-btn" data-value="50">50</button>
+            <button type="button" class="scrape-seg-btn active" data-value="100">100</button>
+            <button type="button" class="scrape-seg-btn" data-value="200">200</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="submitScrapeBtn" class="btn btn--fill btn--block">ЗАПУСТИТИ ПОШУК</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: НОВИЙ ЗБІР ЗАКЛАДІВ (NFC РАДАР) -->
+  <div id="modalNfcSearch" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title" style="flex: 1; text-align: center;">Новий збір закладів (NFC Радар)</h3>
+        <button class="modal-close" data-close="modalNfcSearch">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">ДЖЕРЕЛО ПОШУКУ:</label>
+          <div class="scrape-seg" id="nfcSourceSeg">
             <button type="button" class="scrape-seg-btn active" data-value="gmaps">Google Maps (Карти)</button>
             <button type="button" class="scrape-seg-btn" data-value="instagram">Instagram</button>
           </div>
@@ -399,7 +477,7 @@
             <button type="button" class="nfc-tag-btn" data-val="СТО, автомийки, детейлінг">🚗 СТО / Детейлінг</button>
             <button type="button" class="nfc-tag-btn" data-val="Острівці в ТРЦ, магазини">🛍️ ТРЦ / Острівці</button>
           </div>
-          <input type="text" id="scrapeNicheInput" class="form-input mt-2" placeholder="Введіть нішу або оберіть згори..." value="Кафе, бари, ресторани">
+          <input type="text" id="nfcNicheInput" class="form-input mt-2" placeholder="Введіть нішу або оберіть згори..." value="Кафе, бари, ресторани">
         </div>
 
         <div class="form-group">
@@ -411,12 +489,12 @@
             <button type="button" class="nfc-tag-btn" data-val="Дніпро">Дніпро</button>
             <button type="button" class="nfc-tag-btn" data-val="Харків">Харків</button>
           </div>
-          <input type="text" id="scrapeCityInput" class="form-input mt-2" placeholder="Наприклад: Київ, Львів, Вінниця..." value="Київ">
+          <input type="text" id="nfcCityInput" class="form-input mt-2" placeholder="Наприклад: Київ, Львів, Вінниця..." value="Київ">
         </div>
 
         <div class="form-group">
           <label class="form-label">ЛОКАЦІЯ / РАЙОН / ТРЦ (СКУПЧЕННЯ):</label>
-          <input type="text" id="scrapeClusterInput" class="form-input" placeholder="Наприклад: ТРЦ Ocean Plaza, Поділ, Хрещатик, Оболонь...">
+          <input type="text" id="nfcClusterInput" class="form-input" placeholder="Наприклад: ТРЦ Ocean Plaza, Поділ, Хрещатик, Оболонь...">
           <span class="form-hint" style="font-size: 0.74rem; color: var(--muted); margin-top: 4px; display: block;">
             Вкажіть конкретний ТРЦ чи вулицю, щоб отримати заклади поруч один з одним для маршруту.
           </span>
@@ -424,7 +502,7 @@
 
         <div class="form-group">
           <label class="form-label">ФІЛЬТР ЗА КІЛЬКІСТЮ ВІДГУКІВ:</label>
-          <div class="scrape-seg" id="scrapeReviewsFilterSeg">
+          <div class="scrape-seg" id="nfcReviewsFilterSeg">
             <button type="button" class="scrape-seg-btn active" data-value="300">До 300 (Топ)</button>
             <button type="button" class="scrape-seg-btn" data-value="50">До 50 (Нові)</button>
             <button type="button" class="scrape-seg-btn" data-value="150">До 150</button>
@@ -434,7 +512,7 @@
 
         <div class="form-group">
           <label class="form-label">КІЛЬКІСТЬ ЗАКЛАДІВ:</label>
-          <div class="scrape-seg" id="scrapeLimitSeg">
+          <div class="scrape-seg" id="nfcLimitSeg">
             <button type="button" class="scrape-seg-btn" data-value="15">15</button>
             <button type="button" class="scrape-seg-btn active" data-value="30">30</button>
             <button type="button" class="scrape-seg-btn" data-value="50">50</button>
@@ -443,7 +521,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" id="submitScrapeBtn" class="btn btn--fill btn--block">ЗАПУСТИТИ РАДАР</button>
+        <button type="button" id="submitNfcSearchBtn" class="btn btn--fill btn--block">ЗАПУСТИТИ РАДАР</button>
       </div>
     </div>
   </div>
@@ -1409,6 +1487,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=3.7.0"></script>
+  <script src="js/app.js?v=3.8.0"></script>
 </body>
 </html>

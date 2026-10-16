@@ -1757,8 +1757,8 @@ body.dark-theme .crm-order-card-title {
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  padding: 0 10px;
+  justify-content: space-between;
+  padding: 0 4px;
   z-index: 20;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.03);
   overflow-x: auto;
@@ -1778,8 +1778,10 @@ body.dark-theme .crm-order-card-title {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  /* 4 вкладки на екран, решта — гортанням вправо */
-  flex: 0 0 25%;
+  flex: 1 1 0;
+  min-width: 52px;
+  padding: 0 2px;
+  white-space: nowrap;
   scroll-snap-align: start;
   height: 100%;
   color: var(--muted);
@@ -1791,9 +1793,9 @@ body.dark-theme .crm-order-card-title {
 
 .nav-btn span {
   font-family: var(--ffh);
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
 
 .nav-btn.active {

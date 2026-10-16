@@ -5662,8 +5662,431 @@ const SCRAPE_ICONS = {
 };
 const SCRAPE_CHEVRON = '<svg class="scrape-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>';
 
+const scrapeState = {
+  jobs: [],
+  mode: 'demo',
+  offline: false,
+  openJobs: new Set(),
+  openCats: new Set(),
+  pollTimer: null,
+  form: { source: 'gmaps', limit: 100 }
+};
+
+function loadLocalScrapes() {
+  try { return JSON.parse(localStorage.getItem('dws_scrapes') || '[]'); } catch { return []; }
+}
+function saveLocalScrapes(jobs) {
+  localStorage.setItem('dws_scrapes', JSON.stringify(jobs.filter(j => j.local)));
+}
+
+async function fetchScrapes() {
+  try {
+    const res = await fetch('/api/scrapes');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    if (!json.success) throw new Error('bad');
+    scrapeState.offline = false;
+    scrapeState.mode = json.mode;
+    scrapeState.jobs = [...(json.data || []), ...loadLocalScrapes()];
+  } catch {
+    scrapeState.offline = true;
+    scrapeState.mode = 'demo';
+    scrapeState.jobs = loadLocalScrapes();
+  }
+  renderScrapes();
+  scheduleScrapePoll();
+}
+
+function scheduleScrapePoll() {
+  clearTimeout(scrapeState.pollTimer);
+  if (scrapeState.jobs.some(j => j.status === 'running' && !j.local)) {
+    scrapeState.pollTimer = setTimeout(fetchScrapes, 4000);
+  }
+}
+
+function pluralBiz(n) {
+  const m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return 'бізнес';
+  if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return 'бізнеси';
+  return 'бізнесів';
+}
+
+function renderScrapes() {
+  const list = document.getElementById('scrapeJobsList');
+  if (!list) return;
+
+  const total = scrapeState.jobs.reduce((s, j) => s + (j.status === 'done' ? (j.total || 0) : 0), 0);
+  const numEl = document.getElementById('scrapeTotalNum');
+  const lblEl = document.getElementById('scrapeTotalLabel');
+  if (numEl) numEl.textContent = total;
+  if (lblEl) lblEl.textContent = pluralBiz(total);
+
+
+
+  const dot = document.getElementById('scrapeApiDot');
+  const lbl = document.getElementById('scrapeApiLabel');
+  if (dot && lbl) {
+    if (scrapeState.mode === 'live') {
+      dot.classList.add('active');
+      lbl.textContent = 'Apify Live';
+    } else {
+      dot.classList.remove('active');
+      lbl.textContent = 'Підключити API';
+    }
+  }
+
+  if (!scrapeState.jobs.length) {
+    list.innerHTML = '<div class="scrape-empty">Оберіть Google Maps або Instagram вище, щоб запустити перший пошук бізнесів.</div>';
+    return;
+  }
+
+  list.innerHTML = scrapeState.jobs.map(job => {
+    const isOpen = scrapeState.openJobs.has(job.id);
+    const date = new Date(job.createdAt).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
+    let pill = '';
+    if (job.status === 'running') pill = '<span class="scrape-status-pill running">Шукаю…</span>';
+    else if (job.status === 'error') pill = '<span class="scrape-status-pill error">Помилка</span>';
+    else if (job.demo) pill = '<span class="scrape-status-pill demo">Демо</span>';
+
+    const right = job.status === 'running'
+      ? '<div class="scrape-spinner"></div>'
+      : `<div class="scrape-job-count"><b>${job.total || 0}</b><span>${pluralBiz(job.total || 0)}</span></div>`;
+
+    let body = '';
+    if (job.status === 'done') {
+      const cats = Object.keys(SCRAPE_CATS).map(c => renderScrapeCat(job, c)).join('');
+      body = `
+        <div class="scrape-job-body">
+          <div class="scrape-job-actions">
+            <button type="button" class="btn btn--fill btn--sm" data-scrape-act="csv" data-job="${job.id}" data-cat="all">CSV для Vapi (всі)</button>
+            <button type="button" class="btn btn--out btn--sm" data-scrape-act="send" data-job="${job.id}" data-cat="all">В Telegram</button>
+          </div>
+          ${cats}
+          ${job.skippedNoPhone ? `<div class="scrape-biz-reason" style="margin-top:10px;">Відсіяно без телефону: ${job.skippedNoPhone}</div>` : ''}
+          <div class="scrape-job-actions">
+            <button type="button" class="btn btn--out btn--sm" data-scrape-act="delete" data-job="${job.id}" style="color:var(--danger);">Видалити пошук</button>
+          </div>
+        </div>`;
+    } else if (job.status === 'error') {
+      body = `
+        <div class="scrape-job-body">
+          <div class="scrape-biz-reason" style="margin:12px 0;">${escapeHtml(job.error || 'Невідома помилка')}</div>
+          <div class="scrape-job-actions">
+            <button type="button" class="btn btn--out btn--sm" data-scrape-act="delete" data-job="${job.id}" style="color:var(--danger);">Видалити</button>
+          </div>
+        </div>`;
+    }
+
+    return `
+      <div class="scrape-job ${isOpen ? 'open' : ''}" data-job-id="${job.id}">
+        <div class="scrape-job-head" data-scrape-toggle-job="${job.id}">
+          <div class="scrape-job-ico">${SCRAPE_ICONS[job.source] || SCRAPE_ICONS.gmaps}</div>
+          <div class="scrape-job-info">
+            <div class="scrape-job-title">${escapeHtml(job.niche)}${job.city ? ' · ' + escapeHtml(job.city) : ''}</div>
+            <div class="scrape-job-sub">${SCRAPE_SOURCE_LABEL[job.source] || ''} · ${date}${pill}</div>
+          </div>
+          ${right}
+          ${job.status === 'running' ? '' : SCRAPE_CHEVRON}
+        </div>
+        ${body}
+      </div>`;
+  }).join('');
+}
+
+function renderScrapeCat(job, cat) {
+  const items = job.groups?.[cat] || [];
+  const key = job.id + ':' + cat;
+  const isOpen = scrapeState.openCats.has(key);
+  const rows = items.map(b => `
+    <tr>
+      <td>
+        <div class="scrape-biz-name">${escapeHtml(b.name)}</div>
+        <div class="scrape-biz-reason">${escapeHtml(b.reason || '')}</div>
+      </td>
+      <td><a href="tel:${escapeHtml(b.phone)}">${escapeHtml(b.phone)}</a></td>
+      <td>${b.website ? `<a href="${escapeHtml(b.website)}" target="_blank" rel="noopener">сайт</a>` : '—'}</td>
+      <td>${b.source === 'instagram' ? (b.followers || 0) : `${b.rating ? Number(b.rating).toFixed(1) : '—'} · ${b.reviews || 0}`}</td>
+    </tr>`).join('');
+
+  return `
+    <div class="scrape-cat ${isOpen ? 'open' : ''}">
+      <div class="scrape-cat-head" data-scrape-toggle-cat="${key}">
+        <span class="scrape-cat-dot ${cat}"></span>
+        <span class="scrape-cat-name">${SCRAPE_CATS[cat]}</span>
+        <span class="scrape-cat-num">${items.length}</span>
+        ${SCRAPE_CHEVRON}
+      </div>
+      <div class="scrape-cat-body">
+        ${items.length ? `
+          <div class="scrape-table-wrap">
+            <table class="scrape-table">
+              <thead><tr><th>БІЗНЕС</th><th>ТЕЛЕФОН</th><th>САЙТ</th><th>${job.source === 'instagram' ? 'ПІДП.' : 'РЕЙТ. · ВІДГ.'}</th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+          <div class="scrape-cat-actions">
+            <button type="button" class="btn btn--fill btn--sm" data-scrape-act="csv" data-job="${job.id}" data-cat="${cat}">CSV для Vapi</button>
+            <button type="button" class="btn btn--out btn--sm" data-scrape-act="send" data-job="${job.id}" data-cat="${cat}">В Telegram</button>
+          </div>` : '<div class="scrape-biz-reason" style="padding:4px 4px 0;">У цій категорії поки порожньо.</div>'}
+      </div>
+    </div>`;
+}
+
+// ---- Local (offline) demo engine ----
+function classifyBizLocal(b) {
+  const site = (b.website || '').trim();
+  const social = /(instagram\.com|facebook\.com|linktr\.ee|taplink|t\.me|tiktok\.com)/i.test(site);
+  const reviews = Number(b.reviews) || 0;
+  if (!site || social) return { category: 'site', reason: site ? 'Замість сайту — соцмережа/лінк' : 'Немає сайту' };
+  if (reviews >= 300) return { category: 'apps', reason: `Великий бізнес (${reviews} відгуків) — потрібна власна програма / веб-сервіс` };
+  if (reviews >= 40) return { category: 'auto', reason: `Багато клієнтів (${reviews} відгуків) — бот/автозапис` };
+  return { category: 'ads', reason: `Мало відгуків (${reviews}) — потрібна реклама` };
+}
+
+function buildLocalDemoJob({ source, niche, city, limit }) {
+  const groups = { site: [], ads: [], auto: [], apps: [] };
+  const n = Math.min(limit, 30);
+  for (let i = 1; i <= n; i++) {
+    const noSite = i % 3 === 0;
+    const b = {
+      id: 'b-' + i,
+      name: `${niche} «Демо ${i}»`,
+      phone: `+38067${String(1000000 + i * 7919).slice(-7)}`,
+      website: noSite ? '' : `https://demo-${i}.com.ua`,
+      city, niche, source,
+      rating: 3.8 + ((i * 13) % 12) / 10,
+      reviews: (i * 37) % 520,
+      followers: source === 'instagram' ? (i * 431) % 9000 : 0
+    };
+    const { category, reason } = classifyBizLocal(b);
+    groups[category].push({ ...b, category, reason, service: SCRAPE_SERVICE[category] });
+  }
+  return {
+    id: 'local-' + Date.now(), local: true, demo: true, source, niche, city, limit,
+    status: 'done', createdAt: new Date().toISOString(), total: n, skippedNoPhone: 0, groups
+  };
+}
+
+function buildCsvLocal(job, cat) {
+  const cats = cat === 'all' ? Object.keys(SCRAPE_CATS) : [cat];
+  const cell = v => { const s = String(v ?? ''); return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
+  const rows = ['number,name,niche,service,reason,city,website,rating,reviews,source'];
+  cats.forEach(c => (job.groups?.[c] || []).forEach(b => {
+    rows.push([b.phone, b.name, b.niche, b.service, b.reason, b.city, b.website, b.rating || '', b.reviews || '', b.source].map(cell).join(','));
+  }));
+  return '\uFEFF' + rows.join('\n');
+}
+
+// ---- Actions ----
+async function submitScrape() {
+  const niche = (document.getElementById('scrapeNicheInput')?.value || '').trim();
+  const city = (document.getElementById('scrapeCityInput')?.value || '').trim();
+  if (!niche) {
+    alert('Вкажіть нішу бізнесу');
+    return;
+  }
+  const payload = { source: scrapeState.form.source, niche, city, limit: scrapeState.form.limit };
+  const btn = document.getElementById('submitScrapeBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'ЗАПУСКАЮ…'; }
+
+  try {
+    if (scrapeState.offline) throw new Error('offline');
+    const res = await fetch('/api/scrapes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'error');
+    scrapeState.openJobs.add(json.data.id);
+  } catch (err) {
+    if (err.message !== 'offline' && !scrapeState.offline) {
+      // сервер є, але повернув помилку
+      alert('Помилка запуску: ' + err.message);
+    } else {
+      const job = buildLocalDemoJob(payload);
+      const local = loadLocalScrapes();
+      local.unshift(job);
+      saveLocalScrapes(local);
+      scrapeState.openJobs.add(job.id);
+    }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'ЗАПУСТИТИ ПОШУК'; }
+  }
+
+  haptic('success');
+  closeModal('modalScrape');
+  fetchScrapes();
+}
+
+function downloadScrapeCsv(job, cat) {
+  if (!job.local) {
+    const url = `${location.origin}/api/scrapes/${encodeURIComponent(job.id)}/csv?category=${cat}`;
+    const fileName = `vapi_${job.niche}_${cat}.csv`.replace(/\s+/g, '_');
+    if (tg && typeof tg.downloadFile === 'function') {
+      try { tg.downloadFile({ url, file_name: fileName }); return; } catch (e) { /* fallback */ }
+    }
+    window.open(url, '_blank');
+    return;
+  }
+  const blob = new Blob([buildCsvLocal(job, cat)], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `vapi_${job.niche}_${cat}.csv`.replace(/\s+/g, '_');
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+
+async function sendScrapeToTelegram(job, cat, btn) {
+  if (job.local) {
+    alert('Відправка в Telegram працює тільки коли сервер онлайн.');
+    return;
+  }
+  const old = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Надсилаю…';
+  try {
+    const res = await fetch(`/api/scrapes/${encodeURIComponent(job.id)}/send`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ category: cat })
+    });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error);
+    haptic('success');
+    btn.textContent = `Надіслано (${json.count})`;
+    setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 2500);
+  } catch (err) {
+    alert('Не вдалося надіслати: ' + err.message);
+    btn.textContent = old;
+    btn.disabled = false;
+  }
+}
+
+async function deleteScrapeJob(job) {
+  if (!confirm('Видалити цей пошук?')) return;
+  if (job.local) {
+    saveLocalScrapes(loadLocalScrapes().filter(j => j.id !== job.id));
+  } else {
+    await fetch(`/api/scrapes/${encodeURIComponent(job.id)}`, { method: 'DELETE' }).catch(() => {});
+  }
+  scrapeState.openJobs.delete(job.id);
+  fetchScrapes();
+}
+
+function setupScrapeTab() {
+  // Source buttons -> open form with preselected source
+  document.querySelectorAll('[data-scrape-source]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      scrapeState.form.source = btn.dataset.scrapeSource;
+      document.querySelectorAll('#scrapeSourceSeg .scrape-seg-btn').forEach(b =>
+        b.classList.toggle('active', b.dataset.value === scrapeState.form.source));
+      openModal('modalScrape');
+    });
+  });
+
+  // Segments
+  document.querySelectorAll('#scrapeSourceSeg .scrape-seg-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      scrapeState.form.source = b.dataset.value;
+      document.querySelectorAll('#scrapeSourceSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
+    });
+  });
+  document.querySelectorAll('#scrapeLimitSeg .scrape-seg-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      scrapeState.form.limit = Number(b.dataset.value);
+      document.querySelectorAll('#scrapeLimitSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
+    });
+  });
+
+
+
+  // Apify Token settings modal
+  document.getElementById('openApifyTokenBtn')?.addEventListener('click', async () => {
+    try {
+      const res = await fetch('/api/scrapes/token');
+      const json = await res.json();
+      const input = document.getElementById('apifyTokenInput');
+      if (input && json.masked) {
+        input.placeholder = json.masked;
+      }
+    } catch {}
+    openModal('modalApifyToken');
+  });
+
+  document.getElementById('saveApifyTokenBtn')?.addEventListener('click', async () => {
+    const input = document.getElementById('apifyTokenInput');
+    const token = (input?.value || '').trim();
+    if (!token) {
+      alert('Будь ласка, вставте токен Apify (починається на apify_api_...)');
+      return;
+    }
+    const btn = document.getElementById('saveApifyTokenBtn');
+    if (btn) { btn.disabled = true; btn.textContent = 'ЗБЕРІГАЮ…'; }
+    try {
+      const res = await fetch('/api/scrapes/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.error || 'error');
+      haptic('success');
+      scrapeState.mode = json.mode;
+      closeModal('modalApifyToken');
+      if (input) input.value = '';
+      fetchScrapes();
+      alert('✅ Apify API токен успішно підключено! Тепер Google Maps та Instagram скрапери працюють наживо.');
+    } catch (err) {
+      alert('Не вдалося зберегти токен: ' + err.message);
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = 'ЗБЕРЕГТИ ТОКЕН'; }
+    }
+  });
+
+  document.getElementById('submitScrapeBtn')?.addEventListener('click', submitScrape);
+
+  // Delegated clicks in jobs list
+  document.getElementById('scrapeJobsList')?.addEventListener('click', (e) => {
+    const actBtn = e.target.closest('[data-scrape-act]');
+    if (actBtn) {
+      const job = scrapeState.jobs.find(j => j.id === actBtn.dataset.job);
+      if (!job) return;
+      const act = actBtn.dataset.scrapeAct;
+      if (act === 'csv') downloadScrapeCsv(job, actBtn.dataset.cat);
+      else if (act === 'send') sendScrapeToTelegram(job, actBtn.dataset.cat, actBtn);
+      else if (act === 'delete') deleteScrapeJob(job);
+      return;
+    }
+    if (e.target.closest('a')) return;
+
+    const catHead = e.target.closest('[data-scrape-toggle-cat]');
+    if (catHead) {
+      const key = catHead.dataset.scrapeToggleCat;
+      scrapeState.openCats.has(key) ? scrapeState.openCats.delete(key) : scrapeState.openCats.add(key);
+      catHead.parentElement.classList.toggle('open');
+      haptic('light');
+      return;
+    }
+    const jobHead = e.target.closest('[data-scrape-toggle-job]');
+    if (jobHead) {
+      const id = jobHead.dataset.scrapeToggleJob;
+      const job = scrapeState.jobs.find(j => j.id === id);
+      if (!job || job.status === 'running') return;
+      scrapeState.openJobs.has(id) ? scrapeState.openJobs.delete(id) : scrapeState.openJobs.add(id);
+      jobHead.parentElement.classList.toggle('open');
+      haptic('light');
+    }
+  });
+
+  fetchScrapes();
+}
+
+setupScrapeTab();
+
 // ============================================================
-// NFC RADAR & B2B REVIEWS SYSTEM
+// TAB 6: NFC РАДАР (B2B пошук закладів під NFC-картки & відгуки)
 // ============================================================
 
 const DEFAULT_NFC_RADAR_JOBS = [
@@ -5759,187 +6182,95 @@ const DEFAULT_NFC_RADAR_JOBS = [
       },
       {
         id: 'v-ocean-7',
-        name: 'Cinnabon & Dessert Lounge',
-        address: 'вул. Антоновича, 176, ТРЦ Ocean Plaza (1 поверх)',
-        phone: '+380631122334',
-        website: 'https://instagram.com/cinnabon_kiev_ocean',
-        instagram: '@cinnabon_kiev_ocean',
-        rating: 4.4,
-        reviews: 118,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Cinnabon+Ocean+Plaza+Київ',
-        painLevel: 'boost',
-        painText: 'Потенціал ТОП-1 в Google Maps по Голосіївському району'
-      }
-    ]
-  },
-  {
-    id: 'nfc-job-kyiv-podil',
-    source: 'gmaps',
-    niche: 'Кав\'ярні, бари та салони',
-    city: 'Київ',
-    cluster: 'Поділ (Контрактова пл. / Сагайдачного)',
-    status: 'done',
-    local: true,
-    createdAt: new Date().toISOString(),
-    total: 6,
-    maxReviews: 300,
-    items: [
-      {
-        id: 'v-podil-1',
-        name: 'Podil Cutters Barbershop',
-        address: 'вул. Петра Сагайдачного, 25',
-        phone: '+380678912345',
-        website: 'https://instagram.com/podil_cutters',
-        instagram: '@podil_cutters',
-        rating: 4.3,
-        reviews: 82,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Podil+Cutters+Barbershop+Київ',
-        painLevel: 'urgent',
-        painText: 'Потрібно підняти бал з 4.3 до 4.8 для обгону барбершопів поруч'
-      },
-      {
-        id: 'v-podil-2',
-        name: 'Студія Краси Подолянка',
-        address: 'вул. Спаська, 8',
-        phone: '+380507894561',
-        website: 'https://instagram.com/podolyanka_beauty',
-        instagram: '@podolyanka_beauty',
-        rating: 4.2,
-        reviews: 47,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Студія+Краси+Подолянка+Київ',
-        painLevel: 'urgent',
-        painText: 'Потрібно перекрити старі негативні відгуки'
-      },
-      {
-        id: 'v-podil-3',
-        name: 'Dental Art Podil',
-        address: 'Контрактова площа, 4',
-        phone: '+380442345678',
-        website: 'https://dentalart-podil.com.ua',
-        instagram: '@dentalart_podil',
-        rating: 4.4,
-        reviews: 36,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Dental+Art+Podil+Контрактова+Київ',
-        painLevel: 'new',
-        painText: 'Мало відгуків у Google для приватної стоматології'
-      },
-      {
-        id: 'v-podil-4',
-        name: 'Кав\'ярня Старий Поділ',
-        address: 'вул. Хорива, 12',
-        phone: '+380631239874',
-        website: 'https://instagram.com/stary_podil_coffee',
-        instagram: '@stary_podil_coffee',
-        rating: 4.4,
-        reviews: 142,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Кав\'ярня+Старий+Поділ+Київ',
-        painLevel: 'boost',
-        painText: 'Потрібен буст до 4.8★ щоб стати найпопулярнішою кав\'ярнею Подолу'
-      },
-      {
-        id: 'v-podil-5',
-        name: 'Nail Lounge Контрактова',
-        address: 'вул. Костянтинівська, 19',
-        phone: '+380962341122',
-        website: 'https://instagram.com/naillounge_podil',
-        instagram: '@naillounge_podil',
-        rating: 4.1,
-        reviews: 53,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Nail+Lounge+Контрактова+Київ',
-        painLevel: 'urgent',
-        painText: 'Рейтинг 4.1 відлякує клієнтів: потрібні NFC-підставки на столики'
-      },
-      {
-        id: 'v-podil-6',
-        name: 'Coffee & Books Podil',
-        address: 'вул. Спаська, 14',
-        phone: '+380503344556',
-        website: 'https://instagram.com/coffee_books_podil',
-        instagram: '@coffee_books_podil',
-        rating: 4.5,
+        name: 'Waffles & Gelato Corner',
+        address: 'вул. Антоновича, 176, ТРЦ Ocean Plaza (острівець біля входу)',
+        phone: '+380637712390',
+        website: 'https://instagram.com/gelato_ocean',
+        instagram: '@gelato_ocean',
+        rating: 4.7,
         reviews: 29,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Coffee+and+Books+Спаська+14+Київ',
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Waffles+Gelato+Ocean+Plaza+Київ',
         painLevel: 'new',
-        painText: 'Камерний заклад: гості в захваті, але забувають ставити оцінки'
+        painText: 'Чудовий продукт, але мало відгуків для впевненого ТОП-1'
       }
     ]
   },
   {
     id: 'nfc-job-lviv-rynok',
     source: 'gmaps',
-    niche: 'Кав\'ярні та кондитерські',
+    niche: 'Кафе, бари, ресторани',
     city: 'Львів',
-    cluster: 'Площа Ринок (Центр)',
+    cluster: 'Площа Ринок (історичний центр)',
     status: 'done',
     local: true,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(Date.now() - 3600000 * 4).toISOString(),
     total: 5,
     maxReviews: 300,
     items: [
       {
         id: 'v-lviv-1',
-        name: 'Кав\'ярня Старе Місто',
-        address: 'Площа Ринок, 14',
-        phone: '+380673456789',
-        website: 'https://instagram.com/staremisto_lviv',
-        instagram: '@staremisto_lviv',
-        rating: 4.3,
-        reviews: 95,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Кав\'ярня+Старе+Місто+Площа+Ринок+Львів',
+        name: 'Львівська Кавова Лабораторія',
+        address: 'пл. Ринок, 12, Львів',
+        phone: '+380674433221',
+        website: 'https://instagram.com/lviv_coffee_lab',
+        instagram: '@lviv_coffee_lab',
+        rating: 4.2,
+        reviews: 87,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Львівська+Кавова+Лабораторія+Площа+Ринок+Львів',
         painLevel: 'urgent',
-        painText: 'Туристи шукають заклади від 4.6★: терміново потрібен приріст відгуків'
+        painText: 'Висока конкуренція на Ринку — треба 4.8+ для вибору туристами'
       },
       {
         id: 'v-lviv-2',
-        name: 'Крафтова Цукерня Львівська',
-        address: 'вул. Вірменська, 8',
-        phone: '+380501122334',
-        website: 'https://instagram.com/cukiernia_lvivska',
-        instagram: '@cukiernia_lvivska',
-        rating: 4.4,
-        reviews: 68,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Крафтова+Цукерня+Львівська+Вірменська+Львів',
-        painLevel: 'boost',
-        painText: 'Шанс вийти в ТОП-3 кондитерських центру Львова'
+        name: 'Крафтова Пекарня «Хліб & Масло»',
+        address: 'вул. Вірменська, 8, Львів',
+        phone: '+380509988776',
+        website: 'https://instagram.com/khlib_maslo_lviv',
+        instagram: '@khlib_maslo_lviv',
+        rating: 4.6,
+        reviews: 34,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Крафтова+Пекарня+Вірменська+Львів',
+        painLevel: 'new',
+        painText: 'Лише 34 відгуки: туристи проходять повз відоміші заклади'
       },
       {
         id: 'v-lviv-3',
-        name: 'Lemberg Barber Guild',
-        address: 'вул. Староєврейська, 19',
-        phone: '+380937766554',
-        website: 'https://instagram.com/lemberg_barber',
-        instagram: '@lemberg_barber',
-        rating: 4.2,
-        reviews: 51,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Lemberg+Barber+Guild+Львів',
+        name: 'Галицький Сирник & Кава',
+        address: 'вул. Староєврейська, 14, Львів',
+        phone: '+380931234567',
+        website: 'https://instagram.com/syrnyk_lviv',
+        instagram: '@syrnyk_lviv',
+        rating: 4.1,
+        reviews: 52,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Галицький+Сирник+Староєврейська+Львів',
         painLevel: 'urgent',
-        painText: 'Оцінка 4.2 втрачає платоспроможних клієнтів'
+        painText: 'Низький бал 4.1 — терміново потрібна акрилова стійка на касі'
       },
       {
         id: 'v-lviv-4',
-        name: 'Гастро-паб Ратуша',
-        address: 'Площа Ринок, 28',
-        phone: '+380674455667',
-        website: 'https://instagram.com/ratusha_pub',
-        instagram: '@ratusha_pub',
-        rating: 4.1,
-        reviews: 112,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Гастро-паб+Ратуша+Площа+Ринок+Львів',
+        name: 'Lviv Craft Beer & Burger',
+        address: 'вул. Краківська, 5, Львів',
+        phone: '+380687766554',
+        website: 'https://instagram.com/lviv_craft_beer',
+        instagram: '@lviv_craft_beer',
+        rating: 4.3,
+        reviews: 95,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Lviv+Craft+Beer+Краківська+Львів',
         painLevel: 'urgent',
-        painText: '112 відгуків і 4.1★ — потрібні NFC-підставки на кожен стіл'
+        painText: 'Потрібно підняти середній бал перед сезоном туризму'
       },
       {
         id: 'v-lviv-5',
-        name: 'Еспресо-бар Галицький',
-        address: 'вул. Сербська, 7',
-        phone: '+380509988776',
-        website: 'https://instagram.com/galician_espresso',
-        instagram: '@galician_espresso',
+        name: 'Джелатерія «Dolce Rynok»',
+        address: 'вул. Сербська, 3, Львів',
+        phone: '+380633344556',
+        website: 'https://instagram.com/dolce_rynok',
+        instagram: '@dolce_rynok',
         rating: 4.5,
-        reviews: 34,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Еспресо-бар+Галицький+вул+Сербська+Львів',
+        reviews: 41,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Dolce+Rynok+Сербська+Львів',
         painLevel: 'new',
-        painText: 'Чудовий старт, але потрібно закріпити позиції новими відгуками'
+        painText: 'Черги є, але відгуків мало — NFC-наклейка прискорить збір'
       }
     ]
   },
@@ -5948,35 +6279,35 @@ const DEFAULT_NFC_RADAR_JOBS = [
     source: 'gmaps',
     niche: 'СТО, автомийки, детейлінг',
     city: 'Київ',
-    cluster: 'Оболонь (просп. Володимира Івасюка / Богатирська)',
+    cluster: 'Оболонь (просп. Оболонський / Богатирська)',
     status: 'done',
     local: true,
-    createdAt: new Date().toISOString(),
+    createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
     total: 5,
     maxReviews: 300,
     items: [
       {
         id: 'v-obolon-1',
-        name: 'Детейлінг Студія Оболонь CarSpa',
-        address: 'просп. Володимира Івасюка, 20',
-        phone: '+380672233445',
-        website: 'https://instagram.com/obolon_carspa',
-        instagram: '@obolon_carspa',
-        rating: 4.2,
-        reviews: 44,
-        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Детейлінг+Студія+Оболонь+CarSpa+Київ',
-        painLevel: 'urgent',
-        painText: 'Високий чек (2 500 ₴): клієнти обирають виключно по відгуках'
+        name: 'Детейлінг студія «Gloss Guard»',
+        address: 'вул. Богатирська, 1а',
+        phone: '+380671122334',
+        website: 'https://instagram.com/gloss_guard_kiev',
+        instagram: '@gloss_guard_kiev',
+        rating: 4.4,
+        reviews: 45,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Gloss+Guard+Богатирська+Київ',
+        painLevel: 'new',
+        painText: 'Преміум автовласники довіряють лише студіям з 100+ відгуками'
       },
       {
         id: 'v-obolon-2',
-        name: 'Автосервіс Богатирський',
-        address: 'вул. Богатирська, 1г',
+        name: 'Автосервіс «Богатирський»',
+        address: 'вул. Богатирська, 3г',
         phone: '+380504455667',
-        website: 'https://bogatyrsky-auto.kiev.ua',
-        instagram: '@bogatyrsky_auto',
-        rating: 4.1,
-        reviews: 79,
+        website: 'https://bogatyrske-sto.com.ua',
+        instagram: '@sto_bogatyrske',
+        rating: 4.0,
+        reviews: 74,
         mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Автосервіс+Богатирський+Київ',
         painLevel: 'urgent',
         painText: 'Потрібно нівелювати старий негатив через NFC на касі'
@@ -6024,15 +6355,11 @@ const DEFAULT_NFC_RADAR_JOBS = [
   }
 ];
 
-const scrapeState = {
+const nfcRadarState = {
   jobs: [],
-  mode: 'demo',
-  offline: false,
   cityFilter: 'all',
   viewMode: 'cards', // 'cards' | 'table'
   openJobs: new Set(['nfc-job-kyiv-ocean']),
-  openCats: new Set(),
-  pollTimer: null,
   form: {
     source: 'gmaps',
     niche: 'Кафе, бари, ресторани',
@@ -6043,23 +6370,17 @@ const scrapeState = {
   }
 };
 
-function loadLocalScrapes() {
+function loadLocalNfcJobs() {
   try {
-    const raw = localStorage.getItem('dws_scrapes');
+    const raw = localStorage.getItem('dws_nfc_radars');
     if (!raw) {
-      localStorage.setItem('dws_scrapes', JSON.stringify(DEFAULT_NFC_RADAR_JOBS));
+      localStorage.setItem('dws_nfc_radars', JSON.stringify(DEFAULT_NFC_RADAR_JOBS));
       return DEFAULT_NFC_RADAR_JOBS;
     }
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed) || parsed.length === 0) {
-      localStorage.setItem('dws_scrapes', JSON.stringify(DEFAULT_NFC_RADAR_JOBS));
+      localStorage.setItem('dws_nfc_radars', JSON.stringify(DEFAULT_NFC_RADAR_JOBS));
       return DEFAULT_NFC_RADAR_JOBS;
-    }
-    const hasNfc = parsed.some(j => Array.isArray(j.items) && j.items.length > 0);
-    if (!hasNfc) {
-      const merged = [...DEFAULT_NFC_RADAR_JOBS, ...parsed];
-      localStorage.setItem('dws_scrapes', JSON.stringify(merged));
-      return merged;
     }
     return parsed;
   } catch {
@@ -6067,40 +6388,11 @@ function loadLocalScrapes() {
   }
 }
 
-function saveLocalScrapes(jobs) {
-  localStorage.setItem('dws_scrapes', JSON.stringify(jobs.filter(j => j.local)));
+function saveLocalNfcJobs(jobs) {
+  localStorage.setItem('dws_nfc_radars', JSON.stringify(jobs));
 }
 
-async function fetchScrapes() {
-  try {
-    const res = await fetch('/api/scrapes');
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    if (!json.success) throw new Error('bad');
-    scrapeState.offline = false;
-    scrapeState.mode = json.mode;
-    const local = loadLocalScrapes();
-    const serverJobs = json.data || [];
-    const map = new Map();
-    [...local, ...serverJobs].forEach(j => map.set(j.id, j));
-    scrapeState.jobs = Array.from(map.values());
-  } catch {
-    scrapeState.offline = true;
-    scrapeState.mode = 'demo';
-    scrapeState.jobs = loadLocalScrapes();
-  }
-  renderScrapes();
-  scheduleScrapePoll();
-}
-
-function scheduleScrapePoll() {
-  clearTimeout(scrapeState.pollTimer);
-  if (scrapeState.jobs.some(j => j.status === 'running' && !j.local)) {
-    scrapeState.pollTimer = setTimeout(fetchScrapes, 4000);
-  }
-}
-
-function pluralBiz(n) {
+function pluralNfcVenues(n) {
   const m10 = n % 10, m100 = n % 100;
   if (m10 === 1 && m100 !== 11) return 'заклад';
   if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return 'заклади';
@@ -6232,221 +6524,229 @@ function addBizToCrm(biz, clusterName) {
   haptic('success');
 }
 
-function renderScrapes() {
-  const list = document.getElementById('scrapeJobsList');
+function renderNfcRadar() {
+  const list = document.getElementById('nfcRadarJobsList');
   if (!list) return;
 
-  let jobs = scrapeState.jobs;
-  if (scrapeState.cityFilter && scrapeState.cityFilter !== 'all') {
-    jobs = jobs.filter(j => j.city && j.city.toLowerCase().includes(scrapeState.cityFilter.toLowerCase()));
+  let jobs = nfcRadarState.jobs;
+  if (nfcRadarState.cityFilter && nfcRadarState.cityFilter !== 'all') {
+    jobs = jobs.filter(j => j.city && j.city.toLowerCase().includes(nfcRadarState.cityFilter.toLowerCase()));
   }
 
   const total = jobs.reduce((s, j) => s + (j.status === 'done' ? (j.total || (j.items ? j.items.length : 0)) : 0), 0);
-  const numEl = document.getElementById('scrapeTotalNum');
-  const lblEl = document.getElementById('scrapeTotalLabel');
+  const numEl = document.getElementById('nfcRadarTotalNum');
+  const lblEl = document.getElementById('nfcRadarTotalLabel');
   if (numEl) numEl.textContent = total;
-  if (lblEl) lblEl.textContent = pluralBiz(total);
-
-  const dot = document.getElementById('scrapeApiDot');
-  const lbl = document.getElementById('scrapeApiLabel');
-  if (dot && lbl) {
-    if (scrapeState.mode === 'live') {
-      dot.classList.add('active');
-      lbl.textContent = 'Apify Live';
-    } else {
-      dot.classList.remove('active');
-      lbl.textContent = 'Підключити API';
-    }
-  }
+  if (lblEl) lblEl.textContent = pluralNfcVenues(total);
 
   if (!jobs.length) {
-    list.innerHTML = '<div class="scrape-empty" style="text-align:center; padding:36px 16px; color:var(--muted); background:var(--card-bg); border:1px dashed var(--border); border-radius:var(--r-lg);">' +
-      '<div style="font-size:2.2rem; margin-bottom:8px;">📡</div>' +
-      '<div style="font-family:var(--ffh); font-weight:800; font-size:1rem; color:var(--black); margin-bottom:4px;">Немає зборів для обраної локації</div>' +
-      '<div style="font-size:0.82rem; line-height:1.4;">Натисніть «НОВИЙ ЗБІР», щоб запустити сканування закладів міста з Google Maps!</div>' +
-    '</div>';
+    list.innerHTML = '<div class="scrape-empty">Натисніть <b>«НОВИЙ ЗБІР»</b> або оберіть інше місто, щоб знайти заклади під NFC-картки.</div>';
     return;
   }
 
   list.innerHTML = jobs.map(job => {
-    const isOpen = scrapeState.openJobs.has(job.id);
+    const isOpen = nfcRadarState.openJobs.has(job.id);
     const date = new Date(job.createdAt).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
+    let pill = '<span class="scrape-status-pill demo">Локація</span>';
+    if (job.status === 'running') pill = '<span class="scrape-status-pill running">Шукаю…</span>';
+
     const items = getJobFlatItems(job);
     const count = items.length || job.total || 0;
-
-    let pill = '';
-    if (job.status === 'running') pill = '<span class="scrape-status-pill running">Сканую…</span>';
-    else if (job.status === 'error') pill = '<span class="scrape-status-pill error">Помилка</span>';
-    else if (job.local) pill = '<span class="scrape-status-pill demo" style="background:rgba(0,102,255,0.1); color:var(--accent);">NFC База</span>';
-
-    const right = job.status === 'running'
-      ? '<div class="scrape-spinner"></div>'
-      : ('<div class="scrape-job-count"><b>' + count + '</b><span>' + pluralBiz(count) + '</span></div>');
-
-    const clusterBadge = job.cluster
-      ? ('<div class="nfc-collection-cluster">📍 ' + escapeHtml(job.cluster) + '</div>')
-      : '';
+    const routeUrl = getClusterRouteUrl(job);
 
     let body = '';
-    if (job.status === 'done') {
-      const routeUrl = getClusterRouteUrl(job);
-      const venuesHtml = renderNfcVenuesList(job, items);
+    if (job.status === 'done' && items.length > 0) {
+      body = `
+        <div class="scrape-job-body">
+          <div class="nfc-cluster-action-bar">
+            <div class="nfc-cluster-info">
+              <div class="nfc-cluster-name">📍 ${job.cluster || (job.city + ' — ' + job.niche)}</div>
+              <div class="nfc-cluster-sub">Скупчення закладів поруч для пішого обходу з NFC-зразками</div>
+            </div>
+            <a href="${routeUrl}" target="_blank" rel="noopener" class="btn btn--fill btn--sm nfc-route-link-btn">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+              <span>ПІШИЙ МАРШРУТ (MAPS)</span>
+            </a>
+          </div>
 
-      body = '<div class="scrape-job-body">' +
-        '<div class="nfc-collection-actions-top">' +
-          '<a href="' + routeUrl + '" target="_blank" rel="noopener" class="btn btn--fill btn--sm" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none;">' +
-            '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>' +
-            '<span>МАРШРУТ (GOOGLE MAPS) ↗</span>' +
-          '</a>' +
-          '<button type="button" class="btn btn--out btn--sm" data-scrape-act="csv" data-job="' + job.id + '">' +
-            '<span>CSV ДЛЯ ОБДЗВОНУ</span>' +
-          '</button>' +
-        '</div>' +
-        venuesHtml +
-        '<div class="scrape-job-actions" style="margin-top:16px;">' +
-          '<button type="button" class="btn btn--out btn--sm" data-scrape-act="send" data-job="' + job.id + '">✈️ Надіслати в Telegram</button>' +
-          '<button type="button" class="btn btn--out btn--sm" data-scrape-act="delete" data-job="' + job.id + '" style="color:var(--danger); border-color:rgba(239,68,68,0.25);">Видалити збір</button>' +
-        '</div>' +
-      '</div>';
-    } else if (job.status === 'error') {
-      body = '<div class="scrape-job-body">' +
-        '<div class="scrape-biz-reason" style="margin:12px 0;">' + escapeHtml(job.error || 'Не вдалося завершити збір') + '</div>' +
-        '<div class="scrape-job-actions">' +
-          '<button type="button" class="btn btn--out btn--sm" data-scrape-act="delete" data-job="' + job.id + '" style="color:var(--danger);">Видалити</button>' +
-        '</div>' +
-      '</div>';
+          ${renderNfcVenuesList(job, items)}
+
+          <div class="scrape-job-actions" style="margin-top: 14px;">
+            <button type="button" class="btn btn--out btn--sm" data-nfc-act="csv" data-job="${job.id}">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>CSV таблиця</span>
+            </button>
+            <button type="button" class="btn btn--out btn--sm" data-nfc-act="send" data-job="${job.id}">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+              <span>В Telegram</span>
+            </button>
+            <button type="button" class="btn btn--out btn--sm btn--danger" data-nfc-act="delete" data-job="${job.id}">
+              <span>Видалити</span>
+            </button>
+          </div>
+        </div>
+      `;
     }
 
-    return '<div class="scrape-job ' + (isOpen ? 'open' : '') + '" data-job-id="' + job.id + '">' +
-      '<div class="scrape-job-head" data-scrape-toggle-job="' + job.id + '">' +
-        '<div class="scrape-job-ico">' +
-          '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 9 9"></path><path d="M12 7a5 5 0 0 1 5 5"></path><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle></svg>' +
-        '</div>' +
-        '<div class="scrape-job-info">' +
-          '<div class="scrape-job-title">' + escapeHtml(job.niche) + (job.city ? ' · ' + escapeHtml(job.city) : '') + '</div>' +
-          clusterBadge +
-          '<div class="scrape-job-sub">' + (SCRAPE_SOURCE_LABEL[job.source] || 'Google Maps') + ' · ' + date + pill + '</div>' +
-        '</div>' +
-        right +
-        (job.status === 'running' ? '' : SCRAPE_CHEVRON) +
-      '</div>' +
-      body +
-    '</div>';
+    return `
+      <div class="scrape-job-card ${isOpen ? 'open' : ''}" data-job-card="${job.id}">
+        <div class="scrape-job-head" data-nfc-toggle-job="${job.id}">
+          <div class="scrape-job-ico">
+            ${SCRAPE_ICONS[job.source] || SCRAPE_ICONS.gmaps}
+          </div>
+          <div class="scrape-job-info">
+            <div class="scrape-job-title">${job.cluster ? job.cluster : (job.niche + ' • ' + job.city)}</div>
+            <div class="scrape-job-sub">${job.city} • ${date} ${pill}</div>
+          </div>
+          <div class="scrape-job-count">
+            <b>${count}</b>
+            <span>${pluralNfcVenues(count)}</span>
+          </div>
+          ${SCRAPE_CHEVRON}
+        </div>
+        ${body}
+      </div>
+    `;
   }).join('');
 }
 
 function renderNfcVenuesList(job, items) {
-  if (!items.length) {
-    return '<div class="scrape-empty">Заклади у цьому зборі не знайдені.</div>';
-  }
+  if (nfcRadarState.viewMode === 'table') {
+    const rows = items.map((v, idx) => {
+      const painBadge = v.painLevel === 'urgent'
+        ? '<span class="nfc-pain-chip urgent">🔥 Негатив (треба 5★)</span>'
+        : (v.painLevel === 'new'
+          ? '<span class="nfc-pain-chip new">🌱 <50 відгуків</span>'
+          : '<span class="nfc-pain-chip boost">⚡ Буст до ТОП-1</span>');
 
-  if (scrapeState.viewMode === 'table') {
-    const rows = items.map(v => {
-      const rating = v.rating ? Number(v.rating).toFixed(1) : '—';
-      const reviews = v.reviews || 0;
-      const navUrl = getVenueNavigationUrl(v, job);
-
-      return '<tr>' +
-        '<td>' +
-          '<div class="scrape-biz-name">' + escapeHtml(v.name) + '</div>' +
-          '<div class="scrape-biz-reason">' + escapeHtml(v.address || '') + '</div>' +
-        '</td>' +
-        '<td><b>★ ' + rating + '</b> · ' + reviews + '</td>' +
-        '<td>' + (v.phone ? ('<a href="tel:' + escapeHtml(v.phone) + '">' + escapeHtml(v.phone) + '</a>') : '—') + '</td>' +
-        '<td style="white-space:nowrap;">' +
-          '<button type="button" class="btn btn--fill btn--sm" data-nfc-act="pitch" data-job="' + job.id + '" data-venue="' + (v.id || v.name) + '" style="padding:4px 8px; font-size:0.7rem;">⚡ ОФЕР</button> ' +
-          '<a href="' + navUrl + '" target="_blank" rel="noopener" class="btn btn--out btn--sm" style="padding:4px 8px; font-size:0.7rem; text-decoration:none;">🗺️</a> ' +
-          '<button type="button" class="btn btn--out btn--sm" data-nfc-act="crm" data-job="' + job.id + '" data-venue="' + (v.id || v.name) + '" style="padding:4px 8px; font-size:0.7rem;">➕</button>' +
-        '</td>' +
-      '</tr>';
+      return `
+        <tr class="nfc-table-row">
+          <td class="col-idx">${idx + 1}</td>
+          <td class="col-name">
+            <div class="biz-title">${v.name}</div>
+            <div class="biz-addr">${v.address || '—'}</div>
+          </td>
+          <td class="col-rating">
+            <span class="rating-star">★ ${v.rating ? Number(v.rating).toFixed(1) : '—'}</span>
+            <span class="reviews-cnt">(${v.reviews || 0})</span>
+          </td>
+          <td class="col-pain">${painBadge}</td>
+          <td class="col-actions">
+            <button type="button" class="btn btn--fill btn--xs" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}" title="Скопіювати офер">
+              📋 Офер
+            </button>
+            <button type="button" class="btn btn--out btn--xs" data-nfc-act="crm" data-job="${job.id}" data-venue="${v.id}" title="Додати в CRM">
+              + CRM
+            </button>
+          </td>
+        </tr>
+      `;
     }).join('');
 
-    return '<div class="scrape-table-wrap mt-2">' +
-      '<table class="scrape-table">' +
-        '<thead><tr><th>ЗАКЛАД & АДРЕСА</th><th>РЕЙТИНГ</th><th>ТЕЛЕФОН</th><th>ДІЇ</th></tr></thead>' +
-        '<tbody>' + rows + '</tbody>' +
-      '</table>' +
-    '</div>';
+    return `
+      <div class="nfc-table-wrap">
+        <table class="nfc-venues-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Заклад / Адреса</th>
+              <th>Рейтинг</th>
+              <th>Проблема (Біль)</th>
+              <th>Дії</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    `;
   }
 
-  return '<div class="nfc-venues-grid">' +
-    items.map(v => {
-      const ratingNum = Number(v.rating) || 0;
-      const reviewsCount = Number(v.reviews) || 0;
-      let ratingClass = 'mid';
-      let painHtml = '';
+  return `
+    <div class="nfc-venues-grid">
+      ${items.map((v, idx) => {
+        const painBadge = v.painLevel === 'urgent'
+          ? '<span class="nfc-pain-chip urgent">🔥 Низький рейтинг: треба перекривати 5★</span>'
+          : (v.painLevel === 'new'
+            ? '<span class="nfc-pain-chip new">🌱 Новий заклад: мало відгуків</span>'
+            : '<span class="nfc-pain-chip boost">⚡ ТОП-потенціал: буст рейтингу до 4.9★</span>');
 
-      if (ratingNum <= 4.3 && ratingNum > 0) {
-        ratingClass = 'low';
-        painHtml = '<div class="nfc-pain-badge"><b>⚠️ Біль:</b> ' + escapeHtml(v.painText || 'Потрібно перекривати негатив хорошими відгуками') + '</div>';
-      } else if (reviewsCount < 50) {
-        ratingClass = 'mid';
-        painHtml = '<div class="nfc-pain-badge new"><b>🔥 Потреба:</b> ' + escapeHtml(v.painText || 'Новий заклад — терміново потрібен буст відгуків') + '</div>';
-      } else {
-        ratingClass = 'high';
-        painHtml = '<div class="nfc-pain-badge boost"><b>📈 Мета:</b> ' + escapeHtml(v.painText || 'Буст до ТОП-1 району в Google Maps') + '</div>';
-      }
+        const navUrl = getVenueNavigationUrl(v, job);
+        const mapUrl = getVenueMapsUrl(v, job);
 
-      const mapsUrl = getVenueMapsUrl(v, job);
-      const navUrl = getVenueNavigationUrl(v, job);
-      const instagramLink = v.instagram
-        ? ('<a href="https://instagram.com/' + v.instagram.replace('@', '') + '" target="_blank" rel="noopener" class="nfc-link-btn">📸 ' + escapeHtml(v.instagram) + '</a>')
-        : (v.website ? ('<a href="' + escapeHtml(v.website) + '" target="_blank" rel="noopener" class="nfc-link-btn">🌐 Сайт</a>') : '');
+        return `
+          <div class="nfc-venue-card">
+            <div class="nfc-venue-top">
+              <div class="nfc-venue-header">
+                <span class="nfc-venue-idx">#${idx + 1}</span>
+                <h4 class="nfc-venue-name">${v.name}</h4>
+              </div>
+              <div class="nfc-venue-score-badge ${(v.rating && v.rating <= 4.3) ? 'warning' : 'good'}">
+                ★ ${v.rating ? Number(v.rating).toFixed(1) : '—'}
+                <span class="revs">(${v.reviews || 0} відг)</span>
+              </div>
+            </div>
 
-      return '<div class="nfc-venue-card" data-venue-item="' + escapeHtml(v.name) + '">' +
-        '<div class="nfc-venue-top">' +
-          '<div class="nfc-venue-main">' +
-            '<div class="nfc-venue-title">' + escapeHtml(v.name) + '</div>' +
-            '<div class="nfc-venue-address">📍 ' + escapeHtml(v.address || job.cluster || job.city) + '</div>' +
-          '</div>' +
-          '<div class="nfc-rating-pill ' + ratingClass + '">' +
-            '<span>★ ' + (ratingNum ? ratingNum.toFixed(1) : '—') + '</span>' +
-            '<span style="opacity:0.6; font-size:0.7rem;">(' + reviewsCount + ')</span>' +
-          '</div>' +
-        '</div>' +
-        painHtml +
-        '<div class="nfc-venue-links">' +
-          '<a href="' + mapsUrl + '" target="_blank" rel="noopener" class="nfc-link-btn">🗺️ Google Maps ↗</a>' +
-          (v.phone ? ('<a href="tel:' + escapeHtml(v.phone) + '" class="nfc-link-btn">📞 ' + escapeHtml(v.phone) + '</a>') : '') +
-          instagramLink +
-        '</div>' +
-        '<div class="nfc-venue-actions">' +
-          '<button type="button" class="btn btn--fill btn--sm" data-nfc-act="pitch" data-job="' + job.id + '" data-venue="' + (v.id || v.name) + '">' +
-            '<span>⚡ NFC ОФЕР</span>' +
-          '</button>' +
-          '<a href="' + navUrl + '" target="_blank" rel="noopener" class="btn btn--out btn--sm" style="text-decoration:none;">' +
-            '<span>🗺️ МАРШРУТ ↗</span>' +
-          '</a>' +
-          '<button type="button" class="btn btn--out btn--sm" data-nfc-act="crm" data-job="' + job.id + '" data-venue="' + (v.id || v.name) + '">' +
-            '<span>➕ В CRM</span>' +
-          '</button>' +
-        '</div>' +
-      '</div>';
-    }).join('') +
-  '</div>';
+            <div class="nfc-venue-pain-row">
+              ${painBadge}
+              <div class="nfc-pain-sub">${v.painText || 'Гостра потреба в автоматичному зборі 5★ від реальних гостей'}</div>
+            </div>
+
+            <div class="nfc-venue-meta">
+              <div class="nfc-meta-item">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>${v.address || job.cluster || job.city}</span>
+              </div>
+              ${v.phone ? `
+                <div class="nfc-meta-item">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  <a href="tel:${v.phone}">${v.phone}</a>
+                </div>
+              ` : ''}
+              ${v.instagram ? `
+                <div class="nfc-meta-item">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
+                  <a href="https://instagram.com/${v.instagram.replace('@', '')}" target="_blank" rel="noopener">${v.instagram}</a>
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="nfc-venue-actions-bar">
+              <button type="button" class="btn btn--fill btn--sm nfc-act-btn" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}">
+                <span>📋 ГОТОВИЙ ОФЕР</span>
+              </button>
+              <button type="button" class="btn btn--out btn--sm nfc-act-btn" data-nfc-act="crm" data-job="${job.id}" data-venue="${v.id}">
+                <span>+ В CRM</span>
+              </button>
+              <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn--out btn--sm nfc-act-btn icon-only" title="Відкрити в Google Maps">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+              <a href="${navUrl}" target="_blank" rel="noopener" class="btn btn--out btn--sm nfc-act-btn icon-only" title="Прокласти маршрут пішки">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
 }
 
 function buildLocalNfcJob(opts) {
   const source = opts.source || 'gmaps';
-  const niche = opts.niche || 'Заклади';
+  const niche = opts.niche || 'Кафе, бари, ресторани';
   const city = opts.city || 'Київ';
   const cluster = opts.cluster || '';
   const reviewsLimit = opts.reviewsLimit || 300;
   const limit = opts.limit || 30;
 
-  const n = Math.min(limit, 25);
   const items = [];
-
+  const n = Math.min(limit, 25);
   const namesPool = [
-    niche + ' «Prime ' + city + '»',
-    'Студія «Elegance»',
-    'Заклад «Urban Spot»',
-    'Крафтовий простір «Локація»',
-    'Центр «Aura»',
-    'Лабораторія «Craft Hub»',
-    niche + ' «Grand Lounge»',
-    'Барбер & Салон «Razor Club»',
-    'Кафе «Coffee Corner»',
+    'Кав\'ярня «Black & White»',
+    'Барбершоп «Blade Masters»',
+    'Бьюті-простір «Glow Studio»',
+    'Ресторан «Olive & Salt»',
+    'Пекарня «Свіжий Хруст»',
     'Детейлінг «Pro Detailing»',
     'Стоматологія «Smile Studio»',
     'Острівець «Gourmet Point»'
@@ -6489,303 +6789,192 @@ function buildLocalNfcJob(opts) {
   };
 }
 
-async function submitScrape() {
-  const nicheInput = document.getElementById('scrapeNicheInput');
-  const cityInput = document.getElementById('scrapeCityInput');
-  const clusterInput = document.getElementById('scrapeClusterInput');
+async function submitNfcSearch() {
+  const nicheInput = document.getElementById('nfcNicheInput');
+  const cityInput = document.getElementById('nfcCityInput');
+  const clusterInput = document.getElementById('nfcClusterInput');
   const niche = (nicheInput?.value || '').trim() || 'Кафе, бари, ресторани';
   const city = (cityInput?.value || '').trim() || 'Київ';
   const cluster = (clusterInput?.value || '').trim();
-  const reviewsLimit = Number(document.querySelector('#scrapeReviewsFilterSeg .scrape-seg-btn.active')?.dataset.value) || 300;
-  const limit = Number(document.querySelector('#scrapeLimitSeg .scrape-seg-btn.active')?.dataset.value) || 30;
+  const reviewsLimit = Number(document.querySelector('#nfcReviewsFilterSeg .scrape-seg-btn.active')?.dataset.value) || 300;
+  const limit = Number(document.querySelector('#nfcLimitSeg .scrape-seg-btn.active')?.dataset.value) || 30;
 
-  const btn = document.getElementById('submitScrapeBtn');
+  const btn = document.getElementById('submitNfcSearchBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'СКАНУЮ ЛОКАЦІЮ…'; }
 
-  try {
-    if (scrapeState.offline || scrapeState.mode === 'demo') {
-      const job = buildLocalNfcJob({
-        source: scrapeState.form.source,
-        niche: niche,
-        city: city,
-        cluster: cluster,
-        reviewsLimit: reviewsLimit,
-        limit: limit
-      });
-      const local = loadLocalScrapes();
-      local.unshift(job);
-      saveLocalScrapes(local);
-      scrapeState.openJobs.add(job.id);
-      haptic('success');
-      showToast('🎯 Знайдено ' + job.items.length + ' закладів у ' + city + '!');
-    } else {
-      const res = await fetch('/api/scrapes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          source: scrapeState.form.source,
-          niche: cluster ? (niche + ' ' + cluster) : niche,
-          city: city,
-          limit: limit
-        })
-      });
-      const json = await res.json();
-      if (!json.success) throw new Error(json.error || 'error');
-      scrapeState.openJobs.add(json.data.id);
-      haptic('success');
-    }
-  } catch (err) {
+  setTimeout(() => {
     const job = buildLocalNfcJob({
-      source: scrapeState.form.source,
+      source: nfcRadarState.form.source,
       niche: niche,
       city: city,
       cluster: cluster,
       reviewsLimit: reviewsLimit,
       limit: limit
     });
-    const local = loadLocalScrapes();
-    local.unshift(job);
-    saveLocalScrapes(local);
-    scrapeState.openJobs.add(job.id);
-    haptic('success');
-    showToast('🎯 Знайдено ' + job.items.length + ' закладів у ' + city + '!');
-  } finally {
+    nfcRadarState.jobs.unshift(job);
+    saveLocalNfcJobs(nfcRadarState.jobs);
+    nfcRadarState.openJobs.add(job.id);
+    closeModal('modalNfcSearch');
+    renderNfcRadar();
     if (btn) { btn.disabled = false; btn.textContent = 'ЗАПУСТИТИ РАДАР'; }
-    closeModal('modalScrape');
-    fetchScrapes();
-  }
+    haptic('success');
+    showToast('🎯 Знайдено ' + job.items.length + ' закладів у ' + (cluster || city) + '!');
+  }, 400);
 }
 
-function downloadScrapeCsv(job) {
+function downloadNfcCsv(job) {
   const items = getJobFlatItems(job);
   if (!items.length) {
-    alert('Немає закладів для вивантаження.');
+    showToast('Немає закладів для вивантаження');
     return;
   }
-  const rows = [
-    ['Назва', 'Телефон', 'Адреса', 'Місто', 'Рейтинг', 'Відгуки', 'Instagram/Сайт', 'Google Maps']
-  ];
-  items.forEach(v => {
-    rows.push([
-      v.name || '',
-      v.phone || '',
-      v.address || job.cluster || '',
-      job.city || '',
-      v.rating || '',
-      v.reviews || '',
-      v.website || v.instagram || '',
-      getVenueMapsUrl(v, job)
-    ]);
-  });
-
-  const csv = rows.map(r => r.map(x => '"' + String(x).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+  const headers = ['Назва', 'Місто', 'Кластер / Адреса', 'Рейтинг', 'Кількість відгуків', 'Телефон', 'Instagram', 'Біль / Потреба'];
+  const rows = items.map(v => [
+    '"' + (v.name || '').replace(/"/g, '""') + '"',
+    '"' + (job.city || '').replace(/"/g, '""') + '"',
+    '"' + (v.address || job.cluster || '').replace(/"/g, '""') + '"',
+    v.rating || '',
+    v.reviews || '',
+    '"' + (v.phone || '').replace(/"/g, '""') + '"',
+    '"' + (v.instagram || '').replace(/"/g, '""') + '"',
+    '"' + (v.painText || '').replace(/"/g, '""') + '"'
+  ]);
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'nfc_radar_' + (job.city || 'kyiv') + '_' + Date.now() + '.csv';
+  a.download = 'nfc_radar_' + (job.city || 'leads') + '_' + Date.now() + '.csv';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  haptic('success');
-  showToast('📊 CSV успішно збережено!');
+  showToast('📥 CSV-файл завантажено');
 }
 
-async function sendScrapeToTelegram(job, cat, btn) {
+function sendNfcToTelegram(job, btn) {
   const items = getJobFlatItems(job);
   if (!items.length) {
-    alert('Немає закладів для відправки.');
+    showToast('Немає закладів для відправки');
     return;
   }
-  const old = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Відправляю…';
+  const top = items.slice(0, 5);
+  let msg = '🎯 <b>NFC Радар закладів (' + (job.city || '') + ')</b>\nЛокація: ' + (job.cluster || job.niche) + '\n\n';
+  top.forEach((v, i) => {
+    msg += (i + 1) + '. <b>' + v.name + '</b> — ★' + (v.rating || '—') + ' (' + (v.reviews || 0) + ' відгуків)\n';
+    if (v.phone) msg += '   📞 ' + v.phone + '\n';
+    if (v.instagram) msg += '   📷 ' + v.instagram + '\n';
+  });
+  if (items.length > 5) msg += '\n<i>...та ще ' + (items.length - 5) + ' закладів у зборі</i>';
 
-  try {
-    const lines = items.slice(0, 15).map((v, i) =>
-      (i + 1) + '. *' + escapeMarkdown(v.name) + '* (★ ' + (v.rating || '—') + ' · ' + (v.reviews || 0) + ' відг)\n   📍 ' + escapeMarkdown(v.address || job.cluster || '') + '\n   📞 ' + (v.phone || '—')
-    ).join('\n\n');
-
-    const msg = '📡 *NFC Радар B2B: ' + escapeMarkdown(job.niche) + ' (' + escapeMarkdown(job.city || '') + ')*\nЗнайдено: ' + items.length + ' закладів\n\n' + lines + '\n\n🗺️ [Відкрити маршрут у Google Maps](' + getClusterRouteUrl(job) + ')';
-
-    const token = '8953225581:AAG7lpvh6JHCbyMKfsz4qEucd_7qqgh6koM';
-    const chatId = '5278970111';
-
-    const res = await fetch('https://api.telegram.org/bot' + token + '/sendMessage', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        text: msg,
-        parse_mode: 'Markdown',
-        disable_web_page_preview: true
-      })
-    });
-    const json = await res.json();
-    if (!json.ok) throw new Error(json.description);
-
-    haptic('success');
-    btn.textContent = 'Надіслано (' + items.length + ')';
-    setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 2500);
-    showToast('✈️ Список закладів надіслано вам у Telegram!');
-  } catch (err) {
-    alert('Не вдалося надіслати: ' + err.message);
-    btn.textContent = old;
-    btn.disabled = false;
-  }
-}
-
-function escapeMarkdown(text) {
-  return String(text || '').replace(/[_*[\]()~`>#+\-=|{}.!]/g, '\\$&');
-}
-
-async function deleteScrapeJob(job) {
-  if (!confirm('Видалити збір «' + job.niche + ' · ' + (job.city || '') + '»?')) return;
-  if (job.local) {
-    saveLocalScrapes(loadLocalScrapes().filter(j => j.id !== job.id));
+  if (window.Telegram?.WebApp?.sendData) {
+    window.Telegram.WebApp.sendData(JSON.stringify({ type: 'nfc_radar', job: job.id }));
+    showToast('✅ Надіслано в Telegram!');
   } else {
-    await fetch('/api/scrapes/' + encodeURIComponent(job.id), { method: 'DELETE' }).catch(() => {});
+    navigator.clipboard?.writeText(msg.replace(/<[^>]+>/g, '')).then(() => {
+      showToast('📋 Звіт скопійовано для Telegram!');
+    });
   }
-  scrapeState.openJobs.delete(job.id);
-  fetchScrapes();
-  haptic('medium');
-  showToast('🗑️ Збір видалено');
 }
 
-// ============================================================
-// INTERACTIVE NFC ROI CALCULATOR
-// ============================================================
+function deleteNfcJob(job) {
+  if (!confirm('Видалити цей збір закладів?')) return;
+  nfcRadarState.jobs = nfcRadarState.jobs.filter(j => j.id !== job.id);
+  saveLocalNfcJobs(nfcRadarState.jobs);
+  nfcRadarState.openJobs.delete(job.id);
+  renderNfcRadar();
+  showToast('Збір видалено');
+}
+
 function initNfcRoiCalc() {
-  const ratingInput = document.getElementById('roiCurrentRating');
+  const currentRatingInput = document.getElementById('roiCurrentRating');
   const guestsInput = document.getElementById('roiGuests');
   const checkInput = document.getElementById('roiCheck');
 
+  if (!currentRatingInput || !guestsInput || !checkInput) return;
+
   function updateMath() {
-    const curRating = parseFloat(ratingInput?.value || 4.2);
-    const guests = parseInt(guestsInput?.value || 60, 10);
-    const check = parseInt(checkInput?.value || 250, 10);
+    const r = parseFloat(currentRatingInput.value) || 4.2;
+    const g = parseInt(guestsInput.value) || 60;
+    const c = parseInt(checkInput.value) || 250;
 
-    const rValEl = document.getElementById('roiCurrentRatingVal');
-    const gValEl = document.getElementById('roiGuestsVal');
-    const cValEl = document.getElementById('roiCheckVal');
-    if (rValEl) rValEl.textContent = curRating.toFixed(1) + ' ★';
-    if (gValEl) gValEl.textContent = guests + ' гостей/день';
-    if (cValEl) cValEl.textContent = check.toLocaleString('uk-UA') + ' ₴';
+    const currentRatingVal = document.getElementById('roiCurrentRatingVal');
+    const guestsVal = document.getElementById('roiGuestsVal');
+    const checkVal = document.getElementById('roiCheckVal');
+    if (currentRatingVal) currentRatingVal.textContent = r.toFixed(1) + ' ★';
+    if (guestsVal) guestsVal.textContent = g + ' гостей / день';
+    if (checkVal) checkVal.textContent = c + ' ₴';
 
-    const monthlyVisitors = guests * 30;
-    const taps = Math.round(monthlyVisitors * 0.15);
-    const newReviews = Math.max(15, Math.round(taps * 0.20));
+    const monthlyGuests = g * 30;
+    const nfcConversion = 0.03;
+    const reviewsDelta = Math.round(monthlyGuests * nfcConversion);
 
-    const targetRating = Math.min(4.9, parseFloat((curRating + 0.6).toFixed(1)));
-    const trafficUpliftPct = 18;
-    const extraGuestsMonth = Math.round(monthlyVisitors * (trafficUpliftPct / 100));
-    const extraIncome = Math.round(extraGuestsMonth * check);
+    const targetRating = Math.min(4.9, Number((r + (5.0 - r) * 0.7).toFixed(1)));
+    const boostPercent = r < 4.2 ? 0.22 : (r < 4.5 ? 0.16 : 0.10);
+    const extraGuests = Math.round(monthlyGuests * boostPercent);
+    const extraMoney = extraGuests * c;
 
-    const revDeltaEl = document.getElementById('roiReviewsDelta');
-    const targetRatingEl = document.getElementById('roiTargetRating');
-    const extraIncomeEl = document.getElementById('roiExtraIncome');
+    const elDelta = document.getElementById('roiReviewsDelta');
+    const elTarget = document.getElementById('roiTargetRating');
+    const elIncome = document.getElementById('roiExtraIncome');
 
-    if (revDeltaEl) revDeltaEl.textContent = '+' + newReviews + ' відг / міс';
-    if (targetRatingEl) targetRatingEl.textContent = targetRating.toFixed(1) + ' ★ (ТОП-1)';
-    if (extraIncomeEl) extraIncomeEl.textContent = '+' + extraIncome.toLocaleString('uk-UA') + ' ₴ / міс';
+    if (elDelta) elDelta.textContent = '+' + reviewsDelta + ' відг / міс';
+    if (elTarget) elTarget.textContent = targetRating.toFixed(1) + ' ★ (ТОП-1)';
+    if (elIncome) elIncome.textContent = '+' + extraMoney.toLocaleString('uk-UA') + ' ₴ / міс';
   }
 
-  ratingInput?.addEventListener('input', updateMath);
-  guestsInput?.addEventListener('input', updateMath);
-  checkInput?.addEventListener('input', updateMath);
+  currentRatingInput.addEventListener('input', updateMath);
+  guestsInput.addEventListener('input', updateMath);
+  checkInput.addEventListener('input', updateMath);
+  updateMath();
 
   document.getElementById('openNfcRoiCalcBtn')?.addEventListener('click', () => {
-    updateMath();
     openModal('modalNfcRoiCalc');
     haptic('light');
   });
 
   document.getElementById('copyRoiPitchBtn')?.addEventListener('click', () => {
-    const curRating = parseFloat(ratingInput?.value || 4.2).toFixed(1);
-    const guests = parseInt(guestsInput?.value || 60, 10);
-    const check = parseInt(checkInput?.value || 250, 10);
-    const extraIncomeEl = document.getElementById('roiExtraIncome')?.textContent || '+81 000 ₴ / міс';
-    const revDeltaEl = document.getElementById('roiReviewsDelta')?.textContent || '+54 відг / міс';
+    const r = parseFloat(currentRatingInput.value) || 4.2;
+    const g = parseInt(guestsInput.value) || 60;
+    const c = parseInt(checkInput.value) || 250;
+    const monthlyGuests = g * 30;
+    const reviewsDelta = Math.round(monthlyGuests * 0.03);
+    const boostPercent = r < 4.2 ? 22 : (r < 4.5 ? 16 : 10);
+    const extraMoney = Math.round(monthlyGuests * (boostPercent / 100)) * c;
 
-    const text = '📊 Розрахунок окупності NFC-підставок для відгуків:\n\n' +
-      '• Поточний рейтинг закладу: ' + curRating + '★\n' +
-      '• Потік клієнтів: ~' + guests + ' гостей/день (сер. чек ' + check + ' ₴)\n' +
-      '• Очікуваний приріст відгуків через NFC: ' + revDeltaEl + '\n' +
-      '• Прогнозований рейтинг Google Maps: 4.9★ (вихід у ТОП-1 району)\n' +
-      '• Додатковий потік гостей з карт: +18%\n' +
-      '👉 Очікуваний додатковий виторг: ' + extraIncomeEl + '\n\n' +
-      '💰 Вартість комплекту з 5 акрилових стійок DenisWeb Studio: 1 250 ₴\n' +
-      '⏳ Окупність вкладень: менше 12 годин роботи!';
+    const text = '📊 РОЗРАХУНОК ЕФЕКТИВНОСТІ NFC ДЛЯ ВАШОГО ЗАКЛАДУ:\n\n' +
+      '• Поточний рейтинг: ' + r.toFixed(1) + ' ★\n' +
+      '• Потік гостей: ~' + g + ' на день (' + monthlyGuests + ' / міс)\n' +
+      '• Середній чек: ' + c + ' ₴\n\n' +
+      '🔥 ЩО ДАЄ ВСТАНОВЛЕННЯ 5 NFC-СТІЙОК НА СТОЛИКАХ:\n' +
+      '1. +' + reviewsDelta + ' нових відгуків 5★ щомісяця на автопілоті\n' +
+      '2. Підйом у ТОП-1 видачі карт вашого району (+ ' + boostPercent + '% трафіку з пошуку)\n' +
+      '3. Орієнтовний додатковий прибуток закладу: +' + extraMoney.toLocaleString('uk-UA') + ' ₴ / місяць!\n\n' +
+      'Окупність комплекту з 5 акрилових стійок (1 250 ₴) — менше 24 годин роботи!';
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(() => {
-        showToast('📋 Готовий розрахунок вигоди скопійовано!');
+        showToast('📋 Розрахунок ROI скопійовано для клієнта!');
         haptic('success');
-        closeModal('modalNfcRoiCalc');
-      }).catch(() => {
-        fallbackCopy(text, 'Розрахунок');
-        closeModal('modalNfcRoiCalc');
       });
     } else {
-      fallbackCopy(text, 'Розрахунок');
-      closeModal('modalNfcRoiCalc');
+      fallbackCopy(text, 'Розрахунок ROI');
     }
   });
 }
 
-// ============================================================
-// NFC SHOWCASE CATALOG & COMMERCIAL PROPOSAL
-// ============================================================
 function initNfcCatalog() {
   document.getElementById('openNfcCatalogBtn')?.addEventListener('click', () => {
     openModal('modalNfcCatalog');
     haptic('light');
   });
-
-  document.getElementById('copyNfcKpBtn')?.addEventListener('click', () => {
-    const kp = '💎 Комерційна пропозиція: Брендовані NFC-стійки та картки під ключ (DenisWeb Studio)\n\n' +
-      'Ми перетворюємо ваших гостей на постійних промоутерів закладу за 1 секунду дотику!\n\n' +
-      '📦 Наша продукція:\n' +
-      '1. Акрилові стійки-тейблтенти L-подібні (литий преміум-акрил, УФ-друк, вологостійкі, NTAG213/215 + QR) — від 250 ₴/шт\n' +
-      '2. ПВХ NFC-картки формату банківської карти (Soft-Touch, для персоналу, барберів, офіціантів) — від 120 ₴/шт\n' +
-      '3. Фігурні підставки за індивідуальним контуром логотипу — від 320 ₴/шт\n' +
-      '4. Дерев\'яні еко-холдери з дуба/ясена з лазерним гравіюванням — від 290 ₴/шт\n\n' +
-      '🔥 Оптові партії:\n' +
-      '• 1–2 шт: тестовий семпл\n' +
-      '• 5–10 шт: стандарт для кав\'ярні / салону (-10%)\n' +
-      '• 20–50 шт: ресторан / готель (-20% + безкоштовний дизайн)\n' +
-      '• 100+ шт: мережа закладів (оптова ціна)\n\n' +
-      '📲 Контакт розробника: @zalizkodenis12 | +380961592377';
-
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(kp).then(() => {
-        showToast('📋 КП успішно скопійовано!');
-        haptic('success');
-        closeModal('modalNfcCatalog');
-      }).catch(() => {
-        fallbackCopy(kp, 'КП');
-        closeModal('modalNfcCatalog');
-      });
-    } else {
-      fallbackCopy(kp, 'КП');
-      closeModal('modalNfcCatalog');
-    }
-  });
 }
 
-// Setup NFC Radar Tab
-function setupScrapeTab() {
-  document.getElementById('openNfcRadarPillBtn')?.addEventListener('click', () => {
-    const navBtn = document.querySelector('.nav-btn[data-tab="tab-scrape"]');
-    if (navBtn) {
-      navBtn.click();
-      haptic('medium');
-    }
-  });
+function setupNfcRadarTab() {
+  nfcRadarState.jobs = loadLocalNfcJobs();
 
   document.getElementById('openNewNfcSearchBtn')?.addEventListener('click', () => {
-    openModal('modalScrape');
+    openModal('modalNfcSearch');
     haptic('light');
   });
 
@@ -6793,8 +6982,8 @@ function setupScrapeTab() {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#nfcCityChips .nfc-chip').forEach(x => x.classList.remove('active'));
       btn.classList.add('active');
-      scrapeState.cityFilter = btn.dataset.city || 'all';
-      renderScrapes();
+      nfcRadarState.cityFilter = btn.dataset.city || 'all';
+      renderNfcRadar();
       haptic('light');
     });
   });
@@ -6802,17 +6991,17 @@ function setupScrapeTab() {
   const cardsBtn = document.getElementById('nfcViewCardsBtn');
   const tableBtn = document.getElementById('nfcViewTableBtn');
   cardsBtn?.addEventListener('click', () => {
-    scrapeState.viewMode = 'cards';
+    nfcRadarState.viewMode = 'cards';
     cardsBtn.classList.add('active');
     tableBtn?.classList.remove('active');
-    renderScrapes();
+    renderNfcRadar();
     haptic('light');
   });
   tableBtn?.addEventListener('click', () => {
-    scrapeState.viewMode = 'table';
+    nfcRadarState.viewMode = 'table';
     tableBtn.classList.add('active');
     cardsBtn?.classList.remove('active');
-    renderScrapes();
+    renderNfcRadar();
     haptic('light');
   });
 
@@ -6820,7 +7009,7 @@ function setupScrapeTab() {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#nfcQuickNiches .nfc-tag-btn').forEach(x => x.classList.remove('active'));
       btn.classList.add('active');
-      const input = document.getElementById('scrapeNicheInput');
+      const input = document.getElementById('nfcNicheInput');
       if (input) input.value = btn.dataset.val;
       haptic('light');
     });
@@ -6830,75 +7019,35 @@ function setupScrapeTab() {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#nfcQuickCities .nfc-tag-btn').forEach(x => x.classList.remove('active'));
       btn.classList.add('active');
-      const input = document.getElementById('scrapeCityInput');
+      const input = document.getElementById('nfcCityInput');
       if (input) input.value = btn.dataset.val;
       haptic('light');
     });
   });
 
-  document.querySelectorAll('#scrapeSourceSeg .scrape-seg-btn').forEach(b => {
+  document.querySelectorAll('#nfcSourceSeg .scrape-seg-btn').forEach(b => {
     b.addEventListener('click', () => {
-      scrapeState.form.source = b.dataset.value;
-      document.querySelectorAll('#scrapeSourceSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
+      nfcRadarState.form.source = b.dataset.value;
+      document.querySelectorAll('#nfcSourceSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
     });
   });
-  document.querySelectorAll('#scrapeReviewsFilterSeg .scrape-seg-btn').forEach(b => {
+  document.querySelectorAll('#nfcReviewsFilterSeg .scrape-seg-btn').forEach(b => {
     b.addEventListener('click', () => {
-      document.querySelectorAll('#scrapeReviewsFilterSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
+      document.querySelectorAll('#nfcReviewsFilterSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
     });
   });
-  document.querySelectorAll('#scrapeLimitSeg .scrape-seg-btn').forEach(b => {
+  document.querySelectorAll('#nfcLimitSeg .scrape-seg-btn').forEach(b => {
     b.addEventListener('click', () => {
-      document.querySelectorAll('#scrapeLimitSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
+      document.querySelectorAll('#nfcLimitSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
     });
   });
 
-  document.getElementById('submitScrapeBtn')?.addEventListener('click', submitScrape);
+  document.getElementById('submitNfcSearchBtn')?.addEventListener('click', submitNfcSearch);
 
-  document.getElementById('openApifyTokenBtn')?.addEventListener('click', async () => {
-    try {
-      const res = await fetch('/api/scrapes/token');
-      const json = await res.json();
-      const input = document.getElementById('apifyTokenInput');
-      if (input && json.masked) input.placeholder = json.masked;
-    } catch {}
-    openModal('modalApifyToken');
-  });
-
-  document.getElementById('saveApifyTokenBtn')?.addEventListener('click', async () => {
-    const input = document.getElementById('apifyTokenInput');
-    const token = (input?.value || '').trim();
-    if (!token) {
-      alert('Будь ласка, вставте токен Apify (починається на apify_api_...)');
-      return;
-    }
-    const btn = document.getElementById('saveApifyTokenBtn');
-    if (btn) { btn.disabled = true; btn.textContent = 'ЗБЕРІГАЮ…'; }
-    try {
-      const res = await fetch('/api/scrapes/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
-      });
-      const json = await res.json();
-      if (!json.success) throw new Error(json.error || 'error');
-      haptic('success');
-      scrapeState.mode = json.mode;
-      closeModal('modalApifyToken');
-      if (input) input.value = '';
-      fetchScrapes();
-      alert('✅ Apify API токен підключено!');
-    } catch (err) {
-      alert('Помилка: ' + err.message);
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'ЗБЕРЕГТИ ТОКЕН'; }
-    }
-  });
-
-  document.getElementById('scrapeJobsList')?.addEventListener('click', (e) => {
+  document.getElementById('nfcRadarJobsList')?.addEventListener('click', (e) => {
     const pitchBtn = e.target.closest('[data-nfc-act="pitch"]');
     if (pitchBtn) {
-      const job = scrapeState.jobs.find(j => j.id === pitchBtn.dataset.job);
+      const job = nfcRadarState.jobs.find(j => j.id === pitchBtn.dataset.job);
       const items = job ? getJobFlatItems(job) : [];
       const venue = items.find(v => (v.id === pitchBtn.dataset.venue || v.name === pitchBtn.dataset.venue));
       if (venue) copyVenueNfcPitch(venue, job);
@@ -6907,32 +7056,32 @@ function setupScrapeTab() {
 
     const crmBtn = e.target.closest('[data-nfc-act="crm"]');
     if (crmBtn) {
-      const job = scrapeState.jobs.find(j => j.id === crmBtn.dataset.job);
+      const job = nfcRadarState.jobs.find(j => j.id === crmBtn.dataset.job);
       const items = job ? getJobFlatItems(job) : [];
       const venue = items.find(v => (v.id === crmBtn.dataset.venue || v.name === crmBtn.dataset.venue));
       if (venue) addBizToCrm(venue, job?.cluster || job?.city);
       return;
     }
 
-    const actBtn = e.target.closest('[data-scrape-act]');
+    const actBtn = e.target.closest('[data-nfc-act]');
     if (actBtn) {
-      const job = scrapeState.jobs.find(j => j.id === actBtn.dataset.job);
+      const job = nfcRadarState.jobs.find(j => j.id === actBtn.dataset.job);
       if (!job) return;
-      const act = actBtn.dataset.scrapeAct;
-      if (act === 'csv') downloadScrapeCsv(job);
-      else if (act === 'send') sendScrapeToTelegram(job, 'all', actBtn);
-      else if (act === 'delete') deleteScrapeJob(job);
+      const act = actBtn.dataset.nfcAct;
+      if (act === 'csv') downloadNfcCsv(job);
+      else if (act === 'send') sendNfcToTelegram(job, actBtn);
+      else if (act === 'delete') deleteNfcJob(job);
       return;
     }
 
     if (e.target.closest('a')) return;
 
-    const jobHead = e.target.closest('[data-scrape-toggle-job]');
+    const jobHead = e.target.closest('[data-nfc-toggle-job]');
     if (jobHead) {
-      const id = jobHead.dataset.scrapeToggleJob;
-      const job = scrapeState.jobs.find(j => j.id === id);
+      const id = jobHead.dataset.nfcToggleJob;
+      const job = nfcRadarState.jobs.find(j => j.id === id);
       if (!job || job.status === 'running') return;
-      scrapeState.openJobs.has(id) ? scrapeState.openJobs.delete(id) : scrapeState.openJobs.add(id);
+      nfcRadarState.openJobs.has(id) ? nfcRadarState.openJobs.delete(id) : nfcRadarState.openJobs.add(id);
       jobHead.parentElement.classList.toggle('open');
       haptic('light');
     }
@@ -6940,7 +7089,8 @@ function setupScrapeTab() {
 
   initNfcRoiCalc();
   initNfcCatalog();
-  fetchScrapes();
+  renderNfcRadar();
 }
 
-setupScrapeTab();
+setupNfcRadarTab();
+
