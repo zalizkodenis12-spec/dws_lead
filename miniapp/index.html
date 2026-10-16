@@ -65,6 +65,10 @@
         <!-- Filter Pills Bar -->
         <div class="filter-pills-bar">
           <div class="filter-pills-left">
+            <button id="openNfcRadarPillBtn" class="filter-pill nfc-radar-pill" title="NFC Радар закладів під відгуки">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 9 9"></path><path d="M12 7a5 5 0 0 1 5 5"></path><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle></svg>
+              <span>NFC B2B</span>
+            </button>
             <button id="openNichesBtn" class="filter-pill">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
               <span id="activeNicheLabel">Категорії</span>
@@ -272,12 +276,13 @@
       </section>
 
       <!-- ============================================================
-           TAB 5: СКРАПІНГ (B2B бізнеси -> таблиці для обдзвону)
+           TAB 5: NFC РАДАР (B2B пошук закладів під NFC-картки & відгуки)
            ============================================================ -->
       <section id="tab-scrape" class="tab-view">
         <div class="view-header">
           <div class="view-title-wrap">
-            <h1 class="view-title">Скрапінг</h1>
+            <h1 class="view-title">NFC Радар</h1>
+            <span class="nfc-view-badge">B2B Відгуки</span>
             <button id="openApifyTokenBtn" class="scrape-api-badge" type="button" title="Налаштування Apify API">
               <span class="scrape-api-dot" id="scrapeApiDot"></span>
               <span id="scrapeApiLabel">Apify API</span>
@@ -285,36 +290,64 @@
           </div>
           <div class="leads-today-stat">
             <span class="leads-count-num" id="scrapeTotalNum">0</span>
-            <span class="leads-count-label" id="scrapeTotalLabel">бізнесів</span>
+            <span class="leads-count-label" id="scrapeTotalLabel">закладів</span>
           </div>
         </div>
 
-        <!-- Source launch buttons -->
-        <div class="scrape-sources">
-          <button type="button" class="scrape-source-btn" data-scrape-source="gmaps">
-            <span class="scrape-source-ico">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-            </span>
-            <span class="scrape-source-title">Google Maps</span>
-            <span class="scrape-source-sub">Бізнеси з карт</span>
+        <!-- Super Sales & ROI Tools Bar -->
+        <div class="nfc-tools-row">
+          <button id="openNfcRoiCalcBtn" class="nfc-tool-pill primary" type="button">
+            <span class="ico">📈</span>
+            <span class="txt">Калькулятор вигоди NFC</span>
           </button>
-          <button type="button" class="scrape-source-btn" data-scrape-source="instagram">
-            <span class="scrape-source-ico">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-            </span>
-            <span class="scrape-source-title">Instagram</span>
-            <span class="scrape-source-sub">Бізнес-профілі</span>
+          <button id="openNfcCatalogBtn" class="nfc-tool-pill secondary" type="button">
+            <span class="ico">💎</span>
+            <span class="txt">Каталог карток & Прайс</span>
           </button>
         </div>
 
-        <div class="scrape-section-label">МОЇ ПОШУКИ</div>
+        <!-- Quick Launch New Search Card -->
+        <div class="nfc-launch-card">
+          <div class="nfc-launch-left">
+            <div class="nfc-launch-title">Радар закладів твого міста</div>
+            <div class="nfc-launch-sub">Пошук закладів з відгуками до 300, скупчення в ТРЦ/районі та готові піші маршрути</div>
+          </div>
+          <button id="openNewNfcSearchBtn" type="button" class="btn btn--fill btn--sm nfc-launch-action-btn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            <span>НОВИЙ ЗБІР</span>
+          </button>
+        </div>
+
+        <!-- City Quick Filter Chips -->
+        <div class="nfc-filter-chips-wrap">
+          <div class="nfc-chips-scroll" id="nfcCityChips">
+            <button type="button" class="nfc-chip active" data-city="all">Всі локації</button>
+            <button type="button" class="nfc-chip" data-city="Київ">Київ</button>
+            <button type="button" class="nfc-chip" data-city="Львів">Львів</button>
+            <button type="button" class="nfc-chip" data-city="Одеса">Одеса</button>
+            <button type="button" class="nfc-chip" data-city="Дніпро">Дніпро</button>
+            <button type="button" class="nfc-chip" data-city="Харків">Харків</button>
+          </div>
+        </div>
+
+        <div class="scrape-section-label-row">
+          <span class="scrape-section-label">ЗБОРИ ЗАКЛАДІВ & МАРШРУТИ</span>
+          <div class="nfc-view-toggle">
+            <button type="button" class="nfc-view-btn active" id="nfcViewCardsBtn" title="Вигляд картками">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+            </button>
+            <button type="button" class="nfc-view-btn" id="nfcViewTableBtn" title="Вигляд таблицею">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+            </button>
+          </div>
+        </div>
         <div id="scrapeJobsList" class="scrape-jobs"></div>
       </section>
 
     </main>
 
     <!-- ============================================================
-         BOTTOM NAVIGATION BAR (4 TABS)
+         BOTTOM NAVIGATION BAR (5 TABS)
          ============================================================ -->
     <nav class="app-nav">
       <button class="nav-btn active" data-tab="tab-leads">
@@ -334,51 +367,83 @@
         <span>Профіль</span>
       </button>
       <button class="nav-btn" data-tab="tab-scrape">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
-        <span>Скрапінг</span>
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 9 9"></path><path d="M12 7a5 5 0 0 1 5 5"></path><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle></svg>
+        <span>NFC Радар</span>
       </button>
     </nav>
 
   </div> <!-- End .app-wrap -->
 
-  <!-- MODAL: НОВИЙ СКРАПІНГ -->
+  <!-- MODAL: НОВИЙ ЗБІР ЗАКЛАДІВ (NFC РАДАР) -->
   <div id="modalScrape" class="modal-overlay">
     <div class="modal-sheet">
       <div class="modal-header">
-        <h3 class="modal-title" style="flex: 1; text-align: center;">Новий пошук</h3>
+        <h3 class="modal-title" style="flex: 1; text-align: center;">Новий збір закладів (NFC Радар)</h3>
         <button class="modal-close" data-close="modalScrape">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label class="form-label">ДЖЕРЕЛО:</label>
+          <label class="form-label">ДЖЕРЕЛО ПОШУКУ:</label>
           <div class="scrape-seg" id="scrapeSourceSeg">
-            <button type="button" class="scrape-seg-btn active" data-value="gmaps">Google Maps</button>
+            <button type="button" class="scrape-seg-btn active" data-value="gmaps">Google Maps (Карти)</button>
             <button type="button" class="scrape-seg-btn" data-value="instagram">Instagram</button>
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label">НІША БІЗНЕСУ:</label>
-          <input type="text" id="scrapeNicheInput" class="form-input" placeholder="Наприклад: Автосервіс, Стоматологія, Салон краси...">
+          <label class="form-label">КАТЕГОРІЯ / НІША:</label>
+          <div class="nfc-quick-tags" id="nfcQuickNiches">
+            <button type="button" class="nfc-tag-btn active" data-val="Кафе, бари, ресторани">☕ Кафе / Бари</button>
+            <button type="button" class="nfc-tag-btn" data-val="Барбершопи, салони краси">💈 Салони / Барбери</button>
+            <button type="button" class="nfc-tag-btn" data-val="Стоматології, медклініки">🦷 Стоматології</button>
+            <button type="button" class="nfc-tag-btn" data-val="СТО, автомийки, детейлінг">🚗 СТО / Детейлінг</button>
+            <button type="button" class="nfc-tag-btn" data-val="Острівці в ТРЦ, магазини">🛍️ ТРЦ / Острівці</button>
+          </div>
+          <input type="text" id="scrapeNicheInput" class="form-input mt-2" placeholder="Введіть нішу або оберіть згори..." value="Кафе, бари, ресторани">
         </div>
 
         <div class="form-group">
-          <label class="form-label">МІСТО / РЕГІОН:</label>
-          <input type="text" id="scrapeCityInput" class="form-input" placeholder="Наприклад: Київ, Львів, Одеса, Варшава...">
+          <label class="form-label">МІСТО:</label>
+          <div class="nfc-quick-tags" id="nfcQuickCities">
+            <button type="button" class="nfc-tag-btn active" data-val="Київ">Київ</button>
+            <button type="button" class="nfc-tag-btn" data-val="Львів">Львів</button>
+            <button type="button" class="nfc-tag-btn" data-val="Одеса">Одеса</button>
+            <button type="button" class="nfc-tag-btn" data-val="Дніпро">Дніпро</button>
+            <button type="button" class="nfc-tag-btn" data-val="Харків">Харків</button>
+          </div>
+          <input type="text" id="scrapeCityInput" class="form-input mt-2" placeholder="Наприклад: Київ, Львів, Вінниця..." value="Київ">
         </div>
 
         <div class="form-group">
-          <label class="form-label">КІЛЬКІСТЬ БІЗНЕСІВ:</label>
+          <label class="form-label">ЛОКАЦІЯ / РАЙОН / ТРЦ (СКУПЧЕННЯ):</label>
+          <input type="text" id="scrapeClusterInput" class="form-input" placeholder="Наприклад: ТРЦ Ocean Plaza, Поділ, Хрещатик, Оболонь...">
+          <span class="form-hint" style="font-size: 0.74rem; color: var(--muted); margin-top: 4px; display: block;">
+            Вкажіть конкретний ТРЦ чи вулицю, щоб отримати заклади поруч один з одним для маршруту.
+          </span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">ФІЛЬТР ЗА КІЛЬКІСТЮ ВІДГУКІВ:</label>
+          <div class="scrape-seg" id="scrapeReviewsFilterSeg">
+            <button type="button" class="scrape-seg-btn active" data-value="300">До 300 (Топ)</button>
+            <button type="button" class="scrape-seg-btn" data-value="50">До 50 (Нові)</button>
+            <button type="button" class="scrape-seg-btn" data-value="150">До 150</button>
+            <button type="button" class="scrape-seg-btn" data-value="99999">Всі</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">КІЛЬКІСТЬ ЗАКЛАДІВ:</label>
           <div class="scrape-seg" id="scrapeLimitSeg">
-            <button type="button" class="scrape-seg-btn" data-value="20">20</button>
+            <button type="button" class="scrape-seg-btn" data-value="15">15</button>
+            <button type="button" class="scrape-seg-btn active" data-value="30">30</button>
             <button type="button" class="scrape-seg-btn" data-value="50">50</button>
-            <button type="button" class="scrape-seg-btn active" data-value="100">100</button>
-            <button type="button" class="scrape-seg-btn" data-value="200">200</button>
+            <button type="button" class="scrape-seg-btn" data-value="100">100</button>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" id="submitScrapeBtn" class="btn btn--fill btn--block">ЗАПУСТИТИ ПОШУК</button>
+        <button type="button" id="submitScrapeBtn" class="btn btn--fill btn--block">ЗАПУСТИТИ РАДАР</button>
       </div>
     </div>
   </div>
@@ -1204,6 +1269,146 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=3.6.0"></script>
+  <!-- MODAL: КАЛЬКУЛЯТОР ВИГОДИ NFC (ROI ДЛЯ ЗАКЛАДУ) -->
+  <div id="modalNfcRoiCalc" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title" style="flex: 1; text-align: center;">Калькулятор вигоди NFC</h3>
+        <button class="modal-close" data-close="modalNfcRoiCalc">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 14px; text-align: center; line-height: 1.4;">
+          Розрахуйте, скільки додаткового прибутку отримає заклад від підвищення рейтингу в Google Maps та збору відгуків через NFC-стійки.
+        </p>
+
+        <!-- Dynamic Inputs -->
+        <div class="form-group">
+          <div class="label-row" style="display:flex; justify-content:space-between;">
+            <label class="form-label">ПОТОЧНИЙ РЕЙТИНГ ЗАКЛАДУ:</label>
+            <span id="roiCurrentRatingVal" style="font-family:var(--ffh); font-weight:800; color:var(--warning);">4.2 ★</span>
+          </div>
+          <input type="range" id="roiCurrentRating" min="3.5" max="4.7" step="0.1" value="4.2" class="form-range" style="width:100%;">
+        </div>
+
+        <div class="form-group">
+          <div class="label-row" style="display:flex; justify-content:space-between;">
+            <label class="form-label">ГОСТЕЙ НА ДЕНЬ:</label>
+            <span id="roiGuestsVal" style="font-family:var(--ffh); font-weight:800; color:var(--accent);">60 гостей</span>
+          </div>
+          <input type="range" id="roiGuests" min="15" max="250" step="5" value="60" class="form-range" style="width:100%;">
+        </div>
+
+        <div class="form-group">
+          <div class="label-row" style="display:flex; justify-content:space-between;">
+            <label class="form-label">СЕРЕДНІЙ ЧЕК ЗАКЛАДУ:</label>
+            <span id="roiCheckVal" style="font-family:var(--ffh); font-weight:800; color:var(--black);">250 ₴</span>
+          </div>
+          <input type="range" id="roiCheck" min="80" max="1200" step="20" value="250" class="form-range" style="width:100%;">
+        </div>
+
+        <!-- Calculated Live Metrics -->
+        <div class="nfc-roi-results">
+          <div class="nfc-roi-metric-card">
+            <span class="lbl">ПРИРІСТ ВІДГУКІВ</span>
+            <div class="val text-accent" id="roiReviewsDelta">+54 відг / міс</div>
+            <span class="sub">100% живі оцінки 5★ від реальних гостей</span>
+          </div>
+          <div class="nfc-roi-metric-card">
+            <span class="lbl">НОВИЙ РЕЙТИНГ GOOGLE</span>
+            <div class="val text-success" id="roiTargetRating">4.9 ★ (ТОП-1)</div>
+            <span class="sub">+18% органічних клієнтів з локального пошуку</span>
+          </div>
+          <div class="nfc-roi-metric-card highlight">
+            <span class="lbl">ДОДАТКОВИЙ ПРИБУТОК ЗАКЛАДУ</span>
+            <div class="val text-accent-huge" id="roiExtraIncome">+81 000 ₴ / міс</div>
+            <span class="sub">Окупність 5 акрилових стійок (1 250 ₴) — всього за 12 годин!</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer flex-col gap-2">
+        <button type="button" id="copyRoiPitchBtn" class="btn btn--fill btn--block">📋 СКОПІЮВАТИ РОЗРАХУНОК ДЛЯ КЛІЄНТА</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: КАТАЛОГ NFC-ПРОДУКЦІЇ & ПРАЙС -->
+  <div id="modalNfcCatalog" class="modal-overlay">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h3 class="modal-title" style="flex: 1; text-align: center;">Каталог NFC & Прайс партій</h3>
+        <button class="modal-close" data-close="modalNfcCatalog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="nfc-catalog-intro">
+          Ми виготовляємо індивідуальні NFC-стійки та картки з будь-яким дизайном, фірмовими кольорами та логотипом закладу.
+        </div>
+
+        <!-- Products Showcase -->
+        <div class="nfc-products-list">
+          <div class="nfc-product-item">
+            <div class="nfc-product-ico">💎</div>
+            <div class="nfc-product-info">
+              <div class="title">Акрилові стійки на столики (L-подібні)</div>
+              <div class="sub">Преміум литий акрил 3 мм, стійкий УФ-друк, захист від вологи та спирту. Чіп NTAG213/215 + QR-код.</div>
+              <div class="price">від 250 ₴ / шт (найпопулярніше для кафе та ресторанів)</div>
+            </div>
+          </div>
+
+          <div class="nfc-product-item">
+            <div class="nfc-product-ico">💳</div>
+            <div class="nfc-product-info">
+              <div class="title">ПВХ NFC-картки з індивідуальним дизайном</div>
+              <div class="sub">Формат банківської карти, матове або глянцеве покриття, двосторонній повноколір. Для барберів, офіціантів, ресепшн.</div>
+              <div class="price">від 120 ₴ / шт</div>
+            </div>
+          </div>
+
+          <div class="nfc-product-item">
+            <div class="nfc-product-ico">✨</div>
+            <div class="nfc-product-info">
+              <div class="title">Фігурні підставки за контуром логотипу</div>
+              <div class="sub">Будь-яка складна форма з акрилу або композиту за індивідуальним ескізом замовника.</div>
+              <div class="price">від 320 ₴ / шт</div>
+            </div>
+          </div>
+
+          <div class="nfc-product-item">
+            <div class="nfc-product-ico">🪵</div>
+            <div class="nfc-product-info">
+              <div class="title">Дерев'яні еко-холдери з гравіюванням</div>
+              <div class="sub">Масив ясена/дуба, лазерне гравіювання лого, вбудований безконтактний чіп.</div>
+              <div class="price">від 290 ₴ / шт</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Batches -->
+        <div class="nfc-batches-box">
+          <div class="nfc-batch-title">ОПТОВІ ПАРТІЇ ТА ЗНИЖКИ:</div>
+          <div class="nfc-batch-row">
+            <span>🧪 1–2 шт (Тестовий зразок):</span>
+            <b>без націнки</b>
+          </div>
+          <div class="nfc-batch-row">
+            <span>☕ 5–10 шт (Кафе / Салон):</span>
+            <b>знижка 10%</b>
+          </div>
+          <div class="nfc-batch-row">
+            <span>🍽️ 20–50 шт (Ресторан / Готель):</span>
+            <b>знижка 20% + безкоштовний дизайн</b>
+          </div>
+          <div class="nfc-batch-row">
+            <span>🏢 100+ шт (Мережа закладів):</span>
+            <b>індивідуальний опт + прошивка</b>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer flex-col gap-2">
+        <button type="button" id="copyNfcKpBtn" class="btn btn--fill btn--block">📋 СКОПІЮВАТИ КП (КОМЕРЦІЙНУ ПРОПОЗИЦІЮ)</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js?v=3.7.0"></script>
 </body>
 </html>

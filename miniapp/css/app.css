@@ -3048,3 +3048,491 @@ body.dark-theme .order-leaf-badge.expected {
 .scrape-chip:hover { border-color: var(--accent); color: var(--accent); }
 
 #modalScrape .form-group { margin-bottom: 18px; }
+
+/* ============================================================
+   NFC RADAR & B2B SALES TOOLS DESIGN
+   ============================================================ */
+
+.nfc-radar-pill {
+  border-color: rgba(0, 102, 255, 0.4) !important;
+  background: var(--accent-bg) !important;
+  color: var(--accent) !important;
+  font-weight: 700 !important;
+}
+
+.nfc-view-badge {
+  font-family: var(--ffh);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: var(--pill);
+  background: rgba(0, 102, 255, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(0, 102, 255, 0.25);
+}
+
+.nfc-tools-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.nfc-tool-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  cursor: pointer;
+  font-family: var(--ffh);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  transition: var(--trans);
+}
+
+.nfc-tool-pill:hover {
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.nfc-tool-pill:active { transform: scale(0.98); }
+
+.nfc-tool-pill.primary {
+  background: linear-gradient(135deg, rgba(0, 102, 255, 0.08) 0%, rgba(0, 102, 255, 0.02) 100%);
+  border-color: rgba(0, 102, 255, 0.3);
+  color: var(--accent);
+}
+
+.nfc-tool-pill .ico { font-size: 1.1rem; }
+
+/* Launch Card */
+.nfc-launch-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.nfc-launch-left { flex: 1; min-width: 0; }
+.nfc-launch-title {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.96rem;
+  color: var(--black);
+}
+.nfc-launch-sub {
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.35;
+  margin-top: 2px;
+}
+.nfc-launch-action-btn {
+  flex-shrink: 0;
+  padding: 10px 16px;
+  white-space: nowrap;
+}
+
+/* Quick Filter Chips (Horizontal Scroll) */
+.nfc-filter-chips-wrap {
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.nfc-chips-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.nfc-chips-scroll::-webkit-scrollbar { display: none; }
+
+.nfc-chip {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: var(--pill);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--muted);
+  font-family: var(--ffh);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--trans);
+}
+
+.nfc-chip.active {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+/* Section Label Row with View Toggle */
+.scrape-section-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.nfc-view-toggle {
+  display: flex;
+  background: var(--input-bg);
+  border-radius: var(--r-sm);
+  padding: 2px;
+}
+
+.nfc-view-btn {
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--trans);
+}
+
+.nfc-view-btn.active {
+  background: var(--card-bg);
+  color: var(--black);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Quick Tags inside Modal */
+.nfc-quick-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nfc-tag-btn {
+  padding: 6px 10px;
+  border-radius: var(--pill);
+  border: 1px solid var(--border);
+  background: var(--card-sub);
+  color: var(--text);
+  font-family: var(--ff);
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--trans);
+}
+
+.nfc-tag-btn.active,
+.nfc-tag-btn:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Collection Card Enhancements */
+.nfc-collection-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: rgba(0, 102, 255, 0.08);
+  border-radius: var(--pill);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  margin-top: 3px;
+}
+
+.nfc-collection-actions-top {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 12px;
+}
+
+.nfc-collection-actions-top .btn {
+  flex: 1;
+  justify-content: center;
+  font-size: 0.78rem;
+  padding: 9px 12px;
+}
+
+/* Venue Item Cards */
+.nfc-venues-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.nfc-venue-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: var(--trans);
+}
+
+.nfc-venue-card:hover {
+  border-color: rgba(0, 102, 255, 0.35);
+  box-shadow: var(--shadow-sm);
+}
+
+.nfc-venue-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.nfc-venue-main { flex: 1; min-width: 0; }
+.nfc-venue-title {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.98rem;
+  color: var(--black);
+}
+
+.nfc-venue-address {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 2px;
+  line-height: 1.35;
+}
+
+.nfc-rating-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: var(--pill);
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.nfc-rating-pill.low {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.nfc-rating-pill.mid {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--warning);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.nfc-rating-pill.high {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+/* Pain Point Trigger Badge */
+.nfc-pain-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: var(--r-sm);
+  background: var(--card-sub);
+  border: 1px dashed var(--border);
+  font-size: 0.74rem;
+  color: var(--text);
+  line-height: 1.35;
+}
+
+.nfc-pain-badge b { color: var(--danger); }
+.nfc-pain-badge.new b { color: var(--warning); }
+.nfc-pain-badge.boost b { color: var(--success); }
+
+/* Venue Contacts & Links Row */
+.nfc-venue-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.nfc-link-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--pill);
+  border: 1px solid var(--border);
+  background: var(--card-sub);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.74rem;
+  font-weight: 600;
+  transition: var(--trans);
+}
+
+.nfc-link-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Three Core Action Buttons */
+.nfc-venue-actions {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 0.9fr;
+  gap: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.nfc-venue-actions .btn {
+  font-size: 0.72rem;
+  padding: 8px 6px;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+/* ROI Calculator Styles */
+.nfc-roi-results {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.nfc-roi-metric-card {
+  padding: 12px 14px;
+  background: var(--card-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+
+.nfc-roi-metric-card.highlight {
+  background: linear-gradient(135deg, rgba(0, 102, 255, 0.1) 0%, rgba(0, 102, 255, 0.02) 100%);
+  border-color: rgba(0, 102, 255, 0.35);
+}
+
+.nfc-roi-metric-card .lbl {
+  font-family: var(--ffh);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  display: block;
+}
+
+.nfc-roi-metric-card .val {
+  font-family: var(--ffh);
+  font-size: 1.25rem;
+  font-weight: 900;
+  margin: 2px 0;
+}
+
+.text-accent-huge {
+  color: var(--accent);
+  font-size: 1.55rem !important;
+}
+
+.nfc-roi-metric-card .sub {
+  font-size: 0.74rem;
+  color: var(--muted);
+  line-height: 1.35;
+  display: block;
+}
+
+/* NFC Catalog Showroom */
+.nfc-catalog-intro {
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.45;
+  margin-bottom: 14px;
+}
+
+.nfc-products-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.nfc-product-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: var(--card-sub);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+
+.nfc-product-ico {
+  font-size: 1.6rem;
+  line-height: 1;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.nfc-product-info .title {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--black);
+}
+
+.nfc-product-info .sub {
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+.nfc-product-info .price {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.82rem;
+  color: var(--accent);
+  margin-top: 4px;
+}
+
+.nfc-batches-box {
+  padding: 12px;
+  border-radius: var(--r);
+  background: var(--card-bg);
+  border: 1px dashed var(--border);
+}
+
+.nfc-batch-title {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.78rem;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+
+.nfc-batch-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.78rem;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.nfc-batch-row:last-child { border-bottom: none; }
+.nfc-batch-row b { color: var(--accent); }
