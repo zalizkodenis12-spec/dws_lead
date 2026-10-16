@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/app.css?v=3.9.1">
+  <link rel="stylesheet" href="css/app.css?v=3.9.2">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -268,25 +268,26 @@
           </div>
 
           <!-- MULTI-DEVICE CLOUD SYNC & LOGIN -->
-          <div class="form-group" style="margin-top: 16px; padding: 14px; background: rgba(0, 102, 255, 0.04); border: 1px solid rgba(0, 102, 255, 0.2); border-radius: var(--rad);">
+          <div class="form-group" style="margin-top: 16px; padding: 16px; background: var(--white); border: 1px solid var(--border); border-radius: var(--rad); box-shadow: var(--shadow-sm);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-              <label class="form-label" style="margin: 0; color: var(--brand); font-weight: 700;">🔄 СИНХРОНІЗАЦІЯ (ТЕЛЕФОН ↔ НОУТ):</label>
-              <span id="accountKeyBadge" style="font-size: 0.72rem; padding: 2px 6px; background: var(--brand); color: #fff; border-radius: 4px; font-weight: 600;">ID: 5278970111</span>
+              <label class="form-label" style="margin: 0; color: var(--brand); font-weight: 700; letter-spacing: 0.3px;">СИНХРОНІЗАЦІЯ (ТЕЛЕФОН / НОУТБУК):</label>
+              <span id="accountKeyBadge" style="font-size: 0.74rem; color: var(--muted); font-weight: 600;">ID: 5278970111</span>
             </div>
-            <p class="form-hint" style="margin-bottom: 12px; font-size: 0.75rem;">
-              Щоб відкрити цей самий профіль на ноутбоці або в іншому браузері і зберегти всі клієнти в CRM та доходи:
+            <p class="form-hint" style="margin-bottom: 14px; font-size: 0.76rem; line-height: 1.4;">
+              Збережіть дані в хмару Telegram або завантажте файл бекапу, щоб відкрити свій профіль на ноутбуці без втрати клієнтів у CRM та історії доходів:
             </p>
-            <div style="display: flex; gap: 8px;">
-              <button type="button" id="copySyncCodeBtn" class="btn btn--fill btn--sm" style="flex: 1; font-size: 0.75rem; padding: 10px 4px;">
-                📤 СКОПІЮВАТИ БЕКАП
+            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+              <button type="button" id="cloudSyncTgBtn" class="btn btn--fill btn--block" style="font-size: 0.8rem; padding: 12px 14px;">
+                СИНХРОНІЗУВАТИ З ХМАРОЮ TELEGRAM
               </button>
-              <button type="button" id="importSyncCodeBtn" class="btn btn--out btn--sm" style="flex: 1; font-size: 0.75rem; padding: 10px 4px;">
-                📥 ВВЕСТИ КОД НА НОУТІ
+              <button type="button" id="exportBackupFileBtn" class="btn btn--fill btn--block" style="font-size: 0.8rem; padding: 12px 14px;">
+                ЗАВАНТАЖИТИ ФАЙЛ БЕКАПУ НА НОУТБУК
+              </button>
+              <button type="button" id="importBackupFileBtn" class="btn btn--fill btn--block" style="font-size: 0.8rem; padding: 12px 14px;">
+                ВІДНОВИТИ ДАНІ З ФАЙЛУ АБО ХМАРИ
               </button>
             </div>
-            <button type="button" id="sendBackupTgBtn" class="btn btn--out btn--block btn--sm mt-2" style="font-size: 0.78rem;">
-              💬 Надіслати резервну копію в свій Telegram бот
-            </button>
+            <input type="file" id="syncFileInput" accept=".json,application/json" style="display: none;">
           </div>
 
           <button id="saveProfileBtn" class="btn btn--fill btn--block btn--lg">ЗБЕРЕГТИ НАЛАШТУВАННЯ</button>
@@ -1296,24 +1297,32 @@
     </div>
   </div>
 
-  <!-- MODAL: СИНХРОНІЗАЦІЯ З НОУТОМ (ВВЕДЕННЯ КОДУ) -->
+  <!-- MODAL: ВІДНОВЛЕННЯ ДАНИХ ДЛЯ НОУТБУКА -->
   <div id="modalSyncCode" class="modal-overlay">
     <div class="modal-sheet">
       <div class="modal-header">
-        <h3 class="modal-title">Синхронізація з ноутом</h3>
+        <h3 class="modal-title">Відновлення даних на ноутбуці</h3>
         <button class="modal-close" data-close="modalSyncCode">&times;</button>
       </div>
       <div class="modal-body">
-        <p class="form-hint">
-          Вставте сюди код синхронізації або резервну копію з телефону, щоб завантажити всі ваші клієнти в CRM, доходи та налаштування:
+        <p class="form-hint" style="margin-bottom: 14px;">
+          Оберіть зручний спосіб перенесення даних на ноутбук:
         </p>
-        <div class="form-group">
-          <label class="form-label" for="syncCodeInput">КОД СИНХРОНІЗАЦІЇ / БЕКАП:</label>
-          <textarea id="syncCodeInput" class="form-textarea" rows="5" placeholder="Вставте скопійований код сюди..."></textarea>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px;">
+          <button type="button" id="modalRestoreCloudBtn" class="btn btn--fill btn--block" style="padding: 12px 14px; font-size: 0.82rem;">
+            ЗАВАНТАЖИТИ З ХМАРИ TELEGRAM
+          </button>
+          <button type="button" id="modalChooseFileBtn" class="btn btn--fill btn--block" style="padding: 12px 14px; font-size: 0.82rem;">
+            ОБРАТИ ФАЙЛ БЕКАПУ (.JSON)
+          </button>
+        </div>
+        <div class="form-group" style="margin-top: 10px;">
+          <label class="form-label" for="syncCodeInput">АБО ВСТАВТЕ ТЕКСТ БЕКАПУ ВРУЧНУ:</label>
+          <textarea id="syncCodeInput" class="form-textarea" rows="3" placeholder="Вставте сюди скопійований текст..."></textarea>
         </div>
       </div>
       <div class="modal-footer justify-center flex-col gap-2">
-        <button id="applySyncCodeBtn" class="btn btn--fill btn--block">📥 ЗАСТОСУВАТИ І СИНХРОНІЗУВАТИ</button>
+        <button id="applySyncCodeBtn" class="btn btn--fill btn--block" style="padding: 12px 14px; font-size: 0.82rem;">ЗАСТОСУВАТИ ДАНІ</button>
       </div>
     </div>
   </div>
@@ -1531,6 +1540,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=3.9.1"></script>
+  <script src="js/app.js?v=3.9.2"></script>
 </body>
 </html>

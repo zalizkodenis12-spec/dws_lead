@@ -6831,42 +6831,188 @@ function setupAccountSync() {
     badge.textContent = 'ID: ' + (state.accountKey || '5278970111');
   }
 
-  // 1. Copy sync code / full backup
-  const copySyncBtn = document.getElementById('copySyncCodeBtn');
-  if (copySyncBtn) {
-    copySyncBtn.addEventListener('click', () => {
+  // 1. Sync to Telegram CloudStorage (1-click cloud sync between phone & laptop Telegram Desktop)
+  const cloudSyncBtn = document.getElementById('cloudSyncTgBtn');
+  if (cloudSyncBtn) {
+    cloudSyncBtn.addEventListener('click', () => {
+      haptic('medium');
+      cloudSyncBtn.textContent = 'ЗБЕРЕЖЕННЯ...';
+
+      const cs = window.Telegram?.WebApp?.CloudStorage;
+      const crmStr = JSON.stringify(state.crm || []);
+      const incStr = JSON.stringify(state.income || { records: [], currency: '₴' });
+      const profStr = JSON.stringify(state.profile || {});
+      const takenStr = JSON.stringify([...(state.takenLeadIds || [])]);
+
+      if (cs && cs.setItem) {
+        cs.setItem('dws_crm', crmStr, () => {});
+        cs.setItem('dws_income', incStr, () => {});
+        cs.setItem('dws_profile', profStr, () => {});
+        cs.setItem('dws_taken_leads', takenStr, () => {
+          cloudSyncBtn.textContent = 'ЗБЕРЕЖЕНО В ХМАРУ ✓';
+          setTimeout(() => { cloudSyncBtn.textContent = 'СИНХРОНІЗУВАТИ З ХМАРОЮ TELEGRAM'; }, 2500);
+          alert('Дані збережено в хмару Telegram! Коли ви відкриєте додаток у Telegram на ноутбуці, все автоматично синхронізується.');
+        });
+      } else {
+        // Fallback for browser
+        localStorage.setItem('dws_crm', crmStr);
+        localStorage.setItem('dws_income', incStr);
+        localStorage.setItem('dws_profile', profStr);
+        localStorage.setItem('dws_taken_leads', takenStr);
+        cloudSyncBtn.textContent = 'ЗБЕРЕЖЕНО ЛОКАЛЬНО ✓';
+        setTimeout(() => { cloudSyncBtn.textContent = 'СИНХРОНІЗУВАТИ З ХМАРОЮ TELEGRAM'; }, 2500);
+        alert('Дані збережено! Для синхронізації з іншим браузером скористайтеся кнопкою "Завантажити файл бекапу".');
+      }
+
+      // Also sync to backend API if reachable
+      syncAccountToServer();
+    });
+  }
+
+  // 2. Export backup as JSON file (Download file directly to laptop/phone without long codes!)
+  const exportFileBtn = document.getElementById('exportBackupFileBtn');
+  if (exportFileBtn) {
+    exportFileBtn.addEventListener('click', () => {
       haptic('light');
       const backupData = {
-        version: '3.9.0',
+        app: 'DWS Lead',
+        version: '3.9.1',
         accountKey: state.accountKey || '5278970111',
         crm: state.crm || [],
         income: state.income || { records: [], currency: '₴' },
         profile: state.profile || {},
         takenLeadIds: [...(state.takenLeadIds || [])],
-        timestamp: Date.now()
+        exportedAt: new Date().toISOString()
       };
-      const jsonStr = JSON.stringify(backupData);
-      const encoded = 'DWS_BACKUP_' + btoa(unescape(encodeURIComponent(jsonStr)));
 
-      if (navigator.clipboard?.writeText) {
-        navigator.clipboard.writeText(encoded).catch(() => {});
-      }
-      copySyncBtn.textContent = 'СКОПІЙОВАНО ✓';
-      setTimeout(() => { copySyncBtn.textContent = '📤 СКОПІЮВАТИ БЕКАП'; }, 2500);
-      alert('Код синхронізації скопійовано! Вставте його на ноутбуці через кнопку "Ввести код на ноуті", щоб миттєво підтягнути всі дані.');
+      const jsonStr = JSON.stringify(backupData, null, 2);
+      const blob = new Blob([jsonStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `dws-lead-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      exportFileBtn.textContent = 'ФАЙЛ ЗАВАНТАЖЕНО ✓';
+      setTimeout(() => { exportFileBtn.textContent = 'ЗАВАНТАЖИТИ ФАЙЛ БЕКАПУ НА НОУТБУК'; }, 2500);
     });
   }
 
-  // 2. Open import sync code modal
-  const importSyncBtn = document.getElementById('importSyncCodeBtn');
-  if (importSyncBtn) {
-    importSyncBtn.addEventListener('click', () => {
+  // 3. Open restore modal
+  const importFileBtn = document.getElementById('importBackupFileBtn');
+  if (importFileBtn) {
+    importFileBtn.addEventListener('click', () => {
       haptic('light');
       openModal('modalSyncCode');
     });
   }
 
-  // 3. Apply sync code on laptop / browser
+  // 4. Modal action: Restore from Telegram Cloud
+  const modalRestoreCloud = document.getElementById('modalRestoreCloudBtn');
+  if (modalRestoreCloud) {
+    modalRestoreCloud.addEventListener('click', () => {
+      haptic('light');
+      const cs = window.Telegram?.WebApp?.CloudStorage;
+      if (!cs || !cs.getItem) {
+        alert('Хмара Telegram доступна при відкритті додатка через Telegram Desktop на ноутбуці або в телефоні.');
+        return;
+      }
+
+      cs.getItem('dws_crm', (err1, crmRaw) => {
+        if (!err1 && crmRaw) {
+          try {
+            state.crm = JSON.parse(crmRaw);
+            localStorage.setItem('dws_crm', crmRaw);
+          } catch(e) {}
+        }
+        cs.getItem('dws_income', (err2, incRaw) => {
+          if (!err2 && incRaw) {
+            try {
+              state.income = JSON.parse(incRaw);
+              localStorage.setItem('dws_income', incRaw);
+            } catch(e) {}
+          }
+          cs.getItem('dws_profile', (err3, profRaw) => {
+            if (!err3 && profRaw) {
+              try {
+                state.profile = { ...state.profile, ...JSON.parse(profRaw) };
+                localStorage.setItem('dws_profile', profRaw);
+              } catch(e) {}
+            }
+            cs.getItem('dws_taken_leads', (err4, takenRaw) => {
+              if (!err4 && takenRaw) {
+                try {
+                  state.takenLeadIds = new Set(JSON.parse(takenRaw));
+                  localStorage.setItem('dws_taken_leads', takenRaw);
+                } catch(e) {}
+              }
+
+              haptic('success');
+              closeModal('modalSyncCode');
+              renderCrm();
+              renderIncome();
+              filterAndRenderLeads();
+              initProfileForm();
+              alert('Дані успішно завантажено з хмари Telegram! Усі клієнти та доходи на місці.');
+            });
+          });
+        });
+      });
+    });
+  }
+
+  // 5. Modal action: Choose JSON file
+  const modalChooseFile = document.getElementById('modalChooseFileBtn');
+  const syncFileInput = document.getElementById('syncFileInput');
+  if (modalChooseFile && syncFileInput) {
+    modalChooseFile.addEventListener('click', () => {
+      syncFileInput.click();
+    });
+
+    syncFileInput.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          if (Array.isArray(data.crm)) {
+            state.crm = data.crm;
+            localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+          }
+          if (data.income && Array.isArray(data.income.records)) {
+            state.income = data.income;
+            localStorage.setItem('dws_income', JSON.stringify(state.income));
+          }
+          if (data.profile) {
+            state.profile = { ...state.profile, ...data.profile };
+            localStorage.setItem('dws_profile', JSON.stringify(state.profile));
+          }
+          if (Array.isArray(data.takenLeadIds)) {
+            state.takenLeadIds = new Set(data.takenLeadIds);
+            localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
+          }
+
+          haptic('success');
+          closeModal('modalSyncCode');
+          renderCrm();
+          renderIncome();
+          filterAndRenderLeads();
+          initProfileForm();
+          alert('Файл бекапу успішно застосовано! Усі клієнти в CRM та доходи завантажено на ноутбук.');
+        } catch (err) {
+          alert('Помилка читання файлу. Переконайтеся, що ви обрали файл бекапу у форматі .json.');
+        }
+      };
+      reader.readAsText(file);
+    });
+  }
+
+  // 6. Modal action: Apply manual text/code if pasted
   const applySyncBtn = document.getElementById('applySyncCodeBtn');
   const syncCodeInput = document.getElementById('syncCodeInput');
   if (applySyncBtn && syncCodeInput) {
@@ -6897,10 +7043,6 @@ function setupAccountSync() {
           state.takenLeadIds = new Set(data.takenLeadIds);
           localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
         }
-        if (data.accountKey) {
-          state.accountKey = data.accountKey;
-          localStorage.setItem('dws_account_key', state.accountKey);
-        }
 
         haptic('success');
         closeModal('modalSyncCode');
@@ -6908,61 +7050,9 @@ function setupAccountSync() {
         renderIncome();
         filterAndRenderLeads();
         initProfileForm();
-        alert('✅ Успішно синхронізовано! Всі клієнти в CRM, доходи та налаштування перенесені на ноутбук.');
+        alert('Дані успішно застосовано! Усі клієнти та доходи відновлено.');
       } catch (err) {
-        alert('Помилка читання коду. Переконайтеся, що ви скопіювали весь код без змін.');
-      }
-    });
-  }
-
-  // 4. Send backup to Telegram bot
-  const sendBackupTgBtn = document.getElementById('sendBackupTgBtn');
-  if (sendBackupTgBtn) {
-    sendBackupTgBtn.addEventListener('click', async () => {
-      haptic('light');
-      sendBackupTgBtn.textContent = 'Відправка...';
-
-      const backupData = {
-        version: '3.9.0',
-        accountKey: state.accountKey || '5278970111',
-        crm: state.crm || [],
-        income: state.income || { records: [], currency: '₴' },
-        profile: state.profile || {},
-        takenLeadIds: [...(state.takenLeadIds || [])],
-        timestamp: Date.now()
-      };
-      const jsonStr = JSON.stringify(backupData);
-      const encoded = 'DWS_BACKUP_' + btoa(unescape(encodeURIComponent(jsonStr)));
-
-      const botToken = '8953225581:AAG7lpvh6JHCbyMKfsz4qEucd_7qqgh6koM';
-      const chatId = state.accountKey && /^\d+$/.test(state.accountKey) ? state.accountKey : '5278970111';
-
-      const msg = `📦 <b>Резервна копія DWS Lead для ноутбука</b>\n\n` +
-        `Клієнтів у CRM: <b>${state.crm.length}</b>\n` +
-        `Записів доходу: <b>${state.income.records?.length || 0}</b>\n\n` +
-        `Скопіюйте код нижче та вставте його в додатку на ноутбуці (Профіль -> «Ввести код на ноуті»):\n\n` +
-        `<code>${encoded}</code>`;
-
-      try {
-        const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: chatId,
-            text: msg,
-            parse_mode: 'HTML'
-          })
-        });
-        if (res.ok) {
-          sendBackupTgBtn.textContent = 'ВІДПРАВЛЕНО В ТЕЛЕГРАМ ✓';
-          setTimeout(() => { sendBackupTgBtn.textContent = '💬 Надіслати резервну копію в свій Telegram бот'; }, 3000);
-          alert('Резервну копію надіслано вам у Telegram-бот! Відкрийте бот на ноуті, скопіюйте код та вставте в додатку.');
-        } else {
-          throw new Error('Telegram API error');
-        }
-      } catch (err) {
-        sendBackupTgBtn.textContent = '💬 Надіслати резервну копію в свій Telegram бот';
-        alert('Не вдалося надіслати. Скористайтеся кнопкою "Скопіювати бекап".');
+        alert('Помилка обробки тексту. Перевірте правильність введених даних.');
       }
     });
   }
