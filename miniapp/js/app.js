@@ -10478,7 +10478,7 @@ function initDocumentsHub() {
 
   // Quick Copy IBAN button
   document.getElementById('copyIbanQuickBtn')?.addEventListener('click', () => {
-    const iban = (document.getElementById('invReqIban')?.textContent || '').trim();
+    const iban = (document.getElementById('reqIbanInput')?.value || state.requisites?.iban || '').trim();
     if (!iban) return;
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(iban).then(() => {
@@ -10521,18 +10521,6 @@ function renderRequisitesTab() {
   const bank = req.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)';
   const purpose = req.purpose || 'Оплата за інформаційно-рекламні послуги згідно домовленості';
 
-  const reqRecEl = document.getElementById('invReqRecipient');
-  const reqIbanEl = document.getElementById('invReqIban');
-  const reqEdrpouEl = document.getElementById('invReqEdrpou');
-  const reqBankEl = document.getElementById('invReqBank');
-  const reqPurpEl = document.getElementById('invReqPurpose');
-
-  if (reqRecEl) reqRecEl.textContent = recipient;
-  if (reqIbanEl) reqIbanEl.textContent = iban;
-  if (reqEdrpouEl) reqEdrpouEl.textContent = edrpou;
-  if (reqBankEl) reqBankEl.textContent = bank;
-  if (reqPurpEl) reqPurpEl.textContent = purpose;
-
   // Form inputs
   const inRec = document.getElementById('reqRecipientInput');
   const inIban = document.getElementById('reqIbanInput');
@@ -10548,12 +10536,11 @@ function renderRequisitesTab() {
 }
 
 function sendInvoiceToTelegram() {
-  const req = state.requisites || {};
-  const recipient = req.recipient || 'Залізко Денис Олександрович';
-  const iban = req.iban || 'UA683220010000026007300123456';
-  const edrpou = req.edrpou || '3624800000';
-  const bank = req.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)';
-  const purpose = req.purpose || 'Оплата за інформаційно-рекламні послуги згідно домовленості';
+  const recipient = (document.getElementById('reqRecipientInput')?.value || state.requisites?.recipient || 'Залізко Денис Олександрович').trim();
+  const iban = (document.getElementById('reqIbanInput')?.value || state.requisites?.iban || 'UA683220010000026007300123456').trim();
+  const edrpou = (document.getElementById('reqEdrpouInput')?.value || state.requisites?.edrpou || '3624800000').trim();
+  const bank = (document.getElementById('reqBankInput')?.value || state.requisites?.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)').trim();
+  const purpose = (document.getElementById('reqPurposeInput')?.value || state.requisites?.purpose || 'Оплата за інформаційно-рекламні послуги згідно домовленості').trim();
 
   const text = `Вітаю!\n\n` +
     `Реквізити для оплати (IBAN):\n` +
@@ -10573,12 +10560,11 @@ function sendInvoiceToTelegram() {
 }
 
 function copyRequisitesToClipboard() {
-  const req = state.requisites || {};
-  const recipient = req.recipient || 'Залізко Денис Олександрович';
-  const iban = req.iban || 'UA683220010000026007300123456';
-  const edrpou = req.edrpou || '3624800000';
-  const bank = req.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)';
-  const purpose = req.purpose || 'Оплата за інформаційно-рекламні послуги згідно домовленості';
+  const recipient = (document.getElementById('reqRecipientInput')?.value || state.requisites?.recipient || 'Залізко Денис Олександрович').trim();
+  const iban = (document.getElementById('reqIbanInput')?.value || state.requisites?.iban || 'UA683220010000026007300123456').trim();
+  const edrpou = (document.getElementById('reqEdrpouInput')?.value || state.requisites?.edrpou || '3624800000').trim();
+  const bank = (document.getElementById('reqBankInput')?.value || state.requisites?.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)').trim();
+  const purpose = (document.getElementById('reqPurposeInput')?.value || state.requisites?.purpose || 'Оплата за інформаційно-рекламні послуги згідно домовленості').trim();
 
   const text = `Реквізити для оплати (IBAN):\n` +
     `• Отримувач: ${recipient}\n` +

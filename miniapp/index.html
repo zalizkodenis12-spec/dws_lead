@@ -19,7 +19,7 @@
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.4.0">
+  <link rel="stylesheet" href="css/app.css?v=4.4.1">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -473,48 +473,10 @@
           </div>
         </div>
 
-        <!-- Clean B2B Requisites Card -->
+        <!-- Unified B2B Requisites Card -->
         <div class="card p-3 mb-3" style="background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--r);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
-            <div style="font-weight: 800; font-size: 0.92rem; color: var(--black);">Оплата за безготівковим розрахунком</div>
-            <span class="badge" style="background: rgba(0, 102, 255, 0.1); color: var(--accent); font-weight: 700;">IBAN</span>
-          </div>
-
-          <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div>
-              <div style="font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px;">Отримувач (ПІБ):</div>
-              <div id="invReqRecipient" style="font-size: 0.88rem; font-weight: 700; color: var(--black); margin-top: 2px;">Залізко Денис Олександрович</div>
-            </div>
-
-            <div style="background: var(--card-sub); border: 1px solid var(--border); border-radius: var(--rad-sm); padding: 10px 12px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <span style="font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase;">Рахунок IBAN:</span>
-                <button type="button" id="copyIbanQuickBtn" class="btn btn--xs btn--out" style="padding: 2px 8px; font-size: 0.7rem; border-color: rgba(0,102,255,0.3); color: var(--accent);">
-                  Скопіювати IBAN
-                </button>
-              </div>
-              <div id="invReqIban" style="font-family: monospace; font-size: 0.86rem; font-weight: 800; color: var(--accent); word-break: break-all;">UA683220010000026007300123456</div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-              <div>
-                <div style="font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px;">РНОКПП (ІПН) / ЄДРПОУ:</div>
-                <div id="invReqEdrpou" style="font-size: 0.86rem; font-weight: 700; color: var(--black); margin-top: 2px;">3624800000</div>
-              </div>
-              <div>
-                <div style="font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px;">Банк отримувача:</div>
-                <div id="invReqBank" style="font-size: 0.86rem; font-weight: 700; color: var(--black); margin-top: 2px;">monobank (АТ «УНІВЕРСАЛ БАНК»)</div>
-              </div>
-            </div>
-
-            <div>
-              <div style="font-size: 0.7rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px;">Призначення платежу:</div>
-              <div id="invReqPurpose" style="font-size: 0.82rem; color: var(--black); margin-top: 2px; line-height: 1.4;">Оплата за інформаційно-рекламні послуги згідно домовленості</div>
-            </div>
-          </div>
-
-          <!-- Quick Action Buttons -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px;">
+          <!-- Top Action Buttons -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
             <button type="button" id="invCopyDetailsBtn" class="btn btn--fill" style="padding: 10px 8px; font-size: 0.78rem;">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
               <span>Скопіювати реквізити</span>
@@ -524,12 +486,6 @@
               <span>В Telegram клієнту</span>
             </button>
           </div>
-        </div>
-
-        <!-- Requisites Settings Form -->
-        <div class="card p-3 mb-3" style="background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--r);">
-          <div style="font-weight: 800; font-size: 0.88rem; color: var(--black); margin-bottom: 4px;">Редагувати реквізити</div>
-          <div style="font-size: 0.74rem; color: var(--muted); margin-bottom: 12px;">Збережені дані автоматично синхронізуються та використовуються при відправці клієнтам</div>
 
           <div class="form-group mb-2">
             <label class="form-sublabel">ОТРИМУВАЧ (ПІБ):</label>
@@ -537,8 +493,13 @@
           </div>
 
           <div class="form-group mb-2">
-            <label class="form-sublabel">IBAN РАХУНОК:</label>
-            <input type="text" id="reqIbanInput" class="form-input" placeholder="UA683220010000026007300123456" value="UA683220010000026007300123456">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+              <label class="form-sublabel" style="margin-bottom: 0;">IBAN РАХУНОК:</label>
+              <button type="button" id="copyIbanQuickBtn" class="btn btn--xs btn--out" style="padding: 1px 6px; font-size: 0.68rem; border-color: rgba(0,102,255,0.3); color: var(--accent);">
+                Копіювати IBAN
+              </button>
+            </div>
+            <input type="text" id="reqIbanInput" class="form-input" style="font-family: monospace; font-weight: 700; color: var(--accent);" placeholder="UA683220010000026007300123456" value="UA683220010000026007300123456">
           </div>
 
           <div class="form-group mb-2">
@@ -1909,6 +1870,6 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.4.0"></script>
+  <script src="js/app.js?v=4.4.1"></script>
 </body>
 </html>
