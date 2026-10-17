@@ -8480,10 +8480,7 @@ async function submitScrape() {
   fetchScrapes();
 }
 
-function downloadScrapeCsv(job, cat) {
-  const csvContent = buildCsvLocal(job, cat);
-  const fileName = `vapi_${job.niche || 'b2b'}_${cat || 'all'}_${Date.now()}.csv`.replace(/[^\p{L}\p{N}._-]+/gu, '_');
-
+function triggerCsvDownload(csvContent, fileName) {
   try {
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -8496,15 +8493,79 @@ function downloadScrapeCsv(job, cat) {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }, 1500);
+    showToast('Файл ' + fileName + ' завантажено!');
+    haptic('success');
   } catch (err) {
     console.warn('Blob error:', err);
+    showToast('Помилка вивантаження файлу');
+  }
+}
+
+function openCsvPreviewModal(title, headers, rows, rawCsv, fileName) {
+  const titleEl = document.getElementById('csvPreviewTitle');
+  const statsEl = document.getElementById('csvPreviewStats');
+  const wrapEl = document.getElementById('csvPreviewTableWrap');
+
+  if (titleEl) titleEl.textContent = 'CSV: ' + (title || 'Таблиця лідів');
+  if (statsEl) statsEl.textContent = `Всього знайдено закладів: ${rows.length}`;
+
+  if (wrapEl) {
+    const thead = `<tr>${headers.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr>`;
+    const tbody = rows.map(r => `<tr>${r.map(c => `<td>${escapeHtml(String(c ?? ''))}</td>`).join('')}</tr>`).join('');
+    wrapEl.innerHTML = `<table class="csv-table"><thead>${thead}</thead><tbody>${tbody}</tbody></table>`;
   }
 
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(csvContent).catch(() => {});
+  const copyBtn = document.getElementById('copyCsvContentBtn');
+  if (copyBtn) {
+    copyBtn.onclick = () => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(rawCsv).then(() => {
+          showToast('Всі дані скопійовано в буфер обміну');
+          haptic('success');
+        }).catch(() => {
+          fallbackCopy(rawCsv, title);
+        });
+      } else {
+        fallbackCopy(rawCsv, title);
+      }
+    };
   }
-  showToast('CSV таблицю завантажено (та скопійовано в буфер)');
-  haptic('success');
+
+  const downloadBtn = document.getElementById('downloadCsvFileBtn');
+  if (downloadBtn) {
+    downloadBtn.onclick = () => {
+      triggerCsvDownload(rawCsv, fileName);
+    };
+  }
+
+  openModal('modalCsvPreview');
+  haptic('light');
+}
+
+function downloadScrapeCsv(job, cat) {
+  const cats = cat === 'all' ? Object.keys(SCRAPE_CATS) : [cat];
+  const headers = ['Телефон', 'Назва', 'Ніша', 'Послуга', 'Причина / Біль', 'Місто', 'Сайт', 'Рейтинг', 'Відгуки'];
+  const dataRows = [];
+  cats.forEach(c => {
+    (job.groups?.[c] || []).forEach(b => {
+      dataRows.push([
+        b.phone || '—',
+        b.name || '—',
+        b.niche || job.niche || '—',
+        b.service || SCRAPE_SERVICE[c] || '—',
+        b.reason || '—',
+        b.city || job.city || '—',
+        b.website || '—',
+        b.rating ? Number(b.rating).toFixed(1) : '—',
+        b.reviews || 0
+      ]);
+    });
+  });
+
+  const csvContent = buildCsvLocal(job, cat);
+  const fileName = `vapi_${job.niche || 'b2b'}_${cat || 'all'}_${Date.now()}.csv`.replace(/[^\p{L}\p{N}._-]+/gu, '_');
+
+  openCsvPreviewModal((job.niche || 'Скрапінг') + (cat && cat !== 'all' ? ` (${cat})` : ''), headers, dataRows, csvContent, fileName);
 }
 
 async function sendScrapeToTelegram(job, cat, btn) {
@@ -9058,7 +9119,7 @@ function copyVenueNfcPitch(venue, job) {
   const pitch = generateNfcPitch(venue, job);
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(pitch).then(() => {
-      showToast('NFC-офер для «' + venue.name + '» скопійовано!');
+      showToast('Готовий офер для «' + venue.name + '» скопійовано!');
       haptic('success');
     }).catch(() => {
       fallbackCopy(pitch, venue.name);
@@ -9066,6 +9127,49 @@ function copyVenueNfcPitch(venue, job) {
   } else {
     fallbackCopy(pitch, venue.name);
   }
+
+  const titleEl = document.getElementById('venuePitchModalTitle');
+  const infoEl = document.getElementById('venuePitchVenueInfo');
+  const textEl = document.getElementById('venuePitchText');
+
+  if (titleEl) titleEl.textContent = 'Офер: ' + (venue.name || 'Заклад');
+  if (infoEl) {
+    const starStr = venue.rating ? Number(venue.rating).toFixed(1) : '—';
+    const revStr = venue.reviews || 0;
+    const addrStr = venue.address || job?.cluster || job?.city || '—';
+    infoEl.innerHTML = `<b>Заклад:</b> ${escapeHtml(venue.name)} &bull; <b>Рейтинг:</b> ★ ${starStr} (${revStr})<br><b>Адреса:</b> ${escapeHtml(addrStr)}`;
+  }
+  if (textEl) textEl.value = pitch;
+
+  const copyBtn = document.getElementById('copyVenuePitchBtn');
+  if (copyBtn) {
+    copyBtn.onclick = () => {
+      const val = textEl ? textEl.value : pitch;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(val).then(() => {
+          showToast('Текст оферу скопійовано!');
+          haptic('success');
+        });
+      } else {
+        fallbackCopy(val, venue.name);
+      }
+    };
+  }
+
+  const shareTgBtn = document.getElementById('shareVenuePitchTgBtn');
+  if (shareTgBtn) {
+    shareTgBtn.onclick = () => {
+      const val = textEl ? textEl.value : pitch;
+      const tgUrl = 'https://t.me/share/url?url=' + encodeURIComponent('') + '&text=' + encodeURIComponent(val);
+      if (window.Telegram?.WebApp?.openTelegramLink) {
+        window.Telegram.WebApp.openTelegramLink(tgUrl);
+      } else {
+        window.open(tgUrl, '_blank');
+      }
+    };
+  }
+
+  openModal('modalVenuePitch');
 }
 
 function fallbackCopy(text, name) {
@@ -9075,7 +9179,7 @@ function fallbackCopy(text, name) {
   ta.select();
   document.execCommand('copy');
   document.body.removeChild(ta);
-  showToast('NFC-офер для «' + name + '» скопійовано!');
+  showToast('Офер для «' + name + '» скопійовано!');
   haptic('success');
 }
 
@@ -9153,18 +9257,7 @@ function renderNfcRadar() {
     let body = '';
     if (job.status === 'done' && items.length > 0) {
       body = `
-        <div class="scrape-job-body">
-          <div class="nfc-cluster-action-bar">
-            <div class="nfc-cluster-info">
-              <div class="nfc-cluster-name">${job.cluster || (job.city + ' — ' + job.niche)}</div>
-              <div class="nfc-cluster-sub">Скупчення закладів поруч для пішого обходу з NFC-зразками</div>
-            </div>
-            <a href="${routeUrl}" target="_blank" rel="noopener" class="btn btn--fill btn--sm nfc-route-link-btn">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
-              <span>ПІШИЙ МАРШРУТ (MAPS)</span>
-            </a>
-          </div>
-
+        <div class="scrape-job-body" style="padding-top: 14px;">
           ${renderNfcVenuesList(job, items)}
 
           <div class="scrape-job-actions" style="margin-top: 14px;">
@@ -9270,14 +9363,13 @@ function renderNfcVenuesList(job, items) {
 
         return `
           <div class="nfc-venue-card">
-            <div class="nfc-venue-top">
-              <div class="nfc-venue-header">
+            <div class="nfc-venue-top-row">
+              <div class="nfc-venue-title-wrap">
                 <span class="nfc-venue-idx">#${idx + 1}</span>
-                <h4 class="nfc-venue-name">${v.name}</h4>
+                <span class="nfc-venue-name" title="${v.name}">${v.name}</span>
               </div>
               <div class="nfc-venue-score-badge ${(v.rating && v.rating <= 4.3) ? 'warning' : 'good'}">
-                ★ ${v.rating ? Number(v.rating).toFixed(1) : '—'}
-                <span class="revs">(${v.reviews || 0} відг)</span>
+                ★ ${v.rating ? Number(v.rating).toFixed(1) : '—'} <span class="revs">(${v.reviews || 0})</span>
               </div>
             </div>
 
@@ -9289,7 +9381,7 @@ function renderNfcVenuesList(job, items) {
             <div class="nfc-venue-meta">
               <div class="nfc-meta-item">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span>${v.address || job.cluster || job.city}</span>
+                <a href="${mapUrl}" target="_blank" rel="noopener" class="nfc-addr-link">${v.address || job.cluster || job.city}</a>
               </div>
               ${v.phone ? `
                 <div class="nfc-meta-item">
@@ -9305,18 +9397,16 @@ function renderNfcVenuesList(job, items) {
               ` : ''}
             </div>
 
-            <div class="nfc-venue-actions-bar">
-              <button type="button" class="btn btn--fill btn--sm nfc-act-btn" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}">
-                <span>ГОТОВИЙ ОФЕР</span>
+            <div class="nfc-venue-actions-row">
+              <button type="button" class="btn btn--out btn--sm nfc-pitch-btn" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}">
+                <span>Готовий офер</span>
               </button>
-              <button type="button" class="btn btn--out btn--sm nfc-act-btn" data-nfc-act="crm" data-job="${job.id}" data-venue="${v.id}">
-                <span>+ В CRM</span>
+              <button type="button" class="btn btn--fill btn--sm nfc-crm-btn" data-nfc-act="crm" data-job="${job.id}" data-venue="${v.id}">
+                <span>CRM</span>
               </button>
-              <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn--out btn--sm nfc-act-btn icon-only" title="Відкрити в Google Maps">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-              </a>
-              <a href="${navUrl}" target="_blank" rel="noopener" class="btn btn--out btn--sm nfc-act-btn icon-only" title="Прокласти маршрут пішки">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+              <a href="${navUrl}" target="_blank" rel="noopener" class="btn btn--out btn--sm nfc-route-btn" title="Прокласти маршрут пішки до закладу">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+                <span>Шлях</span>
               </a>
             </div>
           </div>
@@ -9424,7 +9514,18 @@ function downloadNfcCsv(job) {
     return;
   }
   const headers = ['Назва', 'Місто', 'Кластер / Адреса', 'Рейтинг', 'Кількість відгуків', 'Телефон', 'Instagram', 'Біль / Потреба'];
-  const rows = items.map(v => [
+  const dataRows = items.map(v => [
+    v.name || '—',
+    job.city || '—',
+    v.address || job.cluster || '—',
+    v.rating ? Number(v.rating).toFixed(1) : '—',
+    v.reviews || 0,
+    v.phone || '—',
+    v.instagram || '—',
+    v.painText || '—'
+  ]);
+
+  const rawRows = items.map(v => [
     '"' + (v.name || '').replace(/"/g, '""') + '"',
     '"' + (job.city || '').replace(/"/g, '""') + '"',
     '"' + (v.address || job.cluster || '').replace(/"/g, '""') + '"',
@@ -9434,30 +9535,10 @@ function downloadNfcCsv(job) {
     '"' + (v.instagram || '').replace(/"/g, '""') + '"',
     '"' + (v.painText || '').replace(/"/g, '""') + '"'
   ]);
-  const csv = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const csv = '\uFEFF' + [headers.join(','), ...rawRows.map(r => r.join(','))].join('\n');
   const fileName = 'nfc_radar_' + (job.city || 'leads') + '_' + Date.now() + '.csv';
 
-  try {
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 1500);
-  } catch (err) {
-    console.warn('NFC CSV blob error:', err);
-  }
-
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(csv).catch(() => {});
-  }
-  showToast('CSV-файл завантажено (та скопійовано в буфер)');
-  haptic('success');
+  openCsvPreviewModal(job.cluster || (job.city + ' — ' + job.niche), headers, dataRows, csv, fileName);
 }
 
 function sendNfcToTelegram(job, btn) {
@@ -9564,6 +9645,7 @@ function calculateNfcPricing(type, qty) {
 
 function initNfcRoiCalc() {
   const currentRatingInput = document.getElementById('roiCurrentRating');
+  const reviewsCountInput = document.getElementById('roiReviewsCount');
   const guestsInput = document.getElementById('roiGuests');
   const checkInput = document.getElementById('roiCheck');
   const qtyRangeInput = document.getElementById('nfcCardQtyRange');
@@ -9607,17 +9689,20 @@ function initNfcRoiCalc() {
 
   function updateMath() {
     const r = parseFloat(currentRatingInput?.value) || 4.2;
+    const curRev = parseInt(reviewsCountInput?.value) || 45;
     const g = parseInt(guestsInput?.value) || 60;
     const c = parseInt(checkInput?.value) || 260;
     const q = parseInt(qtyRangeInput?.value) || nfcCardQtyState;
     nfcCardQtyState = q;
 
     const currentRatingVal = document.getElementById('roiCurrentRatingVal');
+    const reviewsCountVal = document.getElementById('roiReviewsCountVal');
     const guestsVal = document.getElementById('roiGuestsVal');
     const checkVal = document.getElementById('roiCheckVal');
     const qtyVal = document.getElementById('nfcCardQtyVal');
 
     if (currentRatingVal) currentRatingVal.textContent = r.toFixed(1) + ' ★';
+    if (reviewsCountVal) reviewsCountVal.textContent = curRev + ' відгуків';
     if (guestsVal) guestsVal.textContent = g + ' гостей / день';
     if (checkVal) checkVal.textContent = c + ' ₴';
     if (qtyVal) qtyVal.textContent = q + ' шт';
@@ -9643,7 +9728,8 @@ function initNfcRoiCalc() {
     const nfcConversion = 0.03;
     const reviewsDelta = Math.round(monthlyGuests * nfcConversion);
 
-    const targetRating = Math.min(4.9, Number((r + (5.0 - r) * 0.7).toFixed(1)));
+    const newTotal = curRev + reviewsDelta;
+    const targetRating = Math.min(5.0, Math.max(r, Number(((r * curRev + 5.0 * reviewsDelta) / newTotal).toFixed(1))));
     const boostPercent = r < 4.2 ? 0.22 : (r < 4.5 ? 0.16 : 0.10);
     const extraGuests = Math.round(monthlyGuests * boostPercent);
     const extraMoney = extraGuests * c;
@@ -9706,6 +9792,7 @@ function initNfcRoiCalc() {
   });
 
   currentRatingInput?.addEventListener('input', updateMath);
+  reviewsCountInput?.addEventListener('input', updateMath);
   guestsInput?.addEventListener('input', updateMath);
   checkInput?.addEventListener('input', updateMath);
   updateMath();
@@ -9718,6 +9805,7 @@ function initNfcRoiCalc() {
 
   document.getElementById('copyRoiPitchBtn')?.addEventListener('click', () => {
     const r = parseFloat(currentRatingInput?.value) || 4.2;
+    const curRev = parseInt(reviewsCountInput?.value) || 45;
     const g = parseInt(guestsInput?.value) || 60;
     const c = parseInt(checkInput?.value) || 260;
     const q = parseInt(qtyRangeInput?.value) || nfcCardQtyState;
@@ -9725,7 +9813,8 @@ function initNfcRoiCalc() {
 
     const monthlyGuests = g * 30;
     const reviewsDelta = Math.round(monthlyGuests * 0.03);
-    const targetRating = Math.min(4.9, Number((r + (5.0 - r) * 0.7).toFixed(1)));
+    const newTotal = curRev + reviewsDelta;
+    const targetRating = Math.min(5.0, Math.max(r, Number(((r * curRev + 5.0 * reviewsDelta) / newTotal).toFixed(1))));
     const boostPercent = r < 4.2 ? 22 : (r < 4.5 ? 16 : 10);
     const extraGuests = Math.round(monthlyGuests * (boostPercent / 100));
     const extraMoney = extraGuests * c;
@@ -9754,6 +9843,7 @@ function initNfcRoiCalc() {
 
 1. АНАЛІЗ ПОТОЧНИХ ПОКАЗНИКІВ ЗАКЛАДУ
 - Поточний рейтинг Google Maps: ${r.toFixed(1)} зірок
+- Поточна кількість відгуків у Google Maps: ${curRev} відг
 - Середня кількість гостей на день: ${g} осіб
 - Середній чек закладу: ${c} грн
 - Місячний потік відвідувачів: ${monthlyGuests.toLocaleString('uk-UA')} осіб
@@ -9766,7 +9856,7 @@ ${costLine}
 
 3. ПРОГНОЗ РЕЗУЛЬТАТІВ НА ПЕРШІ 30 ДНІВ
 - Очікуваний приріст оцінок: +${reviewsDelta} нових реальних відгуків / місяць
-- Цільовий рейтинг Google Maps: ${targetRating} зірок (ТОП-1 у локації)
+- Цільовий рейтинг Google Maps: ${targetRating.toFixed(1)} зірок (ТОП-1 у локації)
 - Прогнозоване збільшення органічного потоку: +${boostPercent}% нових гостей
 - Додатковий потік відвідувачів: +${extraGuests} гостей / місяць
 

@@ -2786,15 +2786,18 @@ body.dark-theme .order-leaf-badge.expected {
 }
 
 /* Job card */
-.scrape-job {
+.scrape-job,
+.scrape-job-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--r);
+  margin-bottom: 12px;
   overflow: hidden;
   transition: var(--trans);
 }
 
-.scrape-job.open { border-color: var(--accent); }
+.scrape-job.open,
+.scrape-job-card.open { border-color: var(--accent); }
 
 .scrape-job-head {
   display: flex;
@@ -3565,3 +3568,157 @@ body.dark-theme .order-leaf-badge.expected {
 
 .nfc-batch-row:last-child { border-bottom: none; }
 .nfc-batch-row b { color: var(--accent); }
+
+/* Round Blue Modal Close Button with White Cross */
+.modal-close-round-blue {
+  width: 36px !important;
+  height: 36px !important;
+  background: var(--accent) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.35) !important;
+  transition: transform 0.15s ease, background 0.15s ease !important;
+  padding: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+.modal-close-round-blue:hover,
+.modal-close-round-blue:active {
+  transform: scale(0.92);
+  background: #0052cc !important;
+}
+
+/* Venue Card Top Row: Index, Name, and Rating (★ 4.4 (34)) in ONE single row */
+.nfc-venue-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+.nfc-venue-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.nfc-venue-idx {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+
+.nfc-venue-name {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.96rem;
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nfc-venue-score-badge {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 3px 8px;
+  border-radius: var(--pill);
+}
+
+.nfc-venue-score-badge.good {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--success);
+}
+
+.nfc-venue-score-badge.warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--warning);
+}
+
+/* Clickable Address Link */
+.nfc-addr-link {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: rgba(0, 102, 255, 0.35);
+  text-underline-offset: 2.5px;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.nfc-addr-link:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+
+/* 3 Action Buttons in 1 Row: 50% (Offer), 25% (CRM, Blue), 25% (Route) */
+.nfc-venue-actions-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 6px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.nfc-venue-actions-row .btn {
+  font-size: 0.74rem;
+  padding: 8px 6px;
+  justify-content: center;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.nfc-crm-btn {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  border-color: var(--accent) !important;
+  font-weight: 700;
+}
+
+.nfc-crm-btn:hover {
+  background: #0052cc !important;
+}
+
+/* CSV Preview Table Styling */
+.csv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.76rem;
+  text-align: left;
+}
+
+.csv-table th {
+  background: var(--card-bg);
+  color: var(--muted);
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.7rem;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  white-space: nowrap;
+}
+
+.csv-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.csv-table tr:last-child td {
+  border-bottom: none;
+}
+

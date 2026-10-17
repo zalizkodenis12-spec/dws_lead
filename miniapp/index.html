@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/app.css?v=3.9.6">
+  <link rel="stylesheet" href="css/app.css?v=3.9.7">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -1654,10 +1654,18 @@
 
           <div class="form-group" style="margin-bottom: 10px;">
             <div class="label-row" style="display:flex; justify-content:space-between;">
+              <label class="form-label" style="font-size: 0.75rem;">КІЛЬКІСТЬ ВІДГУКІВ У MAPS:</label>
+              <span id="roiReviewsCountVal" style="font-family:var(--ffh); font-weight:800; color:var(--accent);">45 відгуків</span>
+            </div>
+            <input type="range" id="roiReviewsCount" min="1" max="500" step="1" value="45" class="form-range" style="width:100%;">
+          </div>
+
+          <div class="form-group" style="margin-bottom: 10px;">
+            <div class="label-row" style="display:flex; justify-content:space-between;">
               <label class="form-label" style="font-size: 0.75rem;">ГОСТЕЙ НА ДЕНЬ:</label>
               <span id="roiGuestsVal" style="font-family:var(--ffh); font-weight:800; color:var(--accent);">60 гостей / день</span>
             </div>
-            <input type="range" id="roiGuests" min="15" max="250" step="5" value="60" class="form-range" style="width:100%;">
+            <input type="range" id="roiGuests" min="5" max="250" step="5" value="60" class="form-range" style="width:100%;">
           </div>
 
           <div class="form-group" style="margin-bottom: 12px;">
@@ -1695,6 +1703,63 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=3.9.6"></script>
+  <!-- MODAL: ПЕРЕГЛЯД CSV ТАБЛИЦІ ТА ЕКСПОРТ (З КРУГЛОЮ СИНЬОЮ КНОПКОЮ ВИХОДУ) -->
+  <div id="modalCsvPreview" class="modal-overlay">
+    <div class="modal-sheet" style="max-height: 88vh; display: flex; flex-direction: column;">
+      <div class="modal-header" style="position: relative; padding-right: 50px;">
+        <h3 class="modal-title" id="csvPreviewTitle" style="flex: 1; font-size: 1.05rem;">CSV Таблиця</h3>
+        <button type="button" class="modal-close modal-close-round-blue" data-close="modalCsvPreview" title="Закрити та повернутися" aria-label="Закрити">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto; padding-top: 10px;">
+        <div class="csv-preview-actions" style="display: flex; gap: 8px; margin-bottom: 12px;">
+          <button type="button" id="copyCsvContentBtn" class="btn btn--fill btn--sm" style="flex: 1;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Скопіювати все</span>
+          </button>
+          <button type="button" id="downloadCsvFileBtn" class="btn btn--out btn--sm" style="flex: 1;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Завантажити .csv</span>
+          </button>
+        </div>
+        <div id="csvPreviewStats" style="font-size: 0.76rem; color: var(--muted); margin-bottom: 8px;"></div>
+        <div class="csv-preview-table-wrap" id="csvPreviewTableWrap" style="overflow-x: auto; background: var(--card-sub); border: 1px solid var(--border); border-radius: var(--r); user-select: text; -webkit-user-select: text;">
+          <!-- Dynamically populated table -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ГОТОВИЙ ОФЕР ДЛЯ ЗАКЛАДУ (NFC) -->
+  <div id="modalVenuePitch" class="modal-overlay">
+    <div class="modal-sheet" style="max-height: 88vh; display: flex; flex-direction: column;">
+      <div class="modal-header" style="position: relative; padding-right: 50px;">
+        <h3 class="modal-title" id="venuePitchModalTitle" style="flex: 1; font-size: 1.05rem;">Готовий офер для закладу</h3>
+        <button type="button" class="modal-close modal-close-round-blue" data-close="modalVenuePitch" title="Закрити" aria-label="Закрити">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto;">
+        <div id="venuePitchVenueInfo" style="font-size: 0.8rem; color: var(--muted); margin-bottom: 10px; line-height: 1.4;"></div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">ГОТОВИЙ ТЕКСТ ПОВІДОМЛЕННЯ (ДЛЯ ВІДПРАВКИ ЧИ СПІЛКУВАННЯ):</label>
+          <textarea id="venuePitchText" class="form-input" style="height: 220px; font-size: 0.82rem; line-height: 1.45; resize: vertical; user-select: text; -webkit-user-select: text;"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer flex-col gap-2">
+        <button type="button" id="copyVenuePitchBtn" class="btn btn--fill btn--block">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <span>СКОПІЮВАТИ ТЕКСТ ОФЕРУ</span>
+        </button>
+        <button type="button" id="shareVenuePitchTgBtn" class="btn btn--out btn--block">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          <span>НАДІСЛАТИ В TELEGRAM</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js?v=3.9.7"></script>
 </body>
 </html>
