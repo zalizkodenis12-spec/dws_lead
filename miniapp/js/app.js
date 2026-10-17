@@ -3697,7 +3697,7 @@ const DEFAULT_DATA = {
 const savedSourcesRaw = JSON.parse(localStorage.getItem('dws_sources') || 'null');
 const normalizedSources = (savedSourcesRaw && Array.isArray(savedSourcesRaw.chats) && savedSourcesRaw.chats.length >= 50)
   ? savedSourcesRaw
-  : { chats: Array(104).fill({}), channels: Array(45).fill({}) };
+  : { chats: Array(118).fill({}), channels: Array(59).fill({}) };
 
 const savedTakenIds = JSON.parse(localStorage.getItem('dws_taken_leads') || '[]');
 
@@ -5419,8 +5419,8 @@ async function fetchSources() {
 }
 
 function updateSourcesDisplay() {
-  const chatsCount = (state.sources?.chats?.length && state.sources.chats.length >= 30) ? state.sources.chats.length : 104;
-  const channelsCount = (state.sources?.channels?.length && state.sources.channels.length >= 10) ? state.sources.channels.length : 45;
+  const chatsCount = (state.sources?.chats?.length && state.sources.chats.length >= 30) ? state.sources.chats.length : 118;
+  const channelsCount = (state.sources?.channels?.length && state.sources.channels.length >= 10) ? state.sources.channels.length : 59;
   const total = chatsCount + channelsCount;
 
   const chatsEl = document.getElementById('sourcesChatsCount');

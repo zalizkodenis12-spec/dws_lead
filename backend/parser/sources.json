@@ -1,53 +1,8 @@
 {
-  "description": "DWS Lead — Elite Verified Active Telegram Sources (Min 2,000 Subscribers, IT & Web Dev Focus)",
-  "updatedAt": "2026-10-17T18:46:07.113Z",
-  "totalCount": 149,
+  "description": "DWS Lead — Master Verified Telegram Lead Sources (59 Channels & 118 Chats, Denis Originals Included)",
+  "updatedAt": "2026-10-17T18:51:58.549Z",
+  "totalCount": 177,
   "chats": [
-    {
-      "username": "@kiev_rabota_vakansii",
-      "title": "Робота Київ",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 213351,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@rabota_kieve5",
-      "title": "РОБОТА В КИЄВІ 🇺🇦 КИЇВ",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 111299,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@robotka_kiev",
-      "title": "Київ Робота",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 98631,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@robota_odesa4",
-      "title": "РОБОТА В ОДЕСІ🇺🇦",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 70208,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@work_kiev3",
-      "title": "Вакансії Київ",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 70033,
-      "lastPostDate": null,
-      "active": true
-    },
     {
       "username": "@qa_jobs",
       "title": "QA — вакансии",
@@ -67,92 +22,11 @@
       "active": true
     },
     {
-      "username": "@vinnytsia_job",
-      "title": "РОБОТА ВІННИЦЯ 📣",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 47880,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@h_news_r",
-      "title": "🇪🇺Робота в ЄС | Поради та Новини",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 45740,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@r0botka_ua",
-      "title": "Робота Київ | Вакансії",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 41675,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@rabota_odessa7",
-      "title": "РАБОТА ОДЕССА🇺🇦",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 40987,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@robotka_kyiv",
-      "title": "Работа Киев",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 40014,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@krivoyq_rog_rabotaq",
-      "title": "Робота Кривий Ріг",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 39966,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@frilanc",
       "title": "Фриланс, удаленка, работа",
       "category": "freelance",
       "type": "chat",
       "subscribers": 39716,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@lutsk_robotka",
-      "title": "Робота Луцьк 🇺🇦",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 39042,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@rabota_dnepre3",
-      "title": "РОБОТА В ДНІПРІ🇺🇦",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 39037,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@toprobotadnipro24",
-      "title": "Топ Робота Дніпро | Днепр",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 38867,
       "lastPostDate": null,
       "active": true
     },
@@ -166,78 +40,6 @@
       "active": true
     },
     {
-      "username": "@rabotay_kieve",
-      "title": "РОБОТА В КИЄВІ 🇺🇦 Київ",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 36587,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@toprobota_odesa",
-      "title": "Топ Робота Одеса | Одесса",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 36158,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@facebook_25",
-      "title": "FACEBOOK ADS | ARBITRAGE TRAFFIC",
-      "category": "marketing",
-      "type": "chat",
-      "subscribers": 36140,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@vakanciiodessa",
-      "title": "Робота Одеса Вакансії WorkHub 💼",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 36020,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@odessaa_ua",
-      "title": "Робота Одеса",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 35408,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@rabota_kiev_bird",
-      "title": "КИЇВ Робота | Україна Робота | РОБОТА КИЕВ ПОДРАБОТКА",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 34815,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@dnipro_robata",
-      "title": "Робота Дніпро Вакансії WorkHub 💼",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 33856,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@kyiv1work",
-      "title": "📍РОБОТА КИЇВ",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 32578,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@freelance_chat_ru",
       "title": "Фриланс чат | Вакансии",
       "category": "development",
@@ -247,101 +49,11 @@
       "active": true
     },
     {
-      "username": "@arbidoktor",
-      "title": "Арбитраж трафика | Работа",
-      "category": "marketing",
-      "type": "chat",
-      "subscribers": 29183,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@toprobotalviv24",
-      "title": "Топ Робота Львів",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 28355,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@rabota_zhutomere",
-      "title": "РОБОТА У ЖИТОМИРІ ВАКАНСІЇ",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 28226,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@toprobota_kyiv",
-      "title": "Топ Робота Київ 🇺🇦 Киев",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 28165,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@javascript_jobs",
       "title": "JavaScript Jobs — чат",
       "category": "development",
       "type": "chat",
       "subscribers": 27532,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@workday_lviv",
-      "title": "Робота Львів 🔍 Підробіток",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 27279,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@robota_kyiv_new",
-      "title": "🇺🇦 РОБОТА КИЇВ | ПОДРАБОТКА Робота Україна",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 26672,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@rabota_kiev_o",
-      "title": "РОБОТА В КИЄВІ | КИЇВ чат",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 26511,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@robota_pidrobitok_kyivv",
-      "title": "РОБОТА та ПІДРОБІТОК В КИЄВІ | ВАНТАЖНИКИ | РІЗНОРОБОЧІ",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 25477,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@kiev_jobs",
-      "title": "☃️РОБОТА КИЇВ Україна | Kyiv Work | Україна Робота Работа Київ 💵",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 24494,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@ring_express_brd",
-      "title": "РИНГ ЭКСПРЕСС БЕРДЯНСК",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 23668,
       "lastPostDate": null,
       "active": true
     },
@@ -373,110 +85,11 @@
       "active": true
     },
     {
-      "username": "@umanwork",
-      "title": "УМАНЬ РОБОТА",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 17672,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@dnipro_wopk",
-      "title": "Робота Дніпро",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 17639,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@smmbunker",
-      "title": "чат «SMM-укриття 🇺🇦»",
-      "category": "marketing",
-      "type": "chat",
-      "subscribers": 17579,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@in_traff",
-      "title": "ПОИСК РАБОТЫ | ВАКАНСИИ | БАЕРЫ",
-      "category": "marketing",
-      "type": "chat",
-      "subscribers": 16953,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@rudenkosmm",
-      "title": "Rudenko.smm.chat | чат вакансій | робота",
-      "category": "marketing",
-      "type": "chat",
-      "subscribers": 16399,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@nikolaeve_v_rabota_robotaq",
-      "title": "Миколаїв Вакансії",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 16297,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@w_o_r_k_poland",
-      "title": "Робота Польща | Краків | Лодзь | Катовіце",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 15726,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@jb_ua",
-      "title": "™AllJob🇺🇦 Робота в Україні | Заробіток сьогодні | Активний чат",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 15444,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@vakancii_onlineua",
-      "title": "Робота Онлайн Вакансії WorkHub 💼",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 15232,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@pidr0bitok_lviv",
-      "title": "Робота та підробіток Львів. Оголошення Львів",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 14354,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@qa_ru",
       "title": "QA — русскоговорящее сообщество",
       "category": "development",
       "type": "chat",
       "subscribers": 14118,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@mykolaivrobota_ua",
-      "title": "Робота Миколаїв",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 13174,
       "lastPostDate": null,
       "active": true
     },
@@ -490,51 +103,6 @@
       "active": true
     },
     {
-      "username": "@vakancii_chernihiv",
-      "title": "Робота Чернігів Вакансії WorkHub 💼",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 13025,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@robota_ternopil24",
-      "title": "Робота Тернопіль Вакансії WorkHub 💼",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 12174,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@toprobotapoltava24",
-      "title": "Топ Робота Полтава 🇺🇦",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 11729,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@robota_kropyvnytskyi24",
-      "title": "Робота Кропивницький Вакансії WorkHub 💼",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 11683,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@traffic_cpa_hr",
-      "title": "ВАКАНСИИ АРБИТРАЖ ЧАТ",
-      "category": "marketing",
-      "type": "chat",
-      "subscribers": 11055,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@vuejs_ru",
       "title": "Vue — русскоговорящее сообщество",
       "category": "development",
@@ -544,92 +112,11 @@
       "active": true
     },
     {
-      "username": "@mediabuers_cpa",
-      "title": "Чат медиабайеров | Арбитраж трафика",
-      "category": "marketing",
-      "type": "chat",
-      "subscribers": 10617,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@traffic_hr_cpa",
-      "title": "Чат траферов | Арбитраж трафика",
-      "category": "marketing",
-      "type": "chat",
-      "subscribers": 10452,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@toprobotavinnytsia24",
-      "title": "Топ Робота Вінниця",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 10352,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@freelance_workua",
-      "title": "Робота в Україні 🇺🇦 | Фріланс",
+      "username": "@freelance_work",
+      "title": "Фриланс. Удаленная работа. Freelance",
       "category": "development",
       "type": "chat",
-      "subscribers": 10305,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@business_grup_ukraine",
-      "title": "Бизнес Схемы КУПЛЮ ПРОДАМ",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 10178,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@robota_poltava_top",
-      "title": "Робота Полтава",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 10153,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@w0rk_ukraine",
-      "title": "Робота в Україні 🇺🇦❤️😇",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 9474,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@uzhgorodrobota_ua",
-      "title": "Робота Ужгород",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 9360,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@robotakiew",
-      "title": "Работа, услуги Киев и область",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 9056,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@smmpeople",
-      "title": "Поиск подрядчиков / Маркетинг / SMM / IT",
-      "category": "marketing",
-      "type": "chat",
-      "subscribers": 8932,
+      "subscribers": 10169,
       "lastPostDate": null,
       "active": true
     },
@@ -639,15 +126,6 @@
       "category": "development",
       "type": "chat",
       "subscribers": 8831,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@nikolaev_rabota_robota",
-      "title": "Миколаїв Вакансії Підробіток",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 8658,
       "lastPostDate": null,
       "active": true
     },
@@ -670,15 +148,6 @@
       "active": true
     },
     {
-      "username": "@marketing_network1",
-      "title": "Маркетинг Club",
-      "category": "marketing",
-      "type": "chat",
-      "subscribers": 7524,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@nodejs_jobs",
       "title": "Node.js Jobs. Stop the war&#33;",
       "category": "development",
@@ -697,11 +166,11 @@
       "active": true
     },
     {
-      "username": "@uaallwork",
-      "title": "Робота Україна🇺🇦 Work Ukraine",
-      "category": "general",
+      "username": "@kotlin_lang",
+      "title": "Kotlin Community",
+      "category": "development",
       "type": "chat",
-      "subscribers": 6745,
+      "subscribers": 6771,
       "lastPostDate": null,
       "active": true
     },
@@ -724,15 +193,6 @@
       "active": true
     },
     {
-      "username": "@diplomatia_ua",
-      "title": "🇺🇦 Оголошення UKRAINE-CHAT 🇺🇦",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 6119,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@java_jobs",
       "title": "Java Jobs",
       "category": "development",
@@ -742,47 +202,11 @@
       "active": true
     },
     {
-      "username": "@uman_rabota",
-      "title": "РАБОТА УМАНЬ",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 6031,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@robitalviv2024",
-      "title": "Оголошення &amp;Робота Львів",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 5941,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@angular_ru",
       "title": "Angular - русскоговорящее сообщество",
       "category": "development",
       "type": "chat",
       "subscribers": 5830,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@ua_robota",
-      "title": "🇺🇦 РОБОТА УКРАЇНА | РАБОТА УКРАИНА",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 5740,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@i13partners",
-      "title": "🇺🇦 Робота | IT | Україна 💻",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 5104,
       "lastPostDate": null,
       "active": true
     },
@@ -832,11 +256,11 @@
       "active": true
     },
     {
-      "username": "@evo_prom",
-      "title": "Чат: продажі на Prom.ua / Rozetka",
-      "category": "general",
+      "username": "@nextjs_ru",
+      "title": "Next.js — русскоговорящее сообщество",
+      "category": "development",
       "type": "chat",
-      "subscribers": 3995,
+      "subscribers": 3757,
       "lastPostDate": null,
       "active": true
     },
@@ -877,13 +301,794 @@
       "active": true
     },
     {
-      "username": "@rabotay_zhitomire",
-      "title": "Робота Житомир 🇺🇦 Вакансії",
+      "username": "@work_kiev3",
+      "title": "work_kiev3 UA",
       "category": "general",
       "type": "chat",
-      "subscribers": 2936,
+      "subscribers": 3000,
       "lastPostDate": null,
-      "active": true
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@kyiv1work",
+      "title": "kyiv1work UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@uman_rabota",
+      "title": "uman_rabota UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@toprobota_kyiv",
+      "title": "toprobota_kyiv UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@rabota_dnepre3",
+      "title": "rabota_dnepre3 UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@smmbunker",
+      "title": "smmbunker UA",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@smmpeople",
+      "title": "smmpeople UA",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@robotka_kyiv",
+      "title": "robotka_kyiv UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@robotka_kiev",
+      "title": "robotka_kiev UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@vakanciiodessa",
+      "title": "vakanciiodessa UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@toprobotalviv24",
+      "title": "toprobotalviv24 UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@Robota_ternopil24",
+      "title": "Robota_ternopil24 UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@dnipro_wopk",
+      "title": "dnipro_wopk UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@R0botka_ua",
+      "title": "R0botka_ua UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@toprobota_odesa",
+      "title": "toprobota_odesa UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@vakancii_onlineua",
+      "title": "vakancii_onlineua UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@toprobotadnipro24",
+      "title": "toprobotadnipro24 UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@rabota_kiev_o",
+      "title": "rabota_kiev_o UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@toprobotapoltava24",
+      "title": "toprobotapoltava24 UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@toprobotavinnytsia24",
+      "title": "toprobotavinnytsia24 UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@dnipro_robata",
+      "title": "dnipro_robata UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@marketing_network1",
+      "title": "marketing_network1 UA",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@robota_pidrobitok_kyivv",
+      "title": "robota_pidrobitok_kyivv UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@robota_poltava_top",
+      "title": "robota_poltava_top UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@vakancii_chernihiv",
+      "title": "vakancii_chernihiv UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@robota_kropyvnytskyi24",
+      "title": "robota_kropyvnytskyi24 UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@rabotay_kieve",
+      "title": "rabotay_kieve UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@H_news_R",
+      "title": "H_news_R UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@rabota_odessa7",
+      "title": "rabota_odessa7 UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@lutsk_robotka",
+      "title": "lutsk_robotka UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@facebook_25",
+      "title": "facebook_25 UA",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@Odessaa_ua",
+      "title": "Odessaa_ua UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@krivoyq_rog_rabotaq",
+      "title": "krivoyq_rog_rabotaq UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@ArbiDoktor",
+      "title": "ArbiDoktor UA",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@ring_express_brd",
+      "title": "ring_express_brd UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@umanwork",
+      "title": "umanwork UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@in_traff",
+      "title": "in_traff UA",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@you_can_know_more",
+      "title": "you_can_know_more UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@robota_odesa4",
+      "title": "robota_odesa4 UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@workplaceinukraine",
+      "title": "workplaceinukraine UA",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@rabota_kiev_bird",
+      "title": "rabota_kiev_bird UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@Robota_kyiv_new",
+      "title": "Robota_kyiv_new UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@aplaywork",
+      "title": "aplaywork UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@top_vacansii",
+      "title": "top_vacansii UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@kiev_jobs",
+      "title": "kiev_jobs UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@jb_ua",
+      "title": "jb_ua UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@jobzy",
+      "title": "jobzy UA",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@freelance_workua",
+      "title": "freelance_workua UA",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@W0RK_UKRAINE",
+      "title": "W0RK_UKRAINE UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@uaallwork",
+      "title": "uaallwork UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@ua_robota",
+      "title": "ua_robota UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@I13partners",
+      "title": "I13partners UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@mykolaivrobota_ua",
+      "title": "mykolaivrobota_ua UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@traffic_cpa_hr",
+      "title": "traffic_cpa_hr UA",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@traffic_hr_cpa",
+      "title": "traffic_hr_cpa UA",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@mediabuers_cpa",
+      "title": "mediabuers_cpa UA",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@uzhgorodrobota_ua",
+      "title": "uzhgorodrobota_ua UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@kievy_rabota",
+      "title": "kievy_rabota UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@work_in_ukraine_golovne",
+      "title": "work_in_ukraine_golovne UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@jecontact",
+      "title": "jecontact UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@adgoodashell",
+      "title": "adgoodashell UA",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@Kiev_rabota_vakansii",
+      "title": "Kiev_rabota_vakansii UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@rabota_kieve5",
+      "title": "rabota_kieve5 UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@Vinnytsia_Job",
+      "title": "Vinnytsia_Job UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@rabota_zhutomere",
+      "title": "rabota_zhutomere UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@Workday_Lviv",
+      "title": "Workday_Lviv UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@RudenkoSMM",
+      "title": "RudenkoSMM UA",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@Nikolaeve_v_rabota_robotaq",
+      "title": "Nikolaeve_v_rabota_robotaq UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@w_o_r_k_Poland",
+      "title": "w_o_r_k_Poland UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@pidr0bitok_Lviv",
+      "title": "pidr0bitok_Lviv UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@business_grup_ukraine",
+      "title": "business_grup_ukraine UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@robotakiew",
+      "title": "robotakiew UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@Nikolaev_rabota_robota",
+      "title": "Nikolaev_rabota_robota UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@robitalviv2024",
+      "title": "robitalviv2024 UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@DIPLOMATIA_UA",
+      "title": "DIPLOMATIA_UA UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@evo_prom",
+      "title": "evo_prom UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@rabotay_zhitomire",
+      "title": "rabotay_zhitomire UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@worktopua",
+      "title": "worktopua UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@rabota_Odessa_horeca",
+      "title": "rabota_Odessa_horeca UA",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
     },
     {
       "username": "@react_chat",
@@ -891,15 +1096,6 @@
       "category": "development",
       "type": "chat",
       "subscribers": 2895,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@rabota_odessa_horeca",
-      "title": "РАБОТА HoReCa ОДЕССА",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 2769,
       "lastPostDate": null,
       "active": true
     },
@@ -913,6 +1109,15 @@
       "active": true
     },
     {
+      "username": "@fastapi_ru",
+      "title": "FastAPI / Litestar (ASGI Community)",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 2660,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
       "username": "@react_native_jobs",
       "title": "React Native &amp; Expo Jobs - работа связанная с react-native",
       "category": "development",
@@ -922,20 +1127,20 @@
       "active": true
     },
     {
-      "username": "@worktopua",
-      "title": "Вакансії в Telegram | Україна 🇺🇦",
-      "category": "general",
-      "type": "chat",
-      "subscribers": 2528,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@angular_jobs",
       "title": "Angular Jobs — чат для поиска работы и людей",
       "category": "development",
       "type": "chat",
       "subscribers": 2227,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@javascript_ru",
+      "title": "javascript_ru",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 2163,
       "lastPostDate": null,
       "active": true
     }
@@ -966,15 +1171,6 @@
       "type": "channel",
       "subscribers": 127456,
       "lastPostDate": "2026-10-13T11:40:12+00:00",
-      "active": true
-    },
-    {
-      "username": "@kievy_rabota",
-      "title": "Є РОБОТА КИЇВ 🇺🇦",
-      "category": "general",
-      "type": "channel",
-      "subscribers": 110905,
-      "lastPostDate": "2026-10-08T11:32:48+00:00",
       "active": true
     },
     {
@@ -1077,6 +1273,15 @@
       "active": true
     },
     {
+      "username": "@python_academy",
+      "title": "Python Academy",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 44057,
+      "lastPostDate": "2026-10-17T06:01:01+00:00",
+      "active": true
+    },
+    {
       "username": "@happymonday",
       "title": "Happy Monday",
       "category": "development",
@@ -1104,24 +1309,6 @@
       "active": true
     },
     {
-      "username": "@jecontact",
-      "title": "є контакт",
-      "category": "general",
-      "type": "channel",
-      "subscribers": 30817,
-      "lastPostDate": "2026-10-16T12:05:03+00:00",
-      "active": true
-    },
-    {
-      "username": "@work_in_ukraine_golovne",
-      "title": "Робота Україна | Головне",
-      "category": "general",
-      "type": "channel",
-      "subscribers": 30760,
-      "lastPostDate": "2026-10-16T15:00:02+00:00",
-      "active": true
-    },
-    {
       "username": "@freelancetaverna",
       "title": "Фриланс Таверна Official | Вакансии Удаленная работа",
       "category": "development",
@@ -1137,24 +1324,6 @@
       "type": "channel",
       "subscribers": 29746,
       "lastPostDate": "2026-10-17T09:01:00+00:00",
-      "active": true
-    },
-    {
-      "username": "@aplaywork",
-      "title": "A-Play | Вакансії по всій Україні | Робота в Україні",
-      "category": "general",
-      "type": "channel",
-      "subscribers": 26472,
-      "lastPostDate": "2026-10-16T09:57:41+00:00",
-      "active": true
-    },
-    {
-      "username": "@top_vacansii",
-      "title": "CATWORK | Віддалена робота | Вакансії та стажування",
-      "category": "general",
-      "type": "channel",
-      "subscribers": 25424,
-      "lastPostDate": "2026-10-16T09:59:21+00:00",
       "active": true
     },
     {
@@ -1203,12 +1372,12 @@
       "active": true
     },
     {
-      "username": "@adgoodashell",
-      "title": "Ad Good as Hell ✨ SMM PR Marketing Вакансії",
-      "category": "marketing",
+      "username": "@it_events",
+      "title": "IT Events 📆 АйТи События",
+      "category": "development",
       "type": "channel",
-      "subscribers": 20492,
-      "lastPostDate": "2026-10-16T10:30:21+00:00",
+      "subscribers": 19341,
+      "lastPostDate": "2026-10-16T08:11:08+00:00",
       "active": true
     },
     {
@@ -1239,12 +1408,12 @@
       "active": true
     },
     {
-      "username": "@you_can_know_more",
-      "title": "БЛІЦ",
-      "category": "general",
+      "username": "@pythonrabota",
+      "title": "Python работа",
+      "category": "development",
       "type": "channel",
-      "subscribers": 13453,
-      "lastPostDate": "2026-10-16T19:45:47+00:00",
+      "subscribers": 13065,
+      "lastPostDate": "2026-10-16T15:01:01+00:00",
       "active": true
     },
     {
@@ -1257,6 +1426,15 @@
       "active": true
     },
     {
+      "username": "@internsgo",
+      "title": "InternsGo&#33;",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 12388,
+      "lastPostDate": "2026-10-17T15:23:01+00:00",
+      "active": true
+    },
+    {
       "username": "@partnerkin_job",
       "title": "Вакансии: Арбитраж трафика, SEO, Affiliate [Партнеркин]",
       "category": "development",
@@ -1266,12 +1444,12 @@
       "active": true
     },
     {
-      "username": "@jobzy",
-      "title": "JOBZY | Робота в Українi",
+      "username": "@jobs_in_european_countries",
+      "title": "Jobs in Europe",
       "category": "development",
       "type": "channel",
-      "subscribers": 10898,
-      "lastPostDate": "2026-05-24T12:25:35+00:00",
+      "subscribers": 10031,
+      "lastPostDate": "2025-04-13T17:37:08+00:00",
       "active": true
     },
     {
@@ -1281,6 +1459,33 @@
       "type": "channel",
       "subscribers": 9557,
       "lastPostDate": "2026-10-16T09:04:10+00:00",
+      "active": true
+    },
+    {
+      "username": "@htmlacademy",
+      "title": "HTML Academy",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 9525,
+      "lastPostDate": "2026-10-16T09:25:53+00:00",
+      "active": true
+    },
+    {
+      "username": "@django_school",
+      "title": "Михаил Омельченко | AI&amp;IT",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 5366,
+      "lastPostDate": "2026-10-15T10:24:11+00:00",
+      "active": true
+    },
+    {
+      "username": "@frontend_info",
+      "title": "Frontend Info",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 5279,
+      "lastPostDate": "2026-10-02T05:15:35+00:00",
       "active": true
     },
     {
@@ -1299,15 +1504,6 @@
       "type": "channel",
       "subscribers": 4607,
       "lastPostDate": "2026-10-17T07:00:52+00:00",
-      "active": true
-    },
-    {
-      "username": "@workplaceinukraine",
-      "title": "Робота | Україна | Вакансії | SMM",
-      "category": "development",
-      "type": "channel",
-      "subscribers": 4587,
-      "lastPostDate": "2026-10-15T12:14:00+00:00",
       "active": true
     },
     {
@@ -1338,12 +1534,161 @@
       "active": true
     },
     {
+      "username": "@business_chat_ua",
+      "title": "business_chat_ua UA",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@flschat",
+      "title": "flschat UA",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@rabota_kieve_chate",
+      "title": "rabota_kieve_chate UA",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@joinchat/woxZIzaWi-syNzBi",
+      "title": "Закритий чат UA (Invite)",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@Marketing_chat_UA",
+      "title": "Marketing_chat_UA UA",
+      "category": "marketing",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@chat_robota",
+      "title": "chat_robota UA",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@lviv_ua_group",
+      "title": "lviv_ua_group UA",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@kyiv_ua_group",
+      "title": "kyiv_ua_group UA",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@lvova_chat",
+      "title": "lvova_chat UA",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@vinnytsia_ua_group",
+      "title": "vinnytsia_ua_group UA",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@dnipro_ua_group",
+      "title": "dnipro_ua_group UA",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@odesa_ua_group",
+      "title": "odesa_ua_group UA",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@kharkiv_ua_group",
+      "title": "kharkiv_ua_group UA",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
+      "username": "@bazarUkrain",
+      "title": "bazarUkrain UA",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 3000,
+      "lastPostDate": null,
+      "active": true,
+      "original": true
+    },
+    {
       "username": "@itmozg",
       "title": "ITmozg",
       "category": "development",
       "type": "channel",
       "subscribers": 2632,
       "lastPostDate": "2026-10-13T20:24:40+00:00",
+      "active": true
+    },
+    {
+      "username": "@java_geek",
+      "title": "Java Geek",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 2359,
+      "lastPostDate": "2026-10-13T07:18:19+00:00",
       "active": true
     }
   ]
