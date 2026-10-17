@@ -432,6 +432,12 @@ export const db = {
 
   // ---- SOURCES ----
   getSources() {
+    try {
+      const p = path.join(__dirname, '..', 'parser', 'sources.json');
+      if (fs.existsSync(p)) {
+        return JSON.parse(fs.readFileSync(p, 'utf8'));
+      }
+    } catch (e) {}
     const data = readDb();
     return data.sources || { chats: [], channels: [] };
   },

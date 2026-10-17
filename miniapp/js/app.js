@@ -3695,9 +3695,9 @@ const DEFAULT_DATA = {
 // APP STATE
 // ============================================================
 const savedSourcesRaw = JSON.parse(localStorage.getItem('dws_sources') || 'null');
-const normalizedSources = (savedSourcesRaw && Array.isArray(savedSourcesRaw.chats) && savedSourcesRaw.chats.length >= 79)
+const normalizedSources = (savedSourcesRaw && Array.isArray(savedSourcesRaw.chats) && savedSourcesRaw.chats.length >= 200)
   ? savedSourcesRaw
-  : { chats: Array(79).fill({}), channels: Array(14).fill({}) };
+  : { chats: Array(279).fill({}), channels: Array(235).fill({}) };
 
 const savedTakenIds = JSON.parse(localStorage.getItem('dws_taken_leads') || '[]');
 
@@ -3787,13 +3787,23 @@ const state = {
   accountKey: localStorage.getItem('dws_account_key') || (tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : 'default'),
   accountUser: localStorage.getItem('dws_account_user') || (tg?.initDataUnsafe?.user?.username ? ('@' + tg.initDataUnsafe.user.username) : ''),
   accountName: localStorage.getItem('dws_account_name') || (tg?.initDataUnsafe?.user?.first_name || 'Денис Залізко'),
-  requisites: JSON.parse(localStorage.getItem('dws_requisites') || 'null') || {
-    recipient: 'Залізко Денис Олександрович',
-    iban: 'UA683220010000026007300123456',
-    edrpou: '3624800000',
-    bank: 'monobank (АТ «УНІВЕРСАЛ БАНК»)',
-    purpose: 'Оплата за інформаційно-рекламні послуги згідно домовленості'
-  }
+  requisites: (() => {
+    let req = null;
+    try {
+      req = JSON.parse(localStorage.getItem('dws_requisites') || 'null');
+    } catch (e) {}
+    if (!req || req.iban === 'UA683220010000026007300123456' || !req.iban) {
+      req = {
+        recipient: 'Залізко Сергій Олександрович',
+        iban: 'UA973220010000026204340005801',
+        edrpou: '2890111216',
+        bank: 'monobank',
+        purpose: 'Оплата за інформаційно-рекламні послуги згідно домовленості'
+      };
+      localStorage.setItem('dws_requisites', JSON.stringify(req));
+    }
+    return req;
+  })()
 };
 
 // Helper: Open direct Telegram PM with vacancy owner
@@ -5409,8 +5419,8 @@ async function fetchSources() {
 }
 
 function updateSourcesDisplay() {
-  const chatsCount = state.sources?.chats?.length || 79;
-  const channelsCount = state.sources?.channels?.length || 14;
+  const chatsCount = (state.sources?.chats?.length && state.sources.chats.length >= 200) ? state.sources.chats.length : 279;
+  const channelsCount = (state.sources?.channels?.length && state.sources.channels.length >= 100) ? state.sources.channels.length : 235;
   const total = chatsCount + channelsCount;
 
   const chatsEl = document.getElementById('sourcesChatsCount');
@@ -10535,21 +10545,24 @@ function renderRequisitesTab() {
   if (inPurp) inPurp.value = purpose;
 }
 
+function formatRequisitesMessage({ recipient, iban, edrpou, bank, purpose }) {
+  return `📄 Реквізити для оплати (IBAN)\n\n` +
+    `👤 Отримувач: ${recipient}\n` +
+    `💳 IBAN: ${iban}\n` +
+    `🏢 РНОКПП (ІПН) / ЄДРПОУ: ${edrpou}\n` +
+    `🏦 Банк: ${bank}\n` +
+    `📝 Призначення: ${purpose}\n\n` +
+    `✅ Після здійснення оплати надішліть, будь ласка, квитанцію. Дякуємо за співпрацю!`;
+}
+
 function sendInvoiceToTelegram() {
-  const recipient = (document.getElementById('reqRecipientInput')?.value || state.requisites?.recipient || 'Залізко Денис Олександрович').trim();
-  const iban = (document.getElementById('reqIbanInput')?.value || state.requisites?.iban || 'UA683220010000026007300123456').trim();
-  const edrpou = (document.getElementById('reqEdrpouInput')?.value || state.requisites?.edrpou || '3624800000').trim();
-  const bank = (document.getElementById('reqBankInput')?.value || state.requisites?.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)').trim();
+  const recipient = (document.getElementById('reqRecipientInput')?.value || state.requisites?.recipient || 'Залізко Сергій Олександрович').trim();
+  const iban = (document.getElementById('reqIbanInput')?.value || state.requisites?.iban || 'UA973220010000026204340005801').trim();
+  const edrpou = (document.getElementById('reqEdrpouInput')?.value || state.requisites?.edrpou || '2890111216').trim();
+  const bank = (document.getElementById('reqBankInput')?.value || state.requisites?.bank || 'monobank').trim();
   const purpose = (document.getElementById('reqPurposeInput')?.value || state.requisites?.purpose || 'Оплата за інформаційно-рекламні послуги згідно домовленості').trim();
 
-  const text = `Вітаю!\n\n` +
-    `Реквізити для оплати (IBAN):\n` +
-    `• Отримувач: ${recipient}\n` +
-    `• IBAN: ${iban}\n` +
-    `• РНОКПП (ІПН) / ЄДРПОУ: ${edrpou}\n` +
-    `• Банк: ${bank}\n` +
-    `• Призначення платежу: ${purpose}\n\n` +
-    `Після здійснення оплати надішліть, будь ласка, квитанцію. Дякую за співпрацю!`;
+  const text = `Вітаю!\n\n` + formatRequisitesMessage({ recipient, iban, edrpou, bank, purpose });
 
   const tgUrl = 'https://t.me/share/url?url=' + encodeURIComponent('') + '&text=' + encodeURIComponent(text);
   if (window.Telegram?.WebApp?.openTelegramLink) {
@@ -10560,18 +10573,13 @@ function sendInvoiceToTelegram() {
 }
 
 function copyRequisitesToClipboard() {
-  const recipient = (document.getElementById('reqRecipientInput')?.value || state.requisites?.recipient || 'Залізко Денис Олександрович').trim();
-  const iban = (document.getElementById('reqIbanInput')?.value || state.requisites?.iban || 'UA683220010000026007300123456').trim();
-  const edrpou = (document.getElementById('reqEdrpouInput')?.value || state.requisites?.edrpou || '3624800000').trim();
-  const bank = (document.getElementById('reqBankInput')?.value || state.requisites?.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)').trim();
+  const recipient = (document.getElementById('reqRecipientInput')?.value || state.requisites?.recipient || 'Залізко Сергій Олександрович').trim();
+  const iban = (document.getElementById('reqIbanInput')?.value || state.requisites?.iban || 'UA973220010000026204340005801').trim();
+  const edrpou = (document.getElementById('reqEdrpouInput')?.value || state.requisites?.edrpou || '2890111216').trim();
+  const bank = (document.getElementById('reqBankInput')?.value || state.requisites?.bank || 'monobank').trim();
   const purpose = (document.getElementById('reqPurposeInput')?.value || state.requisites?.purpose || 'Оплата за інформаційно-рекламні послуги згідно домовленості').trim();
 
-  const text = `Реквізити для оплати (IBAN):\n` +
-    `• Отримувач: ${recipient}\n` +
-    `• IBAN: ${iban}\n` +
-    `• РНОКПП (ІПН) / ЄДРПОУ: ${edrpou}\n` +
-    `• Банк: ${bank}\n` +
-    `• Призначення платежу: ${purpose}`;
+  const text = formatRequisitesMessage({ recipient, iban, edrpou, bank, purpose });
 
   if (navigator.clipboard?.writeText) {
     navigator.clipboard.writeText(text).then(() => {
@@ -10584,10 +10592,10 @@ function copyRequisitesToClipboard() {
 }
 
 function saveCustomRequisites() {
-  const recipient = (document.getElementById('reqRecipientInput')?.value || '').trim() || 'Залізко Денис Олександрович';
-  const iban = (document.getElementById('reqIbanInput')?.value || '').trim() || 'UA683220010000026007300123456';
-  const edrpou = (document.getElementById('reqEdrpouInput')?.value || '').trim() || '3624800000';
-  const bank = (document.getElementById('reqBankInput')?.value || '').trim() || 'monobank (АТ «УНІВЕРСАЛ БАНК»)';
+  const recipient = (document.getElementById('reqRecipientInput')?.value || '').trim() || 'Залізко Сергій Олександрович';
+  const iban = (document.getElementById('reqIbanInput')?.value || '').trim() || 'UA973220010000026204340005801';
+  const edrpou = (document.getElementById('reqEdrpouInput')?.value || '').trim() || '2890111216';
+  const bank = (document.getElementById('reqBankInput')?.value || '').trim() || 'monobank';
   const purpose = (document.getElementById('reqPurposeInput')?.value || '').trim() || 'Оплата за інформаційно-рекламні послуги згідно домовленості';
 
   state.requisites = { recipient, iban, edrpou, bank, purpose };

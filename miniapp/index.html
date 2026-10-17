@@ -261,12 +261,12 @@
             <label class="form-label">БАЗА ДЖЕРЕЛ ПОШУКУ:</label>
             <div class="sources-stat-box">
               <div class="sources-stat-item">
-                <span class="num" id="sourcesChatsCount">79</span>
+                <span class="num" id="sourcesChatsCount">279</span>
                 <span class="txt">Telegram чатів</span>
               </div>
               <div class="sources-divider"></div>
               <div class="sources-stat-item">
-                <span class="num" id="sourcesChannelsCount">14</span>
+                <span class="num" id="sourcesChannelsCount">235</span>
                 <span class="txt">Telegram каналів</span>
               </div>
             </div>
@@ -474,42 +474,37 @@
         </div>
 
         <!-- Unified B2B Requisites Card -->
-        <div class="card p-3 mb-3" style="background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--r);">
+        <div class="card p-3 mb-3" style="background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--r); box-shadow: var(--shadow-sm);">
           <!-- Top Action Buttons -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px;">
-            <button type="button" id="invCopyDetailsBtn" class="btn btn--fill" style="padding: 10px 8px; font-size: 0.78rem;">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+            <button type="button" id="invCopyDetailsBtn" class="btn btn--fill" style="padding: 12px 10px; font-size: 0.82rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: var(--rad);">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
               <span>Скопіювати реквізити</span>
             </button>
-            <button type="button" id="invSendTelegramBtn" class="btn btn--out" style="padding: 10px 8px; font-size: 0.78rem; border-color: rgba(0, 102, 255, 0.4); color: var(--accent);">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            <button type="button" id="invSendTelegramBtn" class="btn btn--out" style="padding: 12px 10px; font-size: 0.82rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: var(--rad); border-color: rgba(0, 102, 255, 0.4); color: var(--accent); background: rgba(0, 102, 255, 0.04);">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.52 2.77-1.16 3.35-1.36 3.73-1.37.08 0 .27.02.39.12.1.08.13.2.14.28-.01.06.01.24 0 .37z"/></svg>
               <span>В Telegram клієнту</span>
             </button>
           </div>
 
           <div class="form-group mb-2">
             <label class="form-sublabel">ОТРИМУВАЧ (ПІБ):</label>
-            <input type="text" id="reqRecipientInput" class="form-input" placeholder="Залізко Денис Олександрович" value="Залізко Денис Олександрович">
+            <input type="text" id="reqRecipientInput" class="form-input" placeholder="Залізко Сергій Олександрович" value="Залізко Сергій Олександрович">
           </div>
 
           <div class="form-group mb-2">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-              <label class="form-sublabel" style="margin-bottom: 0;">IBAN РАХУНОК:</label>
-              <button type="button" id="copyIbanQuickBtn" class="btn btn--xs btn--out" style="padding: 1px 6px; font-size: 0.68rem; border-color: rgba(0,102,255,0.3); color: var(--accent);">
-                Копіювати IBAN
-              </button>
-            </div>
-            <input type="text" id="reqIbanInput" class="form-input" style="font-family: monospace; font-weight: 700; color: var(--accent);" placeholder="UA683220010000026007300123456" value="UA683220010000026007300123456">
+            <label class="form-sublabel">IBAN РАХУНОК:</label>
+            <input type="text" id="reqIbanInput" class="form-input" style="font-family: monospace; font-weight: 700; color: var(--text-color, #111827); letter-spacing: 0.5px;" placeholder="UA973220010000026204340005801" value="UA973220010000026204340005801">
           </div>
 
           <div class="form-group mb-2">
             <label class="form-sublabel">РНОКПП (ІПН) / ЄДРПОУ:</label>
-            <input type="text" id="reqEdrpouInput" class="form-input" placeholder="3624800000" value="3624800000">
+            <input type="text" id="reqEdrpouInput" class="form-input" placeholder="2890111216" value="2890111216">
           </div>
 
           <div class="form-group mb-2">
             <label class="form-sublabel">НАЗВА БАНКУ:</label>
-            <input type="text" id="reqBankInput" class="form-input" placeholder="monobank (АТ «УНІВЕРСАЛ БАНК»)" value="monobank (АТ «УНІВЕРСАЛ БАНК»)">
+            <input type="text" id="reqBankInput" class="form-input" placeholder="monobank" value="monobank">
           </div>
 
           <div class="form-group mb-3">

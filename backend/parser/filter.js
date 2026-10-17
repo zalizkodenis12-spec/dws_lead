@@ -59,49 +59,73 @@ const RESUME_AND_SPAM_STOP_WORDS = [
   'робота для мам в декреті', 'работа для мам в декрете', 'ставить лайки', 'перепечатка текстов'
 ];
 
-// Triggers indicating a real client/employer looking to hire or order
+/// Triggers indicating a real client/employer looking to hire or order
 const CLIENT_INTENT_TRIGGERS = [
   'шукаю', 'шукаємо', 'потрібен', 'потрібна', 'потрібні', 'треба', 'замовлення', 'замовлення:',
   'проєкт', 'проект', 'розробити', 'зробити', 'налаштувати', 'змонтувати', 'запустити',
-  'бюджет', 'дедлайн', 'відгукніться', 'хто може', 'вакансія', 'looking for', 'need a',
-  'hiring', 'order', 'в команду потрібен', 'шукаємо підрядника', 'шукаємо агенцію',
-  // Російські тригери замовників
+  'бюджет', 'дедлайн', 'відгукніться', 'хто може', 'вакансія', 'вакансії', 'looking for', 'need a',
+  'hiring', 'order', 'в команду потрібен', 'шукаємо підрядника', 'шукаємо агенцію', 'робота',
+  'віддалено', 'ремоут', 'full-time', 'part-time', 'project', 'ставка', 'зп', 'зарплата',
+  // Російські тригери замовників та роботодавців
   'ищу', 'ищем', 'нужен', 'нужна', 'нужны', 'требуется', 'требуются', 'заказ', 'заказ:',
   'разработать', 'сделать', 'настроить', 'смонтировать', 'запустить', 'откликнитесь',
-  'кто может', 'вакансия', 'в команду нужен', 'ищем подрядчика', 'ищем агентство', 'техзадание', 'тз'
+  'кто может', 'вакансия', 'вакансии', 'в команду нужен', 'ищем подрядчика', 'ищем агентство',
+  'техзадание', 'тз', 'работа', 'удаленно', 'удаленка', 'оплата', 'в штат', 'на проект'
 ];
 
 // 3 Core Agency Niches & specific digital match patterns
 const NICHES = {
   development: {
     name: 'Веброзробка',
-    // Strong phrases (if any match, high confidence)
+    // Strong phrases (if any match, high confidence immediate match)
     strongPhrases: [
+      // Розробка сайтів та лендінгів
       'розробка сайту', 'розробити сайт', 'створення сайту', 'створити сайт', 'потрібен сайт',
       'потрібен лендінг', 'зробити лендінг', 'лендінг під ключ', 'landing page', 'інтернет-магазин',
       'інтернет магазин', 'сайт-каталог', '3d сайт', 'three.js', 'багатосторінковий сайт',
-      'верстка сайту', 'зверстати сайт', 'веб-розробник', 'web-розробник', 'frontend розробник',
+      'верстка сайту', 'зверстати сайт', 'веб-розробник', 'web-розробник', 'веб розробник',
+      'frontend розробник', 'backend розробник', 'fullstack розробник', 'програміст', 'шукаємо розробника',
+      'потрібен розробник', 'потрібен програміст', 'шукаємо програміста', 'вакансія розробник',
+      'вакансія програміст', 'junior розробник', 'middle розробник', 'senior розробник',
       'wordpress', 'webflow', 'tilda', 'тильда', 'телеграм бот', 'телеграм-бот', 'тг бот', 'tg bot',
       'чат-бот', 'чат бот', 'розробка бота', 'техпідтримка сайту', 'редизайн сайту', 'доробити сайт',
-      'поправити сайт', 'баги на сайті', 'верстка figma', 'перенести дизайн',
+      'поправити сайт', 'баги на сайті', 'верстка figma', 'перенести дизайн', 'написати скрипт',
+      'написати бота', 'розробити додаток', 'розробка додатку', 'мобільний додаток',
       // Російські фрази
       'разработка сайта', 'разработать сайт', 'создание сайта', 'создать сайт', 'нужен сайт',
       'нужен лендинг', 'сделать лендинг', 'лендинг под ключ', 'верстка сайта', 'сверстать сайт',
-      'веб-разработчик', 'разработка бота', 'написать бота', 'создать бота', 'сделать бота',
-      'доработать сайт', 'поправить сайт', 'редизайн сайта'
+      'веб-разработчик', 'веб разработчик', 'разработка бота', 'написать бота', 'создать бота',
+      'сделать бота', 'доработать сайт', 'поправить сайт', 'редизайн сайта', 'нужен разработчик',
+      'ищем разработчика', 'нужен программист', 'ищем программиста', 'вакансия разработчик',
+      'вакансия программист', 'frontend разработчик', 'backend разработчик', 'fullstack разработчик',
+      'разработка приложения', 'мобильное приложение', 'написать скрипт', 'написать парсер',
+      // English / Tech Vacancy titles
+      'frontend developer', 'backend developer', 'fullstack developer', 'full stack developer',
+      'web developer', 'python developer', 'react developer', 'node developer', 'wordpress developer',
+      'mobile developer', 'software engineer'
     ],
     keywords: [
-      'лендінг', 'лендинг', 'landing', 'верстк', 'frontend', 'інтернет-магазин', 'интернет-магазин',
-      'webflow', 'wordpress', 'телеграм-бот', 'чат-бот', 'tilda', 'тильда', 'three.js', 'react', 'веб-розроб', 'веб-разраб'
+      'лендінг', 'лендинг', 'landing', 'верстк', 'frontend', 'фронтенд', 'backend', 'бэкенд', 'бекэнд',
+      'fullstack', 'фулстек', 'фуллстек', 'веб-розроб', 'веб-разраб', 'програміст', 'программист',
+      'developer', 'розробник', 'разработчик', 'webflow', 'wordpress', 'вордпрес', 'телеграм-бот',
+      'чат-бот', 'чат бот', 'tilda', 'тильда', 'three.js', 'react', 'vue', 'angular', 'next.js',
+      'nextjs', 'nuxt', 'node', 'nodejs', 'python', 'пайтон', 'django', 'fastapi', 'flask', 'php',
+      'laravel', 'ларавел', 'c#', '.net', 'golang', 'flutter', 'react native', 'парсер', 'скрипт',
+      'інтернет-магазин', 'интернет-магазин', 'ecommerce', 'shopify', 'opencart', 'bitrix', 'битрикс'
     ],
     subcategories: {
       landing: ['лендінг', 'лендинг', 'landing', 'односторінков', 'одностраничн', 'посадочн', 'лендос', 'taplink'],
-      ecommerce: ['інтернет-магазин', 'интернет-магазин', 'магазин', 'e-commerce', 'ecommerce', 'кошик', 'корзина', 'шоп'],
+      ecommerce: ['інтернет-магазин', 'интернет-магазин', 'магазин', 'e-commerce', 'ecommerce', 'кошик', 'корзина', 'шоп', 'shopify', 'opencart'],
       catalog: ['каталог', 'сайти-каталоги', 'каталог товарів', 'каталог товаров'],
       '3d_site': ['3d', 'three.js', 'threejs', 'webgl', 'spline'],
       multipages: ['багатосторінков', 'многостраничн', 'корпоративн', 'сервіс', 'сервис', 'портал'],
-      tg_bots: ['телеграм-бот', 'тг бот', 'tg bot', 'чат-бот', 'бот для'],
-      maintenance: ['техпідтримк', 'техподдержк', 'підтримка', 'поддержка', 'обслуговування', 'обслуживание', 'правки', 'баги', 'доробити', 'доработать', 'редизайн']
+      tg_bots: ['телеграм-бот', 'тг бот', 'tg bot', 'чат-бот', 'бот для', 'бота', 'парсер', 'скрипт', 'парс'],
+      maintenance: ['техпідтримк', 'техподдержк', 'підтримка', 'поддержка', 'обслуговування', 'обслуживание', 'правки', 'баги', 'доробити', 'доработать', 'редизайн'],
+      frontend: ['frontend', 'фронтенд', 'react', 'реакт', 'vue', 'вью', 'angular', 'next.js', 'nextjs', 'nuxt', 'верстк', 'html', 'css', 'tailwind', 'javascript', 'typescript'],
+      backend: ['backend', 'бэкенд', 'бекэнд', 'node', 'nodejs', 'python', 'пайтон', 'django', 'fastapi', 'flask', 'php', 'laravel', 'ларавел', 'golang', 'c#', '.net', 'api', 'rest api', 'sql', 'postgres'],
+      fullstack: ['fullstack', 'full-stack', 'фулстек', 'фуллстек'],
+      mobile: ['flutter', 'флаттер', 'react native', 'mobile', 'мобільн', 'мобильн', 'ios', 'android', 'swift', 'kotlin'],
+      vacancies_it: ['вакансія', 'вакансия', 'робота в it', 'работа в it', 'middle', 'junior', 'senior', 'lead', 'разработчик в штат', 'розробник в команду']
     }
   },
   marketing: {
@@ -225,7 +249,13 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
   const lower = clean.toLowerCase();
 
   // 1. Check Spam & Candidate Resumes
+  const isEmployerPosting = /шукаємо|іщем|ищем|требуется|требуются|вакансі[яї]|ваканси[яи]|в команду|в штат|открыта позиция|ищем разработчика|шукаємо розробника|нужен разработчик|потрібен розробник|нужен программист|потрібен програміст|замовлення|заказ\b/i.test(lower);
+
   for (const sw of RESUME_AND_SPAM_STOP_WORDS) {
+    // If it's explicitly an employer/recruiter posting, don't drop on mentions of sending resume
+    if (isEmployerPosting && (sw.includes('резюме') || sw.includes('портфоліо') || sw.includes('портфолио'))) {
+      continue;
+    }
     if (lower.includes(sw)) return null;
   }
 
@@ -260,7 +290,7 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
 
   // 4. If no strong phrase, check keyword density + client intent
   if (!matchedNiche) {
-    // Must have client intent
+    // Must have client intent or job vacancy intent
     let hasClientIntent = false;
     for (const trig of CLIENT_INTENT_TRIGGERS) {
       if (lower.includes(trig)) {
@@ -276,7 +306,7 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
       for (const kw of catData.keywords) {
         if (lower.includes(kw)) count++;
       }
-      if (count >= 2 && count > bestScore) {
+      if (count >= 1 && count > bestScore) {
         bestScore = count;
         matchedNiche = catKey;
       }
@@ -301,8 +331,13 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
           catalog: "Сайти-каталоги",
           '3d_site': "3D сайт",
           multipages: "Багатосторінковий сайт",
-          tg_bots: "Телеграм-бот",
+          tg_bots: "Телеграм-бот та автоматизація",
           maintenance: "Технічне обслуговування",
+          frontend: "Frontend розробка",
+          backend: "Backend & API розробка",
+          fullstack: "Fullstack розробка",
+          mobile: "Мобільні додатки",
+          vacancies_it: "IT Вакансії / Розробка",
           meta_target: "Таргетована реклама (Meta)",
           google_ads: "Google реклама",
           tiktok_ads: "TikTok реклама",

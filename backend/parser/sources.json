@@ -1,7 +1,7 @@
 {
-  "description": "Максимальна супер-база з 500 Telegram каналів та чатів (IT, Веб-розробка, Сайти, Боти, Фріланс: Україна, Польща, РФ, Казахстан, Європа, Global) для моніторингу DWS Lead.",
-  "updatedAt": "2026-10-17T18:16:41.050Z",
-  "totalCount": 500,
+  "description": "DWS Lead — Realtime Telegram Lead Sources (245 Channels & 279 Chats)",
+  "updatedAt": "2026-10-17T18:34:41.307Z",
+  "totalCount": 514,
   "chats": [
     {
       "username": "@work_kiev3",
@@ -893,6 +893,1272 @@
       "type": "chat"
     },
     {
+      "username": "@krakow_work_chat",
+      "title": "Работа & Услуги Краков",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@biznes_polska",
+      "title": "Бизнес в Польше (Сайты, Реклама)",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@it_poland_chat",
+      "title": "IT & Freelance Poland Chat",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@freelance_poland",
+      "title": "Фриланс Заказы Польша",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@uslugi_warszawa",
+      "title": "Услуги и Реклама Варшава",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@uslugi_krakow",
+      "title": "Услуги и Бизнес Краков",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@uslugi_wroclaw",
+      "title": "Услуги и Реклама Вроцлав",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@warszawa_chat_ukr",
+      "title": "Варшава Чат Украинцы",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@krakow_chat_ua",
+      "title": "Краков Чат Украинцы",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@wroclaw_chat_ua",
+      "title": "Вроцлав Чат Украинцы",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@gdansk_chat_ua",
+      "title": "Гданьск Чат Украинцы",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@poznan_chat_ua",
+      "title": "Познань Чат Украинцы",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@hworknet_community",
+      "title": "Hworknet Community UA",
+      "category": "freelance",
+      "country": "UA",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@uafreelance_chat",
+      "title": "Чат українських фрілансерів",
+      "category": "freelance",
+      "country": "UA",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@it_kazakhstan",
+      "title": "IT Казахстан Комьюнити",
+      "category": "web",
+      "country": "KZ",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@digital_kz",
+      "title": "Digital & Маркетинг Казахстан",
+      "category": "marketing",
+      "country": "KZ",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@georgia_freelance",
+      "title": "Фриланс в Грузии",
+      "category": "freelance",
+      "country": "GE",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tilda_hub",
+      "title": "Tilda Hub Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@webflow_community_ru",
+      "title": "Webflow Комьюнити & Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tg_bot_freelance",
+      "title": "Telegram Bots Freelance",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@python_freelance_orders",
+      "title": "Python Заказы & Парсеры",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@site_building_chat",
+      "title": "Создание сайтов | Чат Заказчиков",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@landing_page_orders",
+      "title": "Лендинги & Одностраничники Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@crm_amo_bitrix",
+      "title": "amoCRM / Bitrix24 Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@outsource_orders",
+      "title": "Аутсорс Разработка Сайтов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@web_design_orders",
+      "title": "Веб-дизайн & Лендинги Заказы",
+      "category": "design",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@logo_orders_ru",
+      "title": "Логотипы & Брендинг Заказы",
+      "category": "design",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@creatives_design_orders",
+      "title": "Рекламные Креативы Заказы",
+      "category": "design",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@packaging_design_orders",
+      "title": "Дизайн упаковки и мерча",
+      "category": "design",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@smm_orders_feed",
+      "title": "SMM Ведение и Продвижение",
+      "category": "marketing",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@seo_freelance_orders",
+      "title": "SEO Оптимизация & Продвижение",
+      "category": "marketing",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@traffic_buyers_chat",
+      "title": "Media Buyers & Трафик Чат",
+      "category": "marketing",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@influencer_ads_orders",
+      "title": "Реклама у блогеров & Посевы",
+      "category": "marketing",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@copywriter_orders",
+      "title": "Копирайтинг & Продающие тексты",
+      "category": "marketing",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@reputation_management",
+      "title": "SERM & Управление репутацией",
+      "category": "marketing",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@digital_shabashka",
+      "title": "Digital Шабашка & Быстрые заказы",
+      "category": "freelance",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@warszawa_it_community",
+      "title": "Warszawa IT Community",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@krakow_it_community",
+      "title": "Krakow IT Community",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@wroclaw_it_community",
+      "title": "Wrocław IT Community",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@warszawa_oglosenia_praca",
+      "title": "Варшава Объявления & Работа",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@krakow_oglosenia",
+      "title": "Краков Объявления & Услуги",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@wroclaw_oglosenia",
+      "title": "Вроцлав Объявления & Работа",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@gdansk_oglosenia",
+      "title": "Гданьск Объявления & Услуги",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@poznan_oglosenia",
+      "title": "Познань Объявления & Работа",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@polska_praca_chat",
+      "title": "Польша Работа Чат",
+      "category": "freelance",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tbilisi_digital_chat",
+      "title": "Тбилиси Digital & IT Чат",
+      "category": "web",
+      "country": "GE",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@batumi_it_chat",
+      "title": "Батуми IT & Фриланс Чат",
+      "category": "web",
+      "country": "GE",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tilda_freelancers",
+      "title": "Tilda Freelancers | Заказы сайтов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tilda_work_chat",
+      "title": "Tilda Work Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tildadev",
+      "title": "Tilda Dev & Code",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@webflow_orders_chat",
+      "title": "Webflow Разработка Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@wordpress_profi",
+      "title": "WordPress Profi Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@wordpress_freelance_chat",
+      "title": "WordPress Freelance Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@woocommerce_orders",
+      "title": "WooCommerce Магазины Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@elementor_ru",
+      "title": "Elementor & WP Разработка",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@bitrix_work_chat",
+      "title": "Битрикс24 & 1С-Битрикс Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@opencart_orders",
+      "title": "OpenCart Разработка & Правки",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@shopify_ru_chat",
+      "title": "Shopify Разработчики Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@strapi_cms_ru",
+      "title": "Strapi & Headless CMS Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@landing_orders_chat",
+      "title": "Заказы на Лендинги Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@verstka_orders",
+      "title": "Верстка Сайтов Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@verstka_chat_ru",
+      "title": "Чат Верстальщиков HTML/CSS",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@web_dev_orders_chat",
+      "title": "Заказы на Сайты под ключ",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@sites_turnkey",
+      "title": "Сайты под ключ Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@corporate_sites_dev",
+      "title": "Корпоративные сайты Разработка",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@interactive_sites",
+      "title": "Three.js / WebGL 3D Сайты",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@anim_sites_dev",
+      "title": "GSAP & Анимация Сайтов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@react_chat_jobs",
+      "title": "React Developers Чат Заказов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@nextjs_chat_ru",
+      "title": "Next.js Комьюнити Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@vuejs_chat_jobs",
+      "title": "Vue.js Чат Заказов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@nuxtjs_ru",
+      "title": "Nuxt.js Проекты & Сайты",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@angular_chat_ru",
+      "title": "Angular Чат Заказов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@javascript_chat_ru",
+      "title": "JavaScript Чат Разработчиков",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@web_interfaces_dev",
+      "title": "Разработка Веб-интерфейсов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@svelte_jobs_ru",
+      "title": "Svelte / SvelteKit Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tailwind_dev_ru",
+      "title": "Tailwind CSS Разработка",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@python_dev_chat_ru",
+      "title": "Python Разработчики Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@fastapi_ru",
+      "title": "FastAPI Разработка API",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@php_geeks_chat",
+      "title": "PHP Geeks Чат Заказов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@laravel_chat_ru",
+      "title": "Laravel Чат Разработчиков",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@yii2_jobs",
+      "title": "Yii2 Разработка & Правки",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@nodejs_chat_ru",
+      "title": "Node.js Разработчики Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@nestjs_ru",
+      "title": "NestJS Backend Разработка",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@golang_chat_ru",
+      "title": "Golang Чат Разработчиков",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@dotnet_chat_ru",
+      "title": ".NET Разработчики Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@sql_db_jobs",
+      "title": "PostgreSQL / MySQL Базы Данных",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tg_bot_exchange",
+      "title": "Биржа Ботов и Скриптов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@aiogram_chat_ru",
+      "title": "aiogram Боты Чат Разработчиков",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@pyrogram_chat",
+      "title": "Pyrogram & Telethon Боты",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@telegram_mini_apps_dev",
+      "title": "Telegram Mini Apps (TMA) Dev",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@bot_creators_orders",
+      "title": "Создание Ботов для Бизнеса",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@parser_orders_ru",
+      "title": "Заказы на Парсеры и Скрапинг",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@scraping_chat",
+      "title": "Скрапинг Данных & Парсинг Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@automation_b2b",
+      "title": "Автоматизация Бизнеса (Make, n8n)",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@n8n_ru",
+      "title": "n8n & Webhooks Автоматизация",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@zapier_make_orders",
+      "title": "Заказы Make (Integromat) & Zapier",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@chatbots_for_business",
+      "title": "Чат-боты для воронок и продаж",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@flutter_chat_ru",
+      "title": "Flutter Чат Разработчиков",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@react_native_chat_ru",
+      "title": "React Native Чат Заказов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@ios_chat_ru",
+      "title": "iOS Разработчики Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@android_chat_ru",
+      "title": "Android Разработчики Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@mobile_apps_turnkey",
+      "title": "Приложения под ключ Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@agency_subcontract",
+      "title": "Субподряд для Веб-студий",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@digital_subcontract",
+      "title": "Digital Субподряд Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@lead_gen_it_orders",
+      "title": "Лиды на Разработку ПО и Сайтов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@dev_lead_exchange",
+      "title": "Биржа IT Лидов и Клиентов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@web_agency_leads",
+      "title": "Клиенты для Веб-агентств",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@saas_dev_orders",
+      "title": "Разработка SaaS Сервисов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@mvp_development",
+      "title": "Разработка MVP под ключ",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@freelance_it_chat",
+      "title": "Фриланс IT Чат Проектов",
+      "category": "freelance",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@forweb_dev_chat",
+      "title": "ForWeb Dev Чат Заказов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@qa_chat_jobs",
+      "title": "QA Тестировщики Чат Заказов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@devops_chat_ru",
+      "title": "DevOps Чат Серверов и Деплоя",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@server_setup_orders",
+      "title": "Настройка Серверов / VPS / Docker",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@web_interface_designers",
+      "title": "Дизайн Интерфейсов Чат",
+      "category": "design",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@figma_community_orders",
+      "title": "Figma Community Заказы",
+      "category": "design",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@warsaw_developers_chat",
+      "title": "Warsaw Developers Chat",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@krakow_dev_chat",
+      "title": "Krakow Developers Chat",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@wroclaw_dev_chat",
+      "title": "Wrocław Developers Chat",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@poznan_tech_community",
+      "title": "Poznań Tech Community",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@poland_dev_freelance",
+      "title": "Poland Dev Freelance Chat",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@prague_dev_chat",
+      "title": "Prague Developers Chat",
+      "category": "web",
+      "country": "CZ",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tilda_ua_orders",
+      "title": "Tilda Україна Замовлення",
+      "category": "web",
+      "country": "UA",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@wordpress_ua_chat",
+      "title": "WordPress Україна Чат Замовлень",
+      "category": "web",
+      "country": "UA",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@frontend_ua_chat",
+      "title": "Frontend UA Чат Розробників",
+      "category": "web",
+      "country": "UA",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@python_ua_chat",
+      "title": "Python UA Чат Розробників",
+      "category": "web",
+      "country": "UA",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@php_ua_chat",
+      "title": "PHP & Laravel UA Чат Замовлень",
+      "category": "web",
+      "country": "UA",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@react_ua_chat",
+      "title": "React UA Ком’юніті & Замовлення",
+      "category": "web",
+      "country": "UA",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tg_bots_ua",
+      "title": "Розробка Telegram-ботів Україна",
+      "category": "web",
+      "country": "UA",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@dev_kazakhstan_chat",
+      "title": "Разработчики Казахстана Чат",
+      "category": "web",
+      "country": "KZ",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tilda_kz_chat",
+      "title": "Tilda & Сайты Казахстан",
+      "category": "web",
+      "country": "KZ",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tashkent_dev_chat",
+      "title": "Ташкент Разработчики Чат",
+      "category": "web",
+      "country": "UZ",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tbilisi_dev_chat",
+      "title": "Тбилиси Разработчики Чат",
+      "category": "web",
+      "country": "GE",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@minsk_it_chat",
+      "title": "Минск IT Комьюнити Чат",
+      "category": "web",
+      "country": "BY",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@yerevan_dev_chat",
+      "title": "Ереван Разработчики Чат",
+      "category": "web",
+      "country": "AM",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@freelance_developers_global",
+      "title": "Freelance Developers Global",
+      "category": "web",
+      "country": "GLOBAL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@it_orders_fast",
+      "title": "Срочные IT Заказы и Шабашки",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@turnkey_websites_chat",
+      "title": "Сайты под ключ | Чат Клиентов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@site_fixes_chat",
+      "title": "Доработки и Баги Сайтов Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@tilda_quick_orders",
+      "title": "Быстрые заказы на Tilda",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@bot_express_orders",
+      "title": "Срочные заказы на Ботов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@landing_express",
+      "title": "Экспресс Лендинги Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@online_store_orders",
+      "title": "Создание Магазинов Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@web_help_freelance",
+      "title": "Помощь по Сайтам Фриланс",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@web_lead_generation",
+      "title": "Лидогенерация на Сайты",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@clients_for_programmers",
+      "title": "Клиенты для Программистов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@order_a_website_chat",
+      "title": "Заказать Сайт | Чат Клиентов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@order_a_bot_chat",
+      "title": "Заказать Бота | Чат Клиентов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@web_masters_chat_ru",
+      "title": "Вебмастера & Заказчики Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@seo_web_orders",
+      "title": "SEO & Сайты под ключ",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@telegram_funnels_dev",
+      "title": "Воронки и Боты под ключ",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@code_orders_ru",
+      "title": "Написание Кода & Скрипты Заказы",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@api_integration_orders",
+      "title": "Интеграция API & Сервисов",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@warsaw_freelance_it",
+      "title": "Warsaw Freelance IT Chat",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@krakow_freelance_it",
+      "title": "Krakow Freelance IT Chat",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@wroclaw_freelance_it",
+      "title": "Wrocław Freelance IT Chat",
+      "category": "web",
+      "country": "PL",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@spb_dev_chat",
+      "title": "Санкт-Петербург Разработчики Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    },
+    {
+      "username": "@krd_dev_chat",
+      "title": "Краснодар Разработчики Чат",
+      "category": "web",
+      "country": "RU",
+      "active": true,
+      "type": "chat"
+    }
+  ],
+  "channels": [
+    {
       "username": "@normrabota",
       "title": "Норм работа Digital",
       "category": "freelance",
@@ -1109,14 +2375,6 @@
       "type": "channel"
     },
     {
-      "username": "@krakow_work_chat",
-      "title": "Работа & Услуги Краков",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@gdansk_praca",
       "title": "Работа Гданьск Сопот Гдыня",
       "category": "freelance",
@@ -1163,94 +2421,6 @@
       "country": "PL",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@biznes_polska",
-      "title": "Бизнес в Польше (Сайты, Реклама)",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@it_poland_chat",
-      "title": "IT & Freelance Poland Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@freelance_poland",
-      "title": "Фриланс Заказы Польша",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@uslugi_warszawa",
-      "title": "Услуги и Реклама Варшава",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@uslugi_krakow",
-      "title": "Услуги и Бизнес Краков",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@uslugi_wroclaw",
-      "title": "Услуги и Реклама Вроцлав",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@warszawa_chat_ukr",
-      "title": "Варшава Чат Украинцы",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krakow_chat_ua",
-      "title": "Краков Чат Украинцы",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wroclaw_chat_ua",
-      "title": "Вроцлав Чат Украинцы",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@gdansk_chat_ua",
-      "title": "Гданьск Чат Украинцы",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@poznan_chat_ua",
-      "title": "Познань Чат Украинцы",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@it_job_ua",
@@ -1301,14 +2471,6 @@
       "type": "channel"
     },
     {
-      "username": "@hworknet_community",
-      "title": "Hworknet Community UA",
-      "category": "freelance",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@happymonday",
       "title": "Happy Monday Кар’єра",
       "category": "freelance",
@@ -1323,14 +2485,6 @@
       "country": "UA",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@uafreelance_chat",
-      "title": "Чат українських фрілансерів",
-      "category": "freelance",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@dev_ua_jobs",
@@ -1381,36 +2535,12 @@
       "type": "channel"
     },
     {
-      "username": "@it_kazakhstan",
-      "title": "IT Казахстан Комьюнити",
-      "category": "web",
-      "country": "KZ",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@digital_kz",
-      "title": "Digital & Маркетинг Казахстан",
-      "category": "marketing",
-      "country": "KZ",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@georgia_it_jobs",
       "title": "Грузия IT & Релокация",
       "category": "web",
       "country": "GE",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@georgia_freelance",
-      "title": "Фриланс в Грузии",
-      "category": "freelance",
-      "country": "GE",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@belarus_it_job",
@@ -1461,22 +2591,6 @@
       "type": "channel"
     },
     {
-      "username": "@tilda_hub",
-      "title": "Tilda Hub Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@webflow_community_ru",
-      "title": "Webflow Комьюнити & Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@wordpress_jobs_ru",
       "title": "WordPress Заказы и Проекты",
       "category": "web",
@@ -1509,52 +2623,12 @@
       "type": "channel"
     },
     {
-      "username": "@tg_bot_freelance",
-      "title": "Telegram Bots Freelance",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@python_freelance_orders",
-      "title": "Python Заказы & Парсеры",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@site_building_chat",
-      "title": "Создание сайтов | Чат Заказчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@landing_page_orders",
-      "title": "Лендинги & Одностраничники Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@ecom_orders_ru",
       "title": "E-commerce & Магазины под ключ",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@crm_amo_bitrix",
-      "title": "amoCRM / Bitrix24 Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@react_dev_jobs",
@@ -1581,36 +2655,12 @@
       "type": "channel"
     },
     {
-      "username": "@outsource_orders",
-      "title": "Аутсорс Разработка Сайтов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@ui_ux_jobs_feed",
       "title": "UI/UX Вакансии и Проекты",
       "category": "design",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@web_design_orders",
-      "title": "Веб-дизайн & Лендинги Заказы",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@logo_orders_ru",
-      "title": "Логотипы & Брендинг Заказы",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@graphic_jobs_feed",
@@ -1621,28 +2671,12 @@
       "type": "channel"
     },
     {
-      "username": "@creatives_design_orders",
-      "title": "Рекламные Креативы Заказы",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@motion_design_jobs",
       "title": "Motion Design & Анимация",
       "category": "design",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@packaging_design_orders",
-      "title": "Дизайн упаковки и мерча",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@figma_design_orders",
@@ -1661,14 +2695,6 @@
       "type": "channel"
     },
     {
-      "username": "@smm_orders_feed",
-      "title": "SMM Ведение и Продвижение",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@context_ads_jobs",
       "title": "Контекстная Реклама Заказы",
       "category": "marketing",
@@ -1677,52 +2703,12 @@
       "type": "channel"
     },
     {
-      "username": "@seo_freelance_orders",
-      "title": "SEO Оптимизация & Продвижение",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@traffic_buyers_chat",
-      "title": "Media Buyers & Трафик Чат",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@influencer_ads_orders",
-      "title": "Реклама у блогеров & Посевы",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@copywriter_orders",
-      "title": "Копирайтинг & Продающие тексты",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@tg_ads_channel",
       "title": "Telegram Ads & Посевы Заказы",
       "category": "marketing",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@reputation_management",
-      "title": "SERM & Управление репутацией",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@freelance_channel_ru",
@@ -1773,14 +2759,6 @@
       "type": "channel"
     },
     {
-      "username": "@digital_shabashka",
-      "title": "Digital Шабашка & Быстрые заказы",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@part_time_digital",
       "title": "Подработка в Digital",
       "category": "freelance",
@@ -1803,78 +2781,6 @@
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@warszawa_it_community",
-      "title": "Warszawa IT Community",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krakow_it_community",
-      "title": "Krakow IT Community",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wroclaw_it_community",
-      "title": "Wrocław IT Community",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@warszawa_oglosenia_praca",
-      "title": "Варшава Объявления & Работа",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krakow_oglosenia",
-      "title": "Краков Объявления & Услуги",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wroclaw_oglosenia",
-      "title": "Вроцлав Объявления & Работа",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@gdansk_oglosenia",
-      "title": "Гданьск Объявления & Услуги",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@poznan_oglosenia",
-      "title": "Познань Объявления & Работа",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@polska_praca_chat",
-      "title": "Польша Работа Чат",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@poland_remote_jobs",
@@ -1915,22 +2821,6 @@
       "country": "UZ",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@tbilisi_digital_chat",
-      "title": "Тбилиси Digital & IT Чат",
-      "category": "web",
-      "country": "GE",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@batumi_it_chat",
-      "title": "Батуми IT & Фриланс Чат",
-      "category": "web",
-      "country": "GE",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@yerevan_digital_jobs",
@@ -1981,14 +2871,6 @@
       "type": "channel"
     },
     {
-      "username": "@tilda_freelancers",
-      "title": "Tilda Freelancers | Заказы сайтов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@tilda_job_orders",
       "title": "Заказы Tilda Publishing",
       "category": "web",
@@ -2003,22 +2885,6 @@
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@tilda_work_chat",
-      "title": "Tilda Work Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tildadev",
-      "title": "Tilda Dev & Code",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@tildaprojects",
@@ -2037,68 +2903,12 @@
       "type": "channel"
     },
     {
-      "username": "@webflow_orders_chat",
-      "title": "Webflow Разработка Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wordpress_profi",
-      "title": "WordPress Profi Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wordpress_freelance_chat",
-      "title": "WordPress Freelance Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@woocommerce_orders",
-      "title": "WooCommerce Магазины Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@elementor_ru",
-      "title": "Elementor & WP Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@bitrix_expert",
       "title": "Битрикс Эксперты Заказы",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@bitrix_work_chat",
-      "title": "Битрикс24 & 1С-Битрикс Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@opencart_orders",
-      "title": "OpenCart Разработка & Правки",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@shopify_dev_orders",
@@ -2109,30 +2919,6 @@
       "type": "channel"
     },
     {
-      "username": "@shopify_ru_chat",
-      "title": "Shopify Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@strapi_cms_ru",
-      "title": "Strapi & Headless CMS Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@landing_orders_chat",
-      "title": "Заказы на Лендинги Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@landing_page_pro",
       "title": "Landing Page Pro Проекты",
       "category": "web",
@@ -2141,36 +2927,12 @@
       "type": "channel"
     },
     {
-      "username": "@verstka_orders",
-      "title": "Верстка Сайтов Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@verstka_chat_ru",
-      "title": "Чат Верстальщиков HTML/CSS",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@html_css_jobs",
       "title": "HTML/CSS/JS Вакансии",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@web_dev_orders_chat",
-      "title": "Заказы на Сайты под ключ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@web_developer_jobs_ru",
@@ -2189,52 +2951,12 @@
       "type": "channel"
     },
     {
-      "username": "@sites_turnkey",
-      "title": "Сайты под ключ Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@corporate_sites_dev",
-      "title": "Корпоративные сайты Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@interactive_sites",
-      "title": "Three.js / WebGL 3D Сайты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@anim_sites_dev",
-      "title": "GSAP & Анимация Сайтов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@react_jobs_feed",
       "title": "React.js Вакансии & Заказы",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@react_chat_jobs",
-      "title": "React Developers Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@nextjs_jobs_ru",
@@ -2245,36 +2967,12 @@
       "type": "channel"
     },
     {
-      "username": "@nextjs_chat_ru",
-      "title": "Next.js Комьюнити Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@vuejs_jobs_feed",
       "title": "Vue.js Вакансии & Проекты",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@vuejs_chat_jobs",
-      "title": "Vue.js Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@nuxtjs_ru",
-      "title": "Nuxt.js Проекты & Сайты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@typescript_jobs_feed",
@@ -2293,14 +2991,6 @@
       "type": "channel"
     },
     {
-      "username": "@angular_chat_ru",
-      "title": "Angular Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@frontend_tender",
       "title": "Frontend Тендеры и Заказы",
       "category": "web",
@@ -2317,44 +3007,12 @@
       "type": "channel"
     },
     {
-      "username": "@javascript_chat_ru",
-      "title": "JavaScript Чат Разработчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@frontend_work_cis",
       "title": "Фронтенд работа СНГ",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@web_interfaces_dev",
-      "title": "Разработка Веб-интерфейсов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@svelte_jobs_ru",
-      "title": "Svelte / SvelteKit Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tailwind_dev_ru",
-      "title": "Tailwind CSS Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@python_jobs_feed",
@@ -2365,28 +3023,12 @@
       "type": "channel"
     },
     {
-      "username": "@python_dev_chat_ru",
-      "title": "Python Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@django_jobs_ru",
       "title": "Django & FastAPI Проекты",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@fastapi_ru",
-      "title": "FastAPI Разработка API",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@php_jobs_feed",
@@ -2397,36 +3039,12 @@
       "type": "channel"
     },
     {
-      "username": "@php_geeks_chat",
-      "title": "PHP Geeks Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@laravel_jobs_ru",
       "title": "Laravel Вакансии & Проекты",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@laravel_chat_ru",
-      "title": "Laravel Чат Разработчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@yii2_jobs",
-      "title": "Yii2 Разработка & Правки",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@nodejs_jobs_feed",
@@ -2437,36 +3055,12 @@
       "type": "channel"
     },
     {
-      "username": "@nodejs_chat_ru",
-      "title": "Node.js Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@nestjs_ru",
-      "title": "NestJS Backend Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@golang_jobs_feed",
       "title": "Go (Golang) Вакансии",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@golang_chat_ru",
-      "title": "Golang Чат Разработчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@java_jobs_feed",
@@ -2485,14 +3079,6 @@
       "type": "channel"
     },
     {
-      "username": "@dotnet_chat_ru",
-      "title": ".NET Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@ruby_jobs_ru",
       "title": "Ruby on Rails Вакансии",
       "category": "web",
@@ -2507,14 +3093,6 @@
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@sql_db_jobs",
-      "title": "PostgreSQL / MySQL Базы Данных",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@bot_orders_feed",
@@ -2533,38 +3111,6 @@
       "type": "channel"
     },
     {
-      "username": "@tg_bot_exchange",
-      "title": "Биржа Ботов и Скриптов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@aiogram_chat_ru",
-      "title": "aiogram Боты Чат Разработчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@pyrogram_chat",
-      "title": "Pyrogram & Telethon Боты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@telegram_mini_apps_dev",
-      "title": "Telegram Mini Apps (TMA) Dev",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@tma_orders",
       "title": "Заказы на Telegram Mini Apps",
       "category": "web",
@@ -2573,68 +3119,12 @@
       "type": "channel"
     },
     {
-      "username": "@bot_creators_orders",
-      "title": "Создание Ботов для Бизнеса",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@parser_orders_ru",
-      "title": "Заказы на Парсеры и Скрапинг",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@scraping_chat",
-      "title": "Скрапинг Данных & Парсинг Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@automation_b2b",
-      "title": "Автоматизация Бизнеса (Make, n8n)",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@n8n_ru",
-      "title": "n8n & Webhooks Автоматизация",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@zapier_make_orders",
-      "title": "Заказы Make (Integromat) & Zapier",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@bot_develop_cis",
       "title": "Разработка Ботов СНГ",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@chatbots_for_business",
-      "title": "Чат-боты для воронок и продаж",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@mobile_dev_feed",
@@ -2653,28 +3143,12 @@
       "type": "channel"
     },
     {
-      "username": "@flutter_chat_ru",
-      "title": "Flutter Чат Разработчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@react_native_jobs_ru",
       "title": "React Native Вакансии",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@react_native_chat_ru",
-      "title": "React Native Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@ios_jobs_feed",
@@ -2685,14 +3159,6 @@
       "type": "channel"
     },
     {
-      "username": "@ios_chat_ru",
-      "title": "iOS Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@android_jobs_feed",
       "title": "Android / Kotlin Вакансии",
       "category": "web",
@@ -2701,44 +3167,12 @@
       "type": "channel"
     },
     {
-      "username": "@android_chat_ru",
-      "title": "Android Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@mobile_apps_turnkey",
-      "title": "Приложения под ключ Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@it_tenders_cis",
       "title": "IT Тендеры СНГ | Сайты & Софт",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@agency_subcontract",
-      "title": "Субподряд для Веб-студий",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@digital_subcontract",
-      "title": "Digital Субподряд Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@b2b_dev_orders",
@@ -2757,30 +3191,6 @@
       "type": "channel"
     },
     {
-      "username": "@lead_gen_it_orders",
-      "title": "Лиды на Разработку ПО и Сайтов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@dev_lead_exchange",
-      "title": "Биржа IT Лидов и Клиентов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@web_agency_leads",
-      "title": "Клиенты для Веб-агентств",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@startup_it_jobs",
       "title": "Стартапы IT Вакансии & Заказы",
       "category": "web",
@@ -2789,36 +3199,12 @@
       "type": "channel"
     },
     {
-      "username": "@saas_dev_orders",
-      "title": "Разработка SaaS Сервисов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@mvp_development",
-      "title": "Разработка MVP под ключ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@it_freelance_feed",
       "title": "IT Freelance Feed",
       "category": "freelance",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@freelance_it_chat",
-      "title": "Фриланс IT Чат Проектов",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@tproger_jobs",
@@ -2877,14 +3263,6 @@
       "type": "channel"
     },
     {
-      "username": "@forweb_dev_chat",
-      "title": "ForWeb Dev Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@weblancer_projects_ru",
       "title": "Weblancer Проекты Сайтов",
       "category": "web",
@@ -2933,14 +3311,6 @@
       "type": "channel"
     },
     {
-      "username": "@qa_chat_jobs",
-      "title": "QA Тестировщики Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@devops_jobs_feed",
       "title": "DevOps / SysAdmin Вакансии",
       "category": "web",
@@ -2949,44 +3319,12 @@
       "type": "channel"
     },
     {
-      "username": "@devops_chat_ru",
-      "title": "DevOps Чат Серверов и Деплоя",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@server_setup_orders",
-      "title": "Настройка Серверов / VPS / Docker",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@uiux_design_projects",
       "title": "UI/UX Проекты для Веб-студий",
       "category": "design",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@web_interface_designers",
-      "title": "Дизайн Интерфейсов Чат",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@figma_community_orders",
-      "title": "Figma Community Заказы",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@product_design_jobs",
@@ -3021,14 +3359,6 @@
       "type": "channel"
     },
     {
-      "username": "@warsaw_developers_chat",
-      "title": "Warsaw Developers Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@krakow_tech_jobs",
       "title": "Kraków Tech & IT Jobs",
       "category": "web",
@@ -3037,36 +3367,12 @@
       "type": "channel"
     },
     {
-      "username": "@krakow_dev_chat",
-      "title": "Krakow Developers Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@wroclaw_it_hub",
       "title": "Wrocław IT Hub & Jobs",
       "category": "web",
       "country": "PL",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@wroclaw_dev_chat",
-      "title": "Wrocław Developers Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@poznan_tech_community",
-      "title": "Poznań Tech Community",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@gdansk_it_jobs",
@@ -3101,14 +3407,6 @@
       "type": "channel"
     },
     {
-      "username": "@poland_dev_freelance",
-      "title": "Poland Dev Freelance Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@poland_remote_it",
       "title": "Poland Remote IT Developers",
       "category": "web",
@@ -3123,14 +3421,6 @@
       "country": "CZ",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@prague_dev_chat",
-      "title": "Prague Developers Chat",
-      "category": "web",
-      "country": "CZ",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@it_digest_ua",
@@ -3181,68 +3471,12 @@
       "type": "channel"
     },
     {
-      "username": "@tilda_ua_orders",
-      "title": "Tilda Україна Замовлення",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wordpress_ua_chat",
-      "title": "WordPress Україна Чат Замовлень",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@frontend_ua_chat",
-      "title": "Frontend UA Чат Розробників",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@python_ua_jobs",
       "title": "Python UA Вакансії",
       "category": "web",
       "country": "UA",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@python_ua_chat",
-      "title": "Python UA Чат Розробників",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@php_ua_chat",
-      "title": "PHP & Laravel UA Чат Замовлень",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@react_ua_chat",
-      "title": "React UA Ком’юніті & Замовлення",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tg_bots_ua",
-      "title": "Розробка Telegram-ботів Україна",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@it_proekty_ua",
@@ -3293,22 +3527,6 @@
       "type": "channel"
     },
     {
-      "username": "@dev_kazakhstan_chat",
-      "title": "Разработчики Казахстана Чат",
-      "category": "web",
-      "country": "KZ",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tilda_kz_chat",
-      "title": "Tilda & Сайты Казахстан",
-      "category": "web",
-      "country": "KZ",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@web_orders_kz",
       "title": "Заказы на Сайты Казахстан",
       "category": "web",
@@ -3317,28 +3535,12 @@
       "type": "channel"
     },
     {
-      "username": "@tashkent_dev_chat",
-      "title": "Ташкент Разработчики Чат",
-      "category": "web",
-      "country": "UZ",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@tashkent_it_hub",
       "title": "Tashkent IT Hub & Jobs",
       "category": "web",
       "country": "UZ",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@tbilisi_dev_chat",
-      "title": "Тбилиси Разработчики Чат",
-      "category": "web",
-      "country": "GE",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@georgia_tech_jobs",
@@ -3355,22 +3557,6 @@
       "country": "BY",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@minsk_it_chat",
-      "title": "Минск IT Комьюнити Чат",
-      "category": "web",
-      "country": "BY",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@yerevan_dev_chat",
-      "title": "Ереван Разработчики Чат",
-      "category": "web",
-      "country": "AM",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@baku_it_jobs",
@@ -3501,84 +3687,12 @@
       "type": "channel"
     },
     {
-      "username": "@freelance_developers_global",
-      "title": "Freelance Developers Global",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@web_studio_orders",
       "title": "Заказы для Веб-студий и Агентств",
       "category": "web",
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@it_orders_fast",
-      "title": "Срочные IT Заказы и Шабашки",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@turnkey_websites_chat",
-      "title": "Сайты под ключ | Чат Клиентов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@site_fixes_chat",
-      "title": "Доработки и Баги Сайтов Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tilda_quick_orders",
-      "title": "Быстрые заказы на Tilda",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@bot_express_orders",
-      "title": "Срочные заказы на Ботов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@landing_express",
-      "title": "Экспресс Лендинги Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@online_store_orders",
-      "title": "Создание Магазинов Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@web_help_freelance",
-      "title": "Помощь по Сайтам Фриланс",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@dev_orders_vip",
@@ -3605,62 +3719,6 @@
       "type": "channel"
     },
     {
-      "username": "@web_lead_generation",
-      "title": "Лидогенерация на Сайты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@clients_for_programmers",
-      "title": "Клиенты для Программистов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@order_a_website_chat",
-      "title": "Заказать Сайт | Чат Клиентов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@order_a_bot_chat",
-      "title": "Заказать Бота | Чат Клиентов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@web_masters_chat_ru",
-      "title": "Вебмастера & Заказчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@seo_web_orders",
-      "title": "SEO & Сайты под ключ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@telegram_funnels_dev",
-      "title": "Воронки и Боты под ключ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@it_freelance_market",
       "title": "IT Freelance Market",
       "category": "web",
@@ -3675,22 +3733,6 @@
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@code_orders_ru",
-      "title": "Написание Кода & Скрипты Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@api_integration_orders",
-      "title": "Интеграция API & Сервисов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@custom_dev_orders",
@@ -3733,30 +3775,6 @@
       "type": "channel"
     },
     {
-      "username": "@warsaw_freelance_it",
-      "title": "Warsaw Freelance IT Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krakow_freelance_it",
-      "title": "Krakow Freelance IT Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wroclaw_freelance_it",
-      "title": "Wrocław Freelance IT Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@kz_it_orders",
       "title": "Казахстан Заказы на Разработку",
       "category": "web",
@@ -3795,14 +3813,6 @@
       "country": "RU",
       "active": true,
       "type": "channel"
-    },
-    {
-      "username": "@spb_dev_chat",
-      "title": "Санкт-Петербург Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
     },
     {
       "username": "@nsk_it_jobs",
@@ -3861,14 +3871,6 @@
       "type": "channel"
     },
     {
-      "username": "@krd_dev_chat",
-      "title": "Краснодар Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
       "username": "@voronezh_it",
       "title": "Воронеж IT Комьюнити",
       "category": "web",
@@ -3921,57 +3923,6 @@
       "title": "Волгоград IT & Веб",
       "category": "web",
       "country": "RU",
-      "active": true,
-      "type": "channel"
-    }
-  ],
-  "channels": [
-    {
-      "username": "@workplaceinukraine",
-      "title": "Work Place UA | Вакансії",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@aplaywork",
-      "title": "A-Play | Робота та кар'єра",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@jecontact",
-      "title": "Je Contact | IT & Digital Вакансії",
-      "category": "development",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@adgoodashell",
-      "title": "Ad Good as Hell | Маркетинг & Креатив",
-      "category": "marketing",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@top_vacansii",
-      "title": "Топ Вакансії UA",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@work_in_ukraine_golovne",
-      "title": "Робота в Україні | Головне",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@jobzy",
-      "title": "Jobzy | Вакансії",
-      "category": "general",
       "active": true,
       "type": "channel"
     },
@@ -4055,27 +4006,6 @@
     {
       "username": "@lobbyx",
       "title": "Lobby X | Вакансії",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@happymonday",
-      "title": "Happy Monday | Кар'єра",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@kievy_rabota",
-      "title": "Київ Робота",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@you_can_know_more",
-      "title": "Ти можеш більше | Вакансії",
       "category": "general",
       "active": true,
       "type": "channel"

@@ -282,10 +282,10 @@ app.post('/api/profile', (req, res) => {
   }
 });
 
-// 5. SOURCES (200 chats & 200 channels)
+// 5. SOURCES (500+ chats & channels)
 app.get('/api/sources', (req, res) => {
   try {
-    const sources = db.getSources();
+    const sources = loadSources();
     res.json({ success: true, data: sources });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

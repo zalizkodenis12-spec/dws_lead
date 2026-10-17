@@ -77,8 +77,16 @@ export function ingestMessage({ text, authorName, authorUsername, sourceTitle, s
     return null;
   }
 
-  // Must have a direct personal username so the user can message the vacancy owner in PM
+  // Fallback to in-text username or source channel/chat username so lead is never lost
   if (!authorUsername || !authorUsername.startsWith('@') || authorUsername.length < 4) {
+    const extracted = extractContactFromText(cleanedText);
+    if (extracted) {
+      authorUsername = extracted;
+    } else if (sourceUsername) {
+      authorUsername = sourceUsername.startsWith('@') ? sourceUsername : '@' + sourceUsername;
+    }
+  }
+  if (!authorUsername || authorUsername.length < 3) {
     return null;
   }
 
@@ -364,7 +372,7 @@ async function syncAndJoinSuperchats(client, sources) {
     const currentSources = loadSources();
     const chatsToProcess = (currentSources.chats || []).filter(c => {
       const clean = (c.username || '').replace('@', '').replace('https://t.me/', '').split('/')[0].trim();
-      return clean && !clean.startsWith('joinchat') && !clean.includes('+');
+      return clean && c.type !== 'channel' && !clean.startsWith('joinchat') && !clean.includes('+');
     });
 
     const unjoined = chatsToProcess.filter(c => {
@@ -434,13 +442,18 @@ async function syncAndJoinSuperchats(client, sources) {
         // Wait 3.5 seconds between joins to avoid Telegram flood limits
         await new Promise(r => setTimeout(r, 3500));
       } catch (joinErr) {
-        const floodMatch = joinErr.message?.match(/FLOOD_WAIT_(\d+)/);
-        if (floodMatch) {
-          const waitSec = parseInt(floodMatch[1], 10);
+        const msg = joinErr.message || '';
+        const waitMatch = msg.match(/(?:wait of (\d+) seconds|FLOOD_WAIT_(\d+))/i);
+        if (waitMatch || joinErr.seconds) {
+          const waitSec = joinErr.seconds || parseInt(waitMatch[1] || waitMatch[2], 10);
           console.warn(`[DWS Lead Monitor] ⏳ Telegram FloodWait: ${waitSec} секунд. Пауза перед наступною пачкою.`);
           break;
         } else {
-          console.warn(`[DWS Lead Monitor] ⚠️ Не вдалося приєднатися до @${cleanHandle}: ${joinErr.message}`);
+          console.warn(`[DWS Lead Monitor] ⚠️ Не вдалося приєднатися до @${cleanHandle}: ${msg}`);
+          // If private, invalid or requires admin invite approval, skip in future loops to avoid repeated errors
+          if (msg.includes('CHANNEL_PRIVATE') || msg.includes('INVITE_REQUEST_SENT') || msg.includes('USERNAME_NOT_OCCUPIED')) {
+            joinedUsernames.add(cleanHandle.toLowerCase());
+          }
         }
       }
     }
