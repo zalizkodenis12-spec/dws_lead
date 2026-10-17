@@ -59,6 +59,16 @@ const RESUME_AND_SPAM_STOP_WORDS = [
   'робота для мам в декреті', 'работа для мам в декрете', 'ставить лайки', 'перепечатка текстов'
 ];
 
+// Conferences, meetups, hackathons, seminars, festivals, non-job events
+const EVENT_AND_MEETUP_STOP_WORDS = [
+  'хакатон', 'митап', 'мітап', 'фестиваль', 'конференция', 'конференція', 'вебинар', 'вебінар',
+  'день открытых дверей', 'день відкритих дверей', 'выставка', 'виставка', 'подкаст', 'дайджест новостей',
+  'новости дня', 'новини дня', 'новости за неделю', 'новини тижня', 'опрос:', 'опитування',
+  'бесплатный интенсив', 'курс с нуля', 'школа бизнеса', 'game jam', 'геймджем', 'гейм джем',
+  'питчинг', 'питч', 'meetup', 'hackathon', 'conference', 'стажировка без оплаты', 'волонтерство',
+  'нетворкинг', 'нетворкінг', 'подборка новостей', 'обзор сервиса'
+];
+
 /// Triggers indicating a real client/employer looking to hire or order
 const CLIENT_INTENT_TRIGGERS = [
   'шукаю', 'шукаємо', 'потрібен', 'потрібна', 'потрібні', 'треба', 'замовлення', 'замовлення:',
@@ -70,7 +80,8 @@ const CLIENT_INTENT_TRIGGERS = [
   'ищу', 'ищем', 'нужен', 'нужна', 'нужны', 'требуется', 'требуются', 'заказ', 'заказ:',
   'разработать', 'сделать', 'настроить', 'смонтировать', 'запустить', 'откликнитесь',
   'кто может', 'вакансия', 'вакансии', 'в команду нужен', 'ищем подрядчика', 'ищем агентство',
-  'техзадание', 'тз', 'работа', 'удаленно', 'удаленка', 'оплата', 'в штат', 'на проект'
+  'техзадание', 'тз', 'работа', 'удаленно', 'удаленка', 'оплата', 'в штат', 'на проект',
+  'пишите в лс', 'пишіть в пп', 'пишіть в лс'
 ];
 
 // 3 Core Agency Niches & specific digital match patterns
@@ -266,16 +277,29 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
     if (lower.includes(sw)) return null;
   }
 
-  // 2. Check Offline Jobs (Baristas, drivers, cleaners, etc.)
-  let hasOfflineJob = false;
+  // 2. Reject meetups, conferences, hackathons, and news
+  for (const ev of EVENT_AND_MEETUP_STOP_WORDS) {
+    if (lower.includes(ev)) return null;
+  }
+
+  // 3. Reject Offline Jobs (Baristas, drivers, cleaners, etc.)
   for (const offline of OFFLINE_STOP_WORDS) {
-    if (lower.includes(offline)) {
-      hasOfflineJob = true;
+    if (lower.includes(offline)) return null;
+  }
+
+  // 4. MANDATORY CLIENT / HIRING INTENT (must be an actual job vacancy, order, or contract)
+  let hasClientIntent = false;
+  for (const trig of CLIENT_INTENT_TRIGGERS) {
+    if (lower.includes(trig)) {
+      hasClientIntent = true;
       break;
     }
   }
+  if (!hasClientIntent) {
+    return null; // Reject all general chatting, news, and syntax discussions
+  }
 
-  // 3. Match against Strong Digital Phrases first
+  // 5. Match against Strong Digital Phrases & Keywords in 3 Core Niches
   let matchedNiche = null;
   let strongMatchFound = false;
 
@@ -290,23 +314,8 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
     if (strongMatchFound) break;
   }
 
-  // If it had an offline job (e.g. barista) and NO strong digital phrase, discard immediately!
-  if (hasOfflineJob && !strongMatchFound) {
-    return null;
-  }
-
-  // 4. If no strong phrase, check keyword density + client intent
+  // 6. If no strong phrase, check keyword density
   if (!matchedNiche) {
-    // Must have client intent or job vacancy intent
-    let hasClientIntent = false;
-    for (const trig of CLIENT_INTENT_TRIGGERS) {
-      if (lower.includes(trig)) {
-        hasClientIntent = true;
-        break;
-      }
-    }
-    if (!hasClientIntent) return null;
-
     let bestScore = 0;
     for (const [catKey, catData] of Object.entries(NICHES)) {
       let count = 0;

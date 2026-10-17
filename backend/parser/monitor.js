@@ -151,7 +151,7 @@ export function extractAuthorHandle(cleanText, rawBodyHtml = '', sourceHandle = 
   const srcLower = (sourceHandle || '').toLowerCase().replace('@', '');
 
   // 1. Explicit contact keywords in text (e.g. "Контакт: @...", "Пишіть @...", "HR: @...", "Резюме: @...")
-  const contactPattern = /(?:контакт[иа]?|пиш[іі]ть|зв['’]?язок|відгук(?:нутися)?|резюме|відправляйте|надсилайте|hr|recruiter|pm|лічка|лс)[\s:—–-]+@?([a-zA-Z0-9_]{4,32})\b/gi;
+  const contactPattern = /(?:контакт[иа]?|пиш[іі]ть|пишите|зв['’]?язок|відгук(?:нутися)?|отклик(?:нуться)?|резюме|відправляйте|надсилайте|присылайте|hr|recruiter|pm|лічка|лс|пп|tg|telegram|телеграм)[\s:—–-]+@?([a-zA-Z0-9_]{4,32})\b/gi;
   let match;
   while ((match = contactPattern.exec(cleanText)) !== null) {
     const handle = match[1];
@@ -161,10 +161,11 @@ export function extractAuthorHandle(cleanText, rawBodyHtml = '', sourceHandle = 
     }
   }
 
-  // 2. All @mentions in text and t.me/ links in html
+  // 2. All @mentions in text and t.me/ links in text and html
   const mentions = [...cleanText.matchAll(/(?:^|[\s(,:;>«"'])@([a-zA-Z0-9_]{4,32})\b/g)].map(x => x[1]);
-  const links = [...(rawBodyHtml || '').matchAll(/href="https:\/\/t\.me\/([a-zA-Z0-9_]{4,32})"/g)].map(x => x[1]);
-  const all = [...mentions, ...links];
+  const textLinks = [...cleanText.matchAll(/(?:https?:\/\/)?t\.me\/([a-zA-Z0-9_]{4,32})/g)].map(x => x[1]);
+  const htmlLinks = [...(rawBodyHtml || '').matchAll(/href="https:\/\/t\.me\/([a-zA-Z0-9_]{4,32})"/g)].map(x => x[1]);
+  const all = [...mentions, ...textLinks, ...htmlLinks];
 
   // Pick candidates from bottom to top (contacts are typically at the end of vacancy posts)
   for (let i = all.length - 1; i >= 0; i--) {
@@ -176,8 +177,8 @@ export function extractAuthorHandle(cleanText, rawBodyHtml = '', sourceHandle = 
     return '@' + candidate;
   }
 
-  // 3. Fallback to channel itself so user can open source channel and see vacancy
-  return '@' + srcLower;
+  // 3. If no personal contact found, return empty string (do not impersonate the source channel)
+  return '';
 }
 
 /**

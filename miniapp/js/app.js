@@ -3697,7 +3697,7 @@ const DEFAULT_DATA = {
 const savedSourcesRaw = JSON.parse(localStorage.getItem('dws_sources') || 'null');
 const normalizedSources = (savedSourcesRaw && Array.isArray(savedSourcesRaw.chats) && savedSourcesRaw.chats.length >= 50)
   ? savedSourcesRaw
-  : { chats: Array(183).fill({}), channels: Array(103).fill({}) };
+  : { chats: Array(160).fill({}), channels: Array(96).fill({}) };
 
 const savedTakenIds = JSON.parse(localStorage.getItem('dws_taken_leads') || '[]');
 
@@ -3806,28 +3806,88 @@ const state = {
   })()
 };
 
-// Helper: Open direct Telegram PM with vacancy owner
+// Helper: Resolve the true personal contact (PM) of the recruiter/client
+function resolveDirectContact(lead) {
+  if (!lead) return { type: 'none', handle: '', url: '' };
+
+  const text = lead.text || '';
+  const srcUser = (lead.sourceUsername || '').replace(/^@/, '').toLowerCase().trim();
+
+  // 1. If lead is from an exchange and has a direct project URL
+  if (lead.url && (lead.url.startsWith('http://') || lead.url.startsWith('https://')) && !lead.url.includes('t.me/')) {
+    return { type: 'exchange', handle: '', url: lead.url };
+  }
+
+  // 2. Author username if not source channel and not a bot or telegram service
+  if (lead.authorUsername && typeof lead.authorUsername === 'string') {
+    let clean = lead.authorUsername.replace(/^@/, '').replace('https://t.me/', '').split('/')[0].split('?')[0].trim();
+    if (clean && clean.toLowerCase() !== srcUser && !clean.toLowerCase().endsWith('bot') && !clean.toLowerCase().startsWith('tg_id_') && clean.toLowerCase() !== 'telegram') {
+      return { type: 'telegram', handle: '@' + clean, url: 'https://t.me/' + clean };
+    }
+  }
+
+  // 3. Explicit contact triggers in text (e.g. "Пишіть: @...", "Контакт: @...", "Резюме: @...")
+  if (text) {
+    const contactRegex = /(?:контакт[иа]?|пиш[іі]ть|пишите|зв['’]?язок|відгук(?:нутися)?|отклик(?:нуться)?|резюме|відправляйте|надсилайте|присылайте|hr|recruiter|pm|лічка|лс|пп|tg|telegram|телеграм)[\s:—–-]+@?([a-zA-Z0-9_]{4,32})\b/i;
+    const m = text.match(contactRegex);
+    if (m) {
+      const clean = m[1].trim();
+      if (clean.toLowerCase() !== srcUser && !clean.toLowerCase().endsWith('bot')) {
+        return { type: 'telegram', handle: '@' + clean, url: 'https://t.me/' + clean };
+      }
+    }
+
+    // 4. Any direct t.me link in text
+    const linkMatches = [...text.matchAll(/(?:https?:\/\/)?t\.me\/([a-zA-Z0-9_]{4,32})/gi)];
+    for (const lm of linkMatches) {
+      const h = lm[1].trim();
+      const hLower = h.toLowerCase();
+      if (hLower !== srcUser && !hLower.endsWith('bot') && !['joinchat', 'share', 'addstickers', 'iv', 'proxy'].includes(hLower)) {
+        return { type: 'telegram', handle: '@' + h, url: 'https://t.me/' + h };
+      }
+    }
+
+    // 5. Any @mention in text
+    const mentions = [...text.matchAll(/@([a-zA-Z0-9_]{4,32})/g)];
+    for (const mm of mentions) {
+      const h = mm[1].trim();
+      const hLower = h.toLowerCase();
+      if (hLower !== srcUser && !hLower.endsWith('bot') && !['joinchat', 'admin', 'channel', 'support'].includes(hLower)) {
+        return { type: 'telegram', handle: '@' + h, url: 'https://t.me/' + h };
+      }
+    }
+  }
+
+  // 6. Fallback: if lead has direct URL
+  if (lead.url) {
+    return { type: 'web', handle: '', url: lead.url };
+  }
+  if (lead.sourceUsername) {
+    const clean = lead.sourceUsername.replace(/^@/, '').trim();
+    return { type: 'source', handle: '@' + clean, url: 'https://t.me/' + clean };
+  }
+
+  return { type: 'none', handle: '', url: '' };
+}
+
+// Helper: Open direct Telegram PM with vacancy owner or project URL
 function openTelegramContact(lead, prefilledText = '') {
-  let username = (lead.authorUsername || '').replace(/^@/, '').trim();
-  if (username.includes('https://t.me/')) {
-    username = username.replace('https://t.me/', '').split('/')[0].split('?')[0].trim();
-  }
-  if (username.includes('@')) username = username.split('@')[1];
-  if (username.includes('.')) username = username.split('.')[0];
+  const contact = resolveDirectContact(lead);
 
-  if (!username && lead.sourceUsername) {
-    username = lead.sourceUsername.replace(/^@/, '').trim();
+  if (contact.type === 'exchange' || (contact.type === 'web' && contact.url)) {
+    window.open(contact.url, '_blank');
+    return;
   }
 
-  let tgUrl = 'https://t.me/' + username;
-  if (prefilledText) {
+  let tgUrl = contact.url || 'https://t.me/';
+  if (prefilledText && contact.type === 'telegram') {
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(prefilledText).catch(() => {});
     }
     tgUrl += '?text=' + encodeURIComponent(prefilledText);
   }
 
-  if (tg?.openTelegramLink) {
+  if (tg?.openTelegramLink && tgUrl.includes('t.me/')) {
     tg.openTelegramLink(tgUrl);
   } else {
     window.open(tgUrl, '_blank');
@@ -4271,8 +4331,14 @@ function openTakeCrmModal(lead, btn) {
         window.open(lead.url, '_blank');
       };
     } else {
-      const handleClean = (lead.authorUsername && lead.authorUsername !== '@telegram') ? lead.authorUsername : '';
-      directTgBtn.textContent = handleClean ? `НАПИСАТИ (${handleClean})` : 'НАПИСАТИ В ЛІЧКУ';
+      const contact = resolveDirectContact(lead);
+      if (contact.type === 'telegram') {
+        directTgBtn.textContent = `НАПИСАТИ В ЛІЧКУ (${contact.handle})`;
+      } else if (contact.type === 'exchange') {
+        directTgBtn.textContent = 'ВІДКРИТИ ПРОЄКТ НА БІРЖІ ↗';
+      } else {
+        directTgBtn.textContent = 'НАПИСАТИ КЛІЄНТУ';
+      }
       directTgBtn.onclick = () => {
         haptic('light');
         markLeadTakenToCrm(lead, btn);
@@ -5419,8 +5485,8 @@ async function fetchSources() {
 }
 
 function updateSourcesDisplay() {
-  const chatsCount = (state.sources?.chats?.length && state.sources.chats.length >= 30) ? state.sources.chats.length : 183;
-  const channelsCount = (state.sources?.channels?.length && state.sources.channels.length >= 10) ? state.sources.channels.length : 103;
+  const chatsCount = (state.sources?.chats?.length && state.sources.chats.length >= 30) ? state.sources.chats.length : 160;
+  const channelsCount = (state.sources?.channels?.length && state.sources.channels.length >= 10) ? state.sources.channels.length : 96;
   const total = chatsCount + channelsCount;
 
   const chatsEl = document.getElementById('sourcesChatsCount');

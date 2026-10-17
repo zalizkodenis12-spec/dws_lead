@@ -1,7 +1,7 @@
 {
   "description": "DWS Lead — Global Worldwide Lead Sources (72 Channels & 119 Chats, Development, Ads & Montage)",
   "updatedAt": "2026-10-17T19:02:30.782Z",
-  "totalCount": 286,
+  "totalCount": 256,
   "chats": [
     {
       "username": "@qa_jobs",
@@ -76,42 +76,6 @@
       "active": true
     },
     {
-      "username": "@devops_ru",
-      "title": "DevOps — русскоговорящее сообщество",
-      "category": "development",
-      "type": "chat",
-      "subscribers": 20523,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@qa_ru",
-      "title": "QA — русскоговорящее сообщество",
-      "category": "development",
-      "type": "chat",
-      "subscribers": 14118,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@react_js",
-      "title": "React — русскоговорящее сообщество",
-      "category": "development",
-      "type": "chat",
-      "subscribers": 13117,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@vuejs_ru",
-      "title": "Vue — русскоговорящее сообщество",
-      "category": "development",
-      "type": "chat",
-      "subscribers": 10879,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@freelance_work",
       "title": "Фриланс. Удаленная работа. Freelance",
       "category": "development",
@@ -139,15 +103,6 @@
       "active": true
     },
     {
-      "username": "@nodejs_ru",
-      "title": "Node.js — русскоговорящее сообщество",
-      "category": "development",
-      "type": "chat",
-      "subscribers": 7699,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@nodejs_jobs",
       "title": "Node.js Jobs. Stop the war&#33;",
       "category": "development",
@@ -162,15 +117,6 @@
       "category": "development",
       "type": "chat",
       "subscribers": 6940,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@kotlin_lang",
-      "title": "Kotlin Community",
-      "category": "development",
-      "type": "chat",
-      "subscribers": 6771,
       "lastPostDate": null,
       "active": true
     },
@@ -198,15 +144,6 @@
       "category": "development",
       "type": "chat",
       "subscribers": 6073,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@angular_ru",
-      "title": "Angular - русскоговорящее сообщество",
-      "category": "development",
-      "type": "chat",
-      "subscribers": 5830,
       "lastPostDate": null,
       "active": true
     },
@@ -261,15 +198,6 @@
       "category": "development",
       "type": "chat",
       "subscribers": 4175,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@nextjs_ru",
-      "title": "Next.js — русскоговорящее сообщество",
-      "category": "development",
-      "type": "chat",
-      "subscribers": 3757,
       "lastPostDate": null,
       "active": true
     },
@@ -1118,15 +1046,6 @@
       "active": true
     },
     {
-      "username": "@fastapi_ru",
-      "title": "FastAPI / Litestar (ASGI Community)",
-      "category": "development",
-      "type": "chat",
-      "subscribers": 2660,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
       "username": "@react_native_jobs",
       "title": "React Native &amp; Expo Jobs - работа связанная с react-native",
       "category": "development",
@@ -1460,33 +1379,6 @@
       "verifiedWorldwide": true
     },
     {
-      "title": "Blockchain Dev Jobs / (Solidity)",
-      "username": "@soliditydevjobs",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 79525,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "Ethereum L1&amp;L2 — Jobs &amp; CVs // вакансии &amp; поиск работы",
-      "username": "@eth_jobs",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 29007,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "Ethereum Jobs Chat",
-      "username": "@ethereum_jobs_market",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 40034,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
       "title": "Вакансии в сфере 1С",
       "username": "@jobs1c",
       "type": "chat",
@@ -1568,15 +1460,6 @@
       "verifiedWorldwide": true
     },
     {
-      "title": "Work To Earn - Биржа труда. Работа в крипте.",
-      "username": "@work2earn_crypto",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 73681,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
       "title": "Python Jobs România - Moldova",
       "username": "@python_job",
       "type": "chat",
@@ -1631,101 +1514,11 @@
       "verifiedWorldwide": true
     },
     {
-      "title": "Unity Engine: вопрос - ответ",
-      "username": "@unity3d_ru",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 11687,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "Golang Developers — русскоговорящее сообщество",
-      "username": "@golang_ru",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 1641,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "Blender_ru: вопрос-ответ.",
-      "username": "@blender_ru",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 13374,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "NFT TRADE | ANYO",
-      "username": "@arbitrage_community",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 6117,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "DaVinci Resolve ru",
-      "username": "@davinci_resolve_ru",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 8042,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "Animation_Chat",
-      "username": "@animation_chat",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 2657,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
       "title": "Nuxt.js | Vue SSR",
       "username": "@nuxtjs_ru",
       "type": "chat",
       "category": "worldwide",
       "subscribers": 4131,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "Docker — русскоговорящее сообщество",
-      "username": "@docker_ru",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 12014,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "Kubernetes — русскоговорящее сообщество",
-      "username": "@kubernetes_ru",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 11617,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "MongoDB Russian",
-      "username": "@mongodb_ru",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 2246,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "GraphQL — русскоговорящее сообщество",
-      "username": "@graphql_ru",
-      "type": "chat",
-      "category": "worldwide",
-      "subscribers": 1710,
       "lastPostDate": "2026-ACTIVE",
       "verifiedWorldwide": true
     }
@@ -1963,15 +1756,6 @@
       "type": "channel",
       "subscribers": 22296,
       "lastPostDate": "2026-10-17T11:09:01+00:00",
-      "active": true
-    },
-    {
-      "username": "@devby",
-      "title": "dev.by: главные ИТ-новости Беларуси",
-      "category": "development",
-      "type": "channel",
-      "subscribers": 21740,
-      "lastPostDate": "2026-10-17T12:17:00+00:00",
       "active": true
     },
     {
@@ -2394,15 +2178,6 @@
       "active": true
     },
     {
-      "title": "Crypto HR | Web 3 jobs",
-      "username": "@bloconomica",
-      "type": "channel",
-      "category": "worldwide",
-      "subscribers": 2450,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
       "title": "Дистанційна робота — Work.ua",
       "username": "@workua_remote",
       "type": "channel",
@@ -2547,29 +2322,11 @@
       "verifiedWorldwide": true
     },
     {
-      "title": "Blender / بلندر",
-      "username": "@blender_3d",
-      "type": "channel",
-      "category": "gamedev_fullstack",
-      "subscribers": 5588,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
       "title": "BIG CG WORK",
       "username": "@cg_freelance",
       "type": "channel",
       "category": "gamedev_fullstack",
       "subscribers": 8454,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "RENDER.RU",
-      "username": "@render_ru",
-      "type": "channel",
-      "category": "gamedev_fullstack",
-      "subscribers": 8505,
       "lastPostDate": "2026-ACTIVE",
       "verifiedWorldwide": true
     },
@@ -2619,38 +2376,11 @@
       "verifiedWorldwide": true
     },
     {
-      "title": "Unreal Engine ru",
-      "username": "@unreal_engine_ru",
-      "type": "channel",
-      "category": "worldwide",
-      "subscribers": 7653,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "gamedev events",
-      "username": "@gamedev_events",
-      "type": "channel",
-      "category": "worldwide",
-      "subscribers": 2419,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
       "title": "Хабр Фриланс",
       "username": "@freelansim_ru",
       "type": "channel",
       "category": "worldwide",
       "subscribers": 2797,
-      "lastPostDate": "2026-ACTIVE",
-      "verifiedWorldwide": true
-    },
-    {
-      "title": "NestJS - открытое сообщество",
-      "username": "@nestjs_ru",
-      "type": "channel",
-      "category": "worldwide",
-      "subscribers": 5000,
       "lastPostDate": "2026-ACTIVE",
       "verifiedWorldwide": true
     },
