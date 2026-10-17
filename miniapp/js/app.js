@@ -3926,6 +3926,8 @@ function switchTab(tabId) {
     renderIncome();
   } else if (tabId === 'tab-expenses') {
     renderExpenses();
+  } else if (tabId === 'tab-requisites') {
+    renderRequisitesTab();
   }
 
   document.querySelector('.app-main').scrollTop = 0;
@@ -8007,6 +8009,7 @@ function renderCurrentTab() {
   else if (state.currentTab === 'tab-profile') renderProfile();
   else if (state.currentTab === 'tab-scrape') renderScrapes();
   else if (state.currentTab === 'tab-nfc-radar') renderNfcRadar();
+  else if (state.currentTab === 'tab-requisites') renderRequisitesTab();
 }
 
 async function pullLatestDataFromServer(force = false) {
@@ -9371,9 +9374,13 @@ function renderNfcRadar() {
           ${renderNfcVenuesList(job, items)}
 
           <div class="nfc-job-footer-actions">
+            <button type="button" class="btn btn--fill btn--sm" data-nfc-act="map" data-job="${job.id}" style="background: var(--black); border-color: var(--black); color: #fff;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+              <span>Карта</span>
+            </button>
             <button type="button" class="btn btn--fill btn--sm" data-nfc-act="csv" data-job="${job.id}">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-              <span>CSV таблиця</span>
+              <span>CSV</span>
             </button>
             <button type="button" class="btn btn--out btn--sm scrape-btn-delete" data-nfc-act="delete" data-job="${job.id}">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -9977,24 +9984,105 @@ ${paybackLine}
 Контакти для погодження дизайну та виготовлення партії:
 Telegram: @zalizkodenis12`;
 
-    try {
-      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `KP_NFC_${todayStr.replace(/\./g, '-')}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => { document.body.removeChild(a); }, 1500);
-    } catch (e) {}
+    const tableHtml = `
+      <div class="roi-summary-card">
+        <b>Заклад:</b> Розрахунок окупності безконтактних карток для виведення локації в ТОП-1 Google Maps.
+      </div>
+      <table class="roi-preview-table">
+        <thead>
+          <tr>
+            <th>Показник</th>
+            <th style="text-align: right;">Значення</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="roi-preview-param">Поточний рейтинг Maps</td>
+            <td class="roi-preview-val">${r.toFixed(1)} ★</td>
+          </tr>
+          <tr>
+            <td class="roi-preview-param">Кількість відгуків у Maps</td>
+            <td class="roi-preview-val">${curRev} відг.</td>
+          </tr>
+          <tr>
+            <td class="roi-preview-param">Гостей на день</td>
+            <td class="roi-preview-val">${g} осіб / день</td>
+          </tr>
+          <tr>
+            <td class="roi-preview-param">Середній чек</td>
+            <td class="roi-preview-val">${c} ₴</td>
+          </tr>
+          <tr>
+            <td class="roi-preview-param">Місячний потік гостей</td>
+            <td class="roi-preview-val">${monthlyGuests.toLocaleString('uk-UA')} осіб</td>
+          </tr>
+          <tr>
+            <td class="roi-preview-param">Тип обладнання</td>
+            <td class="roi-preview-val">${escapeHtml(pricing.typeLabel)}</td>
+          </tr>
+          <tr>
+            <td class="roi-preview-param">Розмір партії</td>
+            <td class="roi-preview-val">${pricing.qty} шт</td>
+          </tr>
+          <tr>
+            <td class="roi-preview-param">Вартість партії</td>
+            <td class="roi-preview-val">${pricing.isIndividual ? 'Індивідуально' : pricing.totalCost.toLocaleString('uk-UA') + ' ₴'}</td>
+          </tr>
+          <tr>
+            <td class="roi-preview-param">Приріст відгуків за 30 днів</td>
+            <td class="roi-preview-val" style="color:#00875A;">+${reviewsDelta} нових 5★</td>
+          </tr>
+          <tr>
+            <td class="roi-preview-param">Цільовий рейтинг (ТОП-1)</td>
+            <td class="roi-preview-val" style="color:#00875A;">${targetRating.toFixed(1)} ★</td>
+          </tr>
+          <tr>
+            <td class="roi-preview-param">Додатковий виторг за місяць</td>
+            <td class="roi-preview-val" style="color:var(--accent);">+${extraMoney.toLocaleString('uk-UA')} ₴ / міс</td>
+          </tr>
+          <tr>
+            <td class="roi-preview-param">Термін повної окупності</td>
+            <td class="roi-preview-val" style="color:var(--black); font-weight:800;">${pricing.isIndividual ? '1–3 дні' : days + ' дн.'}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="roi-summary-card" style="border-left: 3px solid var(--accent); font-weight: 500;">
+        💡 <b>Висновок для замовника:</b> Інвестиція в партію повністю окупається за перші <b>${pricing.isIndividual ? '1–3' : days} дні</b>, після чого постійно генерує додатковий прибуток та захищає заклад від негативу.
+      </div>
+    `;
 
+    const previewContainer = document.getElementById('roiTablePreviewContent');
+    if (previewContainer) {
+      previewContainer.innerHTML = tableHtml;
+    }
+
+    window._lastRoiPitchText = text;
+
+    openModal('modalRoiTablePreview');
+    haptic('success');
+  });
+
+  document.getElementById('copyRoiPitchBtnModal')?.addEventListener('click', () => {
+    const t = window._lastRoiPitchText || '';
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('КП скопійовано та завантажено у файл!');
+      navigator.clipboard.writeText(t).then(() => {
+        showToast('КП скопійовано в буфер обміну!');
         haptic('success');
       });
     } else {
-      fallbackCopy(text, 'Розрахунок ROI');
+      fallbackCopy(t, 'КП');
     }
+  });
+
+  document.getElementById('sendRoiTelegramBtnModal')?.addEventListener('click', () => {
+    const t = window._lastRoiPitchText || '';
+    const url = 'https://t.me/share/url?url=&text=' + encodeURIComponent(t);
+    if (window.Telegram?.WebApp?.openTelegramLink) {
+      window.Telegram.WebApp.openTelegramLink(url);
+    } else {
+      window.open(url, '_blank', 'noopener');
+    }
+    haptic('light');
   });
 }
 
@@ -10021,26 +10109,11 @@ function setupNfcRadarTab() {
   });
 
   const cardsBtn = document.getElementById('nfcViewCardsBtn');
-  const tableBtn = document.getElementById('nfcViewTableBtn');
   const mapBtn = document.getElementById('nfcViewMapBtn');
 
   cardsBtn?.addEventListener('click', () => {
     nfcRadarState.viewMode = 'cards';
     cardsBtn.classList.add('active');
-    tableBtn?.classList.remove('active');
-    mapBtn?.classList.remove('active');
-    const mv = document.getElementById('nfcRadarMapView');
-    if (mv) mv.style.display = 'none';
-    const jl = document.getElementById('nfcRadarJobsList');
-    if (jl) jl.style.display = 'block';
-    renderNfcRadar();
-    haptic('light');
-  });
-
-  tableBtn?.addEventListener('click', () => {
-    nfcRadarState.viewMode = 'table';
-    tableBtn.classList.add('active');
-    cardsBtn?.classList.remove('active');
     mapBtn?.classList.remove('active');
     const mv = document.getElementById('nfcRadarMapView');
     if (mv) mv.style.display = 'none';
@@ -10054,7 +10127,6 @@ function setupNfcRadarTab() {
     nfcRadarState.viewMode = 'map';
     mapBtn.classList.add('active');
     cardsBtn?.classList.remove('active');
-    tableBtn?.classList.remove('active');
     const mv = document.getElementById('nfcRadarMapView');
     if (mv) mv.style.display = 'block';
     const jl = document.getElementById('nfcRadarJobsList');
@@ -10155,7 +10227,20 @@ function setupNfcRadarTab() {
       const job = nfcRadarState.jobs.find(j => j.id === actBtn.dataset.job);
       if (!job) return;
       const act = actBtn.dataset.nfcAct;
-      if (act === 'csv') downloadNfcCsv(job);
+      if (act === 'map') {
+        nfcRadarState.activeJobId = job.id;
+        nfcRadarState.viewMode = 'map';
+        document.getElementById('nfcViewCardsBtn')?.classList.remove('active');
+        document.getElementById('nfcViewMapBtn')?.classList.add('active');
+        const mv = document.getElementById('nfcRadarMapView');
+        if (mv) mv.style.display = 'block';
+        const jl = document.getElementById('nfcRadarJobsList');
+        if (jl) jl.style.display = 'none';
+        renderNfcMap();
+        mv?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        haptic('light');
+      }
+      else if (act === 'csv') downloadNfcCsv(job);
       else if (act === 'send') sendNfcToTelegram(job, actBtn);
       else if (act === 'delete') deleteNfcJob(job);
       return;
@@ -10200,18 +10285,31 @@ const CITY_CENTERS = {
 
 function renderNfcMap() {
   const mapCanvas = document.getElementById('nfcRadarMapCanvas');
-  if (!mapCanvas || typeof L === 'undefined') return;
+  if (!mapCanvas) return;
+
+  if (typeof L === 'undefined') {
+    mapCanvas.innerHTML = '<div style="display:flex; align-items:center; justify-content:center; height:100%; color:var(--muted); font-size:0.85rem;">Завантаження карти...</div>';
+    setTimeout(() => { if (typeof L !== 'undefined') renderNfcMap(); }, 350);
+    return;
+  }
 
   let jobs = nfcRadarState.jobs;
   if (nfcRadarState.cityFilter && nfcRadarState.cityFilter !== 'all') {
     jobs = jobs.filter(j => j.city && j.city.toLowerCase().includes(nfcRadarState.cityFilter.toLowerCase()));
   }
 
-  const activeJob = jobs.find(j => j.status === 'done' && (j.items?.length || j.total > 0)) || jobs[0];
+  const activeJob = (nfcRadarState.activeJobId ? jobs.find(j => j.id === nfcRadarState.activeJobId) : null) ||
+    jobs.find(j => j.status === 'done' && (j.items?.length || j.total > 0)) ||
+    jobs[0];
   const items = activeJob ? getJobFlatItems(activeJob) : [];
 
   const countBadge = document.getElementById('nfcMapStatsCount');
   if (countBadge) countBadge.textContent = `${items.length} ${pluralNfcVenues(items.length)}`;
+
+  const clusterBadge = document.getElementById('nfcMapActiveClusterLabel');
+  if (clusterBadge) {
+    clusterBadge.textContent = activeJob ? `• ${activeJob.cluster || activeJob.city || ''}` : '';
+  }
 
   const cityKey = (activeJob?.city || 'Київ').toLowerCase().trim();
   let baseCoords = CITY_CENTERS[cityKey] || [50.4501, 30.5234];
@@ -10219,26 +10317,30 @@ function renderNfcMap() {
     baseCoords = [50.4128, 30.5238];
   } else if (activeJob?.cluster && /хрещатик/i.test(activeJob.cluster)) {
     baseCoords = [50.4475, 30.5220];
+  } else if (activeJob?.cluster && /гуллівер|gulliver/i.test(activeJob.cluster)) {
+    baseCoords = [50.4385, 30.5229];
   }
 
   if (!nfcLeafletMap) {
+    mapCanvas.innerHTML = '';
     nfcLeafletMap = L.map('nfcRadarMapCanvas', {
       zoomControl: false,
       attributionControl: false
     }).setView(baseCoords, 16);
 
-    // CartoDB Positron: clean black/white/gray/blue map aesthetics
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    const cartoLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
       subdomains: 'abcd'
-    }).addTo(nfcLeafletMap);
+    });
+    cartoLayer.on('tileerror', () => {
+      if (!nfcLeafletMap._hasOsmFallback) {
+        nfcLeafletMap._hasOsmFallback = true;
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(nfcLeafletMap);
+      }
+    });
+    cartoLayer.addTo(nfcLeafletMap);
 
     L.control.zoom({ position: 'topright' }).addTo(nfcLeafletMap);
-  } else {
-    setTimeout(() => {
-      nfcLeafletMap.invalidateSize();
-      nfcLeafletMap.setView(baseCoords, 16);
-    }, 150);
   }
 
   // Clear existing markers
@@ -10276,9 +10378,16 @@ function renderNfcMap() {
     nfcMapMarkers.push(marker);
   });
 
-  if (bounds.length > 0) {
-    nfcLeafletMap.fitBounds(bounds, { padding: [40, 40] });
-  }
+  setTimeout(() => {
+    if (nfcLeafletMap) {
+      nfcLeafletMap.invalidateSize();
+      if (bounds.length > 0) {
+        nfcLeafletMap.fitBounds(bounds, { padding: [40, 40], maxZoom: 17 });
+      } else {
+        nfcLeafletMap.setView(baseCoords, 16);
+      }
+    }
+  }, 180);
 }
 
 function showMapVenueCard(v, job, idx) {
@@ -10358,6 +10467,7 @@ function initDocumentsHub() {
   });
 
   document.getElementById('crmDetailDocBtn')?.addEventListener('click', () => {
+    closeModal('modalCrmDetail');
     if (state.activeCrmLead) {
       openDocumentsHub(state.activeCrmLead);
     } else {
@@ -10506,7 +10616,13 @@ function openDocumentsHub(client = null) {
   document.querySelectorAll('.doc-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.pane === 'docPaneInvoice'));
   document.querySelectorAll('.doc-pane').forEach(p => p.style.display = (p.id === 'docPaneInvoice') ? 'block' : 'none');
 
-  openModal('modalDocumentsHub');
+  if (state.currentTab !== 'tab-requisites') {
+    switchTab('tab-requisites');
+  }
+}
+
+function renderRequisitesTab() {
+  openDocumentsHub();
 }
 
 function applyClientToInvoice(client) {
