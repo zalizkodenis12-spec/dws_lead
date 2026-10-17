@@ -1,4028 +1,1161 @@
 {
-  "description": "DWS Lead — Realtime Telegram Lead Sources (245 Channels & 279 Chats)",
-  "updatedAt": "2026-10-17T18:34:41.307Z",
-  "totalCount": 514,
+  "description": "DWS Lead — 100% Verified Active Telegram Lead Sources (38 Channels & 90 Chats, avg 30k+ subs)",
+  "updatedAt": "2026-10-17T18:41:21.492Z",
+  "totalCount": 128,
   "chats": [
     {
-      "username": "@work_kiev3",
-      "title": "work_kiev3 UA",
+      "username": "@kiev_rabota_vakansii",
+      "title": "Робота Київ",
       "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@kyiv1work",
-      "title": "kyiv1work UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@uman_rabota",
-      "title": "uman_rabota UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@toprobota_kyiv",
-      "title": "toprobota_kyiv UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@rabota_dnepre3",
-      "title": "rabota_dnepre3 UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@smmbunker",
-      "title": "smmbunker UA",
-      "category": "marketing",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@smmpeople",
-      "title": "smmpeople UA",
-      "category": "marketing",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@robotka_kyiv",
-      "title": "robotka_kyiv UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@robotka_kiev",
-      "title": "robotka_kiev UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@vakanciiodessa",
-      "title": "vakanciiodessa UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@toprobotalviv24",
-      "title": "toprobotalviv24 UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@Robota_ternopil24",
-      "title": "Robota_ternopil24 UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@dnipro_wopk",
-      "title": "dnipro_wopk UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@R0botka_ua",
-      "title": "R0botka_ua UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@toprobota_odesa",
-      "title": "toprobota_odesa UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@vakancii_onlineua",
-      "title": "vakancii_onlineua UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@toprobotadnipro24",
-      "title": "toprobotadnipro24 UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@rabota_kiev_o",
-      "title": "rabota_kiev_o UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@toprobotapoltava24",
-      "title": "toprobotapoltava24 UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@toprobotavinnytsia24",
-      "title": "toprobotavinnytsia24 UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@dnipro_robata",
-      "title": "dnipro_robata UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@marketing_network1",
-      "title": "marketing_network1 UA",
-      "category": "marketing",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@robota_pidrobitok_kyivv",
-      "title": "robota_pidrobitok_kyivv UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@robota_poltava_top",
-      "title": "robota_poltava_top UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@vakancii_chernihiv",
-      "title": "vakancii_chernihiv UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@robota_kropyvnytskyi24",
-      "title": "robota_kropyvnytskyi24 UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@rabotay_kieve",
-      "title": "rabotay_kieve UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@H_news_R",
-      "title": "H_news_R UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@rabota_odessa7",
-      "title": "rabota_odessa7 UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@lutsk_robotka",
-      "title": "lutsk_robotka UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@facebook_25",
-      "title": "facebook_25 UA",
-      "category": "marketing",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@Odessaa_ua",
-      "title": "Odessaa_ua UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krivoyq_rog_rabotaq",
-      "title": "krivoyq_rog_rabotaq UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@ArbiDoktor",
-      "title": "ArbiDoktor UA",
-      "category": "marketing",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@ring_express_brd",
-      "title": "ring_express_brd UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@umanwork",
-      "title": "umanwork UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@in_traff",
-      "title": "in_traff UA",
-      "category": "marketing",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@you_can_know_more",
-      "title": "you_can_know_more UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@robota_odesa4",
-      "title": "robota_odesa4 UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@workplaceinukraine",
-      "title": "workplaceinukraine UA",
-      "category": "development",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@rabota_kiev_bird",
-      "title": "rabota_kiev_bird UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@Robota_kyiv_new",
-      "title": "Robota_kyiv_new UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@aplaywork",
-      "title": "aplaywork UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@top_vacansii",
-      "title": "top_vacansii UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@kiev_jobs",
-      "title": "kiev_jobs UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@jb_ua",
-      "title": "jb_ua UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@jobzy",
-      "title": "jobzy UA",
-      "category": "development",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@freelance_workua",
-      "title": "freelance_workua UA",
-      "category": "development",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@W0RK_UKRAINE",
-      "title": "W0RK_UKRAINE UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@uaallwork",
-      "title": "uaallwork UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@ua_robota",
-      "title": "ua_robota UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@I13partners",
-      "title": "I13partners UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@mykolaivrobota_ua",
-      "title": "mykolaivrobota_ua UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@traffic_cpa_hr",
-      "title": "traffic_cpa_hr UA",
-      "category": "marketing",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@traffic_hr_cpa",
-      "title": "traffic_hr_cpa UA",
-      "category": "marketing",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@mediabuers_cpa",
-      "title": "mediabuers_cpa UA",
-      "category": "marketing",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@uzhgorodrobota_ua",
-      "title": "uzhgorodrobota_ua UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@kievy_rabota",
-      "title": "kievy_rabota UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@work_in_ukraine_golovne",
-      "title": "work_in_ukraine_golovne UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@jecontact",
-      "title": "jecontact UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@adgoodashell",
-      "title": "adgoodashell UA",
-      "category": "marketing",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@Kiev_rabota_vakansii",
-      "title": "Kiev_rabota_vakansii UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 213351,
+      "lastPostDate": null,
+      "active": true
     },
     {
       "username": "@rabota_kieve5",
-      "title": "rabota_kieve5 UA",
+      "title": "РОБОТА В КИЄВІ 🇺🇦 КИЇВ",
       "category": "general",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 111299,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@Vinnytsia_Job",
-      "title": "Vinnytsia_Job UA",
+      "username": "@robotka_kiev",
+      "title": "Київ Робота",
       "category": "general",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 98631,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@rabota_zhutomere",
-      "title": "rabota_zhutomere UA",
+      "username": "@robota_odesa4",
+      "title": "РОБОТА В ОДЕСІ🇺🇦",
       "category": "general",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 70208,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@Workday_Lviv",
-      "title": "Workday_Lviv UA",
+      "username": "@work_kiev3",
+      "title": "Вакансії Київ",
       "category": "general",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 70033,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@RudenkoSMM",
-      "title": "RudenkoSMM UA",
-      "category": "marketing",
-      "active": true,
-      "type": "chat"
+      "username": "@qa_jobs",
+      "title": "QA — вакансии",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 58902,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@Nikolaeve_v_rabota_robotaq",
-      "title": "Nikolaeve_v_rabota_robotaq UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
+      "username": "@frilancru",
+      "title": "ФРИЛАНС ЧАТ | ФРИЛАНС БИРЖА",
+      "category": "freelance",
+      "type": "chat",
+      "subscribers": 55022,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@w_o_r_k_Poland",
-      "title": "w_o_r_k_Poland UA",
+      "username": "@vinnytsia_job",
+      "title": "РОБОТА ВІННИЦЯ 📣",
       "category": "general",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 47880,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@pidr0bitok_Lviv",
-      "title": "pidr0bitok_Lviv UA",
+      "username": "@h_news_r",
+      "title": "🇪🇺Робота в ЄС | Поради та Новини",
       "category": "general",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 45740,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@business_grup_ukraine",
-      "title": "business_grup_ukraine UA",
+      "username": "@r0botka_ua",
+      "title": "Робота Київ | Вакансії",
       "category": "general",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 41675,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@robotakiew",
-      "title": "robotakiew UA",
+      "username": "@rabota_odessa7",
+      "title": "РАБОТА ОДЕССА🇺🇦",
       "category": "general",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 40987,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@Nikolaev_rabota_robota",
-      "title": "Nikolaev_rabota_robota UA",
+      "username": "@robotka_kyiv",
+      "title": "Работа Киев",
       "category": "general",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 40014,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@robitalviv2024",
-      "title": "robitalviv2024 UA",
+      "username": "@krivoyq_rog_rabotaq",
+      "title": "Робота Кривий Ріг",
       "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@DIPLOMATIA_UA",
-      "title": "DIPLOMATIA_UA UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@evo_prom",
-      "title": "evo_prom UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@rabotay_zhitomire",
-      "title": "rabotay_zhitomire UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@worktopua",
-      "title": "worktopua UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@rabota_Odessa_horeca",
-      "title": "rabota_Odessa_horeca UA",
-      "category": "general",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 39966,
+      "lastPostDate": null,
+      "active": true
     },
     {
       "username": "@frilanc",
       "title": "Фриланс, удаленка, работа",
       "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
+      "type": "chat",
+      "subscribers": 39716,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@frilancru",
-      "title": "Фриланс Чат | Фриланс Биржа",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
+      "username": "@lutsk_robotka",
+      "title": "Робота Луцьк 🇺🇦",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 39042,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@freelance_taverna",
-      "title": "Фриланс Таверна Чат",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
+      "username": "@rabota_dnepre3",
+      "title": "РОБОТА В ДНІПРІ🇺🇦",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 39037,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@the_pomogator",
-      "title": "Помогатор | Чат фрилансеров",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
+      "username": "@toprobotadnipro24",
+      "title": "Топ Робота Дніпро | Днепр",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 38867,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@digitaltender",
-      "title": "DIGITAL Tender Заказы",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
+      "username": "@freelance_birzha",
+      "title": "ФРИЛАНС БИРЖА l ФРИЛАНС ЧАТ",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 36970,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@tilda_official_chat",
-      "title": "Tilda Developers Chat",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
+      "username": "@rabotay_kieve",
+      "title": "РОБОТА В КИЄВІ 🇺🇦 Київ",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 36587,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@tilda_profi",
-      "title": "Tilda Profi Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
+      "username": "@toprobota_odesa",
+      "title": "Топ Робота Одеса | Одесса",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 36158,
+      "lastPostDate": null,
+      "active": true
     },
     {
-      "username": "@web_freelance",
-      "title": "Web Freelance Сайты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
+      "username": "@facebook_25",
+      "title": "FACEBOOK ADS | ARBITRAGE TRAFFIC",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 36140,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@vakanciiodessa",
+      "title": "Робота Одеса Вакансії WorkHub 💼",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 36020,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@odessaa_ua",
+      "title": "Робота Одеса",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 35408,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@rabota_kiev_bird",
+      "title": "КИЇВ Робота | Україна Робота | РОБОТА КИЕВ ПОДРАБОТКА",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 34815,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@dnipro_robata",
+      "title": "Робота Дніпро Вакансії WorkHub 💼",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 33856,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@kyiv1work",
+      "title": "📍РОБОТА КИЇВ",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 32578,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@freelance_chat_ru",
+      "title": "Фриланс чат | Вакансии",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 29430,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@arbidoktor",
+      "title": "Арбитраж трафика | Работа",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 29183,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@toprobotalviv24",
+      "title": "Топ Робота Львів",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 28355,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@rabota_zhutomere",
+      "title": "РОБОТА У ЖИТОМИРІ ВАКАНСІЇ",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 28226,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@toprobota_kyiv",
+      "title": "Топ Робота Київ 🇺🇦 Киев",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 28165,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@workday_lviv",
+      "title": "Робота Львів 🔍 Підробіток",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 27279,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@robota_kyiv_new",
+      "title": "🇺🇦 РОБОТА КИЇВ | ПОДРАБОТКА Робота Україна",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 26672,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@rabota_kiev_o",
+      "title": "РОБОТА В КИЄВІ | КИЇВ чат",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 26511,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@robota_pidrobitok_kyivv",
+      "title": "РОБОТА та ПІДРОБІТОК В КИЄВІ | ВАНТАЖНИКИ | РІЗНОРОБОЧІ",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 25477,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@kiev_jobs",
+      "title": "☃️РОБОТА КИЇВ Україна | Kyiv Work | Україна Робота Работа Київ 💵",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 24494,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@ring_express_brd",
+      "title": "РИНГ ЭКСПРЕСС БЕРДЯНСК",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 23668,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@devops_jobs",
+      "title": "DevOps Jobs - работа и аналитика",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 22228,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@mobile_jobs",
+      "title": "Mobile Dev Jobs — вакансии и резюме",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 20677,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@umanwork",
+      "title": "УМАНЬ РОБОТА",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 17672,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@dnipro_wopk",
+      "title": "Робота Дніпро",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 17639,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@smmbunker",
+      "title": "чат «SMM-укриття 🇺🇦»",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 17579,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@in_traff",
+      "title": "ПОИСК РАБОТЫ | ВАКАНСИИ | БАЕРЫ",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 16953,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@rudenkosmm",
+      "title": "Rudenko.smm.chat | чат вакансій | робота",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 16399,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@nikolaeve_v_rabota_robotaq",
+      "title": "Миколаїв Вакансії",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 16297,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@w_o_r_k_poland",
+      "title": "Робота Польща | Краків | Лодзь | Катовіце",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 15726,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@jb_ua",
+      "title": "™AllJob🇺🇦 Робота в Україні | Заробіток сьогодні | Активний чат",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 15444,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@vakancii_onlineua",
+      "title": "Робота Онлайн Вакансії WorkHub 💼",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 15232,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@pidr0bitok_lviv",
+      "title": "Робота та підробіток Львів. Оголошення Львів",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 14354,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@mykolaivrobota_ua",
+      "title": "Робота Миколаїв",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 13174,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@vakancii_chernihiv",
+      "title": "Робота Чернігів Вакансії WorkHub 💼",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 13025,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@robota_ternopil24",
+      "title": "Робота Тернопіль Вакансії WorkHub 💼",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 12174,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@toprobotapoltava24",
+      "title": "Топ Робота Полтава 🇺🇦",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 11729,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@robota_kropyvnytskyi24",
+      "title": "Робота Кропивницький Вакансії WorkHub 💼",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 11683,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@traffic_cpa_hr",
+      "title": "ВАКАНСИИ АРБИТРАЖ ЧАТ",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 11055,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@mediabuers_cpa",
+      "title": "Чат медиабайеров | Арбитраж трафика",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 10617,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@traffic_hr_cpa",
+      "title": "Чат траферов | Арбитраж трафика",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 10452,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@toprobotavinnytsia24",
+      "title": "Топ Робота Вінниця",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 10352,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@freelance_workua",
+      "title": "Робота в Україні 🇺🇦 | Фріланс",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 10305,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@business_grup_ukraine",
+      "title": "Бизнес Схемы КУПЛЮ ПРОДАМ",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 10178,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@robota_poltava_top",
+      "title": "Робота Полтава",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 10153,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@w0rk_ukraine",
+      "title": "Робота в Україні 🇺🇦❤️😇",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 9474,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@uzhgorodrobota_ua",
+      "title": "Робота Ужгород",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 9360,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@robotakiew",
+      "title": "Работа, услуги Киев и область",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 9056,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@smmpeople",
+      "title": "Поиск подрядчиков / Маркетинг / SMM / IT",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 8932,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@smm_chat",
+      "title": "SMM-ЧАТ | Telegram • Instagram • VK",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 8831,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@nikolaev_rabota_robota",
+      "title": "Миколаїв Вакансії Підробіток",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 8658,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@python_jobs",
+      "title": "Python — вакансии и аналитика",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 8206,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@marketing_network1",
+      "title": "Маркетинг Club",
+      "category": "marketing",
+      "type": "chat",
+      "subscribers": 7524,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@uaallwork",
+      "title": "Робота Україна🇺🇦 Work Ukraine",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 6745,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@uiux_jobs",
+      "title": "UI/UX Jobs — вакансии и аналитика",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 6676,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@diplomatia_ua",
+      "title": "🇺🇦 Оголошення UKRAINE-CHAT 🇺🇦",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 6119,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@uman_rabota",
+      "title": "РАБОТА УМАНЬ",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 6031,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@robitalviv2024",
+      "title": "Оголошення &amp;Робота Львів",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 5941,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@ua_robota",
+      "title": "🇺🇦 РОБОТА УКРАЇНА | РАБОТА УКРАИНА",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 5740,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@i13partners",
+      "title": "🇺🇦 Робота | IT | Україна 💻",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 5104,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@marketing_jobs_ua",
+      "title": "Маркетологи та Креатив: робота та резюме",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 4783,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@jobinukraine",
+      "title": "РОБОТА В ПОЛЬЩІ",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 4535,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@evo_prom",
+      "title": "Чат: продажі на Prom.ua / Rozetka",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 3995,
+      "lastPostDate": null,
+      "active": true
     },
     {
       "username": "@frontend_ru",
-      "title": "Frontend RU Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@javascript_jobs_feed",
-      "title": "JavaScript & Web Dev",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@for_web",
-      "title": "Верстка и Веб-дизайн",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@designer_ru",
-      "title": "Ищу дизайнера | Заказы",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@cgfreelance",
-      "title": "CG Freelance 3D/Motion",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@marketing_jobs",
-      "title": "Marketing Jobs & Orders",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@smm_bunker",
-      "title": "SMM Бункер Проекты",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@teleancer",
-      "title": "Teleancer Биржа",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@rueventjob",
-      "title": "Творческая работа и фриланс",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@python_job_chat",
-      "title": "Python & Bot Dev Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tg_bots_dev",
-      "title": "Разработка Telegram-ботов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@bot_creators",
-      "title": "Создатели ботов и парсеров",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wordpress_ru",
-      "title": "WordPress Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@bitrix_freelance",
-      "title": "Битрикс & E-commerce",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tilda_experts",
-      "title": "Tilda Эксперты Сайты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@design_chat_ru",
-      "title": "Дизайн Комьюнити Заказы",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@figma_chat",
-      "title": "Figma & UI/UX Чат",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@target_chat_ru",
-      "title": "Таргетологи & Трафик Чат",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@context_chat",
-      "title": "Контекстная реклама Google/Yandex",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@seo_chat_ru",
-      "title": "SEO Оптимизация Сайтов",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@copywriting_chat",
-      "title": "Копирайтинг & Тексты лендингов",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@freelance_leads",
-      "title": "Лиды и Заявки на разработку",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@digital_agents",
-      "title": "Агентства & Субподряд",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@subcontract_it",
-      "title": "IT Субподряд Сайты/Боты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@b2b_freelance",
-      "title": "B2B Фриланс Заказы",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@it_shabashka",
-      "title": "IT Шабашки & Доработки",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@landing_orders",
-      "title": "Заказы на Лендинги",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@ecom_dev",
-      "title": "Разработка Интернет-магазинов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@webflow_ru",
-      "title": "Webflow Разработка Сайтов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@leadgen_chat",
-      "title": "Лидогенерация & Трафик",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@no_code_ru",
-      "title": "No-Code Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@crm_integrations",
-      "title": "amoCRM & Bitrix24 Интеграции",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@graphic_design_orders",
-      "title": "Заказы на Логотипы и Айдентику",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@banner_creators",
-      "title": "Создание Рекламных Креативов",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krakow_work_chat",
-      "title": "Работа & Услуги Краков",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@biznes_polska",
-      "title": "Бизнес в Польше (Сайты, Реклама)",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@it_poland_chat",
-      "title": "IT & Freelance Poland Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@freelance_poland",
-      "title": "Фриланс Заказы Польша",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@uslugi_warszawa",
-      "title": "Услуги и Реклама Варшава",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@uslugi_krakow",
-      "title": "Услуги и Бизнес Краков",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@uslugi_wroclaw",
-      "title": "Услуги и Реклама Вроцлав",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@warszawa_chat_ukr",
-      "title": "Варшава Чат Украинцы",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krakow_chat_ua",
-      "title": "Краков Чат Украинцы",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wroclaw_chat_ua",
-      "title": "Вроцлав Чат Украинцы",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@gdansk_chat_ua",
-      "title": "Гданьск Чат Украинцы",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@poznan_chat_ua",
-      "title": "Познань Чат Украинцы",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@hworknet_community",
-      "title": "Hworknet Community UA",
-      "category": "freelance",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@uafreelance_chat",
-      "title": "Чат українських фрілансерів",
-      "category": "freelance",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@it_kazakhstan",
-      "title": "IT Казахстан Комьюнити",
-      "category": "web",
-      "country": "KZ",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@digital_kz",
-      "title": "Digital & Маркетинг Казахстан",
-      "category": "marketing",
-      "country": "KZ",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@georgia_freelance",
-      "title": "Фриланс в Грузии",
-      "category": "freelance",
-      "country": "GE",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tilda_hub",
-      "title": "Tilda Hub Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@webflow_community_ru",
-      "title": "Webflow Комьюнити & Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tg_bot_freelance",
-      "title": "Telegram Bots Freelance",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@python_freelance_orders",
-      "title": "Python Заказы & Парсеры",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@site_building_chat",
-      "title": "Создание сайтов | Чат Заказчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@landing_page_orders",
-      "title": "Лендинги & Одностраничники Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@crm_amo_bitrix",
-      "title": "amoCRM / Bitrix24 Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@outsource_orders",
-      "title": "Аутсорс Разработка Сайтов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@web_design_orders",
-      "title": "Веб-дизайн & Лендинги Заказы",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@logo_orders_ru",
-      "title": "Логотипы & Брендинг Заказы",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@creatives_design_orders",
-      "title": "Рекламные Креативы Заказы",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@packaging_design_orders",
-      "title": "Дизайн упаковки и мерча",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@smm_orders_feed",
-      "title": "SMM Ведение и Продвижение",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@seo_freelance_orders",
-      "title": "SEO Оптимизация & Продвижение",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@traffic_buyers_chat",
-      "title": "Media Buyers & Трафик Чат",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@influencer_ads_orders",
-      "title": "Реклама у блогеров & Посевы",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@copywriter_orders",
-      "title": "Копирайтинг & Продающие тексты",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@reputation_management",
-      "title": "SERM & Управление репутацией",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@digital_shabashka",
-      "title": "Digital Шабашка & Быстрые заказы",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@warszawa_it_community",
-      "title": "Warszawa IT Community",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krakow_it_community",
-      "title": "Krakow IT Community",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wroclaw_it_community",
-      "title": "Wrocław IT Community",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@warszawa_oglosenia_praca",
-      "title": "Варшава Объявления & Работа",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krakow_oglosenia",
-      "title": "Краков Объявления & Услуги",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wroclaw_oglosenia",
-      "title": "Вроцлав Объявления & Работа",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@gdansk_oglosenia",
-      "title": "Гданьск Объявления & Услуги",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@poznan_oglosenia",
-      "title": "Познань Объявления & Работа",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@polska_praca_chat",
-      "title": "Польша Работа Чат",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tbilisi_digital_chat",
-      "title": "Тбилиси Digital & IT Чат",
-      "category": "web",
-      "country": "GE",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@batumi_it_chat",
-      "title": "Батуми IT & Фриланс Чат",
-      "category": "web",
-      "country": "GE",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tilda_freelancers",
-      "title": "Tilda Freelancers | Заказы сайтов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tilda_work_chat",
-      "title": "Tilda Work Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tildadev",
-      "title": "Tilda Dev & Code",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@webflow_orders_chat",
-      "title": "Webflow Разработка Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wordpress_profi",
-      "title": "WordPress Profi Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wordpress_freelance_chat",
-      "title": "WordPress Freelance Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@woocommerce_orders",
-      "title": "WooCommerce Магазины Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@elementor_ru",
-      "title": "Elementor & WP Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@bitrix_work_chat",
-      "title": "Битрикс24 & 1С-Битрикс Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@opencart_orders",
-      "title": "OpenCart Разработка & Правки",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@shopify_ru_chat",
-      "title": "Shopify Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@strapi_cms_ru",
-      "title": "Strapi & Headless CMS Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@landing_orders_chat",
-      "title": "Заказы на Лендинги Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@verstka_orders",
-      "title": "Верстка Сайтов Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@verstka_chat_ru",
-      "title": "Чат Верстальщиков HTML/CSS",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@web_dev_orders_chat",
-      "title": "Заказы на Сайты под ключ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@sites_turnkey",
-      "title": "Сайты под ключ Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@corporate_sites_dev",
-      "title": "Корпоративные сайты Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@interactive_sites",
-      "title": "Three.js / WebGL 3D Сайты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@anim_sites_dev",
-      "title": "GSAP & Анимация Сайтов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@react_chat_jobs",
-      "title": "React Developers Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@nextjs_chat_ru",
-      "title": "Next.js Комьюнити Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@vuejs_chat_jobs",
-      "title": "Vue.js Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@nuxtjs_ru",
-      "title": "Nuxt.js Проекты & Сайты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@angular_chat_ru",
-      "title": "Angular Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@javascript_chat_ru",
-      "title": "JavaScript Чат Разработчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@web_interfaces_dev",
-      "title": "Разработка Веб-интерфейсов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@svelte_jobs_ru",
-      "title": "Svelte / SvelteKit Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tailwind_dev_ru",
-      "title": "Tailwind CSS Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@python_dev_chat_ru",
-      "title": "Python Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@fastapi_ru",
-      "title": "FastAPI Разработка API",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@php_geeks_chat",
-      "title": "PHP Geeks Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@laravel_chat_ru",
-      "title": "Laravel Чат Разработчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@yii2_jobs",
-      "title": "Yii2 Разработка & Правки",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@nodejs_chat_ru",
-      "title": "Node.js Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@nestjs_ru",
-      "title": "NestJS Backend Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@golang_chat_ru",
-      "title": "Golang Чат Разработчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@dotnet_chat_ru",
-      "title": ".NET Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@sql_db_jobs",
-      "title": "PostgreSQL / MySQL Базы Данных",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tg_bot_exchange",
-      "title": "Биржа Ботов и Скриптов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@aiogram_chat_ru",
-      "title": "aiogram Боты Чат Разработчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@pyrogram_chat",
-      "title": "Pyrogram & Telethon Боты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@telegram_mini_apps_dev",
-      "title": "Telegram Mini Apps (TMA) Dev",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@bot_creators_orders",
-      "title": "Создание Ботов для Бизнеса",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@parser_orders_ru",
-      "title": "Заказы на Парсеры и Скрапинг",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@scraping_chat",
-      "title": "Скрапинг Данных & Парсинг Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@automation_b2b",
-      "title": "Автоматизация Бизнеса (Make, n8n)",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@n8n_ru",
-      "title": "n8n & Webhooks Автоматизация",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@zapier_make_orders",
-      "title": "Заказы Make (Integromat) & Zapier",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@chatbots_for_business",
-      "title": "Чат-боты для воронок и продаж",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@flutter_chat_ru",
-      "title": "Flutter Чат Разработчиков",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@react_native_chat_ru",
-      "title": "React Native Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@ios_chat_ru",
-      "title": "iOS Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@android_chat_ru",
-      "title": "Android Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@mobile_apps_turnkey",
-      "title": "Приложения под ключ Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@agency_subcontract",
-      "title": "Субподряд для Веб-студий",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@digital_subcontract",
-      "title": "Digital Субподряд Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@lead_gen_it_orders",
-      "title": "Лиды на Разработку ПО и Сайтов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@dev_lead_exchange",
-      "title": "Биржа IT Лидов и Клиентов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@web_agency_leads",
-      "title": "Клиенты для Веб-агентств",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@saas_dev_orders",
-      "title": "Разработка SaaS Сервисов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@mvp_development",
-      "title": "Разработка MVP под ключ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@freelance_it_chat",
-      "title": "Фриланс IT Чат Проектов",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@forweb_dev_chat",
-      "title": "ForWeb Dev Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@qa_chat_jobs",
-      "title": "QA Тестировщики Чат Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@devops_chat_ru",
-      "title": "DevOps Чат Серверов и Деплоя",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@server_setup_orders",
-      "title": "Настройка Серверов / VPS / Docker",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@web_interface_designers",
-      "title": "Дизайн Интерфейсов Чат",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@figma_community_orders",
-      "title": "Figma Community Заказы",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@warsaw_developers_chat",
-      "title": "Warsaw Developers Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krakow_dev_chat",
-      "title": "Krakow Developers Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wroclaw_dev_chat",
-      "title": "Wrocław Developers Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@poznan_tech_community",
-      "title": "Poznań Tech Community",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@poland_dev_freelance",
-      "title": "Poland Dev Freelance Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@prague_dev_chat",
-      "title": "Prague Developers Chat",
-      "category": "web",
-      "country": "CZ",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tilda_ua_orders",
-      "title": "Tilda Україна Замовлення",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wordpress_ua_chat",
-      "title": "WordPress Україна Чат Замовлень",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@frontend_ua_chat",
-      "title": "Frontend UA Чат Розробників",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@python_ua_chat",
-      "title": "Python UA Чат Розробників",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@php_ua_chat",
-      "title": "PHP & Laravel UA Чат Замовлень",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@react_ua_chat",
-      "title": "React UA Ком’юніті & Замовлення",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tg_bots_ua",
-      "title": "Розробка Telegram-ботів Україна",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@dev_kazakhstan_chat",
-      "title": "Разработчики Казахстана Чат",
-      "category": "web",
-      "country": "KZ",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tilda_kz_chat",
-      "title": "Tilda & Сайты Казахстан",
-      "category": "web",
-      "country": "KZ",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tashkent_dev_chat",
-      "title": "Ташкент Разработчики Чат",
-      "category": "web",
-      "country": "UZ",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tbilisi_dev_chat",
-      "title": "Тбилиси Разработчики Чат",
-      "category": "web",
-      "country": "GE",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@minsk_it_chat",
-      "title": "Минск IT Комьюнити Чат",
-      "category": "web",
-      "country": "BY",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@yerevan_dev_chat",
-      "title": "Ереван Разработчики Чат",
-      "category": "web",
-      "country": "AM",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@freelance_developers_global",
-      "title": "Freelance Developers Global",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@it_orders_fast",
-      "title": "Срочные IT Заказы и Шабашки",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@turnkey_websites_chat",
-      "title": "Сайты под ключ | Чат Клиентов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@site_fixes_chat",
-      "title": "Доработки и Баги Сайтов Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@tilda_quick_orders",
-      "title": "Быстрые заказы на Tilda",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@bot_express_orders",
-      "title": "Срочные заказы на Ботов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@landing_express",
-      "title": "Экспресс Лендинги Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@online_store_orders",
-      "title": "Создание Магазинов Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@web_help_freelance",
-      "title": "Помощь по Сайтам Фриланс",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@web_lead_generation",
-      "title": "Лидогенерация на Сайты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@clients_for_programmers",
-      "title": "Клиенты для Программистов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@order_a_website_chat",
-      "title": "Заказать Сайт | Чат Клиентов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@order_a_bot_chat",
-      "title": "Заказать Бота | Чат Клиентов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@web_masters_chat_ru",
-      "title": "Вебмастера & Заказчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@seo_web_orders",
-      "title": "SEO & Сайты под ключ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@telegram_funnels_dev",
-      "title": "Воронки и Боты под ключ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@code_orders_ru",
-      "title": "Написание Кода & Скрипты Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@api_integration_orders",
-      "title": "Интеграция API & Сервисов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@warsaw_freelance_it",
-      "title": "Warsaw Freelance IT Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krakow_freelance_it",
-      "title": "Krakow Freelance IT Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@wroclaw_freelance_it",
-      "title": "Wrocław Freelance IT Chat",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@spb_dev_chat",
-      "title": "Санкт-Петербург Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
-    },
-    {
-      "username": "@krd_dev_chat",
-      "title": "Краснодар Разработчики Чат",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "chat"
+      "title": "Frontend_ru",
+      "category": "web",
+      "type": "chat",
+      "subscribers": 3390,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@tilda_official_chat",
+      "title": "Tilda Publishing News Chat",
+      "category": "web",
+      "type": "chat",
+      "subscribers": 3146,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@rabotay_zhitomire",
+      "title": "Робота Житомир 🇺🇦 Вакансії",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 2936,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@react_chat",
+      "title": "#REACT CHAT 🇺🇦",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 2895,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@rabota_odessa_horeca",
+      "title": "РАБОТА HoReCa ОДЕССА",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 2769,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@android_jobs",
+      "title": "Android JOB",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 2723,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@react_native_jobs",
+      "title": "React Native &amp; Expo Jobs - работа связанная с react-native",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 2570,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@worktopua",
+      "title": "Вакансії в Telegram | Україна 🇺🇦",
+      "category": "general",
+      "type": "chat",
+      "subscribers": 2528,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@data_jobs",
+      "title": "Data Jobs, دیتاجابز",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 1534,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@golang_jobs",
+      "title": "Golang — вакансии и аналитика",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 1519,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@tilda_chat",
+      "title": "Tilda Community Support",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 1508,
+      "lastPostDate": null,
+      "active": true
     }
   ],
   "channels": [
     {
-      "username": "@normrabota",
-      "title": "Норм работа Digital",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
       "username": "@theyseeku",
-      "title": "Finder.vc Удаленка",
+      "title": "Finder.work: работа и вакансии ✔",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 274222,
+      "lastPostDate": "2026-10-17T18:30:00+00:00",
+      "active": true
+    },
+    {
+      "username": "@normrabota",
+      "title": "Норм работа",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 141108,
+      "lastPostDate": "2026-10-17T10:30:07+00:00",
+      "active": true
+    },
+    {
+      "username": "@zapwork",
+      "title": "Удалёнщики | удаленная работа",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 127456,
+      "lastPostDate": "2026-10-13T11:40:12+00:00",
+      "active": true
+    },
+    {
+      "username": "@kievy_rabota",
+      "title": "Є РОБОТА КИЇВ 🇺🇦",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 110905,
+      "lastPostDate": "2026-10-08T11:32:48+00:00",
+      "active": true
+    },
+    {
+      "username": "@rueventjob",
+      "title": "Удаленка - вся творческая работа",
       "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
+      "type": "channel",
+      "subscribers": 92568,
+      "lastPostDate": "2026-10-17T15:31:03+00:00",
+      "active": true
     },
     {
-      "username": "@distantsiya",
-      "title": "Dистанция Проекты",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@fr_free",
-      "title": "Удаленная работа | Фриланс",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@habr_freelance",
-      "title": "Хабр Фриланс Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@jobforfrontend",
-      "title": "Job for Frontend",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@geekjobs",
-      "title": "Geekjobs IT & Digital",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@careerspace",
-      "title": "Careerspace IT Vacancies",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@zizu_IT_RU",
-      "title": "Zizu IT Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@job4designer",
-      "title": "Job for Designers",
+      "username": "@designer_ru",
+      "title": "ИЩУ_ДИЗАЙНЕРА",
       "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
+      "type": "channel",
+      "subscribers": 80954,
+      "lastPostDate": "2026-09-17T10:12:06+00:00",
+      "active": true
     },
     {
-      "username": "@dsgnworkers",
-      "title": "UI/UX & Web Designers",
+      "username": "@tproger_official",
+      "title": "Типичный программист ✔",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 78068,
+      "lastPostDate": "2026-10-17T10:54:01+00:00",
+      "active": true
+    },
+    {
+      "username": "@marketing_jobs",
+      "title": "🎯 marketing jobs — вакансии для маркетологов",
+      "category": "marketing",
+      "type": "channel",
+      "subscribers": 61397,
+      "lastPostDate": "2026-10-16T10:30:03+00:00",
+      "active": true
+    },
+    {
+      "username": "@cgfreelance",
+      "title": "CG Freelance",
       "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@perezvonyu",
-      "title": "Мы вам перезвоним Digital",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@digital_hr",
-      "title": "Digital HR Стартапы",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@vakanser_digital_smm",
-      "title": "Digital & SMM Вакансии",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
+      "type": "channel",
+      "subscribers": 60835,
+      "lastPostDate": "2026-10-17T18:02:45+00:00",
+      "active": true
     },
     {
       "username": "@remoteit",
-      "title": "Remote IT Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
+      "title": "Remote IT (Inflow)",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 51455,
+      "lastPostDate": "2026-10-17T15:40:04+00:00",
+      "active": true
     },
     {
-      "username": "@python_jobs",
-      "title": "Python & Backend Jobs",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
+      "username": "@djinni_official",
+      "title": "Djinni (/◔ ◡ ◔)/",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 50573,
+      "lastPostDate": "2026-10-16T10:12:31+00:00",
+      "active": true
     },
     {
-      "username": "@php_jobs",
-      "title": "PHP & Laravel Jobs",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@forweb_design",
-      "title": "For Web Design & Code",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tilda_jobs",
-      "title": "Tilda Jobs & Projects",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@nocode_jobs",
-      "title": "No-Code Jobs",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@bot_jobs",
-      "title": "Bot Dev Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@rabotawarszawa",
-      "title": "Dobra Praca / Работа Варшава",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@house_pl",
-      "title": "Работа в Варшаве • Warszawa",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@warszawa_nasza_praca",
-      "title": "Вакансии Варшава Наша Праця",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@thewwarsaw",
-      "title": "The Warsaw Новости & Вакансии",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@wroclaw_ads",
-      "title": "Работа во Вроцлаве • Wrocław",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@mrowki_group",
-      "title": "Работа Вроцлав & Силезия",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@gdansk_praca",
-      "title": "Работа Гданьск Сопот Гдыня",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@poznan_rabota",
-      "title": "Вакансии Познань",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@katowice_work",
-      "title": "Работа Катовице Силезия",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@lodz_praca",
-      "title": "Работа в Лодзи",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@poland_it_jobs",
-      "title": "IT Вакансии Польша",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@poland_digital",
-      "title": "Digital & Marketing Польша",
-      "category": "marketing",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_job_ua",
-      "title": "IT Job UA",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@nofluffjobsukraine",
-      "title": "No Fluff Jobs Ukraine",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@wannawork",
-      "title": "Wanna Work UA",
-      "category": "freelance",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@itexpert_vacancies",
-      "title": "ITExpert Vacancies UA",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@kresyume",
-      "title": "Крезюме Вакансії Креатив",
-      "category": "design",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@marketing_guild",
-      "title": "Marketing Guild UA",
-      "category": "marketing",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
+      "username": "@junior_developer_ua",
+      "title": "Junior Developer",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 44076,
+      "lastPostDate": "2026-10-16T13:51:17+00:00",
+      "active": true
     },
     {
       "username": "@happymonday",
-      "title": "Happy Monday Кар’єра",
-      "category": "freelance",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_uatalents",
-      "title": "Remote UA Talents",
-      "category": "freelance",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@dev_ua_jobs",
-      "title": "Dev.ua IT Вакансії",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@dou_jobs",
-      "title": "DOU Вакансії та Проєкти",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@freelance_kz",
-      "title": "Фриланс.кз Удаленная работа",
-      "category": "freelance",
-      "country": "KZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_kz",
-      "title": "Казахстан на удалёнке",
-      "category": "freelance",
-      "country": "KZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@astana_rabota_jobs",
-      "title": "Работа в Астане Вакансии",
-      "category": "freelance",
-      "country": "KZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@almaty_work_kz",
-      "title": "Работа в Алматы Вакансии",
-      "category": "freelance",
-      "country": "KZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@georgia_it_jobs",
-      "title": "Грузия IT & Релокация",
-      "category": "web",
-      "country": "GE",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@belarus_it_job",
-      "title": "Беларусь IT & Фриланс",
-      "category": "web",
-      "country": "BY",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remotework_en",
-      "title": "Global Remote Work ($)",
-      "category": "freelance",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@webdev_remote",
-      "title": "Web Development Remote ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@uiux_global",
-      "title": "UI/UX Design International",
-      "category": "design",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@crypto_jobs_remote",
-      "title": "Web3 & Bot Dev Remote",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@web_craft_jobs",
-      "title": "Web Craft | Разработка сайтов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@wordpress_jobs_ru",
-      "title": "WordPress Заказы и Проекты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@frontend_gigs_ru",
-      "title": "Frontend Gigs & Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@backend_dev_jobs",
-      "title": "Backend & API Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@bot_orders_channel",
-      "title": "Заказы на Telegram-ботов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@ecom_orders_ru",
-      "title": "E-commerce & Магазины под ключ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@react_dev_jobs",
-      "title": "React & Next.js Проекты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@vue_jobs_ru",
-      "title": "Vue.js & Nuxt Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_tender_ru",
-      "title": "IT Тендеры & Готовые заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@ui_ux_jobs_feed",
-      "title": "UI/UX Вакансии и Проекты",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@graphic_jobs_feed",
-      "title": "Графический дизайн Вакансии",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@motion_design_jobs",
-      "title": "Motion Design & Анимация",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@figma_design_orders",
-      "title": "Figma Проекты и Макеты",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@targetolog_jobs_feed",
-      "title": "Таргетологи & Трафик Вакансии",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@context_ads_jobs",
-      "title": "Контекстная Реклама Заказы",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tg_ads_channel",
-      "title": "Telegram Ads & Посевы Заказы",
-      "category": "marketing",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@freelance_channel_ru",
-      "title": "Биржа Фриланса Заказы",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@fl_orders_feed",
-      "title": "FL.ru Свежие Проекты",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@freelance_ru_feed",
-      "title": "Freelance.ru Проекты",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@kwork_freelance_feed",
-      "title": "Kwork Проекты & Задачи",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@work_weblancer_feed",
-      "title": "Weblancer Заказы",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@habr_career_feed",
-      "title": "Хабр Карьера Вакансии",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@part_time_digital",
-      "title": "Подработка в Digital",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_gigs_cis",
-      "title": "Удаленная работа СНГ",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@freelance_daily_orders",
-      "title": "Фриланс Дэйли Заказы",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@poland_remote_jobs",
-      "title": "Poland Remote Digital Jobs",
-      "category": "freelance",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@almaty_digital_jobs",
-      "title": "Алматы Digital Вакансии",
-      "category": "marketing",
-      "country": "KZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@astana_digital_jobs",
-      "title": "Астана Digital Вакансии",
-      "category": "marketing",
-      "country": "KZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tashkent_it_jobs",
-      "title": "Ташкент IT Вакансии & Заказы",
-      "category": "web",
-      "country": "UZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tashkent_digital_channel",
-      "title": "Ташкент Digital & Маркетинг",
-      "category": "marketing",
-      "country": "UZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@yerevan_digital_jobs",
-      "title": "Ереван IT & Digital Вакансии",
-      "category": "web",
-      "country": "AM",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_dev_global",
-      "title": "Remote Dev Global ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@frontend_gigs_en",
-      "title": "Frontend Gigs Global ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@ui_ux_global_gigs",
-      "title": "UI/UX Global Gigs ($)",
-      "category": "design",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@marketing_remote_en",
-      "title": "Marketing Remote Worldwide",
-      "category": "marketing",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@digital_nomads_eu",
-      "title": "Digital Nomads Europe Jobs",
-      "category": "freelance",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tilda_job_orders",
-      "title": "Заказы Tilda Publishing",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tilda_baza",
-      "title": "База сайтов на Tilda",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tildaprojects",
-      "title": "Tilda Projects Feed",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@webflow_jobs_ru",
-      "title": "Webflow Вакансии и Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@bitrix_expert",
-      "title": "Битрикс Эксперты Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@shopify_dev_orders",
-      "title": "Shopify Магазины под ключ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@landing_page_pro",
-      "title": "Landing Page Pro Проекты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@html_css_jobs",
-      "title": "HTML/CSS/JS Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@web_developer_jobs_ru",
-      "title": "Web Developer Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@dev_gigs_cis",
-      "title": "Разработка сайтов и скриптов СНГ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@react_jobs_feed",
-      "title": "React.js Вакансии & Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@nextjs_jobs_ru",
-      "title": "Next.js Разработка & Проекты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@vuejs_jobs_feed",
-      "title": "Vue.js Вакансии & Проекты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@typescript_jobs_feed",
-      "title": "TypeScript Разработка Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@angular_jobs_ru",
-      "title": "Angular Разработка Проекты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@frontend_tender",
-      "title": "Frontend Тендеры и Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@js_jobs_feed",
-      "title": "JavaScript Jobs & Projects",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@frontend_work_cis",
-      "title": "Фронтенд работа СНГ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@python_jobs_feed",
-      "title": "Python Вакансии и Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@django_jobs_ru",
-      "title": "Django & FastAPI Проекты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@php_jobs_feed",
-      "title": "PHP & Backend Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@laravel_jobs_ru",
-      "title": "Laravel Вакансии & Проекты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@nodejs_jobs_feed",
-      "title": "Node.js & Express Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@golang_jobs_feed",
-      "title": "Go (Golang) Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@java_jobs_feed",
-      "title": "Java / Spring Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@csharp_jobs_ru",
-      "title": "C# / .NET Вакансии & Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@ruby_jobs_ru",
-      "title": "Ruby on Rails Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@rust_jobs_ru",
-      "title": "Rust Вакансии & Проекты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@bot_orders_feed",
-      "title": "Заказы Ботов Telegram",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tg_bot_market",
-      "title": "Рынок Telegram Ботов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tma_orders",
-      "title": "Заказы на Telegram Mini Apps",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@bot_develop_cis",
-      "title": "Разработка Ботов СНГ",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@mobile_dev_feed",
-      "title": "Мобильная разработка Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@flutter_jobs_ru",
-      "title": "Flutter Вакансии & Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@react_native_jobs_ru",
-      "title": "React Native Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@ios_jobs_feed",
-      "title": "iOS / Swift Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@android_jobs_feed",
-      "title": "Android / Kotlin Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_tenders_cis",
-      "title": "IT Тендеры СНГ | Сайты & Софт",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@b2b_dev_orders",
-      "title": "B2B Разработка для Корпоратов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_orders_board",
-      "title": "Доска IT Заказов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@startup_it_jobs",
-      "title": "Стартапы IT Вакансии & Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_freelance_feed",
-      "title": "IT Freelance Feed",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tproger_jobs",
-      "title": "Типичный Программист Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@habr_it_jobs",
-      "title": "Хабр IT Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@vc_jobs_feed",
-      "title": "VC.ru Вакансии & Проекты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@dev_remote_ru",
-      "title": "Удаленка для Программистов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_work_finder",
-      "title": "IT Work Finder",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tech_jobs_cis",
-      "title": "Tech Jobs CIS",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@proglib_jobs",
-      "title": "Библиотека Программиста Jobs",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@weblancer_projects_ru",
-      "title": "Weblancer Проекты Сайтов",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@fl_web_orders",
-      "title": "FL.ru Веб-разработка Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@freelancehunt_ru_feed",
-      "title": "Freelancehunt Свежие Заказы",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@kwork_web_feed",
-      "title": "Kwork Сайты и Боты Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_orders_radar",
-      "title": "IT Orders Radar",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@qa_jobs_feed",
-      "title": "QA / Тестирование Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@devops_jobs_feed",
-      "title": "DevOps / SysAdmin Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@uiux_design_projects",
-      "title": "UI/UX Проекты для Веб-студий",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@product_design_jobs",
-      "title": "Product Design Вакансии",
-      "category": "design",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@nofluffjobs_poland",
-      "title": "No Fluff Jobs Poland (PL)",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@justjoinit_poland",
-      "title": "Just Join IT Poland",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_warsaw_jobs",
-      "title": "IT Jobs Warsaw / Warszawa",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@krakow_tech_jobs",
-      "title": "Kraków Tech & IT Jobs",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@wroclaw_it_hub",
-      "title": "Wrocław IT Hub & Jobs",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@gdansk_it_jobs",
-      "title": "Gdańsk IT Jobs (Trójmiasto)",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@katowice_it_jobs",
-      "title": "Katowice & Silesia IT Jobs",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@lodz_it_jobs",
-      "title": "Łódź Tech & IT Jobs",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@praca_it_polska",
-      "title": "Praca IT Polska (Oficjalne)",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@poland_remote_it",
-      "title": "Poland Remote IT Developers",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@czech_it_jobs",
-      "title": "Чехия (Прага) IT Вакансии",
-      "category": "web",
-      "country": "CZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_digest_ua",
-      "title": "IT Digest Ukraine Jobs",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@kyiv_it_jobs",
-      "title": "Київ IT Вакансії та Проєкти",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@lviv_it_jobs",
-      "title": "Львів IT Вакансії",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@dnipro_it_jobs",
-      "title": "Дніпро IT Робота",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@odessa_it_jobs",
-      "title": "Одеса IT Вакансії",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@kharkiv_it_jobs",
-      "title": "Харків IT Вакансії",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@python_ua_jobs",
-      "title": "Python UA Вакансії",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_proekty_ua",
-      "title": "IT Проєкти та Підряд UA",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@digital_tender_ua",
-      "title": "Digital Тендери Україна",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@ua_remote_it",
-      "title": "UA Remote IT Jobs",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@dev_gigs_ua",
-      "title": "Dev Gigs Ukraine",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_astana_jobs",
-      "title": "IT Вакансии Астана",
-      "category": "web",
-      "country": "KZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_almaty_jobs",
-      "title": "IT Вакансии Алматы",
-      "category": "web",
-      "country": "KZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@web_orders_kz",
-      "title": "Заказы на Сайты Казахстан",
-      "category": "web",
-      "country": "KZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tashkent_it_hub",
-      "title": "Tashkent IT Hub & Jobs",
-      "category": "web",
-      "country": "UZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@georgia_tech_jobs",
-      "title": "Georgia Tech & IT Jobs",
-      "category": "web",
-      "country": "GE",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@belarus_dev_jobs",
-      "title": "Беларусь Программисты Вакансии",
-      "category": "web",
-      "country": "BY",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@baku_it_jobs",
-      "title": "Баку IT & Dev Вакансии",
-      "category": "web",
-      "country": "AZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_frontend_jobs",
-      "title": "Remote Frontend Jobs ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_backend_jobs",
-      "title": "Remote Backend Jobs ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_fullstack_jobs",
-      "title": "Remote Fullstack Jobs ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_python_jobs",
-      "title": "Remote Python Dev Jobs ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_react_jobs",
-      "title": "Remote React Developer Jobs ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_javascript_jobs",
-      "title": "Remote JavaScript Dev ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_mobile_jobs",
-      "title": "Remote iOS / Android / Flutter ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_devops_jobs",
-      "title": "Remote DevOps & Cloud ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@crypto_dev_jobs",
-      "title": "Crypto & Web3 Developer Gigs ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@solidity_web3_jobs",
-      "title": "Solidity & Smart Contract Jobs ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@web_freelance_worldwide",
-      "title": "Worldwide Web Freelance ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@tech_remote_worldwide",
-      "title": "Tech Remote Worldwide ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_ok_feed",
-      "title": "Remote OK Dev Feed ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@weworkremotely_feed",
-      "title": "We Work Remotely Dev Feed ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@eu_remote_tech",
-      "title": "EU Remote Tech Gigs (EUR)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@web_studio_orders",
-      "title": "Заказы для Веб-студий и Агентств",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@dev_orders_vip",
-      "title": "VIP IT Заказы и Клиенты",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@freelance_hot_orders",
-      "title": "Горячие Фриланс Заказы",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@daily_it_leads",
-      "title": "Daily IT Leads & Clients",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_freelance_market",
-      "title": "IT Freelance Market",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_b2b_projects",
-      "title": "B2B IT Проекты и Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@custom_dev_orders",
-      "title": "Кастомная Разработка ПО",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_job_radar_cis",
-      "title": "IT Job Radar CIS",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@digital_gig_market",
-      "title": "Digital Gig Market",
-      "category": "freelance",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@freelance_it_leads_ua",
-      "title": "Фріланс IT Ліди Україна",
-      "category": "web",
-      "country": "UA",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@poland_tech_gigs",
-      "title": "Poland Tech Gigs & Orders",
-      "category": "web",
-      "country": "PL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@kz_it_orders",
-      "title": "Казахстан Заказы на Разработку",
-      "category": "web",
-      "country": "KZ",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@georgia_it_orders",
-      "title": "Грузия IT Заказы и Проекты",
-      "category": "web",
-      "country": "GE",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_software_gigs",
-      "title": "Remote Software Gigs ($)",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@web_development_hub_global",
-      "title": "Web Development Hub Global",
-      "category": "web",
-      "country": "GLOBAL",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@spb_it_jobs",
-      "title": "СПб IT Вакансии & Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@nsk_it_jobs",
-      "title": "Новосибирск IT Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@ekb_it_jobs",
-      "title": "Екатеринбург IT Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@kazan_it_jobs",
-      "title": "Казань IT & Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@nn_it_jobs",
-      "title": "Нижний Новгород IT Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@samara_it_jobs",
-      "title": "Самара IT & Веб Заказы",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@rostov_it_jobs",
-      "title": "Ростов IT Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@krd_it_jobs",
-      "title": "Краснодар IT & Фриланс",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@voronezh_it",
-      "title": "Воронеж IT Комьюнити",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@ufa_it_jobs",
-      "title": "Уфа IT & Разработка",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@perm_it_jobs",
-      "title": "Пермь IT Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@krasnoyarsk_it",
-      "title": "Красноярск IT Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@chelyabinsk_it",
-      "title": "Челябинск IT Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@omsk_it_jobs",
-      "title": "Омск IT Вакансии",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@volgograd_it",
-      "title": "Волгоград IT & Веб",
-      "category": "web",
-      "country": "RU",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@freelance_projects",
-      "title": "Фріланс проєкти та замовлення UA",
+      "title": "Happy Monday",
       "category": "development",
-      "active": true,
-      "type": "channel"
+      "type": "channel",
+      "subscribers": 42950,
+      "lastPostDate": "2026-10-17T13:20:00+00:00",
+      "active": true
     },
     {
-      "username": "@remote_jobs_ua",
-      "title": "Віддалена робота UA",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@ua_work",
-      "title": "Робота UA | Вакансії",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_jobs_ukraine",
-      "title": "IT Вакансії Україна",
+      "username": "@habr_career",
+      "title": "Хабр Карьера",
       "category": "development",
-      "active": true,
-      "type": "channel"
+      "type": "channel",
+      "subscribers": 33549,
+      "lastPostDate": "2026-10-17T13:57:06+00:00",
+      "active": true
     },
     {
-      "username": "@robota_viddaleno",
-      "title": "Робота віддалено | Freelance",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_work_ukraine",
-      "title": "Remote Work Ukraine",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@it_work_ua",
-      "title": "IT Робота Україна",
+      "username": "@digital_hr",
+      "title": "DigitalHR (ДиджиталлЭйчАр): работа | вакансии | рекрутинг | стартапы",
       "category": "development",
-      "active": true,
-      "type": "channel"
+      "type": "channel",
+      "subscribers": 31866,
+      "lastPostDate": "2026-10-09T07:34:36+00:00",
+      "active": true
     },
     {
-      "username": "@smm_work_ua",
-      "title": "SMM Вакансії та Маркетинг",
-      "category": "marketing",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@freelance_hub_ua",
-      "title": "Freelance Hub UA",
-      "category": "development",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@robota_v_it",
-      "title": "Робота в IT & Digital UA",
-      "category": "development",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@zaichenkoteam",
-      "title": "Zaichenko Team | Вакансії",
+      "username": "@jecontact",
+      "title": "є контакт",
       "category": "general",
-      "active": true,
-      "type": "channel"
+      "type": "channel",
+      "subscribers": 30817,
+      "lastPostDate": "2026-10-16T12:05:03+00:00",
+      "active": true
+    },
+    {
+      "username": "@work_in_ukraine_golovne",
+      "title": "Робота Україна | Головне",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 30760,
+      "lastPostDate": "2026-10-16T15:00:02+00:00",
+      "active": true
+    },
+    {
+      "username": "@freelancetaverna",
+      "title": "Фриланс Таверна Official | Вакансии Удаленная работа",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 30071,
+      "lastPostDate": "2026-10-17T11:00:23+00:00",
+      "active": true
     },
     {
       "username": "@lobbyx",
-      "title": "Lobby X | Вакансії",
-      "category": "general",
-      "active": true,
-      "type": "channel"
-    },
-    {
-      "username": "@remote_it_ua",
-      "title": "Remote IT Ukraine",
+      "title": "Lobby X",
       "category": "development",
-      "active": true,
-      "type": "channel"
+      "type": "channel",
+      "subscribers": 29746,
+      "lastPostDate": "2026-10-17T09:01:00+00:00",
+      "active": true
     },
     {
-      "username": "@digital_work_ua",
-      "title": "Digital Work UA",
+      "username": "@aplaywork",
+      "title": "A-Play | Вакансії по всій Україні | Робота в Україні",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 26472,
+      "lastPostDate": "2026-10-16T09:57:41+00:00",
+      "active": true
+    },
+    {
+      "username": "@top_vacansii",
+      "title": "CATWORK | Віддалена робота | Вакансії та стажування",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 25424,
+      "lastPostDate": "2026-10-16T09:59:21+00:00",
+      "active": true
+    },
+    {
+      "username": "@job_python",
+      "title": "Python Job | Вакансии | Стажировки",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 23265,
+      "lastPostDate": "2026-10-17T15:10:03+00:00",
+      "active": true
+    },
+    {
+      "username": "@zaichenkoteam",
+      "title": "ZAICHENKO TEAM 🇺🇦🇪🇺 Вакансії",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 22957,
+      "lastPostDate": "2026-10-17T13:34:39+00:00",
+      "active": true
+    },
+    {
+      "username": "@digitaltender",
+      "title": "DIGITAL Tender / freelance / фриланс",
+      "category": "freelance",
+      "type": "channel",
+      "subscribers": 20620,
+      "lastPostDate": "2026-10-16T16:24:31+00:00",
+      "active": true
+    },
+    {
+      "username": "@adgoodashell",
+      "title": "Ad Good as Hell ✨ SMM PR Marketing Вакансії",
       "category": "marketing",
-      "active": true,
-      "type": "channel"
+      "type": "channel",
+      "subscribers": 20492,
+      "lastPostDate": "2026-10-16T10:30:21+00:00",
+      "active": true
+    },
+    {
+      "username": "@job_react",
+      "title": "React Job | JavaScript | Вакансии",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 16642,
+      "lastPostDate": "2026-10-17T15:10:04+00:00",
+      "active": true
+    },
+    {
+      "username": "@javascript_jobs_feed",
+      "title": "JavaScript Jobs — вакансии и резюме",
+      "category": "web",
+      "type": "channel",
+      "subscribers": 15032,
+      "lastPostDate": "2026-10-17T18:27:28+00:00",
+      "active": true
+    },
+    {
+      "username": "@you_can_know_more",
+      "title": "БЛІЦ",
+      "category": "general",
+      "type": "channel",
+      "subscribers": 13453,
+      "lastPostDate": "2026-10-16T19:45:47+00:00",
+      "active": true
+    },
+    {
+      "username": "@forwebdev",
+      "title": "For Web — фронтенд, дизайн, программирование",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 13021,
+      "lastPostDate": "2025-05-12T10:31:00+00:00",
+      "active": true
+    },
+    {
+      "username": "@jobzy",
+      "title": "JOBZY | Робота в Українi",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 10898,
+      "lastPostDate": "2026-05-24T12:25:35+00:00",
+      "active": true
+    },
+    {
+      "username": "@proglib_jobs",
+      "title": "IT Job Hub | Работа и вакансии в IT",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 9557,
+      "lastPostDate": "2026-10-16T09:04:10+00:00",
+      "active": true
+    },
+    {
+      "username": "@nofluffjobsukraine",
+      "title": "No Fluff Jobs | Вакансії в IT і не тільки",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 4651,
+      "lastPostDate": "2026-02-04T14:02:25+00:00",
+      "active": true
+    },
+    {
+      "username": "@dou_relocate",
+      "title": "Трактор на DOU",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 4607,
+      "lastPostDate": "2026-10-17T07:00:52+00:00",
+      "active": true
+    },
+    {
+      "username": "@workplaceinukraine",
+      "title": "Робота | Україна | Вакансії | SMM",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 4587,
+      "lastPostDate": "2026-10-15T12:14:00+00:00",
+      "active": true
+    },
+    {
+      "username": "@job_design",
+      "title": "РАБОТА. ДИЗАЙН ИНТЕРЬЕРА",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 4403,
+      "lastPostDate": "2026-10-16T14:05:08+00:00",
+      "active": true
+    },
+    {
+      "username": "@tilda_profi",
+      "title": "Фриланс на Tilda (T.Profi)",
+      "category": "web",
+      "type": "channel",
+      "subscribers": 3044,
+      "lastPostDate": "2025-11-16T14:12:37+00:00",
+      "active": true
+    },
+    {
+      "username": "@smm_vacancies_ua",
+      "title": "Вакансії SMM спеціалістів та фахівців",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 1206,
+      "lastPostDate": "2026-10-12T12:23:06+00:00",
+      "active": true
+    },
+    {
+      "username": "@it_digest_ua",
+      "title": "IT Digest UA",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 982,
+      "lastPostDate": "2026-07-31T12:37:07+00:00",
+      "active": true
     }
   ]
 }

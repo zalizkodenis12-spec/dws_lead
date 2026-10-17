@@ -3695,9 +3695,9 @@ const DEFAULT_DATA = {
 // APP STATE
 // ============================================================
 const savedSourcesRaw = JSON.parse(localStorage.getItem('dws_sources') || 'null');
-const normalizedSources = (savedSourcesRaw && Array.isArray(savedSourcesRaw.chats) && savedSourcesRaw.chats.length >= 200)
+const normalizedSources = (savedSourcesRaw && Array.isArray(savedSourcesRaw.chats) && savedSourcesRaw.chats.length >= 50)
   ? savedSourcesRaw
-  : { chats: Array(279).fill({}), channels: Array(235).fill({}) };
+  : { chats: Array(90).fill({}), channels: Array(38).fill({}) };
 
 const savedTakenIds = JSON.parse(localStorage.getItem('dws_taken_leads') || '[]');
 
@@ -5419,8 +5419,8 @@ async function fetchSources() {
 }
 
 function updateSourcesDisplay() {
-  const chatsCount = (state.sources?.chats?.length && state.sources.chats.length >= 200) ? state.sources.chats.length : 279;
-  const channelsCount = (state.sources?.channels?.length && state.sources.channels.length >= 100) ? state.sources.channels.length : 235;
+  const chatsCount = (state.sources?.chats?.length && state.sources.chats.length >= 30) ? state.sources.chats.length : 90;
+  const channelsCount = (state.sources?.channels?.length && state.sources.channels.length >= 10) ? state.sources.channels.length : 38;
   const total = chatsCount + channelsCount;
 
   const chatsEl = document.getElementById('sourcesChatsCount');
