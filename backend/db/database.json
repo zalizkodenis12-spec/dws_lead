@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792224844925-715",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Rita",
+      "authorUsername": "@smmbunker",
+      "title": "Шукаю SMM-проєкт!",
+      "text": "Шукаю SMM-проєкт!\nЯ понад рік в SMM. Дивлюся на контент свіжим оком і шарю за сучасні тренди, дуже хочу надалі розвиватися у цьому🙏🏽\nFormat співпраці:\n🎬 Відеомонтаж (динамічні Reels / TikTok / Shorts)\n🎨 Створення креативів (яскравий візуал під ваші задачі)\n🚀 Повне SMM-ведення (стратегія, упаковка, сторіз, контент)\nМожна брати як окремі послуги, так і комплекс!❤️\nЗ мене — купа ідей, чіткі дедлайни та максимальна віддача.",
+      "date": "2026-10-17T08:14:04.924Z",
+      "dateFormatted": "Сьогодні, 11:14",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792220646318-232",
       "category": "montage",
       "categoryName": "Монтаж",
