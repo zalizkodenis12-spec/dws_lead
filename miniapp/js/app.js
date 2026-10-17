@@ -6002,8 +6002,14 @@ function renderCrmOrdersList() {
       state.activeCrmLead.orders = orders;
       const totalBudget = orders.reduce((sum, o) => sum + (Number(o.amount) || 0), 0);
       state.activeCrmLead.budget = totalBudget;
+      const cIdx = state.crm.findIndex(c => c.id === state.activeCrmLead.id);
+      if (cIdx !== -1) {
+        state.crm[cIdx] = { ...state.crm[cIdx], orders: state.activeCrmLead.orders, budget: totalBudget };
+        localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+      }
       renderCrmOrdersList();
       renderCrm();
+      syncAccountToServer();
       haptic('medium');
     });
   });
@@ -6248,24 +6254,26 @@ function setupCrmDetailHandlers() {
 
       saveCrmDetailBtn.textContent = 'ЗБЕРІГАЄМО...';
       try {
-        await fetch('/api/crm/' + state.activeCrmLead.id, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updates)
-        });
-
         const idx = state.crm.findIndex(c => c.id === state.activeCrmLead.id);
         if (idx !== -1) {
           state.crm[idx] = { ...state.crm[idx], ...updates };
-          localStorage.setItem('dws_crm', JSON.stringify(state.crm));
         }
+        localStorage.setItem('dws_crm', JSON.stringify(state.crm));
 
         haptic('success');
         saveCrmDetailBtn.textContent = 'ЗБЕРЕЖЕНО ✓';
         closeModal('modalCrmDetail');
         renderCrm();
         syncAccountToServer();
+
+        // Non-blocking server API sync
+        fetch('/api/crm/' + state.activeCrmLead.id, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updates)
+        }).catch(err => console.warn('CRM api sync err:', err));
       } catch (err) {
+        console.error('Save CRM error:', err);
         saveCrmDetailBtn.textContent = 'ПОМИЛКА';
       } finally {
         setTimeout(() => { saveCrmDetailBtn.textContent = 'ЗБЕРЕГТИ ЗМІНИ'; }, 1500);
@@ -7884,27 +7892,79 @@ async function fetchAccountData() {
   }
 }
 
+function setCloudData(key, obj, cb) {
+  const cs = window.Telegram?.WebApp?.CloudStorage;
+  if (!cs || !cs.setItem) { if (cb) cb(); return; }
+  try {
+    const raw = typeof obj === 'string' ? obj : JSON.stringify(obj || '');
+    const CHUNK_SIZE = 3500;
+    if (raw.length <= CHUNK_SIZE) {
+      cs.setItem(key, raw, () => {
+        try { cs.removeItem(key + '_chunks', () => {}); } catch (e) {}
+        if (cb) cb();
+      });
+      return;
+    }
+    const total = Math.ceil(raw.length / CHUNK_SIZE);
+    cs.setItem(key + '_chunks', String(total), () => {
+      let saved = 0;
+      for (let i = 0; i < total; i++) {
+        const chunk = raw.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+        cs.setItem(`${key}_p${i}`, chunk, () => {
+          saved++;
+          if (saved === total) {
+            cs.setItem(key, '__CHUNKED__', () => {
+              if (cb) cb();
+            });
+          }
+        });
+      }
+    });
+  } catch (err) {
+    if (cb) cb();
+  }
+}
+
+function resolveCloudData(key, items, cb) {
+  const cs = window.Telegram?.WebApp?.CloudStorage;
+  const raw = items[key];
+  if (!raw) { cb(null); return; }
+  if (raw !== '__CHUNKED__') { cb(raw); return; }
+  const total = Number(items[key + '_chunks']) || 0;
+  if (total <= 0 || !cs || !cs.getItems) { cb(null); return; }
+  const partKeys = [];
+  for (let i = 0; i < total; i++) partKeys.push(`${key}_p${i}`);
+  cs.getItems(partKeys, (err, partRes) => {
+    if (err || !partRes) { cb(null); return; }
+    let joined = '';
+    for (let i = 0; i < total; i++) {
+      joined += (partRes[`${key}_p${i}`] || '');
+    }
+    cb(joined);
+  });
+}
+
 async function syncAccountToServer() {
   const accountKey = state.accountKey || '5278970111';
   const nowTs = Date.now();
   state.lastSyncTimestamp = nowTs;
 
-  // CloudStorage
+  // CloudStorage with Chunking to bypass 4KB limit
   const cs = window.Telegram?.WebApp?.CloudStorage;
   if (cs && cs.setItem) {
     try {
-      cs.setItem('dws_crm', JSON.stringify(state.crm || []), () => {});
-      cs.setItem('dws_income', JSON.stringify(state.income || { records: [], currency: '₴' }), () => {});
-      cs.setItem('dws_expenses', JSON.stringify(state.expenses || { records: [], currency: '₴' }), () => {});
-      cs.setItem('dws_taken_leads', JSON.stringify([...(state.takenLeadIds || [])]), () => {});
-      cs.setItem('dws_profile', JSON.stringify(state.profile || {}), () => {});
+      setCloudData('dws_crm', state.crm || []);
+      setCloudData('dws_income', state.income || { records: [], currency: '₴' });
+      setCloudData('dws_expenses', state.expenses || { records: [], currency: '₴' });
+      setCloudData('dws_taken_leads', [...(state.takenLeadIds || [])]);
+      setCloudData('dws_profile', state.profile || {});
       cs.setItem('dws_sync_ts', String(nowTs), () => {});
     } catch (e) {}
   }
 
   // Server API
   try {
-    await fetch('/api/account/sync', {
+    const res = await fetch('/api/account/sync', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -7918,6 +7978,12 @@ async function syncAccountToServer() {
         takenLeadIds: [...state.takenLeadIds]
       })
     });
+    if (res && res.ok) {
+      const json = await res.json();
+      if (json.data && json.data.updatedAt) {
+        state.lastSyncTimestamp = new Date(json.data.updatedAt).getTime();
+      }
+    }
   } catch (err) {
     console.warn('Sync error:', err);
   }
@@ -7944,37 +8010,66 @@ async function pullLatestDataFromServer(force = false) {
   const cs = window.Telegram?.WebApp?.CloudStorage;
   if (cs && cs.getItems) {
     try {
-      cs.getItems(['dws_crm', 'dws_income', 'dws_expenses', 'dws_profile', 'dws_taken_leads', 'dws_sync_ts'], (err, res) => {
+      cs.getItems(['dws_crm', 'dws_crm_chunks', 'dws_income', 'dws_income_chunks', 'dws_expenses', 'dws_expenses_chunks', 'dws_profile', 'dws_taken_leads', 'dws_sync_ts'], (err, res) => {
         if (!err && res) {
           const cloudTs = Number(res.dws_sync_ts) || 0;
           if (cloudTs > (state.lastSyncTimestamp || 0) || force) {
-            let changed = false;
-            if (res.dws_crm && res.dws_crm !== JSON.stringify(state.crm)) {
-              try { state.crm = JSON.parse(res.dws_crm); localStorage.setItem('dws_crm', res.dws_crm); changed = true; } catch (e) {}
-            }
-            if (res.dws_income && res.dws_income !== JSON.stringify(state.income)) {
-              try { state.income = JSON.parse(res.dws_income); localStorage.setItem('dws_income', res.dws_income); changed = true; } catch (e) {}
-            }
-            if (res.dws_expenses && res.dws_expenses !== JSON.stringify(state.expenses)) {
-              try { state.expenses = JSON.parse(res.dws_expenses); localStorage.setItem('dws_expenses', res.dws_expenses); changed = true; } catch (e) {}
-            }
-            if (res.dws_taken_leads) {
-              try {
-                const arr = JSON.parse(res.dws_taken_leads);
-                if (arr.length !== state.takenLeadIds.size) {
-                  state.takenLeadIds = new Set(arr);
-                  localStorage.setItem('dws_taken_leads', res.dws_taken_leads);
+            resolveCloudData('dws_crm', res, (rawCrm) => {
+              let changed = false;
+              if (rawCrm && rawCrm !== JSON.stringify(state.crm)) {
+                try {
+                  state.crm = JSON.parse(rawCrm);
+                  localStorage.setItem('dws_crm', rawCrm);
                   changed = true;
+                } catch (e) {}
+              }
+              resolveCloudData('dws_income', res, (rawInc) => {
+                if (rawInc && rawInc !== JSON.stringify(state.income)) {
+                  try {
+                    state.income = JSON.parse(rawInc);
+                    localStorage.setItem('dws_income', rawInc);
+                    changed = true;
+                  } catch (e) {}
                 }
-              } catch (e) {}
-            }
-            if (res.dws_profile && res.dws_profile !== JSON.stringify(state.profile)) {
-              try { state.profile = { ...state.profile, ...JSON.parse(res.dws_profile) }; localStorage.setItem('dws_profile', res.dws_profile); changed = true; } catch (e) {}
-            }
-            if (changed) {
-              state.lastSyncTimestamp = cloudTs || Date.now();
-              renderCurrentTab();
-            }
+                resolveCloudData('dws_expenses', res, (rawExp) => {
+                  if (rawExp && rawExp !== JSON.stringify(state.expenses)) {
+                    try {
+                      state.expenses = JSON.parse(rawExp);
+                      localStorage.setItem('dws_expenses', rawExp);
+                      changed = true;
+                    } catch (e) {}
+                  }
+                  if (res.dws_taken_leads) {
+                    try {
+                      const arr = JSON.parse(res.dws_taken_leads);
+                      if (arr.length !== state.takenLeadIds.size) {
+                        state.takenLeadIds = new Set(arr);
+                        localStorage.setItem('dws_taken_leads', res.dws_taken_leads);
+                        changed = true;
+                      }
+                    } catch (e) {}
+                  }
+                  if (res.dws_profile && res.dws_profile !== JSON.stringify(state.profile)) {
+                    try {
+                      state.profile = { ...state.profile, ...JSON.parse(res.dws_profile) };
+                      localStorage.setItem('dws_profile', res.dws_profile);
+                      changed = true;
+                    } catch (e) {}
+                  }
+                  if (changed) {
+                    state.lastSyncTimestamp = cloudTs || Date.now();
+                    if (state.activeCrmLead) {
+                      const cur = state.crm.find(c => c.id === state.activeCrmLead.id);
+                      if (cur) {
+                        state.activeCrmLead = cur;
+                        renderCrmOrdersList();
+                      }
+                    }
+                    renderCurrentTab();
+                  }
+                });
+              });
+            });
           }
         }
       });
@@ -8020,6 +8115,13 @@ async function pullLatestDataFromServer(force = false) {
           }
           if (hasChanges) {
             state.lastSyncTimestamp = serverTs || Date.now();
+            if (state.activeCrmLead) {
+              const cur = state.crm.find(c => c.id === state.activeCrmLead.id);
+              if (cur) {
+                state.activeCrmLead = cur;
+                renderCrmOrdersList();
+              }
+            }
             renderCurrentTab();
           }
         }
@@ -8230,7 +8332,7 @@ function renderScrapes() {
           ${cats}
           ${job.skippedNoPhone ? `<div class="scrape-biz-reason" style="margin-top:10px;">Відсіяно без телефону: ${job.skippedNoPhone}</div>` : ''}
           <div class="scrape-job-actions">
-            <button type="button" class="btn btn--out btn--sm" data-scrape-act="delete" data-job="${job.id}" style="color:var(--danger);">Видалити пошук</button>
+            <button type="button" class="btn btn--out btn--sm scrape-btn-delete" data-scrape-act="delete" data-job="${job.id}">Видалити пошук</button>
           </div>
         </div>`;
     } else if (job.status === 'error') {
@@ -8238,7 +8340,7 @@ function renderScrapes() {
         <div class="scrape-job-body">
           <div class="scrape-biz-reason" style="margin:12px 0;">${escapeHtml(job.error || 'Невідома помилка')}</div>
           <div class="scrape-job-actions">
-            <button type="button" class="btn btn--out btn--sm" data-scrape-act="delete" data-job="${job.id}" style="color:var(--danger);">Видалити</button>
+            <button type="button" class="btn btn--out btn--sm scrape-btn-delete" data-scrape-act="delete" data-job="${job.id}">Видалити</button>
           </div>
         </div>`;
     }
@@ -8263,15 +8365,15 @@ function renderScrapeCat(job, cat) {
   const items = job.groups?.[cat] || [];
   const key = job.id + ':' + cat;
   const isOpen = scrapeState.openCats.has(key);
-  const rows = items.map(b => `
+  const rows = items.map((b, idx) => `
     <tr>
-      <td>
-        <div class="scrape-biz-name">${escapeHtml(b.name)}</div>
-        <div class="scrape-biz-reason">${escapeHtml(b.reason || '')}</div>
-      </td>
-      <td><a href="tel:${escapeHtml(b.phone)}">${escapeHtml(b.phone)}</a></td>
-      <td>${b.website ? `<a href="${escapeHtml(b.website)}" target="_blank" rel="noopener">сайт</a>` : '—'}</td>
-      <td>${b.source === 'instagram' ? (b.followers || 0) : `${b.rating ? Number(b.rating).toFixed(1) : '—'} · ${b.reviews || 0}`}</td>
+      <td style="font-weight:700; color:var(--muted);">${idx + 1}</td>
+      <td style="font-weight:700; color:var(--black);">${escapeHtml(b.name)}</td>
+      <td><a href="tel:${escapeHtml(b.phone)}" style="color:var(--accent); font-weight:600; text-decoration:none;">${escapeHtml(b.phone)}</a></td>
+      <td style="color:var(--muted); font-size:0.75rem;">${escapeHtml(b.reason || '—')}</td>
+      <td>${escapeHtml(b.city || job.city || '—')}</td>
+      <td>${b.website ? `<a href="${escapeHtml(b.website)}" target="_blank" rel="noopener" style="color:var(--accent); font-weight:600; text-decoration:underline;">відкрити</a>` : '—'}</td>
+      <td>${b.source === 'instagram' ? `${b.followers || 0} підп.` : `${b.rating ? Number(b.rating).toFixed(1) : '—'} ★ (${b.reviews || 0})`}</td>
     </tr>`).join('');
 
   return `
@@ -8286,7 +8388,7 @@ function renderScrapeCat(job, cat) {
         ${items.length ? `
           <div class="scrape-table-wrap">
             <table class="scrape-table">
-              <thead><tr><th>БІЗНЕС</th><th>ТЕЛЕФОН</th><th>САЙТ</th><th>${job.source === 'instagram' ? 'ПІДП.' : 'РЕЙТ. · ВІДГ.'}</th></tr></thead>
+              <thead><tr><th>#</th><th>БІЗНЕС</th><th>ТЕЛЕФОН</th><th>БІЛЬ / ПРИЧИНА</th><th>МІСТО</th><th>САЙТ / INSTA</th><th>${job.source === 'instagram' ? 'ПІДПИСНИКИ' : 'РЕЙТИНГ · ВІДГУКИ'}</th></tr></thead>
               <tbody>${rows}</tbody>
             </table>
           </div>
@@ -9260,16 +9362,13 @@ function renderNfcRadar() {
         <div class="scrape-job-body" style="padding-top: 14px;">
           ${renderNfcVenuesList(job, items)}
 
-          <div class="scrape-job-actions" style="margin-top: 14px;">
-            <button type="button" class="btn btn--out btn--sm" data-nfc-act="csv" data-job="${job.id}">
+          <div class="nfc-job-footer-actions">
+            <button type="button" class="btn btn--fill btn--sm" data-nfc-act="csv" data-job="${job.id}">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
               <span>CSV таблиця</span>
             </button>
-            <button type="button" class="btn btn--out btn--sm" data-nfc-act="send" data-job="${job.id}">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-              <span>В Telegram</span>
-            </button>
-            <button type="button" class="btn btn--out btn--sm btn--danger" data-nfc-act="delete" data-job="${job.id}">
+            <button type="button" class="btn btn--out btn--sm scrape-btn-delete" data-nfc-act="delete" data-job="${job.id}">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               <span>Видалити</span>
             </button>
           </div>

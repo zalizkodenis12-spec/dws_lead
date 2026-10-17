@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/app.css?v=3.9.7">
+  <link rel="stylesheet" href="css/app.css?v=3.9.8">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -357,12 +357,9 @@
 
         <!-- Quick Launch New Search Card -->
         <div class="nfc-launch-card">
-          <div class="nfc-launch-left">
-            <div class="nfc-launch-title">Радар закладів твого міста</div>
-            <div class="nfc-launch-sub">Пошук закладів з відгуками до 300, скупчення в ТРЦ/районі та готові піші маршрути</div>
-          </div>
+          <div class="nfc-launch-title">Радар закладів</div>
+          <div class="nfc-launch-sub">Пошук закладів з відгуками до 300, скупчення в ТРЦ/районі та готові піші маршрути</div>
           <button id="openNewNfcSearchBtn" type="button" class="btn btn--fill btn--sm nfc-launch-action-btn">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             <span>НОВИЙ ЗБІР</span>
           </button>
         </div>
@@ -532,34 +529,17 @@
 
         <div class="form-group">
           <label class="form-label">КАТЕГОРІЯ / НІША:</label>
-          <div class="nfc-quick-tags" id="nfcQuickNiches">
-            <button type="button" class="nfc-tag-btn active" data-val="Кафе, бари, ресторани">Кафе / Бари</button>
-            <button type="button" class="nfc-tag-btn" data-val="Барбершопи, салони краси">Салони / Барбери</button>
-            <button type="button" class="nfc-tag-btn" data-val="Стоматології, медклініки">Стоматології</button>
-            <button type="button" class="nfc-tag-btn" data-val="СТО, автомийки, детейлінг">СТО / Детейлінг</button>
-            <button type="button" class="nfc-tag-btn" data-val="Острівці в ТРЦ, магазини">ТРЦ / Острівці</button>
-          </div>
-          <input type="text" id="nfcNicheInput" class="form-input mt-2" placeholder="Введіть нішу або оберіть згори..." value="Кафе, бари, ресторани">
+          <input type="text" id="nfcNicheInput" class="form-input" placeholder="Введіть нішу (наприклад: Кафе, Стоматологія, Салон...)" value="Кафе, бари, ресторани">
         </div>
 
         <div class="form-group">
-          <label class="form-label">МІСТО:</label>
-          <div class="nfc-quick-tags" id="nfcQuickCities">
-            <button type="button" class="nfc-tag-btn active" data-val="Київ">Київ</button>
-            <button type="button" class="nfc-tag-btn" data-val="Львів">Львів</button>
-            <button type="button" class="nfc-tag-btn" data-val="Одеса">Одеса</button>
-            <button type="button" class="nfc-tag-btn" data-val="Дніпро">Дніпро</button>
-            <button type="button" class="nfc-tag-btn" data-val="Харків">Харків</button>
-          </div>
-          <input type="text" id="nfcCityInput" class="form-input mt-2" placeholder="Наприклад: Київ, Львів, Вінниця..." value="Київ">
+          <label class="form-label">МІСТО / РЕГІОН:</label>
+          <input type="text" id="nfcCityInput" class="form-input" placeholder="Введіть будь-яке місто, село чи регіон..." value="Київ">
         </div>
 
         <div class="form-group">
           <label class="form-label">ЛОКАЦІЯ / РАЙОН / ТРЦ (СКУПЧЕННЯ):</label>
           <input type="text" id="nfcClusterInput" class="form-input" placeholder="Наприклад: ТРЦ Ocean Plaza, Поділ, Хрещатик, Оболонь...">
-          <span class="form-hint" style="font-size: 0.74rem; color: var(--muted); margin-top: 4px; display: block;">
-            Вкажіть конкретний ТРЦ чи вулицю, щоб отримати заклади поруч один з одним для маршруту.
-          </span>
         </div>
 
         <div class="form-group">
@@ -1760,6 +1740,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=3.9.7"></script>
+  <script src="js/app.js?v=3.9.8"></script>
 </body>
 </html>
