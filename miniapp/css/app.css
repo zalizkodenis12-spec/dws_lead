@@ -3649,8 +3649,31 @@ body.dark-theme .order-leaf-badge.expected {
   border: 1px solid rgba(0, 102, 255, 0.22) !important;
 }
 
-/* Clickable Address Link - styled in studio blue like phone and Instagram */
-.nfc-addr-link {
+/* Clickable Venue Meta Links (Address, Phone, Instagram) - styled in studio blue */
+.nfc-venue-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 8px 0 10px;
+}
+
+.nfc-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.nfc-meta-item svg {
+  flex-shrink: 0;
+  stroke: var(--accent);
+}
+
+.nfc-addr-link,
+.nfc-phone-link,
+.nfc-insta-link,
+.nfc-meta-item a {
   color: var(--accent) !important;
   text-decoration: underline;
   text-decoration-color: rgba(0, 102, 255, 0.4);
@@ -3659,12 +3682,15 @@ body.dark-theme .order-leaf-badge.expected {
   font-weight: 600;
 }
 
-.nfc-addr-link:hover {
+.nfc-addr-link:hover,
+.nfc-phone-link:hover,
+.nfc-insta-link:hover,
+.nfc-meta-item a:hover {
   color: #0052cc !important;
   text-decoration-color: #0052cc;
 }
 
-/* 3 Action Buttons in 1 Row: 50% (Offer), 25% (CRM, Blue), 25% (Route) */
+/* 3 Action Buttons in 1 Row: 50% (Offer, Blue), 25% (CRM, Blue), 25% (Route) */
 .nfc-venue-actions-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
@@ -3682,13 +3708,14 @@ body.dark-theme .order-leaf-badge.expected {
 }
 
 .nfc-pitch-btn {
+  background: var(--accent) !important;
+  color: #ffffff !important;
   border-color: var(--accent) !important;
-  color: var(--accent) !important;
   font-weight: 700;
 }
 
 .nfc-pitch-btn:hover {
-  background: rgba(0, 102, 255, 0.06) !important;
+  background: #0052cc !important;
 }
 
 .nfc-crm-btn {

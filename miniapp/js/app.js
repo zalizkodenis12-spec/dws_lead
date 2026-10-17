@@ -9485,19 +9485,19 @@ function renderNfcVenuesList(job, items) {
               ${v.phone ? `
                 <div class="nfc-meta-item">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                  <a href="tel:${v.phone}">${v.phone}</a>
+                  <a href="tel:${v.phone}" class="nfc-phone-link">${v.phone}</a>
                 </div>
               ` : ''}
               ${v.instagram ? `
                 <div class="nfc-meta-item">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
-                  <a href="https://instagram.com/${v.instagram.replace('@', '')}" target="_blank" rel="noopener">${v.instagram}</a>
+                  <a href="https://instagram.com/${v.instagram.replace('@', '')}" target="_blank" rel="noopener" class="nfc-insta-link">${v.instagram}</a>
                 </div>
               ` : ''}
             </div>
 
             <div class="nfc-venue-actions-row">
-              <button type="button" class="btn btn--out btn--sm nfc-pitch-btn" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}">
+              <button type="button" class="btn btn--fill btn--sm nfc-pitch-btn" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}">
                 <span>Готовий офер</span>
               </button>
               <button type="button" class="btn btn--fill btn--sm nfc-crm-btn" data-nfc-act="crm" data-job="${job.id}" data-venue="${v.id}">
