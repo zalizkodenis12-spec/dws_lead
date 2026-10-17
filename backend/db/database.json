@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792265043988-586",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "javascript_jobs_feed",
+      "authorUsername": "@javascript_jobs_feed",
+      "title": "🔥 Резюме Senior React Native / React Engineer от @lilz_e, $45/час, удаленн...",
+      "text": "🔥 Резюме Senior React Native / React Engineer от @lilz_e, $45/час, удаленно, фуллтайм\n\n⭐ Глубокий профайлинг и тюнинг: вычистил оверхед NativeWind и SVG, сократив открытие экрана с 3,6 с до 0,15 с\n⭐ Оптимизация сборки и костов: урезал APK на 29% (124 → 88 МБ) и выкинул прожорливый Google Places API\n⭐ Настоящий full-cycle mobile: написание нативных модулей на Swift/Kotlin под Expo вместо нытья об ограничениях",
+      "date": "2026-10-17T19:24:03.987Z",
+      "dateFormatted": "Сьогодні, 22:24",
+      "budget": 2000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 59,
+      "aiSummary": "Замовлення: frontend розробка з бюджетом 2000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792264898177-935",
       "category": "marketing",
       "categoryName": "Маркетинг",
