@@ -3789,10 +3789,10 @@ const state = {
   accountName: localStorage.getItem('dws_account_name') || (tg?.initDataUnsafe?.user?.first_name || 'Денис Залізко'),
   requisites: JSON.parse(localStorage.getItem('dws_requisites') || 'null') || {
     recipient: 'Залізко Денис Олександрович',
-    iban: '',
-    card: '',
+    iban: 'UA683220010000026007300123456',
+    edrpou: '3624800000',
     bank: 'monobank (АТ «УНІВЕРСАЛ БАНК»)',
-    purpose: 'Оплата за інформаційно-рекламні послуги'
+    purpose: 'Оплата за інформаційно-рекламні послуги згідно домовленості'
   }
 };
 
@@ -9374,7 +9374,7 @@ function renderNfcRadar() {
           ${renderNfcVenuesList(job, items)}
 
           <div class="nfc-job-footer-actions">
-            <button type="button" class="btn btn--fill btn--sm" data-nfc-act="map" data-job="${job.id}" style="background: var(--black); border-color: var(--black); color: #fff;">
+            <button type="button" class="btn btn--out btn--sm nfc-btn-map" data-nfc-act="map" data-job="${job.id}">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
               <span>Карта</span>
             </button>
@@ -10457,87 +10457,47 @@ function showMapVenueCard(v, job, idx) {
 }
 
 // ============================================================
-// DOCUMENTS & INVOICES HUB (INVOICE, PRINT WORK ORDER, REQUISITES)
+// ============================================================
+// B2B REQUISITES & IBAN (OFFICIAL PAYMENT DETAILS)
 // ============================================================
 function initDocumentsHub() {
-  // Open buttons
+  // Open Requisites from CRM Header
   document.getElementById('openInvoiceModalBtn')?.addEventListener('click', () => {
-    openDocumentsHub();
+    switchTab('tab-requisites');
+    renderRequisitesTab();
     haptic('light');
   });
 
+  // Open Requisites from CRM Lead Detail Modal
   document.getElementById('crmDetailDocBtn')?.addEventListener('click', () => {
     closeModal('modalCrmDetail');
-    if (state.activeCrmLead) {
-      openDocumentsHub(state.activeCrmLead);
-    } else {
-      openDocumentsHub();
-    }
+    switchTab('tab-requisites');
+    renderRequisitesTab();
     haptic('light');
   });
 
-  // Tab switching inside Documents Hub
-  document.querySelectorAll('.doc-tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.doc-tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const targetPane = btn.dataset.pane;
-      document.querySelectorAll('.doc-pane').forEach(p => {
-        p.style.display = (p.id === targetPane) ? 'block' : 'none';
+  // Quick Copy IBAN button
+  document.getElementById('copyIbanQuickBtn')?.addEventListener('click', () => {
+    const iban = (document.getElementById('invReqIban')?.textContent || '').trim();
+    if (!iban) return;
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(iban).then(() => {
+        showToast('IBAN рахунок скопійовано!');
+        haptic('success');
       });
-      haptic('light');
-    });
+    } else {
+      fallbackCopy(iban, 'IBAN рахунок');
+    }
   });
 
-  // Client selector change in Invoice
-  document.getElementById('docInvoiceClientSelect')?.addEventListener('change', (e) => {
-    const val = e.target.value;
-    if (!val) return;
-    const client = (state.crm || []).find(c => c.id === val);
-    if (client) applyClientToInvoice(client);
-  });
-
-  // Recalculate totals on table inputs
-  document.getElementById('invItemsTableBody')?.addEventListener('input', () => {
-    recalcInvoiceTotals();
-  });
-
-  // Add item row
-  document.getElementById('invAddItemRowBtn')?.addEventListener('click', () => {
-    const tbody = document.getElementById('invItemsTableBody');
-    if (!tbody) return;
-    const nextIdx = tbody.querySelectorAll('tr').length + 1;
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${nextIdx}</td>
-      <td><input type="text" class="doc-cell-input inv-item-title" placeholder="Найменування послуги..."></td>
-      <td><input type="number" class="doc-cell-input inv-item-qty" value="1" min="1" style="text-align: center;"></td>
-      <td><input type="number" class="doc-cell-input inv-item-price" value="1000" min="0" style="text-align: right;"></td>
-      <td class="inv-item-sum" style="text-align: right; font-weight: 700;">1 000 ₴</td>
-    `;
-    tbody.appendChild(tr);
-    recalcInvoiceTotals();
-    haptic('light');
-  });
-
-  // Print Invoice
-  document.getElementById('docPrintInvoiceBtn')?.addEventListener('click', () => {
-    window.print();
-  });
-
-  // Print Work Order
-  document.getElementById('docPrintWorkOrderBtn')?.addEventListener('click', () => {
-    window.print();
-  });
-
-  // Send Invoice to Telegram
-  document.getElementById('invSendTelegramBtn')?.addEventListener('click', () => {
-    sendInvoiceToTelegram();
-  });
-
-  // Copy details button
+  // Copy Full Requisites button
   document.getElementById('invCopyDetailsBtn')?.addEventListener('click', () => {
     copyRequisitesToClipboard();
+  });
+
+  // Send to Telegram button
+  document.getElementById('invSendTelegramBtn')?.addEventListener('click', () => {
+    sendInvoiceToTelegram();
   });
 
   // Save requisites button
@@ -10547,218 +10507,61 @@ function initDocumentsHub() {
 }
 
 function openDocumentsHub(client = null) {
-  // Populate client dropdown
-  const sel = document.getElementById('docInvoiceClientSelect');
-  if (sel) {
-    sel.innerHTML = '<option value="">-- Введіть вручну або оберіть клієнта --</option>' +
-      (state.crm || []).map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${c.username || c.phone || 'без юзера'})</option>`).join('');
-  }
-
-  // Load and display current requisites
-  const req = state.requisites || {};
-  const recipient = req.recipient || 'Залізко Денис Олександрович';
-  const iban = req.iban || 'UA683220010000026007300123456';
-  const card = req.card || '4441 •••• •••• 1234';
-  const bank = req.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)';
-  const purpose = req.purpose || 'Оплата за інформаційно-рекламні послуги';
-
-  const reqRecEl = document.getElementById('invReqRecipient');
-  const reqIbanEl = document.getElementById('invReqIban');
-  const reqCardEl = document.getElementById('invReqCard');
-  const reqBankEl = document.getElementById('invReqBank');
-  const reqPurpEl = document.getElementById('invReqPurpose');
-
-  if (reqRecEl) reqRecEl.textContent = recipient;
-  if (reqIbanEl) reqIbanEl.textContent = iban;
-  if (reqCardEl) reqCardEl.textContent = card;
-  if (reqBankEl) reqBankEl.textContent = bank;
-  if (reqPurpEl) reqPurpEl.textContent = purpose;
-
-  // Requisites form inputs
-  const inRec = document.getElementById('reqRecipientInput');
-  const inIban = document.getElementById('reqIbanInput');
-  const inCard = document.getElementById('reqCardInput');
-  const inBank = document.getElementById('reqBankInput');
-  const inPurp = document.getElementById('reqPurposeInput');
-  if (inRec) inRec.value = recipient;
-  if (inIban) inIban.value = iban;
-  if (inCard) inCard.value = card;
-  if (inBank) inBank.value = bank;
-  if (inPurp) inPurp.value = purpose;
-
-  // Generate QR Code
-  updatePaymentQrCode(iban, recipient, 4000);
-
-  // Set date and invoice numbers
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('uk-UA', { day: 'numeric', month: 'numeric', year: 'numeric' });
-  const invNum = `DW-INV-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(Date.now()).slice(-3)}`;
-  const woNum = `DW-ORD-${now.getFullYear()}-${String(Date.now()).slice(-4)}`;
-
-  const numEl = document.getElementById('invDocNumber');
-  const dateEl = document.getElementById('invDocDate');
-  const woNumEl = document.getElementById('woDocNumber');
-  const woDateEl = document.getElementById('woDocDate');
-
-  if (numEl) numEl.textContent = 'РАХУНОК #' + invNum;
-  if (dateEl) dateEl.textContent = 'від ' + dateStr + ' р.';
-  if (woNumEl) woNumEl.textContent = 'НАРЯД #' + woNum;
-  if (woDateEl) woDateEl.textContent = dateStr + ' р.';
-
-  if (client) {
-    if (sel) sel.value = client.id;
-    applyClientToInvoice(client);
-  } else {
-    recalcInvoiceTotals();
-  }
-
-  // Set initial tab to Invoice
-  document.querySelectorAll('.doc-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.pane === 'docPaneInvoice'));
-  document.querySelectorAll('.doc-pane').forEach(p => p.style.display = (p.id === 'docPaneInvoice') ? 'block' : 'none');
-
+  renderRequisitesTab();
   if (state.currentTab !== 'tab-requisites') {
     switchTab('tab-requisites');
   }
 }
 
 function renderRequisitesTab() {
-  openDocumentsHub();
-}
+  const req = state.requisites || {};
+  const recipient = req.recipient || 'Залізко Денис Олександрович';
+  const iban = req.iban || 'UA683220010000026007300123456';
+  const edrpou = req.edrpou || '3624800000';
+  const bank = req.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)';
+  const purpose = req.purpose || 'Оплата за інформаційно-рекламні послуги згідно домовленості';
 
-function applyClientToInvoice(client) {
-  const nameInput = document.getElementById('invClientNameInput');
-  const contactInput = document.getElementById('invClientContactInput');
-  if (nameInput) nameInput.value = client.name || 'Клієнт';
-  if (contactInput) contactInput.value = `${client.phone || ''} • ${client.username || ''}`;
+  const reqRecEl = document.getElementById('invReqRecipient');
+  const reqIbanEl = document.getElementById('invReqIban');
+  const reqEdrpouEl = document.getElementById('invReqEdrpou');
+  const reqBankEl = document.getElementById('invReqBank');
+  const reqPurpEl = document.getElementById('invReqPurpose');
 
-  // Work order fields
-  const woTitle = document.getElementById('woClientTitle');
-  const woContact = document.getElementById('woContactPerson');
-  const woPhone = document.getElementById('woContactPhone');
-  const woAddress = document.getElementById('woAddress');
-  if (woTitle) woTitle.value = client.name || '';
-  if (woContact) woContact.value = client.username || client.name || '';
-  if (woPhone) woPhone.value = client.phone || '';
-  if (woAddress) woAddress.value = client.address || client.cluster || 'м. Київ';
+  if (reqRecEl) reqRecEl.textContent = recipient;
+  if (reqIbanEl) reqIbanEl.textContent = iban;
+  if (reqEdrpouEl) reqEdrpouEl.textContent = edrpou;
+  if (reqBankEl) reqBankEl.textContent = bank;
+  if (reqPurpEl) reqPurpEl.textContent = purpose;
 
-  // If client has orders, populate items table
-  const tbody = document.getElementById('invItemsTableBody');
-  if (tbody && Array.isArray(client.orders) && client.orders.length > 0) {
-    tbody.innerHTML = client.orders.map((o, idx) => `
-      <tr>
-        <td>${idx + 1}</td>
-        <td><input type="text" class="doc-cell-input inv-item-title" value="${escapeHtml(o.title || 'Послуга')}"></td>
-        <td><input type="number" class="doc-cell-input inv-item-qty" value="1" min="1" style="text-align: center;"></td>
-        <td><input type="number" class="doc-cell-input inv-item-price" value="${Number(o.amount) || 0}" min="0" style="text-align: right;"></td>
-        <td class="inv-item-sum" style="text-align: right; font-weight: 700;">${Number(o.amount) || 0} ₴</td>
-      </tr>
-    `).join('');
-  }
-  recalcInvoiceTotals();
-}
+  // Form inputs
+  const inRec = document.getElementById('reqRecipientInput');
+  const inIban = document.getElementById('reqIbanInput');
+  const inEdrpou = document.getElementById('reqEdrpouInput');
+  const inBank = document.getElementById('reqBankInput');
+  const inPurp = document.getElementById('reqPurposeInput');
 
-function recalcInvoiceTotals() {
-  let grandTotal = 0;
-  const tbody = document.getElementById('invItemsTableBody');
-  if (!tbody) return;
-
-  tbody.querySelectorAll('tr').forEach(tr => {
-    const qty = Number(tr.querySelector('.inv-item-qty')?.value) || 0;
-    const price = Number(tr.querySelector('.inv-item-price')?.value) || 0;
-    const lineSum = qty * price;
-    grandTotal += lineSum;
-    const sumCell = tr.querySelector('.inv-item-sum');
-    if (sumCell) sumCell.textContent = lineSum.toLocaleString('uk-UA') + ' ₴';
-  });
-
-  const totEl = document.getElementById('invTotalAmountText');
-  const wordsEl = document.getElementById('invTotalWordsText');
-  if (totEl) totEl.textContent = grandTotal.toLocaleString('uk-UA') + '.00 ₴';
-  if (wordsEl) wordsEl.textContent = numberToWordsUkr(grandTotal) + ', без ПДВ';
-
-  // Also update Work Order financial inputs
-  const woTot = document.getElementById('woTotalCost');
-  const woPrep = document.getElementById('woPrepaid');
-  const woBal = document.getElementById('woBalance');
-  if (woTot) woTot.value = grandTotal.toLocaleString('uk-UA') + ' ₴';
-  const prepVal = Math.round(grandTotal / 2);
-  if (woPrep) woPrep.value = prepVal.toLocaleString('uk-UA') + ' ₴';
-  if (woBal) woBal.value = (grandTotal - prepVal).toLocaleString('uk-UA') + ' ₴';
-
-  // Update QR Code
-  const iban = state.requisites?.iban || 'UA683220010000026007300123456';
-  const recipient = state.requisites?.recipient || 'Залізко Денис Олександрович';
-  updatePaymentQrCode(iban, recipient, grandTotal);
-}
-
-function updatePaymentQrCode(iban, recipient, amount) {
-  const qrImg = document.getElementById('invQrCodeImg');
-  if (!qrImg) return;
-  const qrData = `BCD\n002\n1\nSCT\n\n${recipient}\n${iban}\nUAH${amount}\n\n\nОплата згідно рахунку\n`;
-  qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
-}
-
-function numberToWordsUkr(num) {
-  if (!num || num <= 0) return 'Нуль гривень 00 копійок';
-  const unitsM = ['', 'один', 'два', 'три', 'чотири', 'п\'ять', 'шість', 'сім', 'вісім', 'дев\'ять'];
-  const unitsF = ['', 'одна', 'дві', 'три', 'чотири', 'п\'ять', 'шість', 'сім', 'вісім', 'дев\'ять'];
-  const teens = ['десять', 'одинадцять', 'дванадцять', 'тринадцять', 'чотирнадцять', 'п\'ятнадцять', 'шістнадцять', 'сімнадцять', 'вісімнадцять', 'дев\'ятнадцять'];
-  const tens = ['', '', 'двадцять', 'тридцять', 'сорок', 'п\'ятдесят', 'шістдесят', 'сімдесят', 'вісімдесят', 'дев\'яносто'];
-  const hundreds = ['', 'сто', 'двісті', 'триста', 'чотириста', 'п\'ятсот', 'шістсот', 'сімсот', 'вісімсот', 'дев\'ятсот'];
-
-  function triplet(n, isFemale) {
-    let res = [];
-    const h = Math.floor(n / 100);
-    const rem = n % 100;
-    const t = Math.floor(rem / 10);
-    const u = rem % 10;
-    if (h) res.push(hundreds[h]);
-    if (t === 1) {
-      res.push(teens[u]);
-    } else {
-      if (t) res.push(tens[t]);
-      if (u) res.push(isFemale ? unitsF[u] : unitsM[u]);
-    }
-    return res.join(' ');
-  }
-
-  const thousands = Math.floor(num / 1000);
-  const remainder = num % 1000;
-  let parts = [];
-
-  if (thousands > 0) {
-    let word = 'тисяч';
-    const tU = thousands % 10;
-    const tRem = thousands % 100;
-    if (tU === 1 && tRem !== 11) word = 'тисяча';
-    else if (tU >= 2 && tU <= 4 && (tRem < 10 || tRem >= 20)) word = 'тисячі';
-    parts.push(triplet(thousands, true) + ' ' + word);
-  }
-
-  if (remainder > 0) {
-    parts.push(triplet(remainder, false));
-  }
-
-  let text = parts.join(' ').trim();
-  if (text) text = text.charAt(0).toUpperCase() + text.slice(1);
-  return `${text || 'Нуль'} гривень 00 копійок`;
+  if (inRec) inRec.value = recipient;
+  if (inIban) inIban.value = iban;
+  if (inEdrpou) inEdrpou.value = edrpou;
+  if (inBank) inBank.value = bank;
+  if (inPurp) inPurp.value = purpose;
 }
 
 function sendInvoiceToTelegram() {
-  const invNum = document.getElementById('invDocNumber')?.textContent || 'РАХУНОК';
-  const clientName = document.getElementById('invClientNameInput')?.value || 'Клієнт';
-  const total = document.getElementById('invTotalAmountText')?.textContent || '0 ₴';
   const req = state.requisites || {};
+  const recipient = req.recipient || 'Залізко Денис Олександрович';
+  const iban = req.iban || 'UA683220010000026007300123456';
+  const edrpou = req.edrpou || '3624800000';
+  const bank = req.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)';
+  const purpose = req.purpose || 'Оплата за інформаційно-рекламні послуги згідно домовленості';
 
-  const text = `Вітаю, ${clientName}!\n\n` +
-    `Сформовано офіційний ${invNum} від DenisWeb Studio.\n\n` +
-    `💰 До сплати: ${total}\n\n` +
-    `Реквізити для оплати:\n` +
-    `• Отримувач: ${req.recipient || 'Залізко Денис Олександрович'}\n` +
-    `• IBAN: ${req.iban || 'UA683220010000026007300123456'}\n` +
-    (req.card ? `• Номер картки: ${req.card}\n` : '') +
-    `• Банк: ${req.bank || 'monobank'}\n` +
-    `• Призначення: Оплата за послуги згідно ${invNum}\n\n` +
+  const text = `Вітаю!\n\n` +
+    `Реквізити для оплати (IBAN):\n` +
+    `• Отримувач: ${recipient}\n` +
+    `• IBAN: ${iban}\n` +
+    `• РНОКПП (ІПН) / ЄДРПОУ: ${edrpou}\n` +
+    `• Банк: ${bank}\n` +
+    `• Призначення платежу: ${purpose}\n\n` +
     `Після здійснення оплати надішліть, будь ласка, квитанцію. Дякую за співпрацю!`;
 
   const tgUrl = 'https://t.me/share/url?url=' + encodeURIComponent('') + '&text=' + encodeURIComponent(text);
@@ -10771,7 +10574,19 @@ function sendInvoiceToTelegram() {
 
 function copyRequisitesToClipboard() {
   const req = state.requisites || {};
-  const text = `РЕКВІЗИТИ ДЛЯ ОПЛАТИ:\nОтримувач: ${req.recipient || 'Залізко Денис'}\nIBAN: ${req.iban || ''}\nКартка: ${req.card || ''}\nБанк: ${req.bank || 'monobank'}`;
+  const recipient = req.recipient || 'Залізко Денис Олександрович';
+  const iban = req.iban || 'UA683220010000026007300123456';
+  const edrpou = req.edrpou || '3624800000';
+  const bank = req.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)';
+  const purpose = req.purpose || 'Оплата за інформаційно-рекламні послуги згідно домовленості';
+
+  const text = `Реквізити для оплати (IBAN):\n` +
+    `• Отримувач: ${recipient}\n` +
+    `• IBAN: ${iban}\n` +
+    `• РНОКПП (ІПН) / ЄДРПОУ: ${edrpou}\n` +
+    `• Банк: ${bank}\n` +
+    `• Призначення платежу: ${purpose}`;
+
   if (navigator.clipboard?.writeText) {
     navigator.clipboard.writeText(text).then(() => {
       showToast('Реквізити скопійовано в буфер!');
@@ -10784,12 +10599,12 @@ function copyRequisitesToClipboard() {
 
 function saveCustomRequisites() {
   const recipient = (document.getElementById('reqRecipientInput')?.value || '').trim() || 'Залізко Денис Олександрович';
-  const iban = (document.getElementById('reqIbanInput')?.value || '').trim();
-  const card = (document.getElementById('reqCardInput')?.value || '').trim();
+  const iban = (document.getElementById('reqIbanInput')?.value || '').trim() || 'UA683220010000026007300123456';
+  const edrpou = (document.getElementById('reqEdrpouInput')?.value || '').trim() || '3624800000';
   const bank = (document.getElementById('reqBankInput')?.value || '').trim() || 'monobank (АТ «УНІВЕРСАЛ БАНК»)';
-  const purpose = (document.getElementById('reqPurposeInput')?.value || '').trim() || 'Оплата за інформаційно-рекламні послуги';
+  const purpose = (document.getElementById('reqPurposeInput')?.value || '').trim() || 'Оплата за інформаційно-рекламні послуги згідно домовленості';
 
-  state.requisites = { recipient, iban, card, bank, purpose };
+  state.requisites = { recipient, iban, edrpou, bank, purpose };
   localStorage.setItem('dws_requisites', JSON.stringify(state.requisites));
 
   if (state.profile) {
@@ -10797,18 +10612,8 @@ function saveCustomRequisites() {
   }
   syncAccountToServer();
 
-  const reqRecEl = document.getElementById('invReqRecipient');
-  const reqIbanEl = document.getElementById('invReqIban');
-  const reqCardEl = document.getElementById('invReqCard');
-  const reqBankEl = document.getElementById('invReqBank');
-  const reqPurpEl = document.getElementById('invReqPurpose');
-  if (reqRecEl) reqRecEl.textContent = recipient;
-  if (reqIbanEl) reqIbanEl.textContent = iban || 'UA000000000000000000000000000';
-  if (reqCardEl) reqCardEl.textContent = card || '4441 •••• •••• 1234';
-  if (reqBankEl) reqBankEl.textContent = bank;
-  if (reqPurpEl) reqPurpEl.textContent = purpose;
-
-  showToast('Реквізити збережено!');
+  renderRequisitesTab();
+  showToast('Реквізити успішно збережено!');
   haptic('success');
 }
 

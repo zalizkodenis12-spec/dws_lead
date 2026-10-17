@@ -3813,13 +3813,16 @@ body.dark-theme .order-leaf-badge.expected {
 }
 
 /* Scrape Search Delete button (Blue text inside) */
-.scrape-btn-delete {
+.scrape-btn-delete,
+.nfc-btn-map {
   color: var(--accent) !important;
   border-color: rgba(0, 102, 255, 0.35) !important;
   font-weight: 700;
+  background: transparent !important;
 }
 
-.scrape-btn-delete:hover {
+.scrape-btn-delete:hover,
+.nfc-btn-map:hover {
   background: rgba(0, 102, 255, 0.08) !important;
   color: var(--accent) !important;
 }
