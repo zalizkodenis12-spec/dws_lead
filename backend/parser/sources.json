@@ -1,7 +1,7 @@
 {
   "description": "DWS Lead — Global Worldwide Lead Sources (72 Channels & 119 Chats, Development, Ads & Montage)",
   "updatedAt": "2026-10-17T19:02:30.782Z",
-  "totalCount": 191,
+  "totalCount": 255,
   "chats": [
     {
       "username": "@qa_jobs",
@@ -1152,6 +1152,474 @@
       "subscribers": 2163,
       "lastPostDate": null,
       "active": true
+    },
+    {
+      "title": "Топ IT Вакансии {Разработка | DevOps | QA | Management}",
+      "username": "@jobGeeks",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 22738,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Вакансии Backend/Frontend",
+      "username": "@fordev",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 16602,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Telegram IT Job",
+      "username": "@myjobit",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 18350,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "AI IT крипто вакансии работа | B2B P2P Арбитраж",
+      "username": "@itlenta",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 47631,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Javascript Jobs",
+      "username": "@jsspeak",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 73631,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Front-End Developer Jobs 👷🏻‍♂️",
+      "username": "@front_end_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 37694,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "React Jobs работа связанная с reactjs проектами",
+      "username": "@react_js_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 20404,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Vue/React/Angular JS Jobs - работа/вакансии/резюме",
+      "username": "@vuejs_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 25136,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Python",
+      "username": "@ru_python",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 16438,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Python Django Jobs",
+      "username": "@python_django_work",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 11553,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Go Get A Job",
+      "username": "@gogetajob",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 67531,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Golang Jobs",
+      "username": "@golang_jobsgo",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 11047,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Golang — вакансии и аналитика",
+      "username": "@golang_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 15191,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "pro.cxx",
+      "username": "@ProCxx",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 11140,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Вакансии .NET",
+      "username": "@DotNetRuJobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 87281,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Java Job - Вакансии и резюме",
+      "username": "@job_java",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 48989,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Scala Jobs",
+      "username": "@scala_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 17494,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Mobile jobs | Вакансии/Резюме",
+      "username": "@mobile_vacancies",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 17381,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "AndroidDev Pro:: Профессиональная разработка. It&#39;s Android time now&#33;",
+      "username": "@androidev",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 17333,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "MAUI/Xamarin/C# Jobs (Работа, вакансии, фриланс)",
+      "username": "@xamarin_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 64213,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Вакансии Системный Администратор, DevOps",
+      "username": "@sysadmin_rabota",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 34936,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Sys-Admin Job",
+      "username": "@sysadm_in_job",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 84512,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Работа для IT Аналитиков и Архитекторов | Вакансии и Резюме💲",
+      "username": "@tzprofi_job",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 14568,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "SABA - Системные и бизнес-аналитики",
+      "username": "@saba_hunter",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 14033,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Работа ищет аналитиков // Вакансии",
+      "username": "@analysts_hunter",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 24035,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Projects Jobs — вакансии и аналитика",
+      "username": "@projects_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 17097,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Agile Jobs — вакансии",
+      "username": "@agile_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 10682,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Products Jobs — вакансии и аналитика",
+      "username": "@products_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 19111,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Gamedev &amp; IT Job Finder",
+      "username": "@gamedevjobtinder",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 26847,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Data &amp; ML jobs | Вакансии🧑‍💻",
+      "username": "@data_vacancies",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 25824,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Machine Learning Jobs",
+      "username": "@Machinelearning_Jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 12461,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Data jobs",
+      "username": "@datajobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 38491,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Вакансии и заказы на дизайн. Работа и фриланс подработка для дизайнеров.",
+      "username": "@designer_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 18742,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Работа для дизайнера",
+      "username": "@jobs_design",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 11981,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Blockchain Dev Jobs / (Solidity)",
+      "username": "@soliditydevjobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 79525,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Ethereum L1&amp;L2 — Jobs &amp; CVs // вакансии &amp; поиск работы",
+      "username": "@eth_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 29007,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Ethereum Jobs Chat",
+      "username": "@ethereum_jobs_market",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 40034,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Вакансии в сфере 1С",
+      "username": "@jobs1c",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 28175,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Вакансии, резюме, менторинг, поиск компетенций 1С",
+      "username": "@resume_1c",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 10431,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "1С РАБОТА ВАКАНСИИ 1C",
+      "username": "@smoke1c",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 23405,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Работа для SQL и 1С специалистов",
+      "username": "@job_1C_SQL",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 42349,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "SQL JOBS",
+      "username": "@sql_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 45566,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Битрикс24 работа / jobs (вакансии и резюме)",
+      "username": "@bitrix24_work",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 55766,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Битрикс Битрикс24 Работа Вакансии",
+      "username": "@bitrixworkrabota",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 60442,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Работа для ИТ-архитекторов",
+      "username": "@itarchitect_jobs",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 44291,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Texting",
+      "username": "@type",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 63728,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Work To Earn - Биржа труда. Работа в крипте.",
+      "username": "@work2earn_crypto",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 73681,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Python Jobs România - Moldova",
+      "username": "@python_job",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 23700,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "РАБОТА UA Чат",
+      "username": "@rabotawork",
+      "type": "chat",
+      "category": "freelance",
+      "subscribers": 2503,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "CPA BRO Helpdesk & Arbitrage",
+      "username": "@cpabro_chat",
+      "type": "chat",
+      "category": "marketing",
+      "subscribers": 3208,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Laravel Community & Freelance",
+      "username": "@laravel_chat",
+      "type": "chat",
+      "category": "development",
+      "subscribers": 3838,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "WordPress Community & Projects",
+      "username": "@wordpress_ru",
+      "type": "chat",
+      "category": "development",
+      "subscribers": 5399,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
     }
   ],
   "channels": [
@@ -1816,6 +2284,114 @@
       "subscribers": 2359,
       "lastPostDate": "2026-10-13T07:18:19+00:00",
       "active": true
+    },
+    {
+      "title": "Crypto HR | Web 3 jobs",
+      "username": "@bloconomica",
+      "type": "channel",
+      "category": "worldwide",
+      "subscribers": 2450,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Дистанційна робота — Work.ua",
+      "username": "@workua_remote",
+      "type": "channel",
+      "category": "remote",
+      "subscribers": 11512,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "DOU | QA Вакансії",
+      "username": "@dou_qa",
+      "type": "channel",
+      "category": "development",
+      "subscribers": 12533,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "DOU Remote Вакансії",
+      "username": "@dou_remote",
+      "type": "channel",
+      "category": "remote",
+      "subscribers": 6482,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "GameDev DOU",
+      "username": "@gamedev_dou",
+      "type": "channel",
+      "category": "development",
+      "subscribers": 10661,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "DOU Kyiv IT Спільнота",
+      "username": "@dou_kyiv",
+      "type": "channel",
+      "category": "development",
+      "subscribers": 4059,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "DOU Lviv IT Спільнота",
+      "username": "@dou_lviv",
+      "type": "channel",
+      "category": "development",
+      "subscribers": 2298,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Базу збирає вакансії",
+      "username": "@bazuwork",
+      "type": "channel",
+      "category": "remote",
+      "subscribers": 21038,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "CryptoJobsList Web3 & Blockchain",
+      "username": "@cryptojobslist",
+      "type": "channel",
+      "category": "development",
+      "subscribers": 62020,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Data Science & GenAI Jobs",
+      "username": "@datascience_jobs",
+      "type": "channel",
+      "category": "development",
+      "subscribers": 21964,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Kotlin Jobs & Projects",
+      "username": "@kotlin_jobs",
+      "type": "channel",
+      "category": "development",
+      "subscribers": 2851,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "SEO Vacancies & Marketing Jobs",
+      "username": "@seo_jobs",
+      "type": "channel",
+      "category": "marketing",
+      "subscribers": 4253,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
     }
   ]
 }
