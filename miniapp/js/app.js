@@ -3786,7 +3786,14 @@ const state = {
   crmFilterMinBudget: 0,
   accountKey: localStorage.getItem('dws_account_key') || (tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : 'default'),
   accountUser: localStorage.getItem('dws_account_user') || (tg?.initDataUnsafe?.user?.username ? ('@' + tg.initDataUnsafe.user.username) : ''),
-  accountName: localStorage.getItem('dws_account_name') || (tg?.initDataUnsafe?.user?.first_name || 'Денис Залізко')
+  accountName: localStorage.getItem('dws_account_name') || (tg?.initDataUnsafe?.user?.first_name || 'Денис Залізко'),
+  requisites: JSON.parse(localStorage.getItem('dws_requisites') || 'null') || {
+    recipient: 'Залізко Денис Олександрович',
+    iban: '',
+    card: '',
+    bank: 'monobank (АТ «УНІВЕРСАЛ БАНК»)',
+    purpose: 'Оплата за інформаційно-рекламні послуги'
+  }
 };
 
 // Helper: Open direct Telegram PM with vacancy owner
@@ -3828,6 +3835,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupCalendarModal();
   setupCrmFilterModal();
   setupCrmDetailHandlers();
+  initDocumentsHub();
   setupAccountSync();
   setupExpensesHandlers();
   setupEventListeners();
@@ -10014,19 +10022,74 @@ function setupNfcRadarTab() {
 
   const cardsBtn = document.getElementById('nfcViewCardsBtn');
   const tableBtn = document.getElementById('nfcViewTableBtn');
+  const mapBtn = document.getElementById('nfcViewMapBtn');
+
   cardsBtn?.addEventListener('click', () => {
     nfcRadarState.viewMode = 'cards';
     cardsBtn.classList.add('active');
     tableBtn?.classList.remove('active');
+    mapBtn?.classList.remove('active');
+    const mv = document.getElementById('nfcRadarMapView');
+    if (mv) mv.style.display = 'none';
+    const jl = document.getElementById('nfcRadarJobsList');
+    if (jl) jl.style.display = 'block';
     renderNfcRadar();
     haptic('light');
   });
+
   tableBtn?.addEventListener('click', () => {
     nfcRadarState.viewMode = 'table';
     tableBtn.classList.add('active');
     cardsBtn?.classList.remove('active');
+    mapBtn?.classList.remove('active');
+    const mv = document.getElementById('nfcRadarMapView');
+    if (mv) mv.style.display = 'none';
+    const jl = document.getElementById('nfcRadarJobsList');
+    if (jl) jl.style.display = 'block';
     renderNfcRadar();
     haptic('light');
+  });
+
+  mapBtn?.addEventListener('click', () => {
+    nfcRadarState.viewMode = 'map';
+    mapBtn.classList.add('active');
+    cardsBtn?.classList.remove('active');
+    tableBtn?.classList.remove('active');
+    const mv = document.getElementById('nfcRadarMapView');
+    if (mv) mv.style.display = 'block';
+    const jl = document.getElementById('nfcRadarJobsList');
+    if (jl) jl.style.display = 'none';
+    renderNfcMap();
+    haptic('light');
+  });
+
+  document.getElementById('nfcMapLocateBtn')?.addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      showToast('Геолокація недоступна');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition((pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      if (nfcLeafletMap && typeof L !== 'undefined') {
+        if (!nfcUserMarker) {
+          const uIcon = L.divIcon({
+            className: 'nfc-leaflet-user-icon',
+            html: '<div class="nfc-user-pos-marker"></div>',
+            iconSize: [14, 14],
+            iconAnchor: [7, 7]
+          });
+          nfcUserMarker = L.marker([lat, lng], { icon: uIcon }).addTo(nfcLeafletMap);
+        } else {
+          nfcUserMarker.setLatLng([lat, lng]);
+        }
+        nfcLeafletMap.setView([lat, lng], 17);
+        haptic('success');
+        showToast('Вашу позицію знайдено!');
+      }
+    }, () => {
+      showToast('Не вдалося визначити координати');
+    });
   });
 
   document.querySelectorAll('#nfcQuickNiches .nfc-tag-btn').forEach(btn => {
@@ -10117,4 +10180,520 @@ function setupNfcRadarTab() {
 }
 
 setupNfcRadarTab();
+
+// ============================================================
+// INTERACTIVE MAP FOR NFC RADAR (LEAFLET - CLEAN STUDIO PALETTE)
+// Strictly white, black, gray, studio blue (#0066FF). No emojis.
+// ============================================================
+let nfcLeafletMap = null;
+let nfcMapMarkers = [];
+let nfcUserMarker = null;
+
+const CITY_CENTERS = {
+  'київ': [50.4501, 30.5234],
+  'львів': [49.8419, 24.0315],
+  'одеса': [46.4825, 30.7233],
+  'дніпро': [48.4647, 35.0462],
+  'харків': [49.9935, 36.2304],
+  'вінниця': [49.2331, 28.4682]
+};
+
+function renderNfcMap() {
+  const mapCanvas = document.getElementById('nfcRadarMapCanvas');
+  if (!mapCanvas || typeof L === 'undefined') return;
+
+  let jobs = nfcRadarState.jobs;
+  if (nfcRadarState.cityFilter && nfcRadarState.cityFilter !== 'all') {
+    jobs = jobs.filter(j => j.city && j.city.toLowerCase().includes(nfcRadarState.cityFilter.toLowerCase()));
+  }
+
+  const activeJob = jobs.find(j => j.status === 'done' && (j.items?.length || j.total > 0)) || jobs[0];
+  const items = activeJob ? getJobFlatItems(activeJob) : [];
+
+  const countBadge = document.getElementById('nfcMapStatsCount');
+  if (countBadge) countBadge.textContent = `${items.length} ${pluralNfcVenues(items.length)}`;
+
+  const cityKey = (activeJob?.city || 'Київ').toLowerCase().trim();
+  let baseCoords = CITY_CENTERS[cityKey] || [50.4501, 30.5234];
+  if (activeJob?.cluster && /ocean/i.test(activeJob.cluster)) {
+    baseCoords = [50.4128, 30.5238];
+  } else if (activeJob?.cluster && /хрещатик/i.test(activeJob.cluster)) {
+    baseCoords = [50.4475, 30.5220];
+  }
+
+  if (!nfcLeafletMap) {
+    nfcLeafletMap = L.map('nfcRadarMapCanvas', {
+      zoomControl: false,
+      attributionControl: false
+    }).setView(baseCoords, 16);
+
+    // CartoDB Positron: clean black/white/gray/blue map aesthetics
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      subdomains: 'abcd'
+    }).addTo(nfcLeafletMap);
+
+    L.control.zoom({ position: 'topright' }).addTo(nfcLeafletMap);
+  } else {
+    setTimeout(() => {
+      nfcLeafletMap.invalidateSize();
+      nfcLeafletMap.setView(baseCoords, 16);
+    }, 150);
+  }
+
+  // Clear existing markers
+  nfcMapMarkers.forEach(m => m.remove());
+  nfcMapMarkers = [];
+
+  const bounds = [];
+
+  items.forEach((v, idx) => {
+    // Generate organic distinct coords along street if not saved
+    const lat = v.lat || (baseCoords[0] + Math.sin(idx * 0.85 + 0.3) * 0.0032);
+    const lng = v.lng || (baseCoords[1] + Math.cos(idx * 0.85 + 0.3) * 0.0042);
+    bounds.push([lat, lng]);
+
+    const statusClass = v.walkStatus === 'deal' ? 'walk-deal' :
+                        v.walkStatus === 'in_progress' ? 'walk-progress' :
+                        v.walkStatus === 'declined' ? 'walk-declined' : '';
+
+    const iconHtml = `<div class="nfc-map-pin ${statusClass}" id="pin-${v.id}"><span>${idx + 1}</span></div>`;
+    const customIcon = L.divIcon({
+      className: 'nfc-leaflet-div-icon',
+      html: iconHtml,
+      iconSize: [30, 30],
+      iconAnchor: [15, 15]
+    });
+
+    const marker = L.marker([lat, lng], { icon: customIcon }).addTo(nfcLeafletMap);
+    marker.on('click', () => {
+      showMapVenueCard(v, activeJob, idx);
+      document.querySelectorAll('.nfc-map-pin').forEach(p => p.classList.remove('active'));
+      document.getElementById('pin-' + v.id)?.classList.add('active');
+      haptic('light');
+    });
+
+    nfcMapMarkers.push(marker);
+  });
+
+  if (bounds.length > 0) {
+    nfcLeafletMap.fitBounds(bounds, { padding: [40, 40] });
+  }
+}
+
+function showMapVenueCard(v, job, idx) {
+  const card = document.getElementById('nfcMapVenueCard');
+  if (!card) return;
+
+  const mapUrl = getVenueMapsUrl(v, job);
+  const curStatus = v.walkStatus || 'new';
+
+  card.innerHTML = `
+    <div class="nfc-map-sheet-header">
+      <div class="nfc-map-sheet-title">#${idx + 1} ${escapeHtml(v.name)}</div>
+      <div class="nfc-map-sheet-score">★ ${v.rating ? Number(v.rating).toFixed(1) : '—'} (${v.reviews || 0})</div>
+    </div>
+    <div class="nfc-map-sheet-addr">${escapeHtml(v.address || job?.cluster || job?.city || '—')}</div>
+
+    <div class="nfc-map-sheet-contacts">
+      <a href="${mapUrl}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:4px; font-weight:700;">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+        <span>Відкрити в Google Maps</span>
+      </a>
+      ${v.phone ? `<a href="tel:${v.phone}">тел: ${v.phone}</a>` : ''}
+      ${v.instagram ? `<a href="https://instagram.com/${v.instagram.replace('@', '')}" target="_blank" rel="noopener">${v.instagram}</a>` : ''}
+    </div>
+
+    <div class="form-row gap-2" style="margin-top: 6px;">
+      <button type="button" class="btn btn--fill btn--sm flex-1 nfc-pitch-btn" data-nfc-act="pitch" data-job="${job?.id}" data-venue="${v.id}">
+        <span>Готовий офер</span>
+      </button>
+      <button type="button" class="btn btn--fill btn--sm flex-1 nfc-crm-btn" data-nfc-act="crm" data-job="${job?.id}" data-venue="${v.id}">
+        <span>CRM</span>
+      </button>
+      <button type="button" class="btn btn--out btn--sm" id="closeMapVenueCardBtn" style="padding: 0 10px;">
+        ✕
+      </button>
+    </div>
+
+    <div class="nfc-map-walk-statuses">
+      <button type="button" class="nfc-walk-pill ${curStatus === 'new' ? 'active' : ''}" data-status="new">Новий</button>
+      <button type="button" class="nfc-walk-pill ${curStatus === 'in_progress' ? 'active' : ''}" data-status="in_progress">В процесі</button>
+      <button type="button" class="nfc-walk-pill ${curStatus === 'deal' ? 'active' : ''}" data-status="deal">Угода</button>
+      <button type="button" class="nfc-walk-pill ${curStatus === 'declined' ? 'active' : ''}" data-status="declined">Відмова</button>
+    </div>
+  `;
+
+  card.style.display = 'block';
+
+  // Walk status click handler
+  card.querySelectorAll('.nfc-walk-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const st = btn.dataset.status;
+      v.walkStatus = st;
+      card.querySelectorAll('.nfc-walk-pill').forEach(b => b.classList.toggle('active', b === btn));
+      const pin = document.getElementById('pin-' + v.id);
+      if (pin) {
+        pin.className = 'nfc-map-pin ' + (st === 'deal' ? 'walk-deal' : st === 'in_progress' ? 'walk-progress' : st === 'declined' ? 'walk-declined' : '');
+      }
+      saveLocalNfcJobs(nfcRadarState.jobs);
+      haptic('light');
+    });
+  });
+
+  document.getElementById('closeMapVenueCardBtn')?.addEventListener('click', () => {
+    card.style.display = 'none';
+    document.querySelectorAll('.nfc-map-pin').forEach(p => p.classList.remove('active'));
+  });
+}
+
+// ============================================================
+// DOCUMENTS & INVOICES HUB (INVOICE, PRINT WORK ORDER, REQUISITES)
+// ============================================================
+function initDocumentsHub() {
+  // Open buttons
+  document.getElementById('openInvoiceModalBtn')?.addEventListener('click', () => {
+    openDocumentsHub();
+    haptic('light');
+  });
+
+  document.getElementById('crmDetailDocBtn')?.addEventListener('click', () => {
+    if (state.activeCrmLead) {
+      openDocumentsHub(state.activeCrmLead);
+    } else {
+      openDocumentsHub();
+    }
+    haptic('light');
+  });
+
+  // Tab switching inside Documents Hub
+  document.querySelectorAll('.doc-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.doc-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const targetPane = btn.dataset.pane;
+      document.querySelectorAll('.doc-pane').forEach(p => {
+        p.style.display = (p.id === targetPane) ? 'block' : 'none';
+      });
+      haptic('light');
+    });
+  });
+
+  // Client selector change in Invoice
+  document.getElementById('docInvoiceClientSelect')?.addEventListener('change', (e) => {
+    const val = e.target.value;
+    if (!val) return;
+    const client = (state.crm || []).find(c => c.id === val);
+    if (client) applyClientToInvoice(client);
+  });
+
+  // Recalculate totals on table inputs
+  document.getElementById('invItemsTableBody')?.addEventListener('input', () => {
+    recalcInvoiceTotals();
+  });
+
+  // Add item row
+  document.getElementById('invAddItemRowBtn')?.addEventListener('click', () => {
+    const tbody = document.getElementById('invItemsTableBody');
+    if (!tbody) return;
+    const nextIdx = tbody.querySelectorAll('tr').length + 1;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${nextIdx}</td>
+      <td><input type="text" class="doc-cell-input inv-item-title" placeholder="Найменування послуги..."></td>
+      <td><input type="number" class="doc-cell-input inv-item-qty" value="1" min="1" style="text-align: center;"></td>
+      <td><input type="number" class="doc-cell-input inv-item-price" value="1000" min="0" style="text-align: right;"></td>
+      <td class="inv-item-sum" style="text-align: right; font-weight: 700;">1 000 ₴</td>
+    `;
+    tbody.appendChild(tr);
+    recalcInvoiceTotals();
+    haptic('light');
+  });
+
+  // Print Invoice
+  document.getElementById('docPrintInvoiceBtn')?.addEventListener('click', () => {
+    window.print();
+  });
+
+  // Print Work Order
+  document.getElementById('docPrintWorkOrderBtn')?.addEventListener('click', () => {
+    window.print();
+  });
+
+  // Send Invoice to Telegram
+  document.getElementById('invSendTelegramBtn')?.addEventListener('click', () => {
+    sendInvoiceToTelegram();
+  });
+
+  // Copy details button
+  document.getElementById('invCopyDetailsBtn')?.addEventListener('click', () => {
+    copyRequisitesToClipboard();
+  });
+
+  // Save requisites button
+  document.getElementById('saveRequisitesBtn')?.addEventListener('click', () => {
+    saveCustomRequisites();
+  });
+}
+
+function openDocumentsHub(client = null) {
+  // Populate client dropdown
+  const sel = document.getElementById('docInvoiceClientSelect');
+  if (sel) {
+    sel.innerHTML = '<option value="">-- Введіть вручну або оберіть клієнта --</option>' +
+      (state.crm || []).map(c => `<option value="${c.id}">${escapeHtml(c.name)} (${c.username || c.phone || 'без юзера'})</option>`).join('');
+  }
+
+  // Load and display current requisites
+  const req = state.requisites || {};
+  const recipient = req.recipient || 'Залізко Денис Олександрович';
+  const iban = req.iban || 'UA683220010000026007300123456';
+  const card = req.card || '4441 •••• •••• 1234';
+  const bank = req.bank || 'monobank (АТ «УНІВЕРСАЛ БАНК»)';
+  const purpose = req.purpose || 'Оплата за інформаційно-рекламні послуги';
+
+  const reqRecEl = document.getElementById('invReqRecipient');
+  const reqIbanEl = document.getElementById('invReqIban');
+  const reqCardEl = document.getElementById('invReqCard');
+  const reqBankEl = document.getElementById('invReqBank');
+  const reqPurpEl = document.getElementById('invReqPurpose');
+
+  if (reqRecEl) reqRecEl.textContent = recipient;
+  if (reqIbanEl) reqIbanEl.textContent = iban;
+  if (reqCardEl) reqCardEl.textContent = card;
+  if (reqBankEl) reqBankEl.textContent = bank;
+  if (reqPurpEl) reqPurpEl.textContent = purpose;
+
+  // Requisites form inputs
+  const inRec = document.getElementById('reqRecipientInput');
+  const inIban = document.getElementById('reqIbanInput');
+  const inCard = document.getElementById('reqCardInput');
+  const inBank = document.getElementById('reqBankInput');
+  const inPurp = document.getElementById('reqPurposeInput');
+  if (inRec) inRec.value = recipient;
+  if (inIban) inIban.value = iban;
+  if (inCard) inCard.value = card;
+  if (inBank) inBank.value = bank;
+  if (inPurp) inPurp.value = purpose;
+
+  // Generate QR Code
+  updatePaymentQrCode(iban, recipient, 4000);
+
+  // Set date and invoice numbers
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('uk-UA', { day: 'numeric', month: 'numeric', year: 'numeric' });
+  const invNum = `DW-INV-${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}-${String(Date.now()).slice(-3)}`;
+  const woNum = `DW-ORD-${now.getFullYear()}-${String(Date.now()).slice(-4)}`;
+
+  const numEl = document.getElementById('invDocNumber');
+  const dateEl = document.getElementById('invDocDate');
+  const woNumEl = document.getElementById('woDocNumber');
+  const woDateEl = document.getElementById('woDocDate');
+
+  if (numEl) numEl.textContent = 'РАХУНОК #' + invNum;
+  if (dateEl) dateEl.textContent = 'від ' + dateStr + ' р.';
+  if (woNumEl) woNumEl.textContent = 'НАРЯД #' + woNum;
+  if (woDateEl) woDateEl.textContent = dateStr + ' р.';
+
+  if (client) {
+    if (sel) sel.value = client.id;
+    applyClientToInvoice(client);
+  } else {
+    recalcInvoiceTotals();
+  }
+
+  // Set initial tab to Invoice
+  document.querySelectorAll('.doc-tab-btn').forEach(b => b.classList.toggle('active', b.dataset.pane === 'docPaneInvoice'));
+  document.querySelectorAll('.doc-pane').forEach(p => p.style.display = (p.id === 'docPaneInvoice') ? 'block' : 'none');
+
+  openModal('modalDocumentsHub');
+}
+
+function applyClientToInvoice(client) {
+  const nameInput = document.getElementById('invClientNameInput');
+  const contactInput = document.getElementById('invClientContactInput');
+  if (nameInput) nameInput.value = client.name || 'Клієнт';
+  if (contactInput) contactInput.value = `${client.phone || ''} • ${client.username || ''}`;
+
+  // Work order fields
+  const woTitle = document.getElementById('woClientTitle');
+  const woContact = document.getElementById('woContactPerson');
+  const woPhone = document.getElementById('woContactPhone');
+  const woAddress = document.getElementById('woAddress');
+  if (woTitle) woTitle.value = client.name || '';
+  if (woContact) woContact.value = client.username || client.name || '';
+  if (woPhone) woPhone.value = client.phone || '';
+  if (woAddress) woAddress.value = client.address || client.cluster || 'м. Київ';
+
+  // If client has orders, populate items table
+  const tbody = document.getElementById('invItemsTableBody');
+  if (tbody && Array.isArray(client.orders) && client.orders.length > 0) {
+    tbody.innerHTML = client.orders.map((o, idx) => `
+      <tr>
+        <td>${idx + 1}</td>
+        <td><input type="text" class="doc-cell-input inv-item-title" value="${escapeHtml(o.title || 'Послуга')}"></td>
+        <td><input type="number" class="doc-cell-input inv-item-qty" value="1" min="1" style="text-align: center;"></td>
+        <td><input type="number" class="doc-cell-input inv-item-price" value="${Number(o.amount) || 0}" min="0" style="text-align: right;"></td>
+        <td class="inv-item-sum" style="text-align: right; font-weight: 700;">${Number(o.amount) || 0} ₴</td>
+      </tr>
+    `).join('');
+  }
+  recalcInvoiceTotals();
+}
+
+function recalcInvoiceTotals() {
+  let grandTotal = 0;
+  const tbody = document.getElementById('invItemsTableBody');
+  if (!tbody) return;
+
+  tbody.querySelectorAll('tr').forEach(tr => {
+    const qty = Number(tr.querySelector('.inv-item-qty')?.value) || 0;
+    const price = Number(tr.querySelector('.inv-item-price')?.value) || 0;
+    const lineSum = qty * price;
+    grandTotal += lineSum;
+    const sumCell = tr.querySelector('.inv-item-sum');
+    if (sumCell) sumCell.textContent = lineSum.toLocaleString('uk-UA') + ' ₴';
+  });
+
+  const totEl = document.getElementById('invTotalAmountText');
+  const wordsEl = document.getElementById('invTotalWordsText');
+  if (totEl) totEl.textContent = grandTotal.toLocaleString('uk-UA') + '.00 ₴';
+  if (wordsEl) wordsEl.textContent = numberToWordsUkr(grandTotal) + ', без ПДВ';
+
+  // Also update Work Order financial inputs
+  const woTot = document.getElementById('woTotalCost');
+  const woPrep = document.getElementById('woPrepaid');
+  const woBal = document.getElementById('woBalance');
+  if (woTot) woTot.value = grandTotal.toLocaleString('uk-UA') + ' ₴';
+  const prepVal = Math.round(grandTotal / 2);
+  if (woPrep) woPrep.value = prepVal.toLocaleString('uk-UA') + ' ₴';
+  if (woBal) woBal.value = (grandTotal - prepVal).toLocaleString('uk-UA') + ' ₴';
+
+  // Update QR Code
+  const iban = state.requisites?.iban || 'UA683220010000026007300123456';
+  const recipient = state.requisites?.recipient || 'Залізко Денис Олександрович';
+  updatePaymentQrCode(iban, recipient, grandTotal);
+}
+
+function updatePaymentQrCode(iban, recipient, amount) {
+  const qrImg = document.getElementById('invQrCodeImg');
+  if (!qrImg) return;
+  const qrData = `BCD\n002\n1\nSCT\n\n${recipient}\n${iban}\nUAH${amount}\n\n\nОплата згідно рахунку\n`;
+  qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrData)}`;
+}
+
+function numberToWordsUkr(num) {
+  if (!num || num <= 0) return 'Нуль гривень 00 копійок';
+  const unitsM = ['', 'один', 'два', 'три', 'чотири', 'п\'ять', 'шість', 'сім', 'вісім', 'дев\'ять'];
+  const unitsF = ['', 'одна', 'дві', 'три', 'чотири', 'п\'ять', 'шість', 'сім', 'вісім', 'дев\'ять'];
+  const teens = ['десять', 'одинадцять', 'дванадцять', 'тринадцять', 'чотирнадцять', 'п\'ятнадцять', 'шістнадцять', 'сімнадцять', 'вісімнадцять', 'дев\'ятнадцять'];
+  const tens = ['', '', 'двадцять', 'тридцять', 'сорок', 'п\'ятдесят', 'шістдесят', 'сімдесят', 'вісімдесят', 'дев\'яносто'];
+  const hundreds = ['', 'сто', 'двісті', 'триста', 'чотириста', 'п\'ятсот', 'шістсот', 'сімсот', 'вісімсот', 'дев\'ятсот'];
+
+  function triplet(n, isFemale) {
+    let res = [];
+    const h = Math.floor(n / 100);
+    const rem = n % 100;
+    const t = Math.floor(rem / 10);
+    const u = rem % 10;
+    if (h) res.push(hundreds[h]);
+    if (t === 1) {
+      res.push(teens[u]);
+    } else {
+      if (t) res.push(tens[t]);
+      if (u) res.push(isFemale ? unitsF[u] : unitsM[u]);
+    }
+    return res.join(' ');
+  }
+
+  const thousands = Math.floor(num / 1000);
+  const remainder = num % 1000;
+  let parts = [];
+
+  if (thousands > 0) {
+    let word = 'тисяч';
+    const tU = thousands % 10;
+    const tRem = thousands % 100;
+    if (tU === 1 && tRem !== 11) word = 'тисяча';
+    else if (tU >= 2 && tU <= 4 && (tRem < 10 || tRem >= 20)) word = 'тисячі';
+    parts.push(triplet(thousands, true) + ' ' + word);
+  }
+
+  if (remainder > 0) {
+    parts.push(triplet(remainder, false));
+  }
+
+  let text = parts.join(' ').trim();
+  if (text) text = text.charAt(0).toUpperCase() + text.slice(1);
+  return `${text || 'Нуль'} гривень 00 копійок`;
+}
+
+function sendInvoiceToTelegram() {
+  const invNum = document.getElementById('invDocNumber')?.textContent || 'РАХУНОК';
+  const clientName = document.getElementById('invClientNameInput')?.value || 'Клієнт';
+  const total = document.getElementById('invTotalAmountText')?.textContent || '0 ₴';
+  const req = state.requisites || {};
+
+  const text = `Вітаю, ${clientName}!\n\n` +
+    `Сформовано офіційний ${invNum} від DenisWeb Studio.\n\n` +
+    `💰 До сплати: ${total}\n\n` +
+    `Реквізити для оплати:\n` +
+    `• Отримувач: ${req.recipient || 'Залізко Денис Олександрович'}\n` +
+    `• IBAN: ${req.iban || 'UA683220010000026007300123456'}\n` +
+    (req.card ? `• Номер картки: ${req.card}\n` : '') +
+    `• Банк: ${req.bank || 'monobank'}\n` +
+    `• Призначення: Оплата за послуги згідно ${invNum}\n\n` +
+    `Після здійснення оплати надішліть, будь ласка, квитанцію. Дякую за співпрацю!`;
+
+  const tgUrl = 'https://t.me/share/url?url=' + encodeURIComponent('') + '&text=' + encodeURIComponent(text);
+  if (window.Telegram?.WebApp?.openTelegramLink) {
+    window.Telegram.WebApp.openTelegramLink(tgUrl);
+  } else {
+    window.open(tgUrl, '_blank');
+  }
+}
+
+function copyRequisitesToClipboard() {
+  const req = state.requisites || {};
+  const text = `РЕКВІЗИТИ ДЛЯ ОПЛАТИ:\nОтримувач: ${req.recipient || 'Залізко Денис'}\nIBAN: ${req.iban || ''}\nКартка: ${req.card || ''}\nБанк: ${req.bank || 'monobank'}`;
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('Реквізити скопійовано в буфер!');
+      haptic('success');
+    });
+  } else {
+    fallbackCopy(text, 'Реквізити');
+  }
+}
+
+function saveCustomRequisites() {
+  const recipient = (document.getElementById('reqRecipientInput')?.value || '').trim() || 'Залізко Денис Олександрович';
+  const iban = (document.getElementById('reqIbanInput')?.value || '').trim();
+  const card = (document.getElementById('reqCardInput')?.value || '').trim();
+  const bank = (document.getElementById('reqBankInput')?.value || '').trim() || 'monobank (АТ «УНІВЕРСАЛ БАНК»)';
+  const purpose = (document.getElementById('reqPurposeInput')?.value || '').trim() || 'Оплата за інформаційно-рекламні послуги';
+
+  state.requisites = { recipient, iban, card, bank, purpose };
+  localStorage.setItem('dws_requisites', JSON.stringify(state.requisites));
+
+  if (state.profile) {
+    state.profile.requisites = state.requisites;
+  }
+  syncAccountToServer();
+
+  const reqRecEl = document.getElementById('invReqRecipient');
+  const reqIbanEl = document.getElementById('invReqIban');
+  const reqCardEl = document.getElementById('invReqCard');
+  const reqBankEl = document.getElementById('invReqBank');
+  const reqPurpEl = document.getElementById('invReqPurpose');
+  if (reqRecEl) reqRecEl.textContent = recipient;
+  if (reqIbanEl) reqIbanEl.textContent = iban || 'UA000000000000000000000000000';
+  if (reqCardEl) reqCardEl.textContent = card || '4441 •••• •••• 1234';
+  if (reqBankEl) reqBankEl.textContent = bank;
+  if (reqPurpEl) reqPurpEl.textContent = purpose;
+
+  showToast('Реквізити збережено!');
+  haptic('success');
+}
+
 
