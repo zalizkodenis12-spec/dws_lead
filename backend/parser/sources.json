@@ -1,7 +1,7 @@
 {
   "description": "DWS Lead — Global Worldwide Lead Sources (72 Channels & 119 Chats, Development, Ads & Montage)",
   "updatedAt": "2026-10-17T19:02:30.782Z",
-  "totalCount": 255,
+  "totalCount": 286,
   "chats": [
     {
       "username": "@qa_jobs",
@@ -1620,6 +1620,114 @@
       "subscribers": 5399,
       "lastPostDate": "2026-ACTIVE",
       "verifiedWorldwide": true
+    },
+    {
+      "title": "Сообщество Python Программистов",
+      "username": "@python_scripts",
+      "type": "chat",
+      "category": "gamedev_fullstack",
+      "subscribers": 4174,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Unity Engine: вопрос - ответ",
+      "username": "@unity3d_ru",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 11687,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Golang Developers — русскоговорящее сообщество",
+      "username": "@golang_ru",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 1641,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Blender_ru: вопрос-ответ.",
+      "username": "@blender_ru",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 13374,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "NFT TRADE | ANYO",
+      "username": "@arbitrage_community",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 6117,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "DaVinci Resolve ru",
+      "username": "@davinci_resolve_ru",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 8042,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Animation_Chat",
+      "username": "@animation_chat",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 2657,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Nuxt.js | Vue SSR",
+      "username": "@nuxtjs_ru",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 4131,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Docker — русскоговорящее сообщество",
+      "username": "@docker_ru",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 12014,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Kubernetes — русскоговорящее сообщество",
+      "username": "@kubernetes_ru",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 11617,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "MongoDB Russian",
+      "username": "@mongodb_ru",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 2246,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "GraphQL — русскоговорящее сообщество",
+      "username": "@graphql_ru",
+      "type": "chat",
+      "category": "worldwide",
+      "subscribers": 1710,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
     }
   ],
   "channels": [
@@ -1628,7 +1736,7 @@
       "title": "Finder.work: работа и вакансии ✔",
       "category": "development",
       "type": "channel",
-      "subscribers": 274222,
+      "subscribers": 5000,
       "lastPostDate": "2026-10-17T18:30:00+00:00",
       "active": true
     },
@@ -2390,6 +2498,177 @@
       "type": "channel",
       "category": "marketing",
       "subscribers": 4253,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "InGameJob.com (official)",
+      "username": "@ingamejob",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 13581,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Job for Gamedev",
+      "username": "@forgamedev",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 14452,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Gamedev Jobs (Inflow)",
+      "username": "@gamedevjobs",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 21737,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Unity Jobs",
+      "username": "@unity_jobs",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 4732,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Работа в геймдеве",
+      "username": "@gamedev_job",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 3252,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Blender / بلندر",
+      "username": "@blender_3d",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 5588,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "BIG CG WORK",
+      "username": "@cg_freelance",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 8454,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "RENDER.RU",
+      "username": "@render_ru",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 8505,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Задачи и тесты по программированию | proghub",
+      "username": "@prog_hub",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 2211,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "sysadmin_jobs",
+      "username": "@sysadmin_jobs",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 4481,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "bot_creators_chat",
+      "username": "@bot_creators_chat",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 5000,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Remote Front-End Jobs 🌐✨",
+      "username": "@remote_frontend_jobs",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 4950,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Remote Python Jobs: Find your dream remote Python job&#33;",
+      "username": "@remote_python_jobs",
+      "type": "channel",
+      "category": "gamedev_fullstack",
+      "subscribers": 5039,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Unreal Engine ru",
+      "username": "@unreal_engine_ru",
+      "type": "channel",
+      "category": "worldwide",
+      "subscribers": 7653,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "gamedev events",
+      "username": "@gamedev_events",
+      "type": "channel",
+      "category": "worldwide",
+      "subscribers": 2419,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Хабр Фриланс",
+      "username": "@freelansim_ru",
+      "type": "channel",
+      "category": "worldwide",
+      "subscribers": 2797,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "NestJS - открытое сообщество",
+      "username": "@nestjs_ru",
+      "type": "channel",
+      "category": "worldwide",
+      "subscribers": 5000,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "Arbitrage_Pro",
+      "username": "@arbitrage_pro_chat",
+      "type": "channel",
+      "category": "worldwide",
+      "subscribers": 5000,
+      "lastPostDate": "2026-ACTIVE",
+      "verifiedWorldwide": true
+    },
+    {
+      "title": "ЖП",
+      "username": "@cpa_feed",
+      "type": "channel",
+      "category": "worldwide",
+      "subscribers": 39681,
       "lastPostDate": "2026-ACTIVE",
       "verifiedWorldwide": true
     }

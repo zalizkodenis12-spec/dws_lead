@@ -99,10 +99,14 @@ const NICHES = {
       'ищем разработчика', 'нужен программист', 'ищем программиста', 'вакансия разработчик',
       'вакансия программист', 'frontend разработчик', 'backend разработчик', 'fullstack разработчик',
       'разработка приложения', 'мобильное приложение', 'написать скрипт', 'написать парсер',
-      // English / Tech Vacancy titles
+      // English / Tech Vacancy titles & GameDev / Roblox / Desktop
       'frontend developer', 'backend developer', 'fullstack developer', 'full stack developer',
       'web developer', 'python developer', 'react developer', 'node developer', 'wordpress developer',
-      'mobile developer', 'software engineer'
+      'mobile developer', 'software engineer', 'roblox developer', 'roblox scripter', 'luau developer',
+      'разработчик roblox', 'розробник roblox', 'скриптер roblox', 'разработка игр', 'розробка ігор',
+      'game developer', 'gamedev developer', 'unity developer', 'unreal engine developer',
+      'написати програму', 'написать программу', 'розробити програму', 'разработать программу',
+      'софт на заказ', 'софт на замовлення', 'desktop developer'
     ],
     keywords: [
       'лендінг', 'лендинг', 'landing', 'верстк', 'frontend', 'фронтенд', 'backend', 'бэкенд', 'бекэнд',
@@ -111,7 +115,8 @@ const NICHES = {
       'чат-бот', 'чат бот', 'tilda', 'тильда', 'three.js', 'react', 'vue', 'angular', 'next.js',
       'nextjs', 'nuxt', 'node', 'nodejs', 'python', 'пайтон', 'django', 'fastapi', 'flask', 'php',
       'laravel', 'ларавел', 'c#', '.net', 'golang', 'flutter', 'react native', 'парсер', 'скрипт',
-      'інтернет-магазин', 'интернет-магазин', 'ecommerce', 'shopify', 'opencart', 'bitrix', 'битрикс'
+      'інтернет-магазин', 'интернет-магазин', 'ecommerce', 'shopify', 'opencart', 'bitrix', 'битрикс',
+      'roblox', 'роблокс', 'luau', 'gamedev', 'геймдев', 'unity', 'unreal', 'ue5', 'десктоп', 'desktop'
     ],
     subcategories: {
       landing: ['лендінг', 'лендинг', 'landing', 'односторінков', 'одностраничн', 'посадочн', 'лендос', 'taplink'],
@@ -125,6 +130,8 @@ const NICHES = {
       backend: ['backend', 'бэкенд', 'бекэнд', 'node', 'nodejs', 'python', 'пайтон', 'django', 'fastapi', 'flask', 'php', 'laravel', 'ларавел', 'golang', 'c#', '.net', 'api', 'rest api', 'sql', 'postgres'],
       fullstack: ['fullstack', 'full-stack', 'фулстек', 'фуллстек'],
       mobile: ['flutter', 'флаттер', 'react native', 'mobile', 'мобільн', 'мобильн', 'ios', 'android', 'swift', 'kotlin'],
+      gamedev_roblox: ['roblox', 'роблокс', 'luau', 'gamedev', 'геймдев', 'unity', 'unreal', 'ue5', 'плейс', 'скриптер', 'scripter', 'розробка ігор', 'разработка игр'],
+      desktop_software: ['десктоп', 'desktop', 'софт', 'программа', 'програма', 'утиліта', 'утилита', 'автоматизація', 'автоматизация'],
       vacancies_it: ['вакансія', 'вакансия', 'робота в it', 'работа в it', 'middle', 'junior', 'senior', 'lead', 'разработчик в штат', 'розробник в команду']
     }
   },
