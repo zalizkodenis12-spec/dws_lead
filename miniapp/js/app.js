@@ -5120,7 +5120,7 @@ function renderExpenses() {
       const isActive = idx === activeChartIdx;
       const pxHeight = m.amount > 0 ? Math.max(Math.round((m.amount / maxVal) * 85), 14) : 8;
       return `
-        <div class="bar-col expense ${isActive ? 'active' : ''}" data-idx="${idx}" title="${m.fullName}: – ${m.amount.toLocaleString('uk-UA')} ₴">
+        <div class="bar-col ${isActive ? 'active' : ''}" data-idx="${idx}" title="${m.fullName}: – ${m.amount.toLocaleString('uk-UA')} ₴">
           <div class="bar-pill-track">
             <div class="bar-pill" style="height: ${pxHeight}px;"></div>
           </div>
@@ -5220,7 +5220,7 @@ function renderExpenses() {
                 <svg class="tree-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 <span class="tree-node-title">${escapeHtml(mObj.monthTitle)}</span>
               </div>
-              <span class="tree-node-sum text-danger">– ${mTotal.toLocaleString('uk-UA')} ₴</span>
+              <span class="tree-node-sum">– ${mTotal.toLocaleString('uk-UA')} ₴</span>
             </div>
             <div class="tree-node-content">
         `;
@@ -5254,7 +5254,7 @@ function renderExpenses() {
                   <svg class="tree-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   <span class="tree-node-title">${w.label}</span>
                 </div>
-                <span class="tree-node-sum text-danger">– ${wTotal.toLocaleString('uk-UA')} ₴</span>
+                <span class="tree-node-sum">– ${wTotal.toLocaleString('uk-UA')} ₴</span>
               </div>
               <div class="tree-node-content">
           `;
@@ -5273,7 +5273,7 @@ function renderExpenses() {
                       <svg class="tree-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                       <span class="tree-node-title">${escapeHtml(dObj.label)}</span>
                     </div>
-                    <span class="tree-node-sum text-danger">– ${dTotal.toLocaleString('uk-UA')} ₴</span>
+                    <span class="tree-node-sum">– ${dTotal.toLocaleString('uk-UA')} ₴</span>
                   </div>
                   <div class="tree-node-content">
               `;
@@ -5286,10 +5286,10 @@ function renderExpenses() {
                       <div class="order-leaf-meta">
                         <span>${escapeHtml(r.category || r.client || 'Категорія')}</span>
                         <span>•</span>
-                        <span class="order-leaf-badge ${r.isPaid ? 'expense-paid' : 'expected'}">${r.isPaid ? 'Оплачено' : 'В планах'}</span>
+                        <span class="order-leaf-badge ${r.isPaid ? 'paid' : 'expected'}">${r.isPaid ? 'Оплачено' : 'В планах'}</span>
                       </div>
                     </div>
-                    <div class="order-leaf-amount expense">
+                    <div class="order-leaf-amount">
                       <span>– ${(Number(r.amount) || 0).toLocaleString('uk-UA')} ₴</span>
                       <svg class="order-leaf-edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>

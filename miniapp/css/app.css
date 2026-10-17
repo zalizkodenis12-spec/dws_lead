@@ -2604,25 +2604,6 @@ body.dark-theme .order-leaf-badge.expected {
   opacity: 1;
 }
 
-.order-leaf-amount.expense {
-  color: var(--danger) !important;
-}
-
-.order-leaf-badge.expense-paid {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--danger);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
-
-.bar-col.expense.active .bar-pill {
-  background: var(--danger) !important;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35) !important;
-}
-
-.bar-col.expense.active .bar-month-name {
-  color: var(--danger) !important;
-}
-
 .btn--danger {
   background: var(--danger-bg);
   color: var(--danger);
