@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792281138460-247",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "3d_site",
+      "subcategoryName": "3D сайт",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "javascript_jobs_feed",
+      "authorUsername": "@javascript_jobs_feed",
+      "title": "🔥 Резюме Frontend Engineer / Creative Developer от @Rubicon1543, от $2 000...",
+      "text": "🔥 Резюме Frontend Engineer / Creative Developer от @Rubicon1543, от $2 000, Сербия, удаленка, фуллтайм или контракт\n\n⭐ Редкая специализация Creative Dev: плотная связка 3D (Three.js) и интерактивного звука (Tone.js, Web Audio)\n⭐ Конкретные продуктовые метрики: падение негативного фидбека с 30% до 8% и рост трафика на 70%\n⭐ Живые ссылки на прод, пет-проекты и портфолио вместо абстрактного опыта в вакууме",
+      "date": "2026-10-17T23:52:18.459Z",
+      "dateFormatted": "Сьогодні, 02:52",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: 3d сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792277181788-5485",
       "category": "development",
       "categoryName": "Веброзробка",
