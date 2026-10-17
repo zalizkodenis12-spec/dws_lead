@@ -1757,11 +1757,16 @@ body.dark-theme .crm-order-card-title {
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
-  justify-content: space-around;
-  padding: 0 2px;
+  justify-content: flex-start;
+  padding: 0;
   z-index: 20;
   box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.03);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .app-nav::-webkit-scrollbar {
@@ -1773,14 +1778,15 @@ body.dark-theme .crm-order-card-title {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  flex: 1 1 0;
-  width: auto;
-  min-width: 0;
-  max-width: none;
-  padding: 4px 1px;
+  gap: 4px;
+  flex: 0 0 25%;
+  width: 25%;
+  min-width: 25%;
+  max-width: 25%;
+  padding: 0 4px;
   box-sizing: border-box;
   white-space: nowrap;
+  scroll-snap-align: start;
   height: 100%;
   color: var(--muted);
   cursor: pointer;
@@ -1790,23 +1796,19 @@ body.dark-theme .crm-order-card-title {
 }
 
 .nav-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   flex-shrink: 0;
   transition: transform 0.2s ease, stroke 0.2s ease;
 }
 
 .nav-btn span {
   font-family: var(--ffh);
-  font-size: 0.58rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: -0.2px;
+  letter-spacing: 0.2px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
   text-align: center;
-  line-height: 1.1;
 }
 
 .nav-btn.active {
@@ -1815,6 +1817,7 @@ body.dark-theme .crm-order-card-title {
 
 .nav-btn.active svg {
   transform: translateY(-2px);
+  stroke: var(--accent);
   stroke-width: 2.2;
 }
 
