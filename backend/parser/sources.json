@@ -1,7 +1,7 @@
 {
-  "description": "DWS Lead — Master Verified Telegram Lead Sources (59 Channels & 118 Chats, Denis Originals Included)",
-  "updatedAt": "2026-10-17T18:51:58.549Z",
-  "totalCount": 177,
+  "description": "DWS Lead — Global Worldwide Lead Sources (72 Channels & 119 Chats, Development, Ads & Montage)",
+  "updatedAt": "2026-10-17T19:02:30.782Z",
+  "totalCount": 191,
   "chats": [
     {
       "username": "@qa_jobs",
@@ -252,6 +252,15 @@
       "category": "development",
       "type": "chat",
       "subscribers": 4391,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@laravel_pro",
+      "title": "Laravel Pro",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 4175,
       "lastPostDate": null,
       "active": true
     },
@@ -1174,6 +1183,15 @@
       "active": true
     },
     {
+      "username": "@cpa_lenta",
+      "title": "CPALENTA | Арбитраж трафика",
+      "category": "marketing",
+      "type": "channel",
+      "subscribers": 120137,
+      "lastPostDate": "2026-10-14T15:57:09+00:00",
+      "active": true
+    },
+    {
       "username": "@rueventjob",
       "title": "Удаленка - вся творческая работа",
       "category": "freelance",
@@ -1300,12 +1318,30 @@
       "active": true
     },
     {
+      "username": "@thepartnerkin",
+      "title": "Partnerkin | Арбитраж трафика",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 31981,
+      "lastPostDate": "2026-10-17T13:16:00+00:00",
+      "active": true
+    },
+    {
       "username": "@digital_hr",
       "title": "DigitalHR (ДиджиталлЭйчАр): работа | вакансии | рекрутинг | стартапы",
       "category": "development",
       "type": "channel",
       "subscribers": 31866,
       "lastPostDate": "2026-10-09T07:34:36+00:00",
+      "active": true
+    },
+    {
+      "username": "@cparip",
+      "title": "Affiliate Marketing - Cpa.Rip",
+      "category": "marketing",
+      "type": "channel",
+      "subscribers": 30408,
+      "lastPostDate": "2026-10-16T13:56:46+00:00",
       "active": true
     },
     {
@@ -1381,12 +1417,30 @@
       "active": true
     },
     {
+      "username": "@trafficcardinal",
+      "title": "Traffic Cardinal | Арбитраж трафика",
+      "category": "marketing",
+      "type": "channel",
+      "subscribers": 19212,
+      "lastPostDate": "2026-10-16T15:00:01+00:00",
+      "active": true
+    },
+    {
       "username": "@job_react",
       "title": "React Job | JavaScript | Вакансии",
       "category": "development",
       "type": "channel",
       "subscribers": 16642,
       "lastPostDate": "2026-10-17T15:10:04+00:00",
+      "active": true
+    },
+    {
+      "username": "@fb_killa",
+      "title": "Инсайды FB-killa",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 15939,
+      "lastPostDate": "2026-10-17T13:04:10+00:00",
       "active": true
     },
     {
@@ -1426,12 +1480,30 @@
       "active": true
     },
     {
+      "username": "@remoteok",
+      "title": "Remote Jobs by Remote OK",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 12771,
+      "lastPostDate": "2026-10-17T08:09:01+00:00",
+      "active": true
+    },
+    {
       "username": "@internsgo",
       "title": "InternsGo&#33;",
       "category": "development",
       "type": "channel",
       "subscribers": 12388,
       "lastPostDate": "2026-10-17T15:23:01+00:00",
+      "active": true
+    },
+    {
+      "username": "@editors_video",
+      "title": "Монтажеры/Рилс-мейкеры | заказы и вакансии",
+      "category": "montage",
+      "type": "channel",
+      "subscribers": 11491,
+      "lastPostDate": "2026-10-17T16:04:39+00:00",
       "active": true
     },
     {
@@ -1471,6 +1543,24 @@
       "active": true
     },
     {
+      "username": "@GetJob_videoedit",
+      "title": "Монтажер и Рилсмейкер | Вакансии Чат | GetJob",
+      "category": "montage",
+      "type": "channel",
+      "subscribers": 8968,
+      "lastPostDate": "2026-10-16T16:03:44+00:00",
+      "active": true
+    },
+    {
+      "username": "@editcghunter",
+      "title": "Job List | 🪪 Вакансии и Резюме",
+      "category": "montage",
+      "type": "channel",
+      "subscribers": 5713,
+      "lastPostDate": "2026-10-15T12:06:24+00:00",
+      "active": true
+    },
+    {
       "username": "@django_school",
       "title": "Михаил Омельченко | AI&amp;IT",
       "category": "development",
@@ -1507,12 +1597,39 @@
       "active": true
     },
     {
+      "username": "@afftimes",
+      "title": "AffTimes",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 4430,
+      "lastPostDate": "2026-06-22T08:36:51+00:00",
+      "active": true
+    },
+    {
       "username": "@job_design",
       "title": "РАБОТА. ДИЗАЙН ИНТЕРЬЕРА",
       "category": "development",
       "type": "channel",
       "subscribers": 4403,
       "lastPostDate": "2026-10-16T14:05:08+00:00",
+      "active": true
+    },
+    {
+      "username": "@remotejobpositions",
+      "title": "Remote Job Positions",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 3783,
+      "lastPostDate": "2026-06-23T12:18:25+00:00",
+      "active": true
+    },
+    {
+      "username": "@diasppro",
+      "title": "Diasp.pro - всё про Арбитраж Трафика",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 3450,
+      "lastPostDate": "2026-10-09T12:04:45+00:00",
       "active": true
     },
     {
@@ -1680,6 +1797,15 @@
       "type": "channel",
       "subscribers": 2632,
       "lastPostDate": "2026-10-13T20:24:40+00:00",
+      "active": true
+    },
+    {
+      "username": "@video_editing_jobs",
+      "title": "video editing jobs🌎",
+      "category": "montage",
+      "type": "channel",
+      "subscribers": 2405,
+      "lastPostDate": "2026-07-25T13:01:33+00:00",
       "active": true
     },
     {
