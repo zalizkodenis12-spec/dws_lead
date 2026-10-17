@@ -178,34 +178,38 @@ export function extractAuthorHandle(cleanText, rawBodyHtml = '', sourceHandle = 
 export async function scanPublicChannels() {
   const sources = loadSources();
   // Filter for broadcast channels (t.me/s/ works exclusively for channels, not discussion groups)
-  const channelList = (sources.channels && sources.channels.length > 0)
-    ? sources.channels
-    : [
-        { username: '@workplaceinukraine', title: 'Work Place UA', category: 'general' },
-        { username: '@aplaywork', title: 'A-Play Work UA', category: 'general' },
-        { username: '@jecontact', title: 'Je Contact IT & Digital', category: 'development' },
-        { username: '@adgoodashell', title: 'Ad Good as Hell', category: 'marketing' },
-        { username: '@top_vacansii', title: 'Топ Вакансії UA', category: 'general' },
-        { username: '@work_in_ukraine_golovne', title: 'Робота в Україні', category: 'general' },
-        { username: '@jobzy', title: 'Jobzy UA', category: 'general' },
-        { username: '@freelance_projects', title: 'Фріланс проєкти UA', category: 'development' },
-        { username: '@remote_jobs_ua', title: 'Віддалена робота UA', category: 'general' },
-        { username: '@ua_work', title: 'Робота UA', category: 'general' },
-        { username: '@it_jobs_ukraine', title: 'IT Вакансії Україна', category: 'development' },
-        { username: '@robota_viddaleno', title: 'Робота віддалено', category: 'general' },
-        { username: '@remote_work_ukraine', title: 'Remote Work Ukraine', category: 'general' },
-        { username: '@it_work_ua', title: 'IT Робота Україна', category: 'development' },
-        { username: '@smm_work_ua', title: 'SMM Вакансії та Маркетинг', category: 'marketing' },
-        { username: '@freelance_hub_ua', title: 'Freelance Hub UA', category: 'development' },
-        { username: '@robota_v_it', title: 'Робота в IT & Digital', category: 'development' },
-        { username: '@zaichenkoteam', title: 'Zaichenko Team', category: 'general' },
-        { username: '@lobbyx', title: 'Lobby X', category: 'general' },
-        { username: '@happymonday', title: 'Happy Monday', category: 'general' },
-        { username: '@kievy_rabota', title: 'Київ Робота', category: 'general' },
-        { username: '@you_can_know_more', title: 'Ти можеш більше', category: 'general' },
-        { username: '@remote_it_ua', title: 'Remote IT Ukraine', category: 'development' },
-        { username: '@digital_work_ua', title: 'Digital Work UA', category: 'marketing' }
-      ];
+  const channelList = [
+    ...(sources.channels || []),
+    ...(sources.chats || []).filter(c => c.type === 'channel')
+  ];
+  if (channelList.length === 0) {
+    channelList.push(
+      { username: '@workplaceinukraine', title: 'Work Place UA', category: 'general' },
+      { username: '@aplaywork', title: 'A-Play Work UA', category: 'general' },
+      { username: '@jecontact', title: 'Je Contact IT & Digital', category: 'development' },
+      { username: '@adgoodashell', title: 'Ad Good as Hell', category: 'marketing' },
+      { username: '@top_vacansii', title: 'Топ Вакансії UA', category: 'general' },
+      { username: '@work_in_ukraine_golovne', title: 'Робота в Україні', category: 'general' },
+      { username: '@jobzy', title: 'Jobzy UA', category: 'general' },
+      { username: '@freelance_projects', title: 'Фріланс проєкти UA', category: 'development' },
+      { username: '@remote_jobs_ua', title: 'Віддалена робота UA', category: 'general' },
+      { username: '@ua_work', title: 'Робота UA', category: 'general' },
+      { username: '@it_jobs_ukraine', title: 'IT Вакансії Україна', category: 'development' },
+      { username: '@robota_viddaleno', title: 'Робота віддалено', category: 'general' },
+      { username: '@remote_work_ukraine', title: 'Remote Work Ukraine', category: 'general' },
+      { username: '@it_work_ua', title: 'IT Робота Україна', category: 'development' },
+      { username: '@smm_work_ua', title: 'SMM Вакансії та Маркетинг', category: 'marketing' },
+      { username: '@freelance_hub_ua', title: 'Freelance Hub UA', category: 'development' },
+      { username: '@robota_v_it', title: 'Робота в IT & Digital', category: 'development' },
+      { username: '@zaichenkoteam', title: 'Zaichenko Team', category: 'general' },
+      { username: '@lobbyx', title: 'Lobby X', category: 'general' },
+      { username: '@happymonday', title: 'Happy Monday', category: 'general' },
+      { username: '@kievy_rabota', title: 'Київ Робота', category: 'general' },
+      { username: '@you_can_know_more', title: 'Ти можеш більше', category: 'general' },
+      { username: '@remote_it_ua', title: 'Remote IT Ukraine', category: 'development' },
+      { username: '@digital_work_ua', title: 'Digital Work UA', category: 'marketing' }
+    );
+  }
 
   const targetHandles = [];
   const seenHandles = new Set();
