@@ -2879,7 +2879,7 @@ body.dark-theme .order-leaf-badge.expected {
 
 .scrape-status-pill.running { background: var(--accent-bg); color: var(--accent); }
 .scrape-status-pill.error { background: var(--danger-bg); color: var(--danger); }
-.scrape-status-pill.demo { background: var(--warning-bg); color: var(--warning); }
+.scrape-status-pill.demo { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(0, 102, 255, 0.2); }
 
 .scrape-spinner {
   width: 22px;
@@ -2899,7 +2899,22 @@ body.dark-theme .order-leaf-badge.expected {
   border-top: 1px solid var(--border);
 }
 
-.scrape-job.open .scrape-job-body { display: block; }
+.scrape-job.open .scrape-job-body,
+.scrape-job-card.open .scrape-job-body { display: block; }
+
+.scrape-job-count.scrape-job-count-numonly {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.scrape-job-count.scrape-job-count-numonly b {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--accent);
+  min-width: 28px;
+  text-align: right;
+}
 
 .scrape-job-actions {
   display: flex;
@@ -3448,6 +3463,14 @@ body.dark-theme .order-leaf-badge.expected {
   font-size: 1.25rem;
   font-weight: 900;
   margin: 2px 0;
+  color: var(--black);
+}
+
+#roiCurrentRatingVal,
+#roiGuestsVal,
+#roiCheckVal {
+  color: var(--accent) !important;
+  font-weight: 800;
 }
 
 .text-accent-huge {

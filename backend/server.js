@@ -378,8 +378,8 @@ app.get('/api/account/:accountKey', (req, res) => {
 
 app.post('/api/account/sync', (req, res) => {
   try {
-    const { accountKey, crm, income, profile, takenLeadIds, username, name } = req.body;
-    const synced = db.syncAccount(accountKey, { crm, income, profile, takenLeadIds, username, name });
+    const { accountKey, crm, income, expenses, profile, takenLeadIds, username, name } = req.body;
+    const synced = db.syncAccount(accountKey, { crm, income, expenses, profile, takenLeadIds, username, name });
     res.json({ success: true, data: synced });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

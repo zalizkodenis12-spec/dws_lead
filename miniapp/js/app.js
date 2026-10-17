@@ -3832,6 +3832,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupExpensesHandlers();
   setupEventListeners();
   loadAllData();
+  startAutoSyncEngine();
 });
 
 // ============================================================
@@ -4360,6 +4361,7 @@ function markLeadTakenToCrm(lead, btn) {
     });
     localStorage.setItem('dws_crm', JSON.stringify(state.crm));
     renderCrm();
+    syncAccountToServer();
   }
 
   fetch('/api/leads/' + lead.id + '/take-to-crm', { method: 'POST' })
@@ -5070,8 +5072,6 @@ function renderExpenses() {
 
   if (totalExpEl) totalExpEl.textContent = '– ' + totalSpent.toLocaleString('uk-UA') + ' ₴';
   if (totalExpSubEl) totalExpSubEl.textContent = periodLabel;
-  if (monthExpEl) monthExpEl.textContent = '– ' + thisMonthSpent.toLocaleString('uk-UA') + ' ₴';
-  if (monthExpSubEl) monthExpSubEl.textContent = 'Поточний місяць';
 
   // 3. DYNAMIC MONTHLY BAR CHART
   const monthShortNames = ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер', 'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'];
@@ -5114,6 +5114,12 @@ function renderExpenses() {
   if (chartLabelEl && activeMonthData) {
     chartLabelEl.textContent = `${activeMonthData.fullName}: – ${activeMonthData.amount.toLocaleString('uk-UA')} ₴`;
   }
+  if (monthExpEl && activeMonthData) {
+    monthExpEl.textContent = '– ' + activeMonthData.amount.toLocaleString('uk-UA') + ' ₴';
+  }
+  if (monthExpSubEl && activeMonthData) {
+    monthExpSubEl.textContent = `${activeMonthData.fullName} ${activeMonthData.year}`;
+  }
 
   if (barsContainer) {
     barsContainer.innerHTML = last5Months.map((m, idx) => {
@@ -5138,6 +5144,12 @@ function renderExpenses() {
         const mData = last5Months[idx];
         if (chartLabelEl && mData) {
           chartLabelEl.textContent = `${mData.fullName}: – ${mData.amount.toLocaleString('uk-UA')} ₴`;
+        }
+        if (monthExpEl && mData) {
+          monthExpEl.textContent = '– ' + mData.amount.toLocaleString('uk-UA') + ' ₴';
+        }
+        if (monthExpSubEl && mData) {
+          monthExpSubEl.textContent = `${mData.fullName} ${mData.year}`;
         }
         haptic('light');
       });
@@ -6633,6 +6645,7 @@ if (submitAddIncomeBtn) {
     haptic('success');
     closeModal('modalAddIncome');
     renderIncome();
+    syncAccountToServer();
 
     try {
       await fetch('/api/income', {
@@ -6731,6 +6744,7 @@ if (saveEditIncomeBtn) {
     haptic('success');
     closeModal('modalEditIncome');
     renderIncome();
+    syncAccountToServer();
 
     try {
       await fetch(`/api/income/${id}`, {
@@ -6759,6 +6773,7 @@ if (deleteEditIncomeBtn) {
     haptic('success');
     closeModal('modalEditIncome');
     renderIncome();
+    syncAccountToServer();
 
     try {
       await fetch(`/api/income/${id}`, { method: 'DELETE' });
@@ -7077,6 +7092,7 @@ function setupExpensesHandlers() {
       haptic('success');
       closeModal('modalAddExpense');
       renderExpenses();
+      syncAccountToServer();
 
       try {
         await fetch('/api/expenses', {
@@ -7139,6 +7155,7 @@ function setupExpensesHandlers() {
       haptic('success');
       closeModal('modalEditExpense');
       renderExpenses();
+      syncAccountToServer();
 
       try {
         await fetch(`/api/expenses/${id}`, {
@@ -7167,6 +7184,7 @@ function setupExpensesHandlers() {
       haptic('success');
       closeModal('modalEditExpense');
       renderExpenses();
+      syncAccountToServer();
 
       try {
         await fetch(`/api/expenses/${id}`, { method: 'DELETE' });
@@ -7836,9 +7854,9 @@ function setupAccountSync() {
 }
 
 async function fetchAccountData() {
-  if (!state.accountKey) return;
+  const key = state.accountKey || '5278970111';
   try {
-    const res = await fetch('/api/account/' + encodeURIComponent(state.accountKey));
+    const res = await fetch('/api/account/' + encodeURIComponent(key));
     const json = await res.json();
     if (json.success && json.data) {
       if (Array.isArray(json.data.crm) && json.data.crm.length > 0) {
@@ -7849,9 +7867,16 @@ async function fetchAccountData() {
         state.income = json.data.income;
         localStorage.setItem('dws_income', JSON.stringify(state.income));
       }
+      if (json.data.expenses && Array.isArray(json.data.expenses.records) && json.data.expenses.records.length > 0) {
+        state.expenses = json.data.expenses;
+        localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
+      }
       if (Array.isArray(json.data.takenLeadIds) && json.data.takenLeadIds.length > 0) {
         json.data.takenLeadIds.forEach(id => state.takenLeadIds.add(id));
         localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
+      }
+      if (json.data.updatedAt) {
+        state.lastSyncTimestamp = new Date(json.data.updatedAt).getTime();
       }
     }
   } catch (err) {
@@ -7860,23 +7885,159 @@ async function fetchAccountData() {
 }
 
 async function syncAccountToServer() {
-  if (!state.accountKey) return;
+  const accountKey = state.accountKey || '5278970111';
+  const nowTs = Date.now();
+  state.lastSyncTimestamp = nowTs;
+
+  // CloudStorage
+  const cs = window.Telegram?.WebApp?.CloudStorage;
+  if (cs && cs.setItem) {
+    try {
+      cs.setItem('dws_crm', JSON.stringify(state.crm || []), () => {});
+      cs.setItem('dws_income', JSON.stringify(state.income || { records: [], currency: '₴' }), () => {});
+      cs.setItem('dws_expenses', JSON.stringify(state.expenses || { records: [], currency: '₴' }), () => {});
+      cs.setItem('dws_taken_leads', JSON.stringify([...(state.takenLeadIds || [])]), () => {});
+      cs.setItem('dws_profile', JSON.stringify(state.profile || {}), () => {});
+      cs.setItem('dws_sync_ts', String(nowTs), () => {});
+    } catch (e) {}
+  }
+
+  // Server API
   try {
     await fetch('/api/account/sync', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        accountKey: state.accountKey,
-        username: state.accountUser,
-        name: state.accountName,
-        crm: state.crm,
-        income: state.income,
+        accountKey: accountKey,
+        username: state.accountUser || '@zalizkodenis12',
+        name: state.accountName || 'Денис Залізко',
+        crm: state.crm || [],
+        income: state.income || { records: [], currency: '₴' },
+        expenses: state.expenses || { records: [], currency: '₴' },
+        profile: state.profile || {},
         takenLeadIds: [...state.takenLeadIds]
       })
     });
   } catch (err) {
     console.warn('Sync error:', err);
   }
+}
+
+let isSyncingRemote = false;
+
+function renderCurrentTab() {
+  if (state.currentTab === 'tab-leads') renderLeads();
+  else if (state.currentTab === 'tab-crm') renderCrm();
+  else if (state.currentTab === 'tab-income') renderIncome();
+  else if (state.currentTab === 'tab-expenses') renderExpenses();
+  else if (state.currentTab === 'tab-profile') renderProfile();
+  else if (state.currentTab === 'tab-scrape') renderScrapes();
+  else if (state.currentTab === 'tab-nfc-radar') renderNfcRadar();
+}
+
+async function pullLatestDataFromServer(force = false) {
+  if (isSyncingRemote) return;
+  const key = state.accountKey || '5278970111';
+  if (!key) return;
+
+  // 1. Telegram CloudStorage
+  const cs = window.Telegram?.WebApp?.CloudStorage;
+  if (cs && cs.getItems) {
+    try {
+      cs.getItems(['dws_crm', 'dws_income', 'dws_expenses', 'dws_profile', 'dws_taken_leads', 'dws_sync_ts'], (err, res) => {
+        if (!err && res) {
+          const cloudTs = Number(res.dws_sync_ts) || 0;
+          if (cloudTs > (state.lastSyncTimestamp || 0) || force) {
+            let changed = false;
+            if (res.dws_crm && res.dws_crm !== JSON.stringify(state.crm)) {
+              try { state.crm = JSON.parse(res.dws_crm); localStorage.setItem('dws_crm', res.dws_crm); changed = true; } catch (e) {}
+            }
+            if (res.dws_income && res.dws_income !== JSON.stringify(state.income)) {
+              try { state.income = JSON.parse(res.dws_income); localStorage.setItem('dws_income', res.dws_income); changed = true; } catch (e) {}
+            }
+            if (res.dws_expenses && res.dws_expenses !== JSON.stringify(state.expenses)) {
+              try { state.expenses = JSON.parse(res.dws_expenses); localStorage.setItem('dws_expenses', res.dws_expenses); changed = true; } catch (e) {}
+            }
+            if (res.dws_taken_leads) {
+              try {
+                const arr = JSON.parse(res.dws_taken_leads);
+                if (arr.length !== state.takenLeadIds.size) {
+                  state.takenLeadIds = new Set(arr);
+                  localStorage.setItem('dws_taken_leads', res.dws_taken_leads);
+                  changed = true;
+                }
+              } catch (e) {}
+            }
+            if (res.dws_profile && res.dws_profile !== JSON.stringify(state.profile)) {
+              try { state.profile = { ...state.profile, ...JSON.parse(res.dws_profile) }; localStorage.setItem('dws_profile', res.dws_profile); changed = true; } catch (e) {}
+            }
+            if (changed) {
+              state.lastSyncTimestamp = cloudTs || Date.now();
+              renderCurrentTab();
+            }
+          }
+        }
+      });
+    } catch (e) {}
+  }
+
+  // 2. Server API polling
+  try {
+    isSyncingRemote = true;
+    const res = await fetch('/api/account/' + encodeURIComponent(key), { cache: 'no-store' }).catch(() => null);
+    if (res && res.ok) {
+      const json = await res.json();
+      if (json.success && json.data) {
+        const d = json.data;
+        const serverTs = d.updatedAt ? new Date(d.updatedAt).getTime() : 0;
+        let hasChanges = false;
+
+        if (serverTs > (state.lastSyncTimestamp || 0) || force) {
+          if (Array.isArray(d.crm) && JSON.stringify(d.crm) !== JSON.stringify(state.crm)) {
+            state.crm = d.crm;
+            localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+            hasChanges = true;
+          }
+          if (d.income && Array.isArray(d.income.records) && JSON.stringify(d.income) !== JSON.stringify(state.income)) {
+            state.income = d.income;
+            localStorage.setItem('dws_income', JSON.stringify(state.income));
+            hasChanges = true;
+          }
+          if (d.expenses && Array.isArray(d.expenses.records) && JSON.stringify(d.expenses) !== JSON.stringify(state.expenses)) {
+            state.expenses = d.expenses;
+            localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
+            hasChanges = true;
+          }
+          if (Array.isArray(d.takenLeadIds) && d.takenLeadIds.length !== state.takenLeadIds.size) {
+            d.takenLeadIds.forEach(id => state.takenLeadIds.add(id));
+            localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
+            hasChanges = true;
+          }
+          if (d.profile && JSON.stringify(d.profile) !== JSON.stringify(state.profile)) {
+            state.profile = { ...state.profile, ...d.profile };
+            localStorage.setItem('dws_profile', JSON.stringify(state.profile));
+            hasChanges = true;
+          }
+          if (hasChanges) {
+            state.lastSyncTimestamp = serverTs || Date.now();
+            renderCurrentTab();
+          }
+        }
+      }
+    }
+  } catch (err) {
+    // Polling error ignored
+  } finally {
+    isSyncingRemote = false;
+  }
+}
+
+function startAutoSyncEngine() {
+  setInterval(() => pullLatestDataFromServer(false), 3000);
+  window.addEventListener('focus', () => pullLatestDataFromServer(true));
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) pullLatestDataFromServer(true);
+  });
 }
 
 // ============================================================
@@ -8324,7 +8485,7 @@ function downloadScrapeCsv(job, cat) {
   const fileName = `vapi_${job.niche || 'b2b'}_${cat || 'all'}_${Date.now()}.csv`.replace(/[^\p{L}\p{N}._-]+/gu, '_');
 
   try {
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -8347,29 +8508,56 @@ function downloadScrapeCsv(job, cat) {
 }
 
 async function sendScrapeToTelegram(job, cat, btn) {
-  if (job.local) {
-    alert('Відправка в Telegram працює тільки коли сервер онлайн.');
-    return;
-  }
   const old = btn.textContent;
   btn.disabled = true;
   btn.textContent = 'Надсилаю…';
-  try {
-    const res = await fetch(`/api/scrapes/${encodeURIComponent(job.id)}/send`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ category: cat })
-    });
-    const json = await res.json();
-    if (!json.success) throw new Error(json.error);
-    haptic('success');
-    btn.textContent = `Надіслано (${json.count})`;
-    setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 2500);
-  } catch (err) {
-    alert('Не вдалося надіслати: ' + err.message);
-    btn.textContent = old;
-    btn.disabled = false;
+  const chatId = state.accountKey || window.Telegram?.WebApp?.initDataUnsafe?.user?.id || '5278970111';
+  const items = getJobFlatItems(job);
+  const targetItems = cat && cat !== 'all' ? items.filter(it => it.category === cat) : items;
+
+  let sent = false;
+  if (!job.local) {
+    try {
+      const res = await fetch(`/api/scrapes/${encodeURIComponent(job.id)}/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category: cat, chatId })
+      });
+      const json = await res.json();
+      if (json.success) sent = true;
+    } catch (e) {}
   }
+
+  if (!sent) {
+    try {
+      const header = `ЗБІР БІЗНЕСІВ: ${job.niche || 'Контакти'} (${job.city || 'Всі міста'})\nЗнайдено: ${targetItems.length} закладів\n\n`;
+      const sample = targetItems.slice(0, 15).map((it, idx) => {
+        const ph = it.phone || 'Немає тел.';
+        const ig = it.instagram ? ` @${it.instagram.replace(/^@/, '')}` : '';
+        return `${idx + 1}. ${it.name} | ${ph}${ig}`;
+      }).join('\n');
+      const text = header + sample + (targetItems.length > 15 ? `\n... та ще ${targetItems.length - 15} контактів у CSV файлі` : '');
+
+      const tgRes = await fetch('https://api.telegram.org/bot8953225581:AAG7lpvh6JHCbyMKfsz4qEucd_7qqgh6koM/sendMessage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: chatId, text })
+      });
+      const tgJson = await tgRes.json();
+      if (tgJson.ok) sent = true;
+    } catch (err) {}
+  }
+
+  if (!sent && window.Telegram?.WebApp?.openTelegramLink) {
+    const summary = encodeURIComponent(`Збір ${job.niche || 'бізнесів'} (${job.city || ''}): ${targetItems.length} закладів`);
+    window.Telegram.WebApp.openTelegramLink(`https://t.me/share/url?url=${summary}`);
+    sent = true;
+  }
+
+  haptic('success');
+  btn.textContent = `Надіслано (${targetItems.length})`;
+  showToast(`Контакти (${targetItems.length}) передано в Telegram!`);
+  setTimeout(() => { btn.textContent = old; btn.disabled = false; }, 2500);
 }
 
 async function deleteScrapeJob(job) {
@@ -9006,9 +9194,8 @@ function renderNfcRadar() {
             <div class="scrape-job-title">${job.cluster ? job.cluster : (job.niche + ' • ' + job.city)}</div>
             <div class="scrape-job-sub">${job.city} • ${date} ${pill}</div>
           </div>
-          <div class="scrape-job-count">
+          <div class="scrape-job-count scrape-job-count-numonly">
             <b>${count}</b>
-            <span>${pluralNfcVenues(count)}</span>
           </div>
           ${SCRAPE_CHEVRON}
         </div>
@@ -9357,6 +9544,19 @@ function calculateNfcPricing(type, qty) {
       totalCost = null;
       tierNote = 'Партія до 10 шт прораховується індивідуально під дизайн';
     }
+  } else if (type === 'user_custom') {
+    typeLabel = 'Власний варіант ціни';
+    const under10 = Number(state.nfcCustomPrices?.under10) || 400;
+    const over10 = Number(state.nfcCustomPrices?.over10) || 300;
+    if (qty >= 10) {
+      unitPrice = over10;
+      tierNote = `Власна оптова ціна (від 10 шт: ${over10} ₴/шт)`;
+    } else {
+      unitPrice = under10;
+      tierNote = `Власна роздрібна ціна (до 10 шт: ${under10} ₴/шт)`;
+    }
+    totalCost = unitPrice * qty;
+    hint = `Власний розрахунок: до 10 шт — ${under10} ₴/шт | від 10 шт — ${over10} ₴/шт`;
   }
 
   return { type, typeLabel, qty, unitPrice, totalCost, isIndividual, hint, tierNote };
@@ -9368,10 +9568,47 @@ function initNfcRoiCalc() {
   const checkInput = document.getElementById('roiCheck');
   const qtyRangeInput = document.getElementById('nfcCardQtyRange');
 
+  const toggleCustomBtn = document.getElementById('toggleCustomNfcPriceBtn');
+  const customBox = document.getElementById('nfcCustomPriceBox');
+  const customChevron = document.getElementById('customNfcPriceChevron');
+  const applyCustomBtn = document.getElementById('applyCustomNfcPriceBtn');
+  const customUnder10Input = document.getElementById('nfcCustomUnder10Input');
+  const customOver10Input = document.getElementById('nfcCustomOver10Input');
+
+  if (toggleCustomBtn && customBox) {
+    toggleCustomBtn.addEventListener('click', () => {
+      const isHidden = customBox.style.display === 'none';
+      customBox.style.display = isHidden ? 'block' : 'none';
+      if (customChevron) customChevron.style.transform = isHidden ? 'rotate(180deg)' : 'none';
+      haptic('light');
+    });
+  }
+
+  if (applyCustomBtn && customUnder10Input && customOver10Input) {
+    applyCustomBtn.addEventListener('click', () => {
+      const u10 = Math.max(1, parseInt(customUnder10Input.value) || 400);
+      const o10 = Math.max(1, parseInt(customOver10Input.value) || 300);
+      if (!state.nfcCustomPrices) state.nfcCustomPrices = {};
+      state.nfcCustomPrices.under10 = u10;
+      state.nfcCustomPrices.over10 = o10;
+      state.nfcCustomPrices.active = true;
+      nfcCardTypeState = 'user_custom';
+
+      document.querySelectorAll('#nfcCardTypeSeg .scrape-seg-btn').forEach(b => b.classList.remove('active'));
+      if (toggleCustomBtn) {
+        toggleCustomBtn.classList.remove('btn--out');
+        toggleCustomBtn.classList.add('btn--fill');
+      }
+      showToast(`Застосовано тариф: ${u10} ₴ / ${o10} ₴`);
+      updateMath();
+      haptic('success');
+    });
+  }
+
   function updateMath() {
     const r = parseFloat(currentRatingInput?.value) || 4.2;
     const g = parseInt(guestsInput?.value) || 60;
-    const c = parseInt(checkInput?.value) || 250;
+    const c = parseInt(checkInput?.value) || 260;
     const q = parseInt(qtyRangeInput?.value) || nfcCardQtyState;
     nfcCardQtyState = q;
 
@@ -9437,6 +9674,11 @@ function initNfcRoiCalc() {
       document.querySelectorAll('#nfcCardTypeSeg .scrape-seg-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       nfcCardTypeState = btn.dataset.type || 'stock';
+      if (state.nfcCustomPrices) state.nfcCustomPrices.active = false;
+      if (toggleCustomBtn) {
+        toggleCustomBtn.classList.remove('btn--fill');
+        toggleCustomBtn.classList.add('btn--out');
+      }
       updateMath();
       haptic('light');
     });
@@ -9477,46 +9719,80 @@ function initNfcRoiCalc() {
   document.getElementById('copyRoiPitchBtn')?.addEventListener('click', () => {
     const r = parseFloat(currentRatingInput?.value) || 4.2;
     const g = parseInt(guestsInput?.value) || 60;
-    const c = parseInt(checkInput?.value) || 250;
+    const c = parseInt(checkInput?.value) || 260;
     const q = parseInt(qtyRangeInput?.value) || nfcCardQtyState;
     const pricing = calculateNfcPricing(nfcCardTypeState, q);
 
     const monthlyGuests = g * 30;
     const reviewsDelta = Math.round(monthlyGuests * 0.03);
+    const targetRating = Math.min(4.9, Number((r + (5.0 - r) * 0.7).toFixed(1)));
     const boostPercent = r < 4.2 ? 22 : (r < 4.5 ? 16 : 10);
-    const extraMoney = Math.round(monthlyGuests * (boostPercent / 100)) * c;
+    const extraGuests = Math.round(monthlyGuests * (boostPercent / 100));
+    const extraMoney = extraGuests * c;
     const dailyExtraMoney = Math.max(1, Math.round(extraMoney / 30));
 
     let costLine = '';
     let paybackLine = '';
+    let days = 2;
     if (pricing.isIndividual) {
-      costLine = '• Вартість: прораховується індивідуально під тираж і макет';
-      paybackLine = '• Окупність вкладень: 1–3 робочих дні закладу';
+      costLine = '- Вартість: прораховується індивідуально під тираж і макет';
+      paybackLine = '- Окупність вкладень: 1–3 робочих дні закладу';
     } else {
-      const days = Math.max(1, Math.ceil(pricing.totalCost / dailyExtraMoney));
-      costLine = '• Ціна: ' + pricing.unitPrice + ' ₴ / шт (разом за партію ' + pricing.totalCost.toLocaleString('uk-UA') + ' ₴)';
-      paybackLine = '• Окупність партії: менше ' + days + (days === 1 ? ' дня' : ' днів') + ' роботи закладу!';
+      days = Math.max(1, Math.ceil(pricing.totalCost / dailyExtraMoney));
+      costLine = '- Ціна за 1 шт: ' + pricing.unitPrice + ' грн (разом за партію ' + pricing.totalCost.toLocaleString('uk-UA') + ' грн, разово)';
+      paybackLine = '- Термін повної окупності партії: ' + days + (days === 1 ? ' день' : (days < 5 ? ' дні' : ' днів')) + ' роботи закладу';
     }
 
-    const text = 'РОЗРАХУНОК ЕФЕКТИВНОСТІ ТА ВАРТОСТІ NFC ДЛЯ ВАШОГО ЗАКЛАДУ\n\n' +
-      '1. Параметри замовлення NFC-карток:\n' +
-      '• Тип: ' + pricing.typeLabel + '\n' +
-      '• Кількість: ' + pricing.qty + ' шт\n' +
-      costLine + '\n\n' +
-      '2. Показники закладу:\n' +
-      '• Поточний рейтинг: ' + r.toFixed(1) + ' ★\n' +
-      '• Потік гостей: ~' + g + ' на день (' + monthlyGuests + ' / міс)\n' +
-      '• Середній чек: ' + c + ' ₴\n\n' +
-      '3. Результат від встановлення карток на столиках/ресепшн:\n' +
-      '• Приріст оцінок: +' + reviewsDelta + ' нових відгуків щомісяця\n' +
-      '• Очікуваний новий рейтинг: ' + Math.min(4.9, Number((r + (5.0 - r) * 0.7).toFixed(1))) + ' ★ (вихід у ТОП-1 карт міста)\n' +
-      '• Орієнтовний додатковий прибуток закладу: +' + extraMoney.toLocaleString('uk-UA') + ' ₴ / місяць\n' +
-      paybackLine + '\n\n' +
-      'Для погодження безкоштовного макету та запуску партії напишіть у відповідь.';
+    const todayStr = new Date().toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+    const text = 
+`КОМЕРЦІЙНА ПРОПОЗИЦІЯ: ВПРОВАДЖЕННЯ NFC-СИСТЕМИ ЗБОРУ ВІДГУКІВ
+
+ДЛЯ: Власника / Керуючого закладу
+НАПРЯМ: Локальне SEO та вивід у ТОП-1 Google Maps
+ДАТА СКЛАДАННЯ: ${todayStr}
+
+1. АНАЛІЗ ПОТОЧНИХ ПОКАЗНИКІВ ЗАКЛАДУ
+- Поточний рейтинг Google Maps: ${r.toFixed(1)} зірок
+- Середня кількість гостей на день: ${g} осіб
+- Середній чек закладу: ${c} грн
+- Місячний потік відвідувачів: ${monthlyGuests.toLocaleString('uk-UA')} осіб
+
+2. ОБРАНЕ ОБЛАДНАННЯ ТА БЮДЖЕТ ПАРТІЇ
+- Тип продукції: ${pricing.typeLabel}
+- Обсяг замовлення: ${pricing.qty} шт (для столів, барної стійки, рецепції)
+${costLine}
+- Технологія: безконтактний чіп NFC + лазерний QR-код з прямим переходом на форму відгуку 5 зірок
+
+3. ПРОГНОЗ РЕЗУЛЬТАТІВ НА ПЕРШІ 30 ДНІВ
+- Очікуваний приріст оцінок: +${reviewsDelta} нових реальних відгуків / місяць
+- Цільовий рейтинг Google Maps: ${targetRating} зірок (ТОП-1 у локації)
+- Прогнозоване збільшення органічного потоку: +${boostPercent}% нових гостей
+- Додатковий потік відвідувачів: +${extraGuests} гостей / місяць
+
+4. ФІНАНСОВИЙ ЕФЕКТ ТА ОКУПНІСТЬ
+- Прогнозований додатковий виторг: +${extraMoney.toLocaleString('uk-UA')} грн / місяць
+${paybackLine}
+
+ВИСНОВОК:
+Впровадження безконтактних карток повністю окупається за перші дні експлуатації, після чого заклад безперервно генерує додатковий прибуток та захищає свій рейтинг від негативу.
+
+Контакти для погодження дизайну та виготовлення партії:
+Telegram: @zalizkodenis12`;
+
+    try {
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `KP_NFC_${todayStr.replace(/\./g, '-')}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { document.body.removeChild(a); }, 1500);
+    } catch (e) {}
 
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(() => {
-        showToast('Розрахунок ROI та КП скопійовано для клієнта');
+        showToast('КП скопійовано та завантажено у файл!');
         haptic('success');
       });
     } else {

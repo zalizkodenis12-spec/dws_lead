@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/app.css?v=3.9.5">
+  <link rel="stylesheet" href="css/app.css?v=3.9.6">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -339,8 +339,7 @@
       <section id="tab-nfc-radar" class="tab-view">
         <div class="view-header">
           <div class="view-title-wrap">
-            <h1 class="view-title">NFC Радар</h1>
-            <span class="nfc-view-badge">B2B Відгуки</span>
+            <h1 class="view-title">NFC</h1>
           </div>
           <div class="leads-today-stat">
             <span class="leads-count-num" id="nfcRadarTotalNum">0</span>
@@ -368,28 +367,8 @@
           </button>
         </div>
 
-        <!-- City Quick Filter Chips -->
-        <div class="nfc-filter-chips-wrap">
-          <div class="nfc-chips-scroll" id="nfcCityChips">
-            <button type="button" class="nfc-chip active" data-city="all">Всі локації</button>
-            <button type="button" class="nfc-chip" data-city="Київ">Київ</button>
-            <button type="button" class="nfc-chip" data-city="Львів">Львів</button>
-            <button type="button" class="nfc-chip" data-city="Одеса">Одеса</button>
-            <button type="button" class="nfc-chip" data-city="Дніпро">Дніпро</button>
-            <button type="button" class="nfc-chip" data-city="Харків">Харків</button>
-          </div>
-        </div>
-
         <div class="scrape-section-label-row">
           <span class="scrape-section-label">ЗБОРИ ЗАКЛАДІВ & МАРШРУТИ</span>
-          <div class="nfc-view-toggle">
-            <button type="button" class="nfc-view-btn active" id="nfcViewCardsBtn" title="Вигляд картками">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            </button>
-            <button type="button" class="nfc-view-btn" id="nfcViewTableBtn" title="Вигляд таблицею">
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-            </button>
-          </div>
         </div>
         <div id="nfcRadarJobsList" class="scrape-jobs"></div>
       </section>
@@ -410,11 +389,11 @@
         <div class="income-stats-grid">
           <div class="income-stat-card">
             <span class="stat-label">ВИТРАЧЕНО</span>
-            <div class="stat-value text-accent" id="totalExpensesVal">0 ₴</div>
+            <div class="stat-value" id="totalExpensesVal">0 ₴</div>
             <span class="stat-sub" id="totalExpensesSub">За весь час</span>
           </div>
           <div class="income-stat-card">
-            <span class="stat-label">ЗА ЦЕЙ МІСЯЦЬ</span>
+            <span class="stat-label" id="monthExpensesTitle">ЗА ОБРАНИЙ МІСЯЦЬ</span>
             <div class="stat-value text-accent" id="monthExpensesVal">0 ₴</div>
             <span class="stat-sub" id="monthExpensesSub">Поточний місяць</span>
           </div>
@@ -487,7 +466,7 @@
       </button>
       <button class="nav-btn" data-tab="tab-nfc-radar">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 9 9"></path><path d="M12 7a5 5 0 0 1 5 5"></path><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle></svg>
-        <span>NFC Радар</span>
+        <span>NFC</span>
       </button>
     </nav>
 
@@ -1608,8 +1587,24 @@
             <button type="button" class="scrape-seg-btn" data-type="color" style="font-size: 0.74rem; padding: 8px 6px;">Кольоровий акрил</button>
             <button type="button" class="scrape-seg-btn" data-type="custom" style="font-size: 0.74rem; padding: 8px 6px;">Своя партія</button>
           </div>
-          <div id="nfcCardTypeHint" style="font-size: 0.74rem; color: var(--muted); margin-top: 6px; line-height: 1.35;">
-            З асортименту: до 10 шт — 400 ₴/шт | від 10 шт — 300 ₴/шт
+          
+          <button type="button" id="toggleCustomNfcPriceBtn" class="btn btn--out btn--sm btn--block" style="margin-top: 8px; justify-content: space-between;">
+            <span id="customNfcPriceBtnLabel">Свій варіант ціни</span>
+            <svg id="customNfcPriceChevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+
+          <div id="nfcCustomPriceBox" style="display: none; margin-top: 8px; padding: 12px; background: var(--card-sub); border: 1px dashed var(--border); border-radius: var(--r);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <label class="form-label" style="font-size: 0.68rem; margin-bottom: 4px;">ДО 10 ШТ (₴/ШТ):</label>
+                <input type="number" id="nfcCustomUnder10Input" class="form-input" value="400" min="1" max="5000" style="padding: 6px 10px; font-size: 0.85rem; height: 36px;">
+              </div>
+              <div>
+                <label class="form-label" style="font-size: 0.68rem; margin-bottom: 4px;">ВІД 10 ШТ (₴/ШТ):</label>
+                <input type="number" id="nfcCustomOver10Input" class="form-input" value="300" min="1" max="5000" style="padding: 6px 10px; font-size: 0.85rem; height: 36px;">
+              </div>
+            </div>
+            <button type="button" id="applyCustomNfcPriceBtn" class="btn btn--fill btn--sm btn--block">ЗАСТОСУВАТИ СВІЙ ТАРИФ</button>
           </div>
         </div>
 
@@ -1652,7 +1647,7 @@
           <div class="form-group" style="margin-bottom: 10px;">
             <div class="label-row" style="display:flex; justify-content:space-between;">
               <label class="form-label" style="font-size: 0.75rem;">ПОТОЧНИЙ РЕЙТИНГ У MAPS:</label>
-              <span id="roiCurrentRatingVal" style="font-family:var(--ffh); font-weight:800; color:var(--warning);">4.2 ★</span>
+              <span id="roiCurrentRatingVal" style="font-family:var(--ffh); font-weight:800; color:var(--accent);">4.2 ★</span>
             </div>
             <input type="range" id="roiCurrentRating" min="3.5" max="4.7" step="0.1" value="4.2" class="form-range" style="width:100%;">
           </div>
@@ -1660,7 +1655,7 @@
           <div class="form-group" style="margin-bottom: 10px;">
             <div class="label-row" style="display:flex; justify-content:space-between;">
               <label class="form-label" style="font-size: 0.75rem;">ГОСТЕЙ НА ДЕНЬ:</label>
-              <span id="roiGuestsVal" style="font-family:var(--ffh); font-weight:800; color:var(--accent);">60 гостей</span>
+              <span id="roiGuestsVal" style="font-family:var(--ffh); font-weight:800; color:var(--accent);">60 гостей / день</span>
             </div>
             <input type="range" id="roiGuests" min="15" max="250" step="5" value="60" class="form-range" style="width:100%;">
           </div>
@@ -1668,9 +1663,9 @@
           <div class="form-group" style="margin-bottom: 12px;">
             <div class="label-row" style="display:flex; justify-content:space-between;">
               <label class="form-label" style="font-size: 0.75rem;">СЕРЕДНІЙ ЧЕК ЗАКЛАДУ:</label>
-              <span id="roiCheckVal" style="font-family:var(--ffh); font-weight:800; color:var(--black);">250 ₴</span>
+              <span id="roiCheckVal" style="font-family:var(--ffh); font-weight:800; color:var(--accent);">260 ₴</span>
             </div>
-            <input type="range" id="roiCheck" min="80" max="1200" step="20" value="250" class="form-range" style="width:100%;">
+            <input type="range" id="roiCheck" min="80" max="1200" step="20" value="260" class="form-range" style="width:100%;">
           </div>
         </div>
 
@@ -1686,9 +1681,9 @@
             <div class="val text-success" id="roiTargetRating">4.9 ★ (ТОП-1)</div>
             <span class="sub">+18% органічних клієнтів з локального пошуку</span>
           </div>
-          <div class="nfc-roi-metric-card highlight">
+          <div class="nfc-roi-metric-card">
             <span class="lbl">ДОДАТКОВИЙ ПРИБУТОК ЗАКЛАДУ</span>
-            <div class="val text-accent-huge" id="roiExtraIncome">+81 000 ₴ / міс</div>
+            <div class="val" id="roiExtraIncome">+81 000 ₴ / міс</div>
             <span class="sub" id="roiPaybackText">Окупність партії карток (3 000 ₴) — всього за 1–2 дні!</span>
           </div>
         </div>
@@ -1700,6 +1695,6 @@
     </div>
   </div>
 
-  <script src="js/app.js?v=3.9.5"></script>
+  <script src="js/app.js?v=3.9.6"></script>
 </body>
 </html>
