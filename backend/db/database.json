@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792244227580-450",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "channel",
+      "sourceName": "Zaichenko Team | Вакансії",
+      "sourceUsername": "@zaichenkoteam",
+      "authorName": "Operations",
+      "authorUsername": "@Operations",
+      "title": "📺 Можливості для талановитих за останній тиждень, які ми публікували:",
+      "text": "📺 Можливості для талановитих за останній тиждень, які ми публікували:\n\nЗакріплюйте наш канал, щоб не пропустити повідомлення.\n\nОпублікувати вашу вакансію: @zt_admin | @zaichenkoteam_bot\n\n———\n\n🗂 Marketing:\n▪️ PR & Marketing Manager | Digital Manager\n▪️ Business Development Project Manager | VYRIY Industries\n▪️ Talent Marketing Manager | Solidgate\n▪️ Senior Growth Analyst | Readdle\n▪️ YouTube Influencer Marketing | Fetti Flow\n▪️ Senior Media Buyer | Mine Marketing\n▪️ AI Content Manager | nove8\n\n\n🗂 Designer:\n▪️ Visual Designer | Newxel\n▪️ Graphic Designer | Мінцифра\n\n\n🗂 Finance:\n▪️ Finance Manager | Cashbee\n▪️ Financial Manager | Evoplay\n\n\n🗂 Sales:\n▪️ Senior Sales | Softgile\n\n\n🗂 HR:\n▪️ HR Operations Specialist | RiseGuide\n\n———\n\n➡️ Рекомендація таланта на позицію СТО | Детальніше\n\n➡️ Як зрозуміти, що робота не дає тобі нові знання | Детальніше\n\n➡️ Conversion Forum Warsaw  | Детальніше\n\n\n\nБудь ласка, розкажіть про цю добірку вашим талановитим друзям.\n\ntg | inst | fb | tt | link | talents",
+      "date": "2026-10-17T13:37:07.579Z",
+      "dateFormatted": "Сьогодні, 16:37",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792238791342-177",
       "category": "marketing",
       "categoryName": "Маркетинг",
