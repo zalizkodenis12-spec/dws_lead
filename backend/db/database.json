@@ -1,6 +1,214 @@
 {
   "leads": [
     {
+      "id": "lead-1792262815956-285",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "РОБОТА В ОДЕСІ🇺🇦",
+      "sourceUsername": "@robota_odesa4",
+      "authorName": "РЕКЛАМА",
+      "authorUsername": "@Posting_adminRobot",
+      "title": "👑Потрібен смм-фахівець",
+      "text": "👑Потрібен смм-фахівець\nв логістичну компанію Rezar\n\nЗавдання: робити пости, рілси, сторіси.  В основному публікувати машини, рілси з оглядом машин. Матеріал для публікацій є. Публікації робимо в Meta, Telelgram.\nНіша: авто із Кореї та США.\n\nНе потрібно: налаштовувати рекламу, таргетинг, відповідати клієнтам в діректі та на коментарі під постами.\n\n👨‍💼Відкривається офіс (не для ошуканців) в центрі міста. Можливість кар'єрного зростання та в подальшому стати керівником медійного відділу.\n\nГотові розглянути віддалено, з умовою бачитися один раз на тиждень для коригування контент-плану. Цікавить молодий фахівець з Одеси, для повнолітніх.\n\n🗝Порядність, чесність, відповідальність, грамотність, розуміння бази про публікації – обов'язково.\n\nРобота 2-3 години на день.\nЗП: старт 9000 грн.\n\n✅пишіть @nazar_uzhvii",
+      "date": "2026-10-17T18:46:55.955Z",
+      "dateFormatted": "Сьогодні, 21:46",
+      "budget": 9000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 73,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 9000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792262809585-160",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "channel",
+      "sourceName": "Библиотека программиста",
+      "sourceUsername": "@proglib",
+      "authorName": "proglibrary",
+      "authorUsername": "@proglibrary",
+      "title": "🖥 До теста нужно пройти шесть слоёв абстракций",
+      "text": "🖥 До теста нужно пройти шесть слоёв абстракций\n\nВ архивном обсуждении r/ExperiencedDevs участник описал интеграционные тесты, которые коллеги избегали. Чтобы понять путь от написанного сценария до проверки, приходилось разбираться примерно в шести слоях самописной инфраструктуры.\n\nВ треде разделяют проверки одного сервиса с реальным вводом-выводом и сценарии, проходящие через несколько систем. Во втором случае больше связей и обслуживания; выбор инструмента сам по себе эту сложность не убирает.\n\nПеред ещё одним тестовым фреймворком полезно посмотреть на обычный сценарий команды: сколько шагов нужно, чтобы запустить тест, понять падение и изменить проверку? Если ответ требует экскурсии по инфраструктуре, проблема может быть в устройстве тестов.\n\n🔗 Опыт команд в r/ExperiencedDevs\n\n🐸 Библиотека программиста",
+      "date": "2026-10-17T18:46:49.585Z",
+      "dateFormatted": "Сьогодні, 21:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 46,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792262809533-57",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "maintenance",
+      "subcategoryName": "Технічне обслуговування",
+      "sourceType": "channel",
+      "sourceName": "Библиотека программиста",
+      "sourceUsername": "@proglib",
+      "authorName": "proglib",
+      "authorUsername": "@proglib",
+      "title": "👀 ИИ оставил двадцать замечаний. Сколько из них полезны?",
+      "text": "👀 ИИ оставил двадцать замечаний. Сколько из них полезны?\n\nКоличество комментариев мало говорит о качестве ревью. Важно, какие реальные ошибки инструмент нашёл, какие пропустил и сколько раз поднял ложную тревогу.\n\nGitHub представил ReviewBench — бенчмарк на 219 публичных PR на 19 языках. Эталонные находки собирали из нескольких источников: человеческого ревью, статического анализа и LLM. Результаты можно смотреть по серьёзности и типу проблем.\n\nТак проще сравнивать инструменты под свою задачу: искать критичные баги или получать больше замечаний, принимая дополнительный шум. Для выбора в команду всё равно проверьте кандидатов на своих PR: общий результат не гарантирует такую же пользу в вашем проекте.\n\n🐸 Библиотека программиста",
+      "date": "2026-10-17T18:46:49.532Z",
+      "dateFormatted": "Сьогодні, 21:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: технічне обслуговування.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792262809482-576",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "channel",
+      "sourceName": "Библиотека программиста",
+      "sourceUsername": "@proglib",
+      "authorName": "proglib",
+      "authorUsername": "@proglib",
+      "title": "🖥 Песочница есть. Файлы проекта всё ещё можно удалить",
+      "text": "🖥 Песочница есть. Файлы проекта всё ещё можно удалить\n\nВ Docker Sandboxes агент работает внутри отдельной microVM. Но доступ к проекту зависит от режима: direct разрешает сразу менять исходную папку, clone даёт отдельную копию для работы.\n\nАвтор эксперимента с Claude Code проверил это на Mac: в direct агент удалил файл и создал Git hook. Удаление попало в обычный diff, а hook в .git/hooks — нет. Его не запускали.\n\nВ clone изменения остались в копии. При этом агент мог читать файлы проекта и отправить тестовое значение на разрешённый сервер. Перед запуском проверьте доступные папки и сеть; после работы в direct может понадобиться проверить больше, чем diff.\n\n🐸 Библиотека программиста",
+      "date": "2026-10-17T18:46:49.481Z",
+      "dateFormatted": "Сьогодні, 21:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 46,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792262809429-345",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "channel",
+      "sourceName": "Библиотека программиста",
+      "sourceUsername": "@proglib",
+      "authorName": "proglib",
+      "authorUsername": "@proglib",
+      "title": "📊 Архитектурную схему тоже можно отправить на ревью",
+      "text": "📊 Архитектурную схему тоже можно отправить на ревью\n\nДобавили очередь, разделили сервис, поменяли базу — а в документации всё ещё старая картинка. Если схема описана кодом, её изменения можно обсуждать в том же PR.\n\nВ руководстве по Python Diagrams показывают, как собрать схему из узлов, связей и кластеров. Graphviz отвечает за отрисовку, а в Python вы задаёте компоненты и направление потока данных.\n\nИсходник можно хранить рядом с проектом и генерировать изображение при сборке документации. Схема сама не узнает, что вы добавили сервис: обновлять её всё равно придётся. Зато у изменений появятся история и ревью.\n\n🐸 Библиотека программиста",
+      "date": "2026-10-17T18:46:49.429Z",
+      "dateFormatted": "Сьогодні, 21:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792262809358-496",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "channel",
+      "sourceName": "Библиотека программиста",
+      "sourceUsername": "@proglib",
+      "authorName": "proglib",
+      "authorUsername": "@proglib",
+      "title": "📊 API тормозит. В логах ошибок нет",
+      "text": "📊 API тормозит. В логах ошибок нет\n\nЗапрос дошёл до контроллера, прошёл несколько сервисов, обратился к базе и платёжному провайдеру. Отдельные строки логов показывают события, но собрать из них путь одного запроса бывает непросто.\n\nВ руководстве по NestJS Observe разбирают наблюдаемость с контекстом фреймворка: контроллеры, провайдеры, guards и interceptors помогают понять, где выполнялась работа и куда ушло время.\n\nЛоги описывают события, метрики показывают тенденции, трассировка связывает этапы операции. При выборе инструмента учитывайте весь стек: глубокий контекст NestJS полезен его командам, а для сервисов на разных языках может быть важнее общая архитектура на OpenTelemetry.\n\n🐸 Библиотека программиста",
+      "date": "2026-10-17T18:46:49.357Z",
+      "dateFormatted": "Сьогодні, 21:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792262809298-407",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "channel",
+      "sourceName": "Библиотека программиста",
+      "sourceUsername": "@proglib",
+      "authorName": "proglib",
+      "authorUsername": "@proglib",
+      "title": "Почему разработчик планирует отдавать больше задач Claude",
+      "text": "Почему разработчик планирует отдавать больше задач Claude\n\nВинсент Шмальбах описал план перераспределить расходы на ИИ: больше работы отдавать Claude, а Codex сохранить для части задач.\n\nК решению его подтолкнули затяжные сессии. По наблюдениям автора, агент иногда часами продолжал проверки и добавлял соседние задачи. Квота расходовалась, а момент, когда можно принять результат и двигаться дальше, было трудно предсказать.\n\nВ личном разборе Шмальбах связывает эти эпизоды с условиями подписки и затратами на собственные проекты.\n\n#ии #инструменты\n\n🐸 Библиотека ИИ для айтишников",
+      "date": "2026-10-17T18:46:49.296Z",
+      "dateFormatted": "Сьогодні, 21:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
+      "id": "lead-1792262809249-227",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "channel",
+      "sourceName": "Библиотека программиста",
+      "sourceUsername": "@proglib",
+      "authorName": "proglib",
+      "authorUsername": "@proglib",
+      "title": "🛠 Инструмент деплоя сменили. Что считать успехом?",
+      "text": "🛠 Инструмент деплоя сменили. Что считать успехом?\n\nВ старом пайплайне всё понятно: команда завершилась без ошибки — идём дальше. После миграции выясняется, что никто отдельно не записал, какая версия должна работать, сколько реплик нужно и какой уровень ошибок допустим.\n\nАвтор руководства на TypeScript выносит эти условия в отдельную спецификацию. Два исполнителя получают один контракт и возвращают данные для проверки: версию, доступные реплики, долю ошибок и задержку.\n\nСравнивать можно результат операции, даже если шаги внутри различаются. Примеры учебные, в памяти, но вопрос для своего CI/CD вполне практический: при смене инструмента вы переносите команды или сохраняете условия, при которых деплой считается успешным?\n\n🐸 Библиотека программиста",
+      "date": "2026-10-17T18:46:49.248Z",
+      "dateFormatted": "Сьогодні, 21:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792262683072-795",
       "category": "marketing",
       "categoryName": "Маркетинг",
@@ -14447,9 +14655,9 @@
     }
   },
   "sources": {
-    "description": "DWS Lead — 100% Verified Active Telegram Lead Sources (38 Channels & 90 Chats, avg 30k+ subs)",
-    "updatedAt": "2026-10-17T18:41:21.492Z",
-    "totalCount": 128,
+    "description": "DWS Lead — Elite Verified Active Telegram Sources (Min 2,000 Subscribers, IT & Web Dev Focus)",
+    "updatedAt": "2026-10-17T18:46:07.113Z",
+    "totalCount": 149,
     "chats": [
       {
         "username": "@kiev_rabota_vakansii",
@@ -14731,6 +14939,15 @@
         "active": true
       },
       {
+        "username": "@javascript_jobs",
+        "title": "JavaScript Jobs — чат",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 27532,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
         "username": "@workday_lviv",
         "title": "Робота Львів 🔍 Підробіток",
         "category": "general",
@@ -14799,6 +15016,15 @@
         "category": "development",
         "type": "chat",
         "subscribers": 20677,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
+        "username": "@devops_ru",
+        "title": "DevOps — русскоговорящее сообщество",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 20523,
         "lastPostDate": null,
         "active": true
       },
@@ -14893,11 +15119,29 @@
         "active": true
       },
       {
+        "username": "@qa_ru",
+        "title": "QA — русскоговорящее сообщество",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 14118,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
         "username": "@mykolaivrobota_ua",
         "title": "Робота Миколаїв",
         "category": "general",
         "type": "chat",
         "subscribers": 13174,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
+        "username": "@react_js",
+        "title": "React — русскоговорящее сообщество",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 13117,
         "lastPostDate": null,
         "active": true
       },
@@ -14943,6 +15187,15 @@
         "category": "marketing",
         "type": "chat",
         "subscribers": 11055,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
+        "username": "@vuejs_ru",
+        "title": "Vue — русскоговорящее сообщество",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 10879,
         "lastPostDate": null,
         "active": true
       },
@@ -15064,11 +15317,38 @@
         "active": true
       },
       {
+        "username": "@nodejs_ru",
+        "title": "Node.js — русскоговорящее сообщество",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 7699,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
         "username": "@marketing_network1",
         "title": "Маркетинг Club",
         "category": "marketing",
         "type": "chat",
         "subscribers": 7524,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
+        "username": "@nodejs_jobs",
+        "title": "Node.js Jobs. Stop the war&#33;",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 7343,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
+        "username": "@php_jobs",
+        "title": "PHP — вакансии, поиск работы и аналитика",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 6940,
         "lastPostDate": null,
         "active": true
       },
@@ -15091,11 +15371,29 @@
         "active": true
       },
       {
+        "username": "@pydjango",
+        "title": "Django [ru]",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 6201,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
         "username": "@diplomatia_ua",
         "title": "🇺🇦 Оголошення UKRAINE-CHAT 🇺🇦",
         "category": "general",
         "type": "chat",
         "subscribers": 6119,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
+        "username": "@java_jobs",
+        "title": "Java Jobs",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 6073,
         "lastPostDate": null,
         "active": true
       },
@@ -15114,6 +15412,15 @@
         "category": "general",
         "type": "chat",
         "subscribers": 5941,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
+        "username": "@angular_ru",
+        "title": "Angular - русскоговорящее сообщество",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 5830,
         "lastPostDate": null,
         "active": true
       },
@@ -15154,6 +15461,33 @@
         "active": true
       },
       {
+        "username": "@remotework_it",
+        "title": "IT Job: Back, Front, Mobil developer",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 4496,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
+        "username": "@uxui_jobs",
+        "title": "UX UI design - вакансии и резюме",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 4434,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
+        "username": "@django_jobs",
+        "title": "django_jobs",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 4391,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
         "username": "@evo_prom",
         "title": "Чат: продажі на Prom.ua / Rozetka",
         "category": "general",
@@ -15163,9 +15497,27 @@
         "active": true
       },
       {
+        "username": "@tilda_community",
+        "title": "Tilda Чат &amp; Сообщество",
+        "category": "development",
+        "type": "chat",
+        "subscribers": 3674,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
         "username": "@frontend_ru",
         "title": "Frontend_ru",
         "category": "web",
+        "type": "chat",
+        "subscribers": 3390,
+        "lastPostDate": null,
+        "active": true
+      },
+      {
+        "username": "@rust_jobs",
+        "title": "Rust Jobs - вакансии &amp; резюме",
+        "category": "development",
         "type": "chat",
         "subscribers": 3390,
         "lastPostDate": null,
@@ -15235,29 +15587,11 @@
         "active": true
       },
       {
-        "username": "@data_jobs",
-        "title": "Data Jobs, دیتاجابز",
+        "username": "@angular_jobs",
+        "title": "Angular Jobs — чат для поиска работы и людей",
         "category": "development",
         "type": "chat",
-        "subscribers": 1534,
-        "lastPostDate": null,
-        "active": true
-      },
-      {
-        "username": "@golang_jobs",
-        "title": "Golang — вакансии и аналитика",
-        "category": "development",
-        "type": "chat",
-        "subscribers": 1519,
-        "lastPostDate": null,
-        "active": true
-      },
-      {
-        "username": "@tilda_chat",
-        "title": "Tilda Community Support",
-        "category": "development",
-        "type": "chat",
-        "subscribers": 1508,
+        "subscribers": 2227,
         "lastPostDate": null,
         "active": true
       }
@@ -15327,6 +15661,15 @@
         "active": true
       },
       {
+        "username": "@proglib",
+        "title": "Библиотека программиста",
+        "category": "development",
+        "type": "channel",
+        "subscribers": 78026,
+        "lastPostDate": "2026-10-17T11:20:30+00:00",
+        "active": true
+      },
+      {
         "username": "@marketing_jobs",
         "title": "🎯 marketing jobs — вакансии для маркетологов",
         "category": "marketing",
@@ -15345,12 +15688,30 @@
         "active": true
       },
       {
+        "username": "@cresume",
+        "title": "Крезюме Вакансії",
+        "category": "development",
+        "type": "channel",
+        "subscribers": 51851,
+        "lastPostDate": "2026-10-16T13:30:06+00:00",
+        "active": true
+      },
+      {
         "username": "@remoteit",
         "title": "Remote IT (Inflow)",
         "category": "development",
         "type": "channel",
         "subscribers": 51455,
         "lastPostDate": "2026-10-17T15:40:04+00:00",
+        "active": true
+      },
+      {
+        "username": "@geekjobs",
+        "title": "Job in IT&amp;Digital",
+        "category": "development",
+        "type": "channel",
+        "subscribers": 51436,
+        "lastPostDate": "2026-10-16T16:28:07+00:00",
         "active": true
       },
       {
@@ -15471,6 +15832,24 @@
         "active": true
       },
       {
+        "username": "@tproger_web",
+        "title": "Веб-страница",
+        "category": "development",
+        "type": "channel",
+        "subscribers": 22296,
+        "lastPostDate": "2026-10-17T11:09:01+00:00",
+        "active": true
+      },
+      {
+        "username": "@devby",
+        "title": "dev.by: главные ИТ-новости Беларуси",
+        "category": "development",
+        "type": "channel",
+        "subscribers": 21740,
+        "lastPostDate": "2026-10-17T12:17:00+00:00",
+        "active": true
+      },
+      {
         "username": "@digitaltender",
         "title": "DIGITAL Tender / freelance / фриланс",
         "category": "freelance",
@@ -15507,6 +15886,15 @@
         "active": true
       },
       {
+        "username": "@webstandards_ru",
+        "title": "Веб-стандарты",
+        "category": "development",
+        "type": "channel",
+        "subscribers": 13821,
+        "lastPostDate": "2026-10-16T10:01:13+00:00",
+        "active": true
+      },
+      {
         "username": "@you_can_know_more",
         "title": "БЛІЦ",
         "category": "general",
@@ -15522,6 +15910,15 @@
         "type": "channel",
         "subscribers": 13021,
         "lastPostDate": "2025-05-12T10:31:00+00:00",
+        "active": true
+      },
+      {
+        "username": "@partnerkin_job",
+        "title": "Вакансии: Арбитраж трафика, SEO, Affiliate [Партнеркин]",
+        "category": "development",
+        "type": "channel",
+        "subscribers": 11236,
+        "lastPostDate": "2026-10-17T10:20:53+00:00",
         "active": true
       },
       {
@@ -15579,6 +15976,15 @@
         "active": true
       },
       {
+        "username": "@wordpress_jobs",
+        "title": "WordPress Jobs",
+        "category": "development",
+        "type": "channel",
+        "subscribers": 3111,
+        "lastPostDate": "2026-10-06T12:28:42+00:00",
+        "active": true
+      },
+      {
         "username": "@tilda_profi",
         "title": "Фриланс на Tilda (T.Profi)",
         "category": "web",
@@ -15588,21 +15994,12 @@
         "active": true
       },
       {
-        "username": "@smm_vacancies_ua",
-        "title": "Вакансії SMM спеціалістів та фахівців",
+        "username": "@itmozg",
+        "title": "ITmozg",
         "category": "development",
         "type": "channel",
-        "subscribers": 1206,
-        "lastPostDate": "2026-10-12T12:23:06+00:00",
-        "active": true
-      },
-      {
-        "username": "@it_digest_ua",
-        "title": "IT Digest UA",
-        "category": "development",
-        "type": "channel",
-        "subscribers": 982,
-        "lastPostDate": "2026-07-31T12:37:07+00:00",
+        "subscribers": 2632,
+        "lastPostDate": "2026-10-13T20:24:40+00:00",
         "active": true
       }
     ]

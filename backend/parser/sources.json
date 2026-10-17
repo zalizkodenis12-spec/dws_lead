@@ -1,7 +1,7 @@
 {
-  "description": "DWS Lead — 100% Verified Active Telegram Lead Sources (38 Channels & 90 Chats, avg 30k+ subs)",
-  "updatedAt": "2026-10-17T18:41:21.492Z",
-  "totalCount": 128,
+  "description": "DWS Lead — Elite Verified Active Telegram Sources (Min 2,000 Subscribers, IT & Web Dev Focus)",
+  "updatedAt": "2026-10-17T18:46:07.113Z",
+  "totalCount": 149,
   "chats": [
     {
       "username": "@kiev_rabota_vakansii",
@@ -283,6 +283,15 @@
       "active": true
     },
     {
+      "username": "@javascript_jobs",
+      "title": "JavaScript Jobs — чат",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 27532,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
       "username": "@workday_lviv",
       "title": "Робота Львів 🔍 Підробіток",
       "category": "general",
@@ -351,6 +360,15 @@
       "category": "development",
       "type": "chat",
       "subscribers": 20677,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@devops_ru",
+      "title": "DevOps — русскоговорящее сообщество",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 20523,
       "lastPostDate": null,
       "active": true
     },
@@ -445,11 +463,29 @@
       "active": true
     },
     {
+      "username": "@qa_ru",
+      "title": "QA — русскоговорящее сообщество",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 14118,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
       "username": "@mykolaivrobota_ua",
       "title": "Робота Миколаїв",
       "category": "general",
       "type": "chat",
       "subscribers": 13174,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@react_js",
+      "title": "React — русскоговорящее сообщество",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 13117,
       "lastPostDate": null,
       "active": true
     },
@@ -495,6 +531,15 @@
       "category": "marketing",
       "type": "chat",
       "subscribers": 11055,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@vuejs_ru",
+      "title": "Vue — русскоговорящее сообщество",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 10879,
       "lastPostDate": null,
       "active": true
     },
@@ -616,11 +661,38 @@
       "active": true
     },
     {
+      "username": "@nodejs_ru",
+      "title": "Node.js — русскоговорящее сообщество",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 7699,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
       "username": "@marketing_network1",
       "title": "Маркетинг Club",
       "category": "marketing",
       "type": "chat",
       "subscribers": 7524,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@nodejs_jobs",
+      "title": "Node.js Jobs. Stop the war&#33;",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 7343,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@php_jobs",
+      "title": "PHP — вакансии, поиск работы и аналитика",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 6940,
       "lastPostDate": null,
       "active": true
     },
@@ -643,11 +715,29 @@
       "active": true
     },
     {
+      "username": "@pydjango",
+      "title": "Django [ru]",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 6201,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
       "username": "@diplomatia_ua",
       "title": "🇺🇦 Оголошення UKRAINE-CHAT 🇺🇦",
       "category": "general",
       "type": "chat",
       "subscribers": 6119,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@java_jobs",
+      "title": "Java Jobs",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 6073,
       "lastPostDate": null,
       "active": true
     },
@@ -666,6 +756,15 @@
       "category": "general",
       "type": "chat",
       "subscribers": 5941,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@angular_ru",
+      "title": "Angular - русскоговорящее сообщество",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 5830,
       "lastPostDate": null,
       "active": true
     },
@@ -706,6 +805,33 @@
       "active": true
     },
     {
+      "username": "@remotework_it",
+      "title": "IT Job: Back, Front, Mobil developer",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 4496,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@uxui_jobs",
+      "title": "UX UI design - вакансии и резюме",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 4434,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@django_jobs",
+      "title": "django_jobs",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 4391,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
       "username": "@evo_prom",
       "title": "Чат: продажі на Prom.ua / Rozetka",
       "category": "general",
@@ -715,9 +841,27 @@
       "active": true
     },
     {
+      "username": "@tilda_community",
+      "title": "Tilda Чат &amp; Сообщество",
+      "category": "development",
+      "type": "chat",
+      "subscribers": 3674,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
       "username": "@frontend_ru",
       "title": "Frontend_ru",
       "category": "web",
+      "type": "chat",
+      "subscribers": 3390,
+      "lastPostDate": null,
+      "active": true
+    },
+    {
+      "username": "@rust_jobs",
+      "title": "Rust Jobs - вакансии &amp; резюме",
+      "category": "development",
       "type": "chat",
       "subscribers": 3390,
       "lastPostDate": null,
@@ -787,29 +931,11 @@
       "active": true
     },
     {
-      "username": "@data_jobs",
-      "title": "Data Jobs, دیتاجابز",
+      "username": "@angular_jobs",
+      "title": "Angular Jobs — чат для поиска работы и людей",
       "category": "development",
       "type": "chat",
-      "subscribers": 1534,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@golang_jobs",
-      "title": "Golang — вакансии и аналитика",
-      "category": "development",
-      "type": "chat",
-      "subscribers": 1519,
-      "lastPostDate": null,
-      "active": true
-    },
-    {
-      "username": "@tilda_chat",
-      "title": "Tilda Community Support",
-      "category": "development",
-      "type": "chat",
-      "subscribers": 1508,
+      "subscribers": 2227,
       "lastPostDate": null,
       "active": true
     }
@@ -879,6 +1005,15 @@
       "active": true
     },
     {
+      "username": "@proglib",
+      "title": "Библиотека программиста",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 78026,
+      "lastPostDate": "2026-10-17T11:20:30+00:00",
+      "active": true
+    },
+    {
       "username": "@marketing_jobs",
       "title": "🎯 marketing jobs — вакансии для маркетологов",
       "category": "marketing",
@@ -897,12 +1032,30 @@
       "active": true
     },
     {
+      "username": "@cresume",
+      "title": "Крезюме Вакансії",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 51851,
+      "lastPostDate": "2026-10-16T13:30:06+00:00",
+      "active": true
+    },
+    {
       "username": "@remoteit",
       "title": "Remote IT (Inflow)",
       "category": "development",
       "type": "channel",
       "subscribers": 51455,
       "lastPostDate": "2026-10-17T15:40:04+00:00",
+      "active": true
+    },
+    {
+      "username": "@geekjobs",
+      "title": "Job in IT&amp;Digital",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 51436,
+      "lastPostDate": "2026-10-16T16:28:07+00:00",
       "active": true
     },
     {
@@ -1023,6 +1176,24 @@
       "active": true
     },
     {
+      "username": "@tproger_web",
+      "title": "Веб-страница",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 22296,
+      "lastPostDate": "2026-10-17T11:09:01+00:00",
+      "active": true
+    },
+    {
+      "username": "@devby",
+      "title": "dev.by: главные ИТ-новости Беларуси",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 21740,
+      "lastPostDate": "2026-10-17T12:17:00+00:00",
+      "active": true
+    },
+    {
       "username": "@digitaltender",
       "title": "DIGITAL Tender / freelance / фриланс",
       "category": "freelance",
@@ -1059,6 +1230,15 @@
       "active": true
     },
     {
+      "username": "@webstandards_ru",
+      "title": "Веб-стандарты",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 13821,
+      "lastPostDate": "2026-10-16T10:01:13+00:00",
+      "active": true
+    },
+    {
       "username": "@you_can_know_more",
       "title": "БЛІЦ",
       "category": "general",
@@ -1074,6 +1254,15 @@
       "type": "channel",
       "subscribers": 13021,
       "lastPostDate": "2025-05-12T10:31:00+00:00",
+      "active": true
+    },
+    {
+      "username": "@partnerkin_job",
+      "title": "Вакансии: Арбитраж трафика, SEO, Affiliate [Партнеркин]",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 11236,
+      "lastPostDate": "2026-10-17T10:20:53+00:00",
       "active": true
     },
     {
@@ -1131,6 +1320,15 @@
       "active": true
     },
     {
+      "username": "@wordpress_jobs",
+      "title": "WordPress Jobs",
+      "category": "development",
+      "type": "channel",
+      "subscribers": 3111,
+      "lastPostDate": "2026-10-06T12:28:42+00:00",
+      "active": true
+    },
+    {
       "username": "@tilda_profi",
       "title": "Фриланс на Tilda (T.Profi)",
       "category": "web",
@@ -1140,21 +1338,12 @@
       "active": true
     },
     {
-      "username": "@smm_vacancies_ua",
-      "title": "Вакансії SMM спеціалістів та фахівців",
+      "username": "@itmozg",
+      "title": "ITmozg",
       "category": "development",
       "type": "channel",
-      "subscribers": 1206,
-      "lastPostDate": "2026-10-12T12:23:06+00:00",
-      "active": true
-    },
-    {
-      "username": "@it_digest_ua",
-      "title": "IT Digest UA",
-      "category": "development",
-      "type": "channel",
-      "subscribers": 982,
-      "lastPostDate": "2026-07-31T12:37:07+00:00",
+      "subscribers": 2632,
+      "lastPostDate": "2026-10-13T20:24:40+00:00",
       "active": true
     }
   ]
