@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792347267972-744",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Емілія",
+      "authorUsername": "@danik2936",
+      "title": "🎬 Відеомонтажер",
+      "text": "🎬 Відеомонтажер\n\nПривіт! Я  займаюся  монтажем відео та хочу набратися досвіду й поповнити портфоліо.\n Можу зробити монтаж для TikTok, Reels, YouTube Shorts та інших форматів.\n\nЯкщо вам потрібен монтаж — пишіть у приватні повідомлення 📩\nБуду радий попрацювати та зробити якісний монтаж! 🔥\nПишіть в особисті @danik2936",
+      "date": "2026-10-18T18:14:27.970Z",
+      "dateFormatted": "Сьогодні, 21:14",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 51,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792346836591-393",
       "category": "development",
       "categoryName": "Веброзробка",
