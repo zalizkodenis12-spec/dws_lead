@@ -4002,31 +4002,43 @@ function initMasterGatekeeper() {
     }
 
     let isMatch = false;
+    let authPayload = null;
     const clientHash = await computeSha256(val);
     if (MASTER_KEY_HASHES.has(clientHash)) {
       isMatch = true;
-    } else {
-      // Also verify against server endpoint
-      try {
-        const res = await fetch('/api/auth/verify-code', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: val })
-        });
-        const json = await res.json();
-        if (json.success) isMatch = true;
-      } catch (e) {}
+      authPayload = {
+        accountKey: 'zalizkodenis12',
+        accountUser: '@zalizkodenis12',
+        accountName: 'Денис Залізко',
+        role: 'owner'
+      };
     }
 
-    if (isMatch) {
+    // Verify against server endpoint
+    try {
+      const res = await fetch('/api/auth/verify-code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: val })
+      });
+      const json = await res.json();
+      if (json.success) {
+        isMatch = true;
+        authPayload = json;
+      }
+    } catch (e) {}
+
+    if (isMatch && authPayload) {
       haptic('success');
       localStorage.setItem('dws_master_unlocked', 'true');
       localStorage.setItem('dws_master_key_hash', clientHash);
 
-      // Auto link master account to Denis across all devices
-      state.accountKey = 'zalizkodenis12';
-      state.accountUser = '@zalizkodenis12';
-      state.accountName = 'Денис Залізко';
+      // Link specific user profile (Denis for owner, separate workspace for employees/subscribers)
+      state.accountKey = authPayload.accountKey || 'zalizkodenis12';
+      state.accountUser = authPayload.accountUser || '@zalizkodenis12';
+      state.accountName = authPayload.accountName || 'Денис Залізко';
+      state.userRole = authPayload.role || 'owner';
+
       localStorage.setItem('dws_account_key', state.accountKey);
       localStorage.setItem('dws_account_user', state.accountUser);
       localStorage.setItem('dws_account_name', state.accountName);
@@ -4035,7 +4047,7 @@ function initMasterGatekeeper() {
       if (successMsg) successMsg.style.display = 'block';
       if (submitBtn) submitBtn.textContent = 'ДОСТУП ДОЗВОЛЕНО ✓';
 
-      // Pull latest cloud data
+      // Pull isolated cloud data for this user
       fetchAccountData().then(() => {
         renderCrm();
         renderIncome();
@@ -4062,6 +4074,8 @@ function initMasterGatekeeper() {
         errorMsg.style.display = 'block';
       }
       if (codeInput) {
+        codeInput.classList.add('is-error');
+        setTimeout(() => codeInput.classList.remove('is-error'), 450);
         codeInput.value = '';
         codeInput.focus();
       }

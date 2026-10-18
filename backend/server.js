@@ -375,9 +375,24 @@ app.post('/api/auth/verify-code', (req, res) => {
     }
     const clean = String(code).trim();
     const masterCode = process.env.MASTER_ACCESS_CODE || 'DWS-2026-STUDIO-ZALIZKO-PRO';
-    const isMasterMatch = clean === masterCode || clean === 'DWS-2026-STUDIO-ZALIZKO-PRO' || clean === 'DWS777';
 
-    if (!isMasterMatch) {
+    let accountKey = 'zalizkodenis12';
+    let accountName = 'Денис Залізко';
+    let accountUser = '@zalizkodenis12';
+    let role = 'owner';
+
+    if (clean === masterCode || clean === 'DWS-2026-STUDIO-ZALIZKO-PRO' || clean === 'DWS777') {
+      role = 'owner';
+      accountKey = 'zalizkodenis12';
+      accountName = 'Денис Залізко';
+      accountUser = '@zalizkodenis12';
+    } else if (clean.startsWith('DWS-TEAM-') || clean.startsWith('DWS-SUB-') || clean.startsWith('DWS-VIP-') || (clean.startsWith('DWS-') && clean.length >= 8)) {
+      role = 'member';
+      const cleanSub = clean.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+      accountKey = 'user_' + cleanSub;
+      accountName = 'Спеціаліст (' + clean.replace(/^DWS-/, '') + ')';
+      accountUser = '@' + cleanSub;
+    } else {
       return res.status(401).json({ success: false, error: 'Невірний секретний код доступу' });
     }
 
@@ -385,9 +400,10 @@ app.post('/api/auth/verify-code', (req, res) => {
     res.json({
       success: true,
       token,
-      accountKey: 'zalizkodenis12',
-      accountUser: '@zalizkodenis12',
-      accountName: 'Денис Залізко',
+      accountKey,
+      accountUser,
+      accountName,
+      role,
       message: 'Доступ підтверджено'
     });
   } catch (err) {
