@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792326537941-93",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "javascript_jobs_feed",
+      "authorUsername": "@javascript_jobs_feed",
+      "title": "📃 Резюме Frontend Software Engineer от @self_noname, от $2 000 до $3 000,...",
+      "text": "📃 Резюме Frontend Software Engineer от @self_noname, от $2 000 до $3 000, удаленно, фуллтайм или парт-тайм",
+      "date": "2026-10-18T12:28:57.940Z",
+      "dateFormatted": "Сьогодні, 15:28",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792321414328-715",
       "category": "development",
       "categoryName": "Веброзробка",
