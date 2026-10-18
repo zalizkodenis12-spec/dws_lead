@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792341086122-150",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "javascript_jobs_feed",
+      "authorUsername": "@javascript_jobs_feed",
+      "title": "📃 Резюме Junior Developer от @h1nd566, от $20 за проект, удаленно, проектн...",
+      "text": "📃 Резюме Junior Developer от @h1nd566, от $20 за проект, удаленно, проектная работа",
+      "date": "2026-10-18T16:31:26.122Z",
+      "dateFormatted": "Сьогодні, 19:31",
+      "budget": 1000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація з бюджетом 1000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792338381129-3840",
       "category": "marketing",
       "categoryName": "Маркетинг",
