@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792327556825-179",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "dasha",
+      "authorUsername": "@momenty",
+      "title": "Привіт! ✨",
+      "text": "Привіт! ✨\n\nШукаю part-time / проєктну співпрацю у сфері SMM та контент-маркетингу.\n\nЯ SMM-спеціалістка, контент-кріейторка та фотографка з Києва. Маю 2+ роки досвіду роботи з контентом і профільну бакалаврську освіту (комунікація брендів, візуальний брендинг, фотографія).\n\nЩо можу взяти на себе:\n• SMM-стратегію та контент-план\n• Візуальне оформлення Instagram, пости та сторіс\n• Монтаж Reels / TikTok\n• Створення контенту, тексти та ідеї\n• Фотозйомку, ретуш і кольорокорекцію\n\nДосвід: комерційні проєкти у fashion, handmade та артмеблях. Також розвиваю власний бренд біжутерії @momenty.ua та понад рік самостійно веду магазин на Etsy, працюючи з міжнародною аудиторією.\n\n📎 Приклади робіт:\nSMM — https://www.instagram.com/momenty.ua/\nФото — https://www.instagram.com/lis.nysho/\n\nРозглядаю віддалену співпрацю з брендами та агенціями, а також разові проєкти.\n\nЗа деталями та додатковими кейсами — в особисті 💌",
+      "date": "2026-10-18T12:45:56.824Z",
+      "dateFormatted": "Сьогодні, 15:45",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 65,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792326537941-93",
       "category": "development",
       "categoryName": "Веброзробка",
