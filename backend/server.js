@@ -400,9 +400,10 @@ app.post('/api/auth/verify-code', (req, res) => {
     } else if (tgUser && tgUser.id) {
       // Окремий співробітник / інший користувач у Telegram
       role = 'member';
-      accountKey = 'tg_' + tgUser.id;
+      const cleanUser = tgUser.username ? String(tgUser.username).toLowerCase().replace(/^@/, '') : '';
+      accountKey = cleanUser || ('tg_' + tgUser.id);
       accountName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || ('Користувач #' + tgUser.id);
-      accountUser = tgUser.username ? ('@' + tgUser.username) : ('@user_' + tgUser.id);
+      accountUser = tgUser.username ? ('@' + tgUser.username) : ('@' + accountKey);
     } else if (clientKey) {
       // Окремий профіль браузера/десктопа
       role = clientKey === 'zalizkodenis12' ? 'owner' : 'member';

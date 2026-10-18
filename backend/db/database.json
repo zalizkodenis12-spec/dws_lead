@@ -21697,5 +21697,215 @@
         "active": true
       }
     ]
+  },
+  "accounts": {
+    "alex_dev": {
+      "crm": [
+        {
+          "clientName": "Test Client",
+          "status": "in_progress",
+          "orderTitle": "Landing Page",
+          "budget": 12000,
+          "id": "crm-test-1"
+        }
+      ],
+      "income": {
+        "records": [
+          {
+            "amount": 6000,
+            "title": "Landing advance",
+            "id": "inc-1",
+            "currency": "₴"
+          }
+        ]
+      },
+      "expenses": {
+        "records": [],
+        "currency": "₴"
+      },
+      "profile": {},
+      "takenLeadIds": [],
+      "username": "@alex_dev",
+      "name": "Олександр Мельник",
+      "updatedAt": "2026-10-18T20:20:44.912Z"
+    },
+    "zalizkodenis12": {
+      "crm": [
+        {
+          "id": "crm-1",
+          "name": "Олексій",
+          "username": "@olexa12",
+          "avatarLetter": "О",
+          "status": "offer",
+          "statusLabel": "Оффер",
+          "service": "development",
+          "serviceLabel": "Розробка",
+          "niche": "Кав'ярня / Ресторан",
+          "budget": 14000,
+          "currency": "₴",
+          "source": "partners",
+          "sourceLabel": "Партнери",
+          "notes": "Обговорили вимоги. Клієнту сподобалась ідея безкоштовного демо головного екрана. Чекає договір та фінальний оффер.",
+          "links": {
+            "telegram": "https://t.me/olexa12"
+          },
+          "orders": [
+            {
+              "id": "ord-1",
+              "title": "Створення односторінкового сайту",
+              "amount": 14000,
+              "paidStatus": "partial",
+              "deadline": "2026-10-18"
+            }
+          ]
+        },
+        {
+          "id": "crm-2",
+          "name": "Ваня",
+          "username": "@ivan_26",
+          "avatarLetter": "В",
+          "status": "working",
+          "statusLabel": "Працюєм",
+          "service": "marketing",
+          "serviceLabel": "Маркетинг",
+          "niche": "E-commerce бренд одягу",
+          "budget": 24000,
+          "currency": "₴",
+          "source": "site",
+          "sourceLabel": "Сайт агенства",
+          "notes": "Налаштування таргетованої реклами Meta + ретаргетинг. Запуск першої зв'язки креативів у понеділок.",
+          "links": {
+            "telegram": "https://t.me/ivan_26"
+          },
+          "orders": [
+            {
+              "id": "ord-2",
+              "title": "Таргет Meta під ключ на місяць",
+              "amount": 24000,
+              "paidStatus": "paid",
+              "deadline": "2026-10-31"
+            }
+          ]
+        },
+        {
+          "id": "crm-3",
+          "name": "Саша",
+          "username": "@sana",
+          "avatarLetter": "С",
+          "status": "in_progress",
+          "statusLabel": "В процесі",
+          "service": "development",
+          "serviceLabel": "Розробка",
+          "niche": "Юридична фірма",
+          "budget": 8000,
+          "currency": "₴",
+          "source": "tg_leads",
+          "sourceLabel": "DWS Lead",
+          "notes": "Потрібна швидка розробка односторінкового сайту-візитки для юридичної консультації. Погоджуємо структуру меню.",
+          "links": {
+            "telegram": "https://t.me/sana"
+          },
+          "orders": [
+            {
+              "id": "ord-3",
+              "title": "Сайт-візитка для юриста",
+              "amount": 8000,
+              "paidStatus": "unpaid",
+              "deadline": "2026-10-20"
+            }
+          ]
+        },
+        {
+          "id": "crm-4",
+          "name": "Інна",
+          "username": "@inna",
+          "avatarLetter": "І",
+          "status": "closed",
+          "statusLabel": "Закритий",
+          "service": "montage",
+          "serviceLabel": "Монтаж",
+          "niche": "Стоматологічна клініка",
+          "budget": 18000,
+          "currency": "₴",
+          "source": "tiktok",
+          "sourceLabel": "TikTok",
+          "notes": "Проєкт успішно зданий та повністю оплачений. 15 динамічних Reels/TikTok з субтитрами та саунд-дизайном.",
+          "links": {
+            "telegram": "https://t.me/inna"
+          },
+          "orders": [
+            {
+              "id": "ord-4",
+              "title": "Пакет 15 Reels/Shorts для клініки",
+              "amount": 18000,
+              "paidStatus": "paid",
+              "deadline": "2026-10-10"
+            }
+          ]
+        }
+      ],
+      "income": {
+        "records": [],
+        "currency": "₴"
+      },
+      "expenses": {
+        "records": [],
+        "currency": "₴"
+      },
+      "profile": {
+        "agencyName": "DenisWeb Studio",
+        "ownerName": "Денис Залізко",
+        "theme": "light",
+        "about": "DenisWeb Studio — діджитал-агентство сучасної веброзробки та результативного маркетингу. Створюємо висококонверсійні лендінги, інтернет-магазини, 3D-сайти, каталоги та Telegram-боти. Наші стандарти: чистий код, PageSpeed 90+, адаптив під усі гаджети, інтеграція ШІ у процеси та безкоштовне інтерактивне демо до внесення авансу. Оплата 40% аванс / 60% після запуску.",
+        "responseTemplate": "Вітаю, {NAME}! Побачив ваше замовлення щодо {TASK}. У DenisWeb Studio ми реалізуємо подібні проєкти під ключ за 2-4 дні з гарантією швидкості та чистого коду.\n\nГотові безкоштовно розробити концепт та інтерактивне демо головного блоку ще до початку оплати, щоб ви наочно побачили результат.\n\nНаш сайт та кейси: https://denis-webstudio.site\nКоли вам зручно коротко обговорити деталі?",
+        "niches": {
+          "development": {
+            "enabled": true,
+            "label": "Веброзробка",
+            "subcategories": {
+              "landing": true,
+              "ecommerce": true,
+              "catalog": true,
+              "3d_site": true,
+              "multipages": true,
+              "maintenance": true,
+              "tg_bots": true,
+              "services": true
+            }
+          },
+          "marketing": {
+            "enabled": true,
+            "label": "Маркетинг",
+            "subcategories": {
+              "meta_target": true,
+              "google_ads": true,
+              "tiktok_ads": true,
+              "telegram_ads": true,
+              "seo": true,
+              "complex": true
+            }
+          },
+          "montage": {
+            "enabled": true,
+            "label": "Монтаж",
+            "subcategories": {
+              "reels_tiktok": true,
+              "youtube": true,
+              "ads_creatives": true,
+              "motion": true,
+              "color_sound": true
+            }
+          }
+        },
+        "filterSettings": {
+          "budgetRange": "all",
+          "portfolioOnly": false,
+          "experienceRequired": "any",
+          "sortBy": "date"
+        }
+      },
+      "takenLeadIds": [],
+      "createdAt": "2026-10-18T20:20:49.419Z"
+    }
   }
 }

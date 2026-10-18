@@ -3762,11 +3762,14 @@ function getOrCreateUserIdentity() {
         role: 'owner'
       };
     }
+    // Prioritize clean Telegram username as the canonical key so same username across devices syncs 1:1!
+    const cleanUser = tgUser.username ? tgUser.username.toLowerCase().replace(/^@/, '') : '';
+    const userKey = cleanUser || ('tg_' + tgUser.id);
     const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || ('Користувач #' + tgUser.id);
     return {
-      key: 'tg_' + tgUser.id,
+      key: userKey,
       name: fullName,
-      username: tgUser.username ? ('@' + tgUser.username) : ('@user_' + tgUser.id),
+      username: tgUser.username ? ('@' + tgUser.username) : ('@' + userKey),
       role: 'member'
     };
   }

@@ -454,13 +454,16 @@ export const db = {
     const data = readDb();
     if (!data.accounts) data.accounts = {};
     const cleanKey = String(accountKey).trim().toLowerCase().replace(/^@/, '') || 'default';
+    const isDenis = cleanKey === 'zalizkodenis12';
+
     if (!data.accounts[cleanKey]) {
       data.accounts[cleanKey] = {
-        crm: data.crm || [],
-        income: data.income || { records: [], currency: '₴' },
-        expenses: data.expenses || { records: [], currency: '₴' },
-        profile: data.profile || {},
-        takenLeadIds: (data.leads || []).filter(l => l.inCrm).map(l => l.id)
+        crm: isDenis ? (data.crm || []) : [],
+        income: isDenis ? (data.income || { records: [], currency: '₴' }) : { records: [], currency: '₴' },
+        expenses: isDenis ? (data.expenses || { records: [], currency: '₴' }) : { records: [], currency: '₴' },
+        profile: isDenis ? (data.profile || {}) : {},
+        takenLeadIds: isDenis ? (data.leads || []).filter(l => l.inCrm).map(l => l.id) : [],
+        createdAt: new Date().toISOString()
       };
       writeDb(data);
     }
@@ -471,35 +474,40 @@ export const db = {
     const data = readDb();
     if (!data.accounts) data.accounts = {};
     const cleanKey = String(accountKey).trim().toLowerCase().replace(/^@/, '') || 'default';
+    const isDenis = cleanKey === 'zalizkodenis12';
+
     const acc = data.accounts[cleanKey] || {
-      crm: data.crm || [],
-      income: data.income || { records: [], currency: '₴' },
-      expenses: data.expenses || { records: [], currency: '₴' },
-      profile: data.profile || {},
+      crm: isDenis ? (data.crm || []) : [],
+      income: isDenis ? (data.income || { records: [], currency: '₴' }) : { records: [], currency: '₴' },
+      expenses: isDenis ? (data.expenses || { records: [], currency: '₴' }) : { records: [], currency: '₴' },
+      profile: isDenis ? (data.profile || {}) : {},
       takenLeadIds: []
     };
+
     if (Array.isArray(payload.crm)) {
       acc.crm = payload.crm;
-      data.crm = payload.crm;
+      if (isDenis) data.crm = payload.crm;
     }
     if (payload.income && Array.isArray(payload.income.records)) {
       acc.income = payload.income;
-      data.income = payload.income;
+      if (isDenis) data.income = payload.income;
     }
     if (payload.expenses && Array.isArray(payload.expenses.records)) {
       acc.expenses = payload.expenses;
-      data.expenses = payload.expenses;
+      if (isDenis) data.expenses = payload.expenses;
     }
     if (payload.profile) {
       acc.profile = { ...acc.profile, ...payload.profile };
-      data.profile = { ...data.profile, ...payload.profile };
+      if (isDenis) data.profile = { ...data.profile, ...payload.profile };
     }
     if (Array.isArray(payload.takenLeadIds)) {
       acc.takenLeadIds = payload.takenLeadIds;
-      const takenSet = new Set(payload.takenLeadIds);
-      (data.leads || []).forEach(l => {
-        if (takenSet.has(l.id)) l.inCrm = true;
-      });
+      if (isDenis) {
+        const takenSet = new Set(payload.takenLeadIds);
+        (data.leads || []).forEach(l => {
+          if (takenSet.has(l.id)) l.inCrm = true;
+        });
+      }
     }
     if (payload.username) acc.username = payload.username;
     if (payload.name) acc.name = payload.name;
