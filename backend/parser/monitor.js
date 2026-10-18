@@ -151,7 +151,7 @@ export function extractAuthorHandle(cleanText, rawBodyHtml = '', sourceHandle = 
   const srcLower = (sourceHandle || '').toLowerCase().replace('@', '');
 
   // 1. Explicit contact keywords in text (e.g. "Контакт: @...", "Пишіть @...", "HR: @...", "Резюме: @...")
-  const contactPattern = /(?:контакт[иа]?|пиш[іі]ть|пишите|зв['’]?язок|відгук(?:нутися)?|отклик(?:нуться)?|резюме|відправляйте|надсилайте|присылайте|hr|recruiter|pm|лічка|лс|пп|tg|telegram|телеграм)[\s:—–-]+@?([a-zA-Z0-9_]{4,32})\b/gi;
+  const contactPattern = /(?:контакт[иа]?|пиш[іі]ть|пишите|писати|писать|зв['’]?язок|відгук(?:нутися)?|отклик(?:нуться)?|резюме|відправляйте|надсилайте|присылайте|звертайтесь|обращайтесь|hr|recruiter|pm|лічка|лс|пп|в лс|в пп|в особисті|в личку|tg|telegram|телеграм)[\s:—–\-\+a-zA-Zа-яА-ЯіїєґІЇЄҐ]*(?:https?:\/\/t\.me\/|@)?([a-zA-Z0-9_]{4,32})\b/gi;
   let match;
   while ((match = contactPattern.exec(cleanText)) !== null) {
     const handle = match[1];
@@ -413,11 +413,13 @@ async function syncAndJoinSuperchats(client, sources) {
           const messages = await client.getMessages(cleanHandle, { limit: 15 });
           for (const msg of messages) {
             if (!msg || !msg.message) continue;
-            const text = msg.message;
             const sender = await msg.getSender().catch(() => null);
+            if (sender?.bot || sender?.username?.toLowerCase().endsWith('bot')) continue;
+
             let authorUsername = sender?.username ? '@' + sender.username : '';
-            if (!authorUsername) {
-              authorUsername = extractAuthorHandle(text, '', cleanHandle);
+            const inTextHandle = extractAuthorHandle(text, '', cleanHandle);
+            if (inTextHandle) {
+              authorUsername = inTextHandle;
             }
             if (!authorUsername && sender?.id) {
               authorUsername = `@tg_id_${sender.id}`;
@@ -533,13 +535,15 @@ export async function startMonitor() {
 
         const chat = await message.getChat().catch(() => null);
         const sender = await message.getSender().catch(() => null);
+        if (sender?.bot || sender?.username?.toLowerCase().endsWith('bot')) return;
 
         const text = message.message;
         const sourceUsername = chat?.username ? '@' + chat.username : '';
         let authorUsername = sender?.username ? '@' + sender.username : '';
 
-        if (!authorUsername) {
-          authorUsername = extractAuthorHandle(text, '', sourceUsername);
+        const inTextHandle = extractAuthorHandle(text, '', sourceUsername);
+        if (inTextHandle) {
+          authorUsername = inTextHandle;
         }
         if (!authorUsername && sender?.id) {
           authorUsername = `@tg_id_${sender.id}`;

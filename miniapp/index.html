@@ -850,17 +850,19 @@
           <div class="take-modal-text" id="takeModalFullText"></div>
         </div>
       </div>
-      <div class="modal-footer flex-col gap-2" style="display: flex; flex-direction: column; width: 100%;">
+      <div class="modal-footer flex-col gap-2" style="display: flex; flex-direction: column; width: 100%; gap: 10px;">
+        <!-- РЯД 1: По 50% обидві кнопки сині з білим текстом -->
         <div style="display: flex; gap: 8px; width: 100%;">
-          <button id="takeModalDirectTgBtn" class="btn btn--out" style="flex: 1;">
-            НАПИСАТИ В ЛІЧКУ
+          <button id="takeModalDirectTgBtn" class="btn btn--fill" style="flex: 1; background: #0066ff !important; color: #ffffff !important; border: none; font-weight: 700; padding: 13px 8px; border-radius: 12px; font-size: 0.88rem; cursor: pointer; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);">
+            НАПИСАТИ КЛІЄНТУ
           </button>
-          <button id="takeModalAiOfferBtn" class="btn btn--fill" style="flex: 1;">
+          <button id="takeModalAiOfferBtn" class="btn btn--fill" style="flex: 1; background: #0066ff !important; color: #ffffff !important; border: none; font-weight: 700; padding: 13px 8px; border-radius: 12px; font-size: 0.88rem; cursor: pointer; text-align: center; white-space: nowrap; box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);">
             AI-ВІДГУК
           </button>
         </div>
-        <button id="takeModalSourceBtn" class="btn btn--out" style="width: 100%; display: none; font-size: 0.85rem; padding: 10px 14px; background: rgba(0, 102, 255, 0.05); border-color: rgba(0, 102, 255, 0.25); color: var(--brand); font-weight: 600;">
-          🔗 ВІДКРИТИ В ДЖЕРЕЛІ ↗
+        <!-- РЯД 2: На всю ширину чорна кнопка з білим текстом та сірою обводкою -->
+        <button id="takeModalSourceBtn" class="btn" style="width: 100%; display: block; background: #000000 !important; color: #ffffff !important; border: 1px solid #4b5563 !important; font-weight: 700; padding: 13px 14px; border-radius: 12px; font-size: 0.88rem; cursor: pointer; text-align: center;">
+          ВІДКРИТИ В ДЖЕРЕЛІ ↗
         </button>
       </div>
     </div>

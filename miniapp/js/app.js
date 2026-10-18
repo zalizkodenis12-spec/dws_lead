@@ -3825,31 +3825,34 @@ function resolveDirectContact(lead) {
     };
   }
 
-  // 2. If lead is from an exchange and has a direct project URL
-  if (lead.url && (lead.url.startsWith('http://') || lead.url.startsWith('https://')) && !lead.url.includes('t.me/')) {
-    return { type: 'exchange', handle: '', url: lead.url };
+  // 2. Explicit recruiter / client contact in text (e.g. "Пишіть @...", "Контакти: @...", "HR: @...")
+  if (text) {
+    const contactRegex = /(?:контакт[иа]?|пиш[іі]ть|пишите|писати|писать|зв['’]?язок|відгук(?:нутися)?|отклик(?:нуться)?|резюме|відправляйте|надсилайте|присылайте|звертайтесь|обращайтесь|hr|recruiter|pm|лічка|лс|пп|в лс|в пп|в особисті|в личку|tg|telegram|телеграм)[\s:—–\-\+a-zA-Zа-яА-ЯіїєґІЇЄҐ]*(?:https?:\/\/t\.me\/|@)?([a-zA-Z0-9_]{4,32})\b/i;
+    const m = text.match(contactRegex);
+    if (m) {
+      const clean = m[1].trim();
+      const cLower = clean.toLowerCase();
+      if (cLower !== srcUser && !cLower.endsWith('bot') && !['joinchat', 'admin', 'channel', 'support'].includes(cLower)) {
+        return { type: 'telegram', handle: '@' + clean, url: 'https://t.me/' + clean };
+      }
+    }
   }
 
-  // 3. Author username if not source channel and not a bot or telegram service
+  // 3. Author username if a real person handle or numeric ID
   if (lead.authorUsername && typeof lead.authorUsername === 'string') {
     let clean = lead.authorUsername.replace(/^@/, '').replace('https://t.me/', '').split('/')[0].split('?')[0].trim();
-    if (clean && clean.toLowerCase() !== srcUser && !clean.toLowerCase().endsWith('bot') && !clean.toLowerCase().startsWith('tg_id_') && clean.toLowerCase() !== 'telegram') {
+    const cLower = clean.toLowerCase();
+    if (cLower.startsWith('tg_id_') || cLower.startsWith('id_')) {
+      const numId = clean.replace(/^(?:tg_)?id_/, '');
+      return { type: 'telegram_id', handle: 'id: ' + numId, url: `tg://user?id=${numId}` };
+    }
+    if (clean && cLower !== srcUser && !cLower.endsWith('bot') && cLower !== 'telegram') {
       return { type: 'telegram', handle: '@' + clean, url: 'https://t.me/' + clean };
     }
   }
 
-  // 3. Explicit contact triggers in text (e.g. "Пишіть: @...", "Контакт: @...", "Резюме: @...")
+  // 4. Any direct t.me link in text
   if (text) {
-    const contactRegex = /(?:контакт[иа]?|пиш[іі]ть|пишите|зв['’]?язок|відгук(?:нутися)?|отклик(?:нуться)?|резюме|відправляйте|надсилайте|присылайте|hr|recruiter|pm|лічка|лс|пп|tg|telegram|телеграм)[\s:—–-]+@?([a-zA-Z0-9_]{4,32})\b/i;
-    const m = text.match(contactRegex);
-    if (m) {
-      const clean = m[1].trim();
-      if (clean.toLowerCase() !== srcUser && !clean.toLowerCase().endsWith('bot')) {
-        return { type: 'telegram', handle: '@' + clean, url: 'https://t.me/' + clean };
-      }
-    }
-
-    // 4. Any direct t.me link in text
     const linkMatches = [...text.matchAll(/(?:https?:\/\/)?t\.me\/([a-zA-Z0-9_]{4,32})/gi)];
     for (const lm of linkMatches) {
       const h = lm[1].trim();
@@ -3859,10 +3862,10 @@ function resolveDirectContact(lead) {
       }
     }
 
-    // 5. Any @mention in text
+    // 5. Any @mention in text (bottom to top)
     const mentions = [...text.matchAll(/@([a-zA-Z0-9_]{4,32})/g)];
-    for (const mm of mentions) {
-      const h = mm[1].trim();
+    for (let i = mentions.length - 1; i >= 0; i--) {
+      const h = mentions[i][1].trim();
       const hLower = h.toLowerCase();
       if (hLower !== srcUser && !hLower.endsWith('bot') && !['joinchat', 'admin', 'channel', 'support'].includes(hLower)) {
         return { type: 'telegram', handle: '@' + h, url: 'https://t.me/' + h };
@@ -3870,7 +3873,12 @@ function resolveDirectContact(lead) {
     }
   }
 
-  // 6. Fallback: if lead has direct URL
+  // 6. If lead is from an exchange and has a direct project URL
+  if (lead.url && (lead.url.startsWith('http://') || lead.url.startsWith('https://')) && !lead.url.includes('t.me/')) {
+    return { type: 'exchange', handle: '', url: lead.url };
+  }
+
+  // 7. Fallback: message post link or source channel
   if (lead.url) {
     return { type: 'web', handle: '', url: lead.url };
   }
@@ -3895,17 +3903,31 @@ function openTelegramContact(lead, prefilledText = '') {
     return;
   }
 
-  if (contact.type === 'exchange' || (contact.type === 'web' && contact.url)) {
+  if (contact.type === 'exchange' || (contact.type === 'web' && contact.url && !contact.url.includes('t.me/'))) {
     window.open(contact.url, '_blank');
     return;
   }
 
+  // Telegram numeric ID deep link: tg://user?id=12345678 (opens personal dialog directly in app)
+  if (contact.type === 'telegram_id') {
+    if (prefilledText && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(prefilledText).catch(() => {});
+    }
+    if (tg?.openTelegramLink) {
+      tg.openTelegramLink(contact.url);
+    } else {
+      window.location.href = contact.url;
+    }
+    return;
+  }
+
+  // Telegram username: https://t.me/username
   let tgUrl = contact.url || 'https://t.me/';
   if (prefilledText && contact.type === 'telegram') {
     if (navigator.clipboard?.writeText) {
       navigator.clipboard.writeText(prefilledText).catch(() => {});
     }
-    tgUrl += '?text=' + encodeURIComponent(prefilledText);
+    tgUrl += (tgUrl.includes('?') ? '&' : '?') + 'text=' + encodeURIComponent(prefilledText);
   }
 
   if (tg?.openTelegramLink && tgUrl.includes('t.me/')) {
@@ -4341,41 +4363,25 @@ function openTakeCrmModal(lead, btn) {
     }
   }
 
-  // 1. Action buttons: Direct contact or open on exchange
+  // 1. Action buttons: Row 1 - Direct Contact (Blue with White text, 50% width)
   if (directTgBtn) {
-    const isExchange = !!lead.url && (!lead.authorUsername || lead.authorUsername.startsWith('@freelance') || lead.authorUsername.startsWith('@djinni') || lead.authorUsername.startsWith('@kabanchik') || lead.authorUsername.startsWith('@upwork') || lead.authorUsername.startsWith('@wework'));
-    if (isExchange) {
-      directTgBtn.textContent = `ВІДКРИТИ НА ${lead.sourceName || 'БІРЖІ'} ↗`;
-      directTgBtn.onclick = () => {
-        haptic('light');
-        markLeadTakenToCrm(lead, btn);
-        window.open(lead.url, '_blank');
-      };
-    } else {
-      const contact = resolveDirectContact(lead);
-      if (contact.type === 'telegram') {
-        directTgBtn.textContent = `НАПИСАТИ В ЛІЧКУ (${contact.handle})`;
-      } else if (contact.type === 'reddit') {
-        directTgBtn.textContent = `НАПИСАТИ В REDDIT (${contact.handle}) ↗`;
-      } else if (contact.type === 'exchange') {
-        directTgBtn.textContent = 'ВІДКРИТИ ПРОЄКТ НА БІРЖІ ↗';
-      } else {
-        directTgBtn.textContent = 'НАПИСАТИ КЛІЄНТУ';
-      }
-      directTgBtn.onclick = () => {
-        haptic('light');
-        markLeadTakenToCrm(lead, btn);
-        openTelegramContact(lead, '');
-      };
-    }
+    directTgBtn.style.display = 'block';
+    directTgBtn.textContent = 'НАПИСАТИ КЛІЄНТУ';
+    directTgBtn.onclick = () => {
+      haptic('light');
+      markLeadTakenToCrm(lead, btn);
+      openTelegramContact(lead, '');
+    };
   }
 
-  // 2. AI offer button click handler (Copies pitch and opens dialog/exchange)
+  // 2. Action buttons: Row 1 - AI Offer (Blue with White text, 50% width)
   if (aiOfferBtn) {
+    aiOfferBtn.style.display = 'block';
+    aiOfferBtn.textContent = 'AI-ВІДГУК';
     aiOfferBtn.onclick = () => {
       haptic('success');
       markLeadTakenToCrm(lead, btn);
-      const clientName = lead.authorName || (lead.authorUsername ? lead.authorUsername.replace('@', '') : 'замовнику');
+      const clientName = lead.authorName || (lead.authorUsername ? lead.authorUsername.replace(/^[@u\/]+/, '') : 'замовнику');
       const taskName = lead.subcategoryName || lead.title || 'розробка проєкту';
       const template = state.profile?.responseTemplate || DEFAULT_DATA.profile.responseTemplate;
       const pitch = template.replace(/{NAME}/g, clientName).replace(/{TASK}/g, taskName);
@@ -4386,41 +4392,30 @@ function openTakeCrmModal(lead, btn) {
       aiOfferBtn.textContent = 'СКОПІЙОВАНО ✓';
       setTimeout(() => { aiOfferBtn.textContent = 'AI-ВІДГУК'; }, 2000);
 
-      if (lead.url) {
-        window.open(lead.url, '_blank');
-      } else {
-        openTelegramContact(lead, pitch);
-      }
+      openTelegramContact(lead, pitch);
     };
   }
 
-  // 3. Open in Source button (Check original channel message or exchange project)
+  // 3. Action buttons: Row 2 - Open in Source (100% full-width Black button with gray outline)
   const sourceBtn = document.getElementById('takeModalSourceBtn');
   if (sourceBtn) {
-    let sourceUrl = '';
-    let sourceLabel = lead.sourceName || 'ДЖЕРЕЛІ';
-
-    if (lead.url) {
-      sourceUrl = lead.url;
-    } else if (lead.sourceUsername) {
-      const cleanHandle = lead.sourceUsername.replace(/^@/, '');
-      sourceUrl = `https://t.me/${cleanHandle}`;
-    }
-
-    if (sourceUrl) {
-      sourceBtn.style.display = 'block';
-      sourceBtn.textContent = `🔗 ВІДКРИТИ В ДЖЕРЕЛІ (${sourceLabel}) ↗`;
-      sourceBtn.onclick = () => {
-        haptic('light');
+    sourceBtn.style.display = 'block';
+    sourceBtn.textContent = 'ВІДКРИТИ В ДЖЕРЕЛІ ↗';
+    sourceBtn.onclick = () => {
+      haptic('light');
+      let sourceUrl = lead.url || '';
+      if (!sourceUrl && lead.sourceUsername) {
+        const cleanHandle = lead.sourceUsername.replace(/^@/, '');
+        sourceUrl = `https://t.me/${cleanHandle}`;
+      }
+      if (sourceUrl) {
         if (tg?.openTelegramLink && sourceUrl.includes('t.me/')) {
           tg.openTelegramLink(sourceUrl);
         } else {
           window.open(sourceUrl, '_blank');
         }
-      };
-    } else {
-      sourceBtn.style.display = 'none';
-    }
+      }
+    };
   }
 
   openModal('modalTakeCrmLead');
