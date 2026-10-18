@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1792352839663-366",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "vacancies_it",
+      "subcategoryName": "IT Вакансії / Розробка",
+      "sourceType": "djinni",
+      "sourceName": "Djinni",
+      "sourceUsername": "@djinni",
+      "authorName": "Рекрутер на Djinni",
+      "authorUsername": "@djinni",
+      "title": "Branding and Partnerships Lead",
+      "text": "Branding and Partnerships Lead\n\nAbout us\n \nWe are a new-generation international production company where talent, business, and technology come together to create what comes next. We believe the biggest breakthroughs happen when ambitious people embrace new ideas and use new technology and AI without limits.\n \nWe are currently looking for a Brand and Partnerships Lead who will shape how the company is seen, understood, and remembered. The role covers developing a new brand strategy, building the company’s presence on LinkedIn and other public channels, and taking strategic partnerships to the next level.\n \nThis role is for you if you have:\n4+ years of experience in brand, marketing, or partnerships, preferably in fintech, payments, crypto, or B2B SaaS.\nProven experience with at least one full rebrand, from developing the concept and positioning to launching it in the market.\nExcellent written English.\nStrong day-to-day experience with AI tools and a practical understanding of how to use them to improve your work.\nA track record of personally owning the full partnership process, from identifying and initiating opportunities to negotiating, closing, and growing partnerships.\nA proactive and structured working style, with a strong sense of ownership and the ability to independently take ideas from strategy to execution.\n \n\nWhat you will do:\nLead the rebrand of our product from concept to full launch within your first 90 days.\nCoordinate the external lead designer and in-house web developer, set clear briefs and priorities, review their work, and keep the rebrand on schedule.\nIntroduce the new brand across websites, email, documents, dashboards, social media, sales materials, and every other relevant company touchpoint, and manage the public launch.\nOwn how the company presents itself across all marketing and customer-facing channels, keeping the brand consistent and clear.\nOwn the LinkedIn presence of the company and its founder, build their positioning, and grow the brand across the channels that matter most.\nBuild and manage partnerships that support company growth and strengthen the brand.\n \n\nWhat we offer:\nMeaningful work: Work on projects with a visible impact on the brand, the business, and its future growth.\nFreedom to lead: Take ownership of your area, make decisions independently, and have a direct impact on how the company develops.\nPaid vacation: 20 working days of paid annual leave each year to rest, recharge, and return with new energy.\nPaid sick days: 1 paid sick day per month, up to 10 days per year, with no medical certificate required. Certified medical leave is covered in accordance with UA law.\nBirthday day off: One additional paid day off to celebrate your birthday or simply take some time for yourself.\nCompany equipment: Corporate equipment is provided after 6 months of full-time work.\n \nRecruitment process:\nApply for the position -> Interview with the recruiter -> Test task (1–2 pages max; AI is allowed) -> Tech interview -> Final decision.\n \nReady to take ownership and make a real impact? Join us. Great achievements are ahead!",
+      "url": "https://djinni.co/jobs/853851-branding-and-partnerships-lead/",
+      "date": "2026-10-18T19:47:19.151Z",
+      "dateFormatted": "Сьогодні, 22:47",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Djinni",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення на Djinni: it вакансії / розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792351370815-276",
       "category": "marketing",
       "categoryName": "Маркетинг",
