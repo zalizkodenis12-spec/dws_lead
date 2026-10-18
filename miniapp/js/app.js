@@ -3813,12 +3813,24 @@ function resolveDirectContact(lead) {
   const text = lead.text || '';
   const srcUser = (lead.sourceUsername || '').replace(/^@/, '').toLowerCase().trim();
 
-  // 1. If lead is from an exchange and has a direct project URL
+  // 1. If lead is from Reddit
+  if (lead.sourceType === 'reddit' || (lead.authorUsername && typeof lead.authorUsername === 'string' && lead.authorUsername.startsWith('u/'))) {
+    const rawUser = lead.authorUsername.replace(/^u\//i, '').trim();
+    return {
+      type: 'reddit',
+      handle: 'u/' + rawUser,
+      url: `https://www.reddit.com/user/${rawUser}`,
+      chatUrl: `https://www.reddit.com/message/compose/?to=${rawUser}`,
+      postUrl: lead.url
+    };
+  }
+
+  // 2. If lead is from an exchange and has a direct project URL
   if (lead.url && (lead.url.startsWith('http://') || lead.url.startsWith('https://')) && !lead.url.includes('t.me/')) {
     return { type: 'exchange', handle: '', url: lead.url };
   }
 
-  // 2. Author username if not source channel and not a bot or telegram service
+  // 3. Author username if not source channel and not a bot or telegram service
   if (lead.authorUsername && typeof lead.authorUsername === 'string') {
     let clean = lead.authorUsername.replace(/^@/, '').replace('https://t.me/', '').split('/')[0].split('?')[0].trim();
     if (clean && clean.toLowerCase() !== srcUser && !clean.toLowerCase().endsWith('bot') && !clean.toLowerCase().startsWith('tg_id_') && clean.toLowerCase() !== 'telegram') {
@@ -3873,6 +3885,15 @@ function resolveDirectContact(lead) {
 // Helper: Open direct Telegram PM with vacancy owner or project URL
 function openTelegramContact(lead, prefilledText = '') {
   const contact = resolveDirectContact(lead);
+
+  if (contact.type === 'reddit') {
+    if (prefilledText && navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(prefilledText).catch(() => {});
+    }
+    const redditTarget = contact.chatUrl || contact.url;
+    window.open(redditTarget, '_blank');
+    return;
+  }
 
   if (contact.type === 'exchange' || (contact.type === 'web' && contact.url)) {
     window.open(contact.url, '_blank');
@@ -4334,6 +4355,8 @@ function openTakeCrmModal(lead, btn) {
       const contact = resolveDirectContact(lead);
       if (contact.type === 'telegram') {
         directTgBtn.textContent = `НАПИСАТИ В ЛІЧКУ (${contact.handle})`;
+      } else if (contact.type === 'reddit') {
+        directTgBtn.textContent = `НАПИСАТИ В REDDIT (${contact.handle}) ↗`;
       } else if (contact.type === 'exchange') {
         directTgBtn.textContent = 'ВІДКРИТИ ПРОЄКТ НА БІРЖІ ↗';
       } else {

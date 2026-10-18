@@ -6,6 +6,7 @@
 
 import { classifyLeadRuleBased } from './filter.js';
 import { db } from '../db/db.js';
+import { scrapeAllReddit } from './reddit.js';
 
 function decodeHtmlEntities(str) {
   if (!str) return '';
@@ -397,14 +398,15 @@ export async function scrapeWeWorkRemotely() {
  * Scan all freelance exchanges in parallel and save matched leads
  */
 export async function scanAllExchanges() {
-  console.log('[Exchanges Monitor] 🌐 Збір замовлень з бірж: Freelancehunt, Djinni, Freelance.ua, Kabanchik, Upwork/Remote, WeWorkRemotely...');
-  const [fhRes, djRes, fuaRes, kbRes, remRes, wwrRes] = await Promise.allSettled([
+  console.log('[Exchanges Monitor] 🌐 Збір замовлень з бірж та Reddit: Freelancehunt, Djinni, Freelance.ua, Kabanchik, Upwork/Remote, WeWorkRemotely, Reddit...');
+  const [fhRes, djRes, fuaRes, kbRes, remRes, wwrRes, rdRes] = await Promise.allSettled([
     scrapeFreelancehunt(),
     scrapeDjinni(),
     scrapeFreelanceUa(),
     scrapeKabanchik(),
     scrapeRemotive(),
-    scrapeWeWorkRemotely()
+    scrapeWeWorkRemotely(),
+    scrapeAllReddit()
   ]);
 
   const fh = fhRes.status === 'fulfilled' ? fhRes.value : [];
@@ -413,9 +415,10 @@ export async function scanAllExchanges() {
   const kb = kbRes.status === 'fulfilled' ? kbRes.value : [];
   const rem = remRes.status === 'fulfilled' ? remRes.value : [];
   const wwr = wwrRes.status === 'fulfilled' ? wwrRes.value : [];
+  const rd = rdRes.status === 'fulfilled' ? rdRes.value : [];
 
-  const allLeads = [...fh, ...dj, ...fua, ...kb, ...rem, ...wwr];
-  console.log(`[Exchanges Monitor] 📦 Знайдено: Freelancehunt (${fh.length}), Djinni (${dj.length}), Freelance.ua (${fua.length}), Kabanchik (${kb.length}), Upwork/Remote (${rem.length}), WeWorkRemotely (${wwr.length}). Разом: ${allLeads.length}`);
+  const allLeads = [...fh, ...dj, ...fua, ...kb, ...rem, ...wwr, ...rd];
+  console.log(`[Exchanges Monitor] 📦 Знайдено: Freelancehunt (${fh.length}), Djinni (${dj.length}), Freelance.ua (${fua.length}), Kabanchik (${kb.length}), Upwork/Remote (${rem.length}), WeWorkRemotely (${wwr.length}), Reddit (${rd.length}). Разом: ${allLeads.length}`);
 
   let newCount = 0;
   const bySource = {
@@ -424,7 +427,8 @@ export async function scanAllExchanges() {
     'Freelance.ua': { found: fua.length, new: 0 },
     Kabanchik: { found: kb.length, new: 0 },
     'Upwork / Remote': { found: rem.length, new: 0 },
-    WeWorkRemotely: { found: wwr.length, new: 0 }
+    WeWorkRemotely: { found: wwr.length, new: 0 },
+    Reddit: { found: rd.length, new: 0 }
   };
   const now = new Date();
   const timeFormatted = new Intl.DateTimeFormat('uk-UA', {
@@ -435,6 +439,7 @@ export async function scanAllExchanges() {
 
   for (const item of allLeads) {
     const cl = item.classification;
+    const isUsd = item.sourceType === 'reddit' || item.country.includes('Upwork') || item.country.includes('Remote') || item.country.includes('WeWork') || item.country.includes('Reddit');
     const newLead = {
       id: `lead-ex-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
       category: cl.category,
@@ -452,13 +457,13 @@ export async function scanAllExchanges() {
       date: now.toISOString(),
       dateFormatted: `Сьогодні, ${timeFormatted}`,
       budget: item.budget,
-      currency: item.country.includes('Upwork') || item.country.includes('Remote') || item.country.includes('WeWork') ? '$' : '₴',
-      country: item.country, // Exact exchange name
+      currency: isUsd ? '$' : '₴',
+      country: item.country,
       isUrgent: cl.isUrgent,
       requiresPortfolio: cl.requiresPortfolio,
       experienceRequired: cl.experienceRequired,
       aiRating: cl.initialRating,
-      aiSummary: `Замовлення на ${item.sourceName}: ${cl.subcategoryName.toLowerCase()}${item.budget ? ` з бюджетом ${item.budget} ${item.country.includes('Upwork') ? '$' : '₴'}` : ''}.`,
+      aiSummary: `Замовлення на ${item.sourceName}: ${cl.subcategoryName.toLowerCase()}${item.budget ? ` з бюджетом ${item.budget} ${isUsd ? '$' : '₴'}` : ''}.`,
       aiAnalysis: null,
       inCrm: false
     };
@@ -468,10 +473,12 @@ export async function scanAllExchanges() {
       newCount++;
       if (bySource[item.sourceName]) {
         bySource[item.sourceName].new++;
+      } else if (item.sourceType === 'reddit') {
+        bySource.Reddit.new++;
       }
     }
   }
 
-  console.log(`[Exchanges Monitor] ✅ Додано ${newCount} нових замовлень з бірж у загальну базу заявок.`);
+  console.log(`[Exchanges Monitor] ✅ Додано ${newCount} нових замовлень з бірж та Reddit у загальну базу заявок.`);
   return { totalScraped: allLeads.length, newLeads: newCount, bySource };
 }

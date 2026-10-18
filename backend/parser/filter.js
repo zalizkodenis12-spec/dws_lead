@@ -159,11 +159,17 @@ const NICHES = {
       'нужен таргетолог', 'ищем таргетолога', 'таргетированная реклама', 'таргет инстаграм',
       'настроить таргет', 'настроить рекламу', 'запустить рекламу', 'контекстная реклама',
       'реклама в тикток', 'реклама в телеграм', 'трафик-менеджер', 'smm специалист', 'smm-специалист',
-      'ведение инстаграм', 'seo специалист', 'лидогенерация'
+      'ведение инстаграм', 'seo специалист', 'лидогенерация',
+      // English Marketing & Ads phrases
+      'media buyer', 'meta ads', 'facebook ads', 'google ads', 'ad specialist', 'ads specialist',
+      'ppc specialist', 'ppc manager', 'smm manager', 'social media marketer', 'digital marketer',
+      'growth marketer', 'lead generation', 'performance marketer', 'run ads', 'manage ads',
+      'tiktok ads', 'ad campaign', 'ad manager'
     ],
     keywords: [
       'таргет', 'таргетолог', 'meta ads', 'facebook ads', 'google ads', 'контекстна реклама', 'контекстная реклама',
-      'smm', 'трафік', 'трафик', 'медіабаєр', 'медиабаер', 'buyer', 'лідогенерація', 'лидогенерация', 'seo'
+      'smm', 'трафік', 'трафик', 'медіабаєр', 'медиабаер', 'buyer', 'лідогенерація', 'лидогенерация', 'seo',
+      'ppc', 'performance marketing', 'media buying', 'ad manager', 'ad campaign'
     ],
     subcategories: {
       meta_target: ['таргет', 'meta', 'facebook', 'інстаграм', 'инстаграм', 'instagram', 'fb ads'],
