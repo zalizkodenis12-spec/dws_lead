@@ -388,7 +388,7 @@ app.post('/api/auth/verify-code', (req, res) => {
     let role = 'owner';
 
     const isDenis = (tgUser && (
-      (tgUser.username && tgUser.username.toLowerCase() === 'zalizkodenis12') ||
+      (tgUser.username && (tgUser.username.toLowerCase() === 'zalizkodenis12' || tgUser.username.toLowerCase() === 'absolutikdenchik')) ||
       String(tgUser.id) === '5278970111'
     )) || clientKey === 'zalizkodenis12';
 

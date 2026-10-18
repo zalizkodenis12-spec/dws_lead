@@ -3753,7 +3753,7 @@ function getOrCreateUserIdentity() {
   const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
   
   if (tgUser && tgUser.id) {
-    const isDenis = (tgUser.username && tgUser.username.toLowerCase() === 'zalizkodenis12') || String(tgUser.id) === '5278970111';
+    const isDenis = (tgUser.username && (tgUser.username.toLowerCase() === 'zalizkodenis12' || tgUser.username.toLowerCase() === 'absolutikdenchik')) || String(tgUser.id) === '5278970111';
     if (isDenis) {
       return {
         key: 'zalizkodenis12',
