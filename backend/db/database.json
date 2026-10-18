@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1792348060619-528",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "freelancehunt",
+      "sourceName": "Freelancehunt",
+      "sourceUsername": "@freelancehunt",
+      "authorName": "Замовник на Freelancehunt",
+      "authorUsername": "@freelancehunt",
+      "title": "Разработка контент-плана и дизайна для православного Instagram",
+      "text": "Разработка контент-плана и дизайна для православного Instagram\n\nИщем креативного SMM-специалиста для миссионерского проекта \n\n\nНаша цель: говорить о православии современным языком, заинтересовывать молодежь, разрушать стереотипы о Церкви и привлекать людей в сообщество.\n\n\nInstagram: ortho.east\n\n\nЗадачи на 1 месяц: Разработать контент-план. Подготовить 12 постов (3...",
+      "url": "https://freelancehunt.com/project/rozrobka-kontent-planu-ta-dizaynu-dlya-pravoslavnogo/1659663.html",
+      "date": "2026-10-18T18:27:40.618Z",
+      "dateFormatted": "Сьогодні, 21:27",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Freelancehunt",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення на Freelancehunt: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792348021447-729",
       "category": "development",
       "categoryName": "Веброзробка",
