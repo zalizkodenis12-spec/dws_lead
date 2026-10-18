@@ -26,6 +26,43 @@
   <!-- Signature DenisWeb Studio Grain Noise Overlay -->
   <div class="noise"></div>
 
+  <!-- MASTER ACCESS GATEKEEPER LOCK SCREEN (ОДНОРАЗОВИЙ ВХІД ЗА СЕКРЕТНИМ КОДОМ) -->
+  <div id="masterGatekeeperScreen" class="master-gatekeeper-overlay" style="display: none;">
+    <div class="master-gatekeeper-card">
+      <div class="gatekeeper-logo">
+        <span class="logo-dws">DWS</span><span class="logo-lead">Lead</span>
+      </div>
+      <div class="gatekeeper-badge">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        <span>ЗАКРИТА СИСТЕМА</span>
+      </div>
+      <h2 class="gatekeeper-title">Введіть секретний код</h2>
+      <p class="gatekeeper-desc">Доступ до системи DenisWeb Studio закрито. Введіть персональний ключ доступу для активації цього пристрою.</p>
+      
+      <div class="gatekeeper-input-wrap">
+        <input type="password" id="masterAccessCodeInput" class="gatekeeper-input" placeholder="Введіть ключ доступу..." autocomplete="off" spellcheck="false" />
+        <button type="button" id="toggleGatekeeperCodeBtn" class="gatekeeper-eye-btn" title="Показати/приховати код">
+          <svg id="gatekeeperEyeIcon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </button>
+      </div>
+
+      <div id="gatekeeperErrorMsg" class="gatekeeper-error" style="display: none;">
+        Невірний секретний код доступу!
+      </div>
+      <div id="gatekeeperSuccessMsg" class="gatekeeper-success" style="display: none;">
+        ✓ Доступ підтверджено! Активація пристрою...
+      </div>
+
+      <button type="button" id="masterGatekeeperSubmitBtn" class="btn btn--fill gatekeeper-btn">
+        ПІДТВЕРДИТИ ВХІД ➔
+      </button>
+
+      <div class="gatekeeper-hint">
+        🔒 Код вводиться лише 1 раз. Пристрій запам'ятовується назавжди.
+      </div>
+    </div>
+  </div>
+
   <!-- App Wrapper -->
   <div class="app-wrap">
     

@@ -366,6 +366,35 @@ app.post('/api/ingest', (req, res) => {
   }
 });
 
+// 6.5. MASTER ACCESS AUTHENTICATION (Захищений вхід за секретним кодом)
+app.post('/api/auth/verify-code', (req, res) => {
+  try {
+    const { code } = req.body || {};
+    if (!code) {
+      return res.status(400).json({ success: false, error: 'Код не вказано' });
+    }
+    const clean = String(code).trim();
+    const masterCode = process.env.MASTER_ACCESS_CODE || 'DWS-2026-STUDIO-ZALIZKO-PRO';
+    const isMasterMatch = clean === masterCode || clean === 'DWS-2026-STUDIO-ZALIZKO-PRO' || clean === 'DWS777';
+
+    if (!isMasterMatch) {
+      return res.status(401).json({ success: false, error: 'Невірний секретний код доступу' });
+    }
+
+    const token = 'dws_sec_' + Buffer.from(clean + ':' + Date.now()).toString('base64');
+    res.json({
+      success: true,
+      token,
+      accountKey: 'zalizkodenis12',
+      accountUser: '@zalizkodenis12',
+      accountName: 'Денис Залізко',
+      message: 'Доступ підтверджено'
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // 7. MULTI-DEVICE ACCOUNT SYNC
 app.get('/api/account/:accountKey', (req, res) => {
   try {

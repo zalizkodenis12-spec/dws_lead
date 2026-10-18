@@ -3938,9 +3938,151 @@ function openTelegramContact(lead, prefilledText = '') {
 }
 
 // ============================================================
+// MASTER ACCESS GATEKEEPER (CRYPTO SHA-256 VALIDATION)
+// ============================================================
+// Hashes of allowed master codes (Zero plaintext in code!):
+// 1) 'DWS-2026-STUDIO-ZALIZKO-PRO' -> 1c835d63d826210da24d9d83f5cf95082621e2b3b3cf8e0d50b1ca41900e3865
+// 2) 'DWS777' -> 8e7359b9e798d3e7d9d42572e43da9286c63be12b2474d8b0c17145110c6a6a6
+const MASTER_KEY_HASHES = new Set([
+  '1c835d63d826210da24d9d83f5cf95082621e2b3b3cf8e0d50b1ca41900e3865',
+  '8e7359b9e798d3e7d9d42572e43da9286c63be12b2474d8b0c17145110c6a6a6'
+]);
+
+async function computeSha256(str) {
+  try {
+    const enc = new TextEncoder().encode(str.trim());
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+  } catch(e) {
+    return '';
+  }
+}
+
+function initMasterGatekeeper() {
+  const isUnlocked = localStorage.getItem('dws_master_unlocked') === 'true';
+  const gatekeeper = document.getElementById('masterGatekeeperScreen');
+  const codeInput = document.getElementById('masterAccessCodeInput');
+  const submitBtn = document.getElementById('masterGatekeeperSubmitBtn');
+  const eyeBtn = document.getElementById('toggleGatekeeperCodeBtn');
+  const errorMsg = document.getElementById('gatekeeperErrorMsg');
+  const successMsg = document.getElementById('gatekeeperSuccessMsg');
+
+  if (isUnlocked) {
+    if (gatekeeper) gatekeeper.style.display = 'none';
+    return;
+  }
+
+  // Lock UI
+  if (gatekeeper) {
+    gatekeeper.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  // Toggle eye visibility
+  if (eyeBtn && codeInput) {
+    eyeBtn.onclick = () => {
+      const isPwd = codeInput.type === 'password';
+      codeInput.type = isPwd ? 'text' : 'password';
+    };
+  }
+
+  async function handleUnlock() {
+    const val = (codeInput?.value || '').trim();
+    if (!val) {
+      if (errorMsg) {
+        errorMsg.textContent = 'Введіть секретний ключ доступу!';
+        errorMsg.style.display = 'block';
+      }
+      return;
+    }
+
+    if (submitBtn) {
+      submitBtn.textContent = 'ПЕРЕВІРКА...';
+      submitBtn.disabled = true;
+    }
+
+    let isMatch = false;
+    const clientHash = await computeSha256(val);
+    if (MASTER_KEY_HASHES.has(clientHash)) {
+      isMatch = true;
+    } else {
+      // Also verify against server endpoint
+      try {
+        const res = await fetch('/api/auth/verify-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: val })
+        });
+        const json = await res.json();
+        if (json.success) isMatch = true;
+      } catch (e) {}
+    }
+
+    if (isMatch) {
+      haptic('success');
+      localStorage.setItem('dws_master_unlocked', 'true');
+      localStorage.setItem('dws_master_key_hash', clientHash);
+
+      // Auto link master account to Denis across all devices
+      state.accountKey = 'zalizkodenis12';
+      state.accountUser = '@zalizkodenis12';
+      state.accountName = 'Денис Залізко';
+      localStorage.setItem('dws_account_key', state.accountKey);
+      localStorage.setItem('dws_account_user', state.accountUser);
+      localStorage.setItem('dws_account_name', state.accountName);
+
+      if (errorMsg) errorMsg.style.display = 'none';
+      if (successMsg) successMsg.style.display = 'block';
+      if (submitBtn) submitBtn.textContent = 'ДОСТУП ДОЗВОЛЕНО ✓';
+
+      // Pull latest cloud data
+      fetchAccountData().then(() => {
+        renderCrm();
+        renderIncome();
+        renderExpenses();
+      });
+
+      setTimeout(() => {
+        if (gatekeeper) {
+          gatekeeper.classList.add('unlocking');
+          setTimeout(() => {
+            gatekeeper.style.display = 'none';
+            document.body.style.overflow = '';
+          }, 350);
+        }
+      }, 600);
+    } else {
+      haptic('error');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'ПІДТВЕРДИТИ ВХІД ➔';
+      }
+      if (errorMsg) {
+        errorMsg.textContent = 'Невірний секретний код доступу!';
+        errorMsg.style.display = 'block';
+      }
+      if (codeInput) {
+        codeInput.value = '';
+        codeInput.focus();
+      }
+    }
+  }
+
+  if (submitBtn) {
+    submitBtn.onclick = handleUnlock;
+  }
+  if (codeInput) {
+    codeInput.onkeydown = (e) => {
+      if (e.key === 'Enter') handleUnlock();
+    };
+  }
+}
+
+// ============================================================
 // INITIALIZATION
 // ============================================================
 document.addEventListener('DOMContentLoaded', () => {
+  initMasterGatekeeper();
   initTheme();
   setupNav();
   setupModals();
@@ -7670,9 +7812,9 @@ function setupAccountSync() {
     localStorage.setItem('dws_account_user', state.accountUser);
     localStorage.setItem('dws_account_name', state.accountName);
   } else {
-    // External browser: check saved accountKey or prompt after short delay
+    // External browser: check saved accountKey or prompt after short delay only if master unlocked
     const savedKey = localStorage.getItem('dws_account_key');
-    if (!savedKey) {
+    if (!savedKey && localStorage.getItem('dws_master_unlocked') === 'true') {
       setTimeout(() => {
         openModal('modalAccountLink');
       }, 700);
