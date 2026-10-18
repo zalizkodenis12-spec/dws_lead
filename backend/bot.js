@@ -7,7 +7,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-const TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN || '8953225581:AAG7lpvh6JHCbyMKfsz4qEucd_7qqgh6koM';
+const TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN || '';
 const APP_URL = process.env.TELEGRAM_APP_URL || process.env.WEBAPP_URL || 'https://dwslead-miniapp.vercel.app';
 const ADMIN_CHAT_ID = process.env.TELEGRAM_CHAT_ID || process.env.CHAT_ID || '5278970111';
 
@@ -165,7 +165,7 @@ export async function handleTelegramUpdate(update) {
         `• знайти замовлення\n` +
         `• не втратити клієнта\n` +
         `• зрозуміти скільки заробив\n\n` +
-        `Ловлю вакансії та замовлення з Telegram-каналів і фріланс-бірж (Freelancehunt, Djinni, Freelance.ua), веду по них CRM і рахую доходи.`,
+        `Ловлю вакансії та замовлення з 200+ тг-чатів і 200+ каналів України, веду по них CRM і рахую доходи по тижнях і місяцях.`,
       parse_mode: 'HTML',
       reply_markup: {
         inline_keyboard: [
