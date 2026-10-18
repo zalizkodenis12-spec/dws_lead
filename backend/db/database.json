@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1792284383393-6891",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "freelance_ua",
+      "sourceName": "Freelance.ua",
+      "sourceUsername": "@freelance_ua",
+      "authorName": "Замовник на Freelance.ua",
+      "authorUsername": "@freelance_ua",
+      "title": "Ищем видеомонтажёров для Reels",
+      "text": "Ищем видеомонтажёров для Reels\n\nИщем креативных видеомонтажёров для создания 10 коротких видео (Reels/Shorts/TikTok).\r\n\r\nУсловия:\r\n- $5 за 1...",
+      "url": "https://freelance.ua/orders/298010-ishhem-videomontazhorov-dla-reels.html",
+      "date": "2026-10-18T00:46:22.768Z",
+      "dateFormatted": "Сьогодні, 03:46",
+      "budget": 401,
+      "currency": "₴",
+      "country": "Freelance.ua",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення на Freelance.ua: монтаж reels/tiktok з бюджетом 401 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792281138460-247",
       "category": "development",
       "categoryName": "Веброзробка",
