@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792313335547-497",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "fullstack",
+      "subcategoryName": "Fullstack розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "javascript_jobs_feed",
+      "authorUsername": "@javascript_jobs_feed",
+      "title": "📃 Резюме Junior QA Automation Engineer / Full-Stack Developer от @flex_lik...",
+      "text": "📃 Резюме Junior QA Automation Engineer / Full-Stack Developer от @flex_like_uuu, от 90 000 ₽, удаленка или гибрид, фуллтайм или проект",
+      "date": "2026-10-18T08:48:55.547Z",
+      "dateFormatted": "Сьогодні, 11:48",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: fullstack розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792313181128-6031",
       "category": "montage",
       "categoryName": "Монтаж",
