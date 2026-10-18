@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792307021182-388",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "javascript_jobs_feed",
+      "authorUsername": "@javascript_jobs_feed",
+      "title": "🔥 Резюме Backend Developer от @arthur_devF, $2 000 - $2 500, Нижний Новгор...",
+      "text": "🔥 Резюме Backend Developer от @arthur_devF, $2 000 - $2 500, Нижний Новгород, удаленка, гибрид или офис, фуллтайм\n\n⭐ Обилие конкретных метрик: ускорение деплоя в 8 раз, оптимизация на 58% и срез времени релиза с 8 часов до 2\n⭐ Понятный продакшн-кейс с 'Кантатой': распил монолита, вынос корзины в микросервис NestJS и интеграции с 1C\n⭐ Живой GitHub с разноплановыми прикладными проектами (от тарифов WB до Electron)",
+      "date": "2026-10-18T07:03:41.180Z",
+      "dateFormatted": "Сьогодні, 10:03",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792305981020-9968",
       "category": "development",
       "categoryName": "Веброзробка",
