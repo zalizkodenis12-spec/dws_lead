@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792318428217-117",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Ілля Василенко",
+      "authorUsername": "@tg_id_6734150822",
+      "title": "🎬 Потрібен монтажер для Reels / Shorts / TikTok?",
+      "text": "🎬 Потрібен монтажер для Reels / Shorts / TikTok?\n\nДопомагаю перетворювати сирий матеріал на динамічні відео з чіткою структурою, сильним початком і темпом, який утримує увагу. Можу також допомогти з ідеями для роликів, хуками та AI-візуалами.\n\nПрацюю з короткими відео, рекламними креативами та візуалізацією історій.\n\n📁 Портфоліо у профілі.\n\nМожете надіслати вихідний матеріал або коротко описати свій проєкт — запропоную варіант реалізації та зорієнтую за вартістю.",
+      "date": "2026-10-18T10:13:48.216Z",
+      "dateFormatted": "Сьогодні, 13:13",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 65,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792316771912-868",
       "category": "marketing",
       "categoryName": "Маркетинг",
