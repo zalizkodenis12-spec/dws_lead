@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792321414328-715",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "javascript_jobs_feed",
+      "authorUsername": "@javascript_jobs_feed",
+      "title": "📃 Резюме Senior Fullstack / Backend Developer от @viesto_rosa, от $4 000,...",
+      "text": "📃 Резюме Senior Fullstack / Backend Developer от @viesto_rosa, от $4 000, удаленно, фуллтайм или проектная работа",
+      "date": "2026-10-18T11:03:34.326Z",
+      "dateFormatted": "Сьогодні, 14:03",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792321203780-92",
       "category": "marketing",
       "categoryName": "Маркетинг",
