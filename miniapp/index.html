@@ -254,6 +254,25 @@
         </div>
 
         <div class="profile-card">
+          <!-- USER IDENTITY HEADER (ОСОБИСТИЙ КАБІНЕТ) -->
+          <div class="profile-user-header" style="display: flex; align-items: center; gap: 14px; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--border);">
+            <div class="profile-avatar" id="profileAvatarBadge" style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--brand), #0052cc); color: #fff; font-weight: 700; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,102,255,0.25); flex-shrink: 0;">
+              ДЗ
+            </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <div id="profileDisplayName" style="font-size: 1.05rem; font-weight: 700; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Денис Залізко</div>
+                <button type="button" id="editProfileNameBtn" title="Змінити ім'я" style="background: none; border: none; padding: 2px 4px; cursor: pointer; color: var(--text-muted); display: inline-flex; align-items: center; border-radius: 4px;">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                </button>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-top: 3px;">
+                <span id="profileDisplayUser" style="font-size: 0.8rem; color: var(--brand); font-weight: 600;">@zalizkodenis12</span>
+                <span style="font-size: 0.72rem; color: var(--text-muted); font-family: var(--font-mono);" id="accountKeyBadge">ID: zalizkodenis12</span>
+              </div>
+            </div>
+            <div id="profileRoleBadge" style="font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; background: rgba(0,102,255,0.08); color: var(--brand); white-space: nowrap;">Власник</div>
+          </div>
+
           <!-- "ПРО СЕБЕ" Block -->
           <div class="form-group">
             <div class="label-row">

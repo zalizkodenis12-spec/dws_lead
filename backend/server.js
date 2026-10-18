@@ -369,31 +369,52 @@ app.post('/api/ingest', (req, res) => {
 // 6.5. MASTER ACCESS AUTHENTICATION (Захищений вхід за секретним кодом)
 app.post('/api/auth/verify-code', (req, res) => {
   try {
-    const { code } = req.body || {};
+    const { code, tgUser, clientKey, clientName, clientUser } = req.body || {};
     if (!code) {
       return res.status(400).json({ success: false, error: 'Код не вказано' });
     }
     const clean = String(code).trim();
     const masterCode = process.env.MASTER_ACCESS_CODE || 'DWS-2026-STUDIO-ZALIZKO-PRO';
 
+    const isAuthorized = (clean === masterCode || clean === 'DWS-2026-STUDIO-ZALIZKO-PRO' || clean === 'DWS777');
+    if (!isAuthorized) {
+      return res.status(401).json({ success: false, error: 'Невірний секретний код доступу' });
+    }
+
+    // Код вірний! Визначаємо особистий профіль для кожного користувача окремо
     let accountKey = 'zalizkodenis12';
     let accountName = 'Денис Залізко';
     let accountUser = '@zalizkodenis12';
     let role = 'owner';
 
-    if (clean === masterCode || clean === 'DWS-2026-STUDIO-ZALIZKO-PRO' || clean === 'DWS777') {
+    const isDenis = (tgUser && (
+      (tgUser.username && tgUser.username.toLowerCase() === 'zalizkodenis12') ||
+      String(tgUser.id) === '5278970111'
+    )) || clientKey === 'zalizkodenis12';
+
+    if (isDenis) {
       role = 'owner';
       accountKey = 'zalizkodenis12';
       accountName = 'Денис Залізко';
       accountUser = '@zalizkodenis12';
-    } else if (clean.startsWith('DWS-TEAM-') || clean.startsWith('DWS-SUB-') || clean.startsWith('DWS-VIP-') || (clean.startsWith('DWS-') && clean.length >= 8)) {
+    } else if (tgUser && tgUser.id) {
+      // Окремий співробітник / інший користувач у Telegram
       role = 'member';
-      const cleanSub = clean.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-      accountKey = 'user_' + cleanSub;
-      accountName = 'Спеціаліст (' + clean.replace(/^DWS-/, '') + ')';
-      accountUser = '@' + cleanSub;
+      accountKey = 'tg_' + tgUser.id;
+      accountName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || ('Користувач #' + tgUser.id);
+      accountUser = tgUser.username ? ('@' + tgUser.username) : ('@user_' + tgUser.id);
+    } else if (clientKey) {
+      // Окремий профіль браузера/десктопа
+      role = clientKey === 'zalizkodenis12' ? 'owner' : 'member';
+      accountKey = clientKey;
+      accountName = clientName || 'Спеціаліст';
+      accountUser = clientUser || ('@' + clientKey);
     } else {
-      return res.status(401).json({ success: false, error: 'Невірний секретний код доступу' });
+      // Новий невідомий пристрій
+      role = 'member';
+      accountKey = 'dev_' + Math.random().toString(36).substring(2, 9);
+      accountName = 'Спеціаліст';
+      accountUser = '@' + accountKey;
     }
 
     const token = 'dws_sec_' + Buffer.from(clean + ':' + Date.now()).toString('base64');

@@ -3748,6 +3748,52 @@ const normalizedExpenses = (savedExpensesRaw && Array.isArray(savedExpensesRaw.r
   ? savedExpensesRaw
   : { records: defaultExpensesRecords, currency: "₴" };
 
+// Resolve unique user profile for this device/session (Multi-user isolation)
+function getOrCreateUserIdentity() {
+  const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+  
+  if (tgUser && tgUser.id) {
+    const isDenis = (tgUser.username && tgUser.username.toLowerCase() === 'zalizkodenis12') || String(tgUser.id) === '5278970111';
+    if (isDenis) {
+      return {
+        key: 'zalizkodenis12',
+        name: 'Денис Залізко',
+        username: '@zalizkodenis12',
+        role: 'owner'
+      };
+    }
+    const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || ('Користувач #' + tgUser.id);
+    return {
+      key: 'tg_' + tgUser.id,
+      name: fullName,
+      username: tgUser.username ? ('@' + tgUser.username) : ('@user_' + tgUser.id),
+      role: 'member'
+    };
+  }
+
+  let savedKey = localStorage.getItem('dws_account_key');
+  let savedName = localStorage.getItem('dws_account_name');
+  let savedUser = localStorage.getItem('dws_account_user');
+
+  if (!savedKey) {
+    savedKey = 'dev_' + Math.random().toString(36).substring(2, 9);
+    savedName = 'Спеціаліст';
+    savedUser = '@' + savedKey;
+    localStorage.setItem('dws_account_key', savedKey);
+    localStorage.setItem('dws_account_name', savedName);
+    localStorage.setItem('dws_account_user', savedUser);
+  }
+
+  return {
+    key: savedKey,
+    name: savedName || 'Спеціаліст',
+    username: savedUser || ('@' + savedKey),
+    role: savedKey === 'zalizkodenis12' ? 'owner' : 'member'
+  };
+}
+
+const _initialIdentity = getOrCreateUserIdentity();
+
 const state = {
   currentTab: 'tab-leads',
   theme: localStorage.getItem('dws_theme') || 'light',
@@ -3784,9 +3830,10 @@ const state = {
   crmPinnedStages: JSON.parse(localStorage.getItem('dws_crm_pinned_stages') || 'null') || ['all', 'in_progress', 'offer', 'paid'],
   crmFilterService: 'all',
   crmFilterMinBudget: 0,
-  accountKey: localStorage.getItem('dws_account_key') || (tg?.initDataUnsafe?.user?.id ? String(tg.initDataUnsafe.user.id) : 'default'),
-  accountUser: localStorage.getItem('dws_account_user') || (tg?.initDataUnsafe?.user?.username ? ('@' + tg.initDataUnsafe.user.username) : ''),
-  accountName: localStorage.getItem('dws_account_name') || (tg?.initDataUnsafe?.user?.first_name || 'Денис Залізко'),
+  accountKey: _initialIdentity.key,
+  accountUser: _initialIdentity.username,
+  accountName: _initialIdentity.name,
+  userRole: _initialIdentity.role,
   requisites: (() => {
     let req = null;
     try {
@@ -4006,20 +4053,28 @@ function initMasterGatekeeper() {
     const clientHash = await computeSha256(val);
     if (MASTER_KEY_HASHES.has(clientHash)) {
       isMatch = true;
-      authPayload = {
-        accountKey: 'zalizkodenis12',
-        accountUser: '@zalizkodenis12',
-        accountName: 'Денис Залізко',
-        role: 'owner'
-      };
     }
+
+    const currentIdent = getOrCreateUserIdentity();
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
 
     // Verify against server endpoint
     try {
       const res = await fetch('/api/auth/verify-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: val })
+        body: JSON.stringify({
+          code: val,
+          tgUser: tgUser ? {
+            id: tgUser.id,
+            first_name: tgUser.first_name,
+            last_name: tgUser.last_name,
+            username: tgUser.username
+          } : null,
+          clientKey: currentIdent.key,
+          clientName: currentIdent.name,
+          clientUser: currentIdent.username
+        })
       });
       const json = await res.json();
       if (json.success) {
@@ -4028,26 +4083,35 @@ function initMasterGatekeeper() {
       }
     } catch (e) {}
 
-    if (isMatch && authPayload) {
+    if (isMatch) {
       haptic('success');
       localStorage.setItem('dws_master_unlocked', 'true');
       localStorage.setItem('dws_master_key_hash', clientHash);
 
-      // Link specific user profile (Denis for owner, separate workspace for employees/subscribers)
-      state.accountKey = authPayload.accountKey || 'zalizkodenis12';
-      state.accountUser = authPayload.accountUser || '@zalizkodenis12';
-      state.accountName = authPayload.accountName || 'Денис Залізко';
-      state.userRole = authPayload.role || 'owner';
+      // Link user profile: preserve individual profile for employees/clients, Denis for owner
+      if (authPayload && authPayload.accountKey) {
+        state.accountKey = authPayload.accountKey;
+        state.accountUser = authPayload.accountUser || currentIdent.username;
+        state.accountName = authPayload.accountName || currentIdent.name;
+        state.userRole = authPayload.role || currentIdent.role;
+      } else {
+        state.accountKey = currentIdent.key;
+        state.accountUser = currentIdent.username;
+        state.accountName = currentIdent.name;
+        state.userRole = currentIdent.role;
+      }
 
       localStorage.setItem('dws_account_key', state.accountKey);
       localStorage.setItem('dws_account_user', state.accountUser);
       localStorage.setItem('dws_account_name', state.accountName);
 
+      updateProfileHeaderUI();
+
       if (errorMsg) errorMsg.style.display = 'none';
       if (successMsg) successMsg.style.display = 'block';
       if (submitBtn) submitBtn.textContent = 'ДОСТУП ДОЗВОЛЕНО ✓';
 
-      // Pull isolated cloud data for this user
+      // Pull isolated cloud data for this specific user
       fetchAccountData().then(() => {
         renderCrm();
         renderIncome();
@@ -4197,6 +4261,8 @@ function switchTab(tabId) {
     renderExpenses();
   } else if (tabId === 'tab-requisites') {
     renderRequisitesTab();
+  } else if (tabId === 'tab-profile') {
+    updateProfileHeaderUI();
   }
 
   document.querySelector('.app-main').scrollTop = 0;
@@ -7814,25 +7880,56 @@ function setupCrmFilterModal() {
 // ============================================================
 // ACCOUNT SYNC & RECOGNITION (MULTI-DEVICE LINKING)
 // ============================================================
-function setupAccountSync() {
-  const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+function updateProfileHeaderUI() {
+  const nameEl = document.getElementById('profileDisplayName');
+  const userEl = document.getElementById('profileDisplayUser');
+  const keyEl = document.getElementById('accountKeyBadge');
+  const roleEl = document.getElementById('profileRoleBadge');
+  const avatarEl = document.getElementById('profileAvatarBadge');
 
-  if (tgUser && tgUser.id) {
-    // Automatically recognized via Telegram WebApp
-    state.accountKey = String(tgUser.id);
-    state.accountUser = tgUser.username ? ('@' + tgUser.username) : '';
-    state.accountName = (tgUser.first_name + ' ' + (tgUser.last_name || '')).trim() || 'Денис Залізко';
-    localStorage.setItem('dws_account_key', state.accountKey);
-    localStorage.setItem('dws_account_user', state.accountUser);
-    localStorage.setItem('dws_account_name', state.accountName);
-  } else {
-    // External browser: check saved accountKey or prompt after short delay only if master unlocked
-    const savedKey = localStorage.getItem('dws_account_key');
-    if (!savedKey && localStorage.getItem('dws_master_unlocked') === 'true') {
-      setTimeout(() => {
-        openModal('modalAccountLink');
-      }, 700);
-    }
+  if (nameEl) nameEl.textContent = state.accountName || 'Спеціаліст';
+  if (userEl) userEl.textContent = state.accountUser || ('@' + state.accountKey);
+  if (keyEl) keyEl.textContent = 'ID: ' + (state.accountKey || '');
+  if (roleEl) {
+    roleEl.textContent = state.userRole === 'owner' ? 'Власник' : 'Спеціаліст';
+    roleEl.style.background = state.userRole === 'owner' ? 'rgba(0,102,255,0.08)' : 'rgba(100,116,139,0.08)';
+    roleEl.style.color = state.userRole === 'owner' ? 'var(--brand)' : 'var(--text-muted)';
+  }
+  if (avatarEl) {
+    const parts = (state.accountName || 'Спеціаліст').trim().split(/\s+/);
+    let initials = parts[0] ? parts[0][0].toUpperCase() : 'С';
+    if (parts[1]) initials += parts[1][0].toUpperCase();
+    avatarEl.textContent = initials;
+  }
+}
+
+function setupAccountSync() {
+  const ident = getOrCreateUserIdentity();
+  state.accountKey = ident.key;
+  state.accountUser = ident.username;
+  state.accountName = ident.name;
+  state.userRole = ident.role;
+
+  localStorage.setItem('dws_account_key', state.accountKey);
+  localStorage.setItem('dws_account_user', state.accountUser);
+  localStorage.setItem('dws_account_name', state.accountName);
+
+  updateProfileHeaderUI();
+
+  // Allow editing name directly from profile
+  const editNameBtn = document.getElementById('editProfileNameBtn');
+  if (editNameBtn) {
+    editNameBtn.onclick = () => {
+      const current = state.accountName || 'Спеціаліст';
+      const newName = prompt('Введіть ваше ім\'я або назву профілю:', current);
+      if (newName && newName.trim()) {
+        state.accountName = newName.trim();
+        localStorage.setItem('dws_account_name', state.accountName);
+        updateProfileHeaderUI();
+        syncAccountToServer();
+        showToast('Ім\'я профілю оновлено!');
+      }
+    };
   }
 
   const quickDenisBtn = document.getElementById('quickLoginDenisBtn');
@@ -7853,22 +7950,18 @@ function setupAccountSync() {
 
       state.accountKey = cleanKey;
       state.accountUser = val.startsWith('@') ? val : ('@' + cleanKey);
-      state.accountName = 'Денис Залізко';
+      state.accountName = cleanKey === 'zalizkodenis12' ? 'Денис Залізко' : ('Спеціаліст (' + cleanKey + ')');
+      state.userRole = cleanKey === 'zalizkodenis12' ? 'owner' : 'member';
 
       localStorage.setItem('dws_account_key', state.accountKey);
       localStorage.setItem('dws_account_user', state.accountUser);
       localStorage.setItem('dws_account_name', state.accountName);
 
+      updateProfileHeaderUI();
       haptic('success');
       closeModal('modalAccountLink');
       await loadAllData();
     });
-  }
-
-  // Update accountKeyBadge in profile tab
-  const badge = document.getElementById('accountKeyBadge');
-  if (badge) {
-    badge.textContent = 'ID: ' + (state.accountKey || '5278970111');
   }
 
   // 1. Sync to Telegram CloudStorage (1-click cloud sync between phone & laptop Telegram Desktop)
@@ -7920,7 +8013,7 @@ function setupAccountSync() {
       const backupData = {
         app: 'DWS Lead',
         version: '3.9.4',
-        accountKey: state.accountKey || '5278970111',
+        accountKey: state.accountKey || getOrCreateUserIdentity().key,
         crm: state.crm || [],
         income: state.income || { records: [], currency: '₴' },
         expenses: state.expenses || { records: [], currency: '₴' },
@@ -8122,7 +8215,7 @@ function setupAccountSync() {
 }
 
 async function fetchAccountData() {
-  const key = state.accountKey || '5278970111';
+  const key = state.accountKey || getOrCreateUserIdentity().key;
   try {
     const res = await fetch('/api/account/' + encodeURIComponent(key));
     const json = await res.json();
@@ -8205,7 +8298,8 @@ function resolveCloudData(key, items, cb) {
 }
 
 async function syncAccountToServer() {
-  const accountKey = state.accountKey || '5278970111';
+  const dynamicId = getOrCreateUserIdentity();
+  const accountKey = state.accountKey || dynamicId.key;
   const nowTs = Date.now();
   state.lastSyncTimestamp = nowTs;
 
@@ -8229,8 +8323,8 @@ async function syncAccountToServer() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         accountKey: accountKey,
-        username: state.accountUser || '@zalizkodenis12',
-        name: state.accountName || 'Денис Залізко',
+        username: state.accountUser || dynamicId.username,
+        name: state.accountName || dynamicId.name,
         crm: state.crm || [],
         income: state.income || { records: [], currency: '₴' },
         expenses: state.expenses || { records: [], currency: '₴' },
@@ -8264,7 +8358,7 @@ function renderCurrentTab() {
 
 async function pullLatestDataFromServer(force = false) {
   if (isSyncingRemote) return;
-  const key = state.accountKey || '5278970111';
+  const key = state.accountKey || getOrCreateUserIdentity().key;
   if (!key) return;
 
   // 1. Telegram CloudStorage
