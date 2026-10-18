@@ -5815,18 +5815,7 @@ function setupEventListeners() {
           `📦 Всього заявок у базі: <b>${state.allLeads.length}</b>\n\n` +
           `Всі замовлення відображаються у першому меню «Заявки» з тегом біржі замість країни.`;
 
-        fetch('https://api.telegram.org/bot8953225581:AAG7lpvh6JHCbyMKfsz4qEucd_7qqgh6koM/sendMessage', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: '5278970111',
-            text: reportMsg,
-            parse_mode: 'HTML',
-            reply_markup: {
-              inline_keyboard: [[{ text: 'Відкрити DWSlead ↗', web_app: { url: 'https://dwslead-miniapp.vercel.app' } }]]
-            }
-          })
-        }).catch(() => {});
+        // Backend automatically sends notifications via secure .env token
       } catch (_) {}
 
       try {
@@ -9047,26 +9036,6 @@ async function sendScrapeToTelegram(job, cat, btn) {
       const json = await res.json();
       if (json.success) sent = true;
     } catch (e) {}
-  }
-
-  if (!sent) {
-    try {
-      const header = `ЗБІР БІЗНЕСІВ: ${job.niche || 'Контакти'} (${job.city || 'Всі міста'})\nЗнайдено: ${targetItems.length} закладів\n\n`;
-      const sample = targetItems.slice(0, 15).map((it, idx) => {
-        const ph = it.phone || 'Немає тел.';
-        const ig = it.instagram ? ` @${it.instagram.replace(/^@/, '')}` : '';
-        return `${idx + 1}. ${it.name} | ${ph}${ig}`;
-      }).join('\n');
-      const text = header + sample + (targetItems.length > 15 ? `\n... та ще ${targetItems.length - 15} контактів у CSV файлі` : '');
-
-      const tgRes = await fetch('https://api.telegram.org/bot8953225581:AAG7lpvh6JHCbyMKfsz4qEucd_7qqgh6koM/sendMessage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chatId, text })
-      });
-      const tgJson = await tgRes.json();
-      if (tgJson.ok) sent = true;
-    } catch (err) {}
   }
 
   if (!sent && window.Telegram?.WebApp?.openTelegramLink) {

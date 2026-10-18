@@ -114,6 +114,15 @@ function normalizePhone(raw) {
   return p.length >= 10 ? p : '';
 }
 
+export function extractPhoneFromText(text) {
+  if (!text) return '';
+  const match = String(text).match(/(?:\+?38\s*\(?0\d{2}\)?|\b0\d{2}\)?)\s*\d{3}[\s-]?\d{2}[\s-]?\d{2}|\b0\d{2}[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}\b/);
+  if (match) {
+    return normalizePhone(match[0]);
+  }
+  return '';
+}
+
 const SOCIAL_SITE_RE = /(instagram\.com|facebook\.com|fb\.com|linktr\.ee|taplink|t\.me|tiktok\.com|wa\.me|viber|google\.com\/maps|business\.site)/i;
 const BOOKING_NICHE_RE = /(стомат|dental|салон|beauty|краси|барбер|barber|клінік|clinic|медич|автосерв|сто\b|шиномонт|фітнес|fitness|спорт|йог|масаж|spa|спа|ресторан|кафе|кав'ярн|піца|суші|доставк|готел|hotel|хостел|ветерин|косметолог|манікюр|nail|тату|школ|курси|репетит)/i;
 
@@ -177,9 +186,13 @@ function normalizeGmaps(item, niche, city) {
 }
 
 function normalizeInstagram(item, niche, city) {
+  const directPhone = normalizePhone(item.businessPhoneNumber || item.contactPhoneNumber || item.publicPhoneNumber);
+  const bioPhone = extractPhoneFromText(item.biography || '') || extractPhoneFromText(item.externalUrl || '');
+  const phone = directPhone || bioPhone;
+
   return {
     name: item.fullName || item.username || '',
-    phone: normalizePhone(item.businessPhoneNumber || item.contactPhoneNumber || item.publicPhoneNumber),
+    phone,
     email: item.businessEmail || item.publicEmail || '',
     website: item.externalUrl || '',
     address: item.businessAddress?.street_address || '',
@@ -189,6 +202,7 @@ function normalizeInstagram(item, niche, city) {
     posts: item.postsCount || 0,
     username: item.username ? '@' + item.username : '',
     link: item.url || (item.username ? `https://instagram.com/${item.username}` : ''),
+    biography: item.biography || '',
     niche,
     source: 'instagram'
   };
@@ -344,26 +358,31 @@ async function processJob(job) {
     items = raw.map(it => normalizeInstagram(it, niche, city));
   }
 
-  // Дедуплікація по телефону + тільки ті, кому можна подзвонити
+  // Дедуплікація та збереження контактів
   const seen = new Set();
-  const withPhone = [];
+  const validBusinesses = [];
   let skipped = 0;
   for (const b of items) {
-    if (!b.phone) { skipped++; continue; }
-    if (seen.has(b.phone)) continue;
-    seen.add(b.phone);
+    if (!b.phone && !b.username) {
+      skipped++;
+      continue;
+    }
+    const dedupKey = b.phone || b.username || b.name;
+    if (seen.has(dedupKey)) continue;
+    seen.add(dedupKey);
+
     const { category, reason } = classifyBusiness(b);
-    withPhone.push({ ...b, id: `b-${seen.size}`, category, reason, service: CATEGORIES[category].service });
+    validBusinesses.push({ ...b, id: `b-${seen.size}`, category, reason, service: CATEGORIES[category].service });
   }
 
   updateJob(job.id, {
     status: 'done',
     finishedAt: new Date().toISOString(),
-    total: withPhone.length,
+    total: validBusinesses.length,
     skippedNoPhone: skipped,
-    groups: groupByCategory(withPhone)
+    groups: groupByCategory(validBusinesses)
   });
-  console.log(`[Scraper] ✅ ${query}: ${withPhone.length} бізнесів з телефоном (відсіяно ${skipped})`);
+  console.log(`[Scraper] ✅ ${query}: ${validBusinesses.length} бізнесів збережено (відсіяно ${skipped})`);
 }
 
 // ---------------- EXPORT ----------------
@@ -379,7 +398,8 @@ export function buildCsv(job, category = 'all') {
   const rows = [header.join(',')];
   cats.forEach(c => {
     (job.groups?.[c] || []).forEach(b => {
-      rows.push([b.phone, b.name, b.niche, b.service, b.reason, b.city, b.website, b.rating || '', b.reviews || '', b.source]
+      const contactNumber = b.phone || b.username || '';
+      rows.push([contactNumber, b.name, b.niche, b.service, b.reason, b.city, b.website, b.rating || '', b.reviews || '', b.source]
         .map(csvCell).join(','));
     });
   });
