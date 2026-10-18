@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792316068205-16",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "MILLER〽️",
+      "authorUsername": "@tg_id_7296722929",
+      "title": "Шукаємо SMM на співпрацю (віддалено) 🙌",
+      "text": "Шукаємо SMM на співпрацю (віддалено) 🙌\nЦікавить ведення Instagram/Facebook клієнтів під ключ: контент-план, пости, сторіс, рілси.\nНапрямки бувають абсолютно різні і для різних країн.\n\nКого цікавить співпраця будь ласка скидуйте своє портфоліо та ваші ціни за ведення акаунта на місяць. Дякую",
+      "date": "2026-10-18T09:34:28.205Z",
+      "dateFormatted": "Сьогодні, 12:34",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 60,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792315970881-230",
       "category": "marketing",
       "categoryName": "Маркетинг",
