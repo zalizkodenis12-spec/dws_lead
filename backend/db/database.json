@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792399878610-401",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "ecommerce",
+      "subcategoryName": "Онлайн-магазин",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Nataliia",
+      "authorUsername": "@TalentSourcerT",
+      "title": "🇵🇱 Marketing & Lifecycle Manager (Polish speaking) | Remote",
+      "text": "🇵🇱 Marketing & Lifecycle Manager (Polish speaking) | Remote\n\nШукаємо маркетолога з польською (B2+) на retention і повторні продажі в e-commerce: офери, скрипти для кол-центру, upsell і cross-sell, ріст LTV.\n\nПотрібно 2+ роки в маркетингу і досвід CRM-комунікацій. COD буде плюсом.\n#вакансія #remote #marketing #retention #polish\n\n📩 За деталями в Telegram: @TalentSourcerT",
+      "date": "2026-10-19T08:51:18.609Z",
+      "dateFormatted": "Сьогодні, 11:51",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: онлайн-магазин.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792399492807-5341",
       "category": "development",
       "categoryName": "Веброзробка",
