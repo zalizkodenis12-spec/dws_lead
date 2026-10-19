@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792412822240-200",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "jiruku",
+      "authorUsername": "@jiruku",
+      "title": "📃 Резюме Junior Full-stack Developer от @jiruku, от 1 500 ₽/час, удаленно,...",
+      "text": "📃 Резюме Junior Full-stack Developer от @jiruku, от 1 500 ₽/час, удаленно, проектная работа",
+      "date": "2026-10-19T12:27:02.239Z",
+      "dateFormatted": "Сьогодні, 15:27",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792412629447-765",
       "category": "development",
       "categoryName": "Веброзробка",
