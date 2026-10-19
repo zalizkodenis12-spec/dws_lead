@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792431307800-877",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "VDOSTAL | MANAGER",
+      "authorUsername": "@tg_id_7381480616",
+      "title": "Шукаємо монтажера короткого контенту в нашу агенцію ⚡️",
+      "text": "Шукаємо монтажера короткого контенту в нашу агенцію ⚡️\n\nОбовʼязково:\n— Впевнене володіння Premiere Pro та After Effects\n— Досвід монтажу Reels / Shorts\n— Відчуття динаміки, ритму та стилю\n\nЄ цікаві проєкти та можливість стабільної співпраці\nЯкщо цікаво — пиши в особисті та одразу надсилай портфоліо 📩",
+      "date": "2026-10-19T17:35:07.800Z",
+      "dateFormatted": "Сьогодні, 20:35",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 60,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792431224018-982",
       "category": "montage",
       "categoryName": "Монтаж",
