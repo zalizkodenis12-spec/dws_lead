@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792400398570-938",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "tack",
+      "authorUsername": "@tack",
+      "title": "📃 Резюме Senior Fullstack / Backend Developer от @st_frontend, от $4 500,...",
+      "text": "📃 Резюме Senior Fullstack / Backend Developer от @st_frontend, от $4 500, Тбилиси, удаленка",
+      "date": "2026-10-19T08:59:58.569Z",
+      "dateFormatted": "Сьогодні, 11:59",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792399878610-401",
       "category": "development",
       "categoryName": "Веброзробка",
