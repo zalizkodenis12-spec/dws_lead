@@ -9711,6 +9711,13 @@ function loadLocalNfcJobs() {
       localStorage.setItem('dws_nfc_radars', JSON.stringify(DEFAULT_NFC_RADAR_JOBS));
       return DEFAULT_NFC_RADAR_JOBS;
     }
+    parsed.forEach(job => {
+      const maxRev = Number(job.maxReviews);
+      if (maxRev && maxRev < 90000 && Array.isArray(job.items)) {
+        job.items = job.items.filter(v => (Number(v.reviews) || 0) <= maxRev);
+        job.total = job.items.length;
+      }
+    });
     return parsed;
   } catch {
     return DEFAULT_NFC_RADAR_JOBS;
@@ -9759,15 +9766,21 @@ function getVenueMapsUrl(venue, job) {
 }
 
 function getJobFlatItems(job) {
-  if (Array.isArray(job.items) && job.items.length > 0) return job.items;
-  if (job.groups) {
+  if (!job) return [];
+  let list = [];
+  if (Array.isArray(job.items) && job.items.length > 0) list = [...job.items];
+  else if (job.groups) {
     const flat = [];
-    Object.values(job.groups).forEach(list => {
-      if (Array.isArray(list)) flat.push(...list);
+    Object.values(job.groups).forEach(l => {
+      if (Array.isArray(l)) flat.push(...l);
     });
-    return flat;
+    list = flat;
   }
-  return [];
+  const maxRev = Number(job.maxReviews);
+  if (maxRev && maxRev < 90000) {
+    list = list.filter(v => (Number(v.reviews) || 0) <= maxRev);
+  }
+  return list;
 }
 
 function generateNfcPitch(venue, job) {
@@ -10091,11 +10104,26 @@ function renderNfcVenuesList(job, items) {
 
 async function runLiveNfcRadar(job, reviewsLimit, limit) {
   const token = getClientApifyToken();
-  const query = [job.niche, job.cluster, job.city].filter(Boolean).join(' ');
+  const targetReviews = Number(reviewsLimit || job.maxReviews || 300);
+  const targetCount = Number(limit || job.limit || 20);
+
+  // When searching for new/low-review places (<= 50 or <= 150), crawl more places (up to 120)
+  // so that after filtering out 3000-8000 review giants, we have plenty of real matching venues!
+  const crawlLimit = targetReviews <= 50
+    ? Math.max(targetCount * 4, 80)
+    : (targetReviews <= 150 ? Math.max(targetCount * 3, 60) : Math.max(targetCount, 25));
+
+  const baseQuery = [job.niche, job.cluster, job.city].filter(Boolean).join(' ');
+  const searchStrings = [baseQuery];
+  if (targetReviews <= 50) {
+    const newQuery = ['нове', job.niche || 'кафе', job.cluster, job.city].filter(Boolean).join(' ');
+    searchStrings.push(newQuery);
+  }
+
   const actorId = 'compass~crawler-google-places';
   const input = {
-    searchStringsArray: [query],
-    maxCrawledPlacesPerSearch: Math.min(limit || 20, 50),
+    searchStringsArray: searchStrings,
+    maxCrawledPlacesPerSearch: Math.min(crawlLimit, 120),
     language: 'uk',
     skipClosedPlaces: true
   };
@@ -10126,8 +10154,14 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
     const itemsRes = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}&clean=true&format=json`);
     const rawItems = await itemsRes.json();
 
-    const items = rawItems.map((it, idx) => {
-      const name = it.title || it.name || '';
+    // Map and deduplicate by placeId / title
+    const seenNames = new Set();
+    let mapped = [];
+    rawItems.forEach((it, idx) => {
+      const name = (it.title || it.name || '').trim();
+      if (!name || seenNames.has(name.toLowerCase())) return;
+      seenNames.add(name.toLowerCase());
+
       const rating = Number(it.totalScore || 0);
       const reviews = Number(it.reviewsCount || 0);
       const phone = normalizePhone(it.phoneUnformatted || it.phone);
@@ -10135,7 +10169,7 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
       const insta = (it.instagrams || [])[0] || (it.url || '');
       const addr = it.address || it.street || job.cluster || job.city;
 
-      return {
+      mapped.push({
         id: 'v-real-' + Date.now() + '-' + idx,
         name,
         address: addr,
@@ -10147,15 +10181,35 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
         mapsUrl: it.url || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + addr)),
         painLevel: (rating && rating <= 4.3) ? 'urgent' : (reviews < 50 ? 'new' : 'boost'),
         painText: (rating && rating <= 4.3) ? 'Потрібно терміново перекривати негатив' : (reviews < 50 ? 'Новий заклад — гостра потреба у відгуках' : 'Буст до ТОП-1 в Google Maps')
-      };
+      });
     });
 
+    // STRICT REVIEWS FILTERING (Eliminate any venues exceeding user selected limit!):
+    if (targetReviews && targetReviews < 90000) {
+      mapped = mapped.filter(v => Number(v.reviews || 0) <= targetReviews);
+    }
+
+    // Sort: if targetReviews <= 50 or <= 150, sort ascending (least reviewed first)
+    if (targetReviews <= 150) {
+      mapped.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
+    }
+
+    // Slice to requested count
+    if (targetCount && targetCount > 0 && mapped.length > targetCount) {
+      mapped = mapped.slice(0, targetCount);
+    }
+
     job.status = 'done';
-    job.items = items;
-    job.total = items.length;
+    job.items = mapped;
+    job.total = mapped.length;
     saveLocalNfcJobs(nfcRadarState.jobs);
     renderNfcRadar();
-    try { showToast(`✅ Знайдено ${items.length} реальних закладів у ${job.city || job.cluster}!`); } catch (_) {}
+
+    if (mapped.length === 0) {
+      try { showToast(`Усі знайдені заклади мали більше ${targetReviews} відгуків. Спробуйте вказати район або розширити фільтр.`); } catch (_) {}
+    } else {
+      try { showToast(`✅ Знайдено ${mapped.length} закладів (відгуків ≤ ${targetReviews}) у ${job.city || job.cluster}!`); } catch (_) {}
+    }
     haptic('success');
   } catch (err) {
     console.error('[NFC Apify] Error:', err);
@@ -10174,8 +10228,8 @@ async function submitNfcSearch() {
   const niche = (nicheInput?.value || '').trim() || 'Кафе, бари, ресторани';
   const city = (cityInput?.value || '').trim() || 'Київ';
   const cluster = (clusterInput?.value || '').trim();
-  const reviewsLimit = Number(document.querySelector('#nfcReviewsFilterSeg .scrape-seg-btn.active')?.dataset.value) || 300;
-  const limit = Number(document.querySelector('#nfcLimitSeg .scrape-seg-btn.active')?.dataset.value) || 20;
+  const reviewsLimit = Number(document.querySelector('#nfcReviewsFilterSeg .scrape-seg-btn.active')?.dataset.value) || nfcRadarState.form.reviewsLimit || 300;
+  const limit = Number(document.querySelector('#nfcLimitSeg .scrape-seg-btn.active')?.dataset.value) || nfcRadarState.form.limit || 20;
 
   const btn = document.getElementById('submitNfcSearchBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'СКАНУЮ ЛОКАЦІЮ…'; }
@@ -10194,6 +10248,7 @@ async function submitNfcSearch() {
     createdAt: new Date().toISOString(),
     total: 0,
     maxReviews: reviewsLimit,
+    limit: limit,
     items: []
   };
 
@@ -10778,11 +10833,13 @@ function setupNfcRadarTab() {
   });
   document.querySelectorAll('#nfcReviewsFilterSeg .scrape-seg-btn').forEach(b => {
     b.addEventListener('click', () => {
+      nfcRadarState.form.reviewsLimit = Number(b.dataset.value);
       document.querySelectorAll('#nfcReviewsFilterSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
     });
   });
   document.querySelectorAll('#nfcLimitSeg .scrape-seg-btn').forEach(b => {
     b.addEventListener('click', () => {
+      nfcRadarState.form.limit = Number(b.dataset.value);
       document.querySelectorAll('#nfcLimitSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
     });
   });
