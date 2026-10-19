@@ -4258,17 +4258,19 @@ function switchTab(tabId) {
     }
   });
 
-  if (tabId === 'tab-income') {
-    renderIncome();
-  } else if (tabId === 'tab-expenses') {
-    renderExpenses();
-  } else if (tabId === 'tab-requisites') {
-    renderRequisitesTab();
-  } else if (tabId === 'tab-profile') {
-    updateProfileHeaderUI();
+  if (typeof renderCurrentTab === 'function') {
+    renderCurrentTab();
+  } else {
+    if (tabId === 'tab-income') renderIncome();
+    else if (tabId === 'tab-expenses') renderExpenses();
+    else if (tabId === 'tab-requisites') renderRequisitesTab();
+    else if (tabId === 'tab-profile') updateProfileHeaderUI();
+    else if (tabId === 'tab-scrape' && typeof renderScrapes === 'function') renderScrapes();
+    else if (tabId === 'tab-nfc-radar' && typeof renderNfcRadar === 'function') renderNfcRadar();
   }
 
-  document.querySelector('.app-main').scrollTop = 0;
+  const mainEl = document.querySelector('.app-main');
+  if (mainEl) mainEl.scrollTop = 0;
 }
 
 // ============================================================
