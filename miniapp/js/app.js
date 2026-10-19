@@ -19,6 +19,32 @@ function haptic(type = 'light') {
   }
 }
 
+function showToast(message, duration = 2500) {
+  if (!message) return;
+  try {
+    let container = document.getElementById('dwsToastContainer');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'dwsToastContainer';
+      container.style.cssText = 'position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:999999;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;max-width:90%;width:max-content;';
+      document.body.appendChild(container);
+    }
+    const toast = document.createElement('div');
+    toast.className = 'dws-toast-pill';
+    toast.style.cssText = 'background:#111827;color:#ffffff;padding:10px 18px;border-radius:24px;font-size:0.82rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.28);border:1px solid rgba(255,255,255,0.14);text-align:center;pointer-events:auto;word-break:break-word;transition:all 0.25s cubic-bezier(0.16,1,0.3,1);';
+    toast.textContent = message;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(-8px)';
+      setTimeout(() => { toast.remove(); }, 250);
+    }, duration);
+  } catch (err) {
+    console.log('[Toast]', message);
+  }
+}
+
 // Clean Telegram reactions, views, and noise from vacancy text
 function cleanVacancyText(text) {
   if (!text) return '';
@@ -8629,7 +8655,17 @@ function loadLocalScrapes() {
     const raw = JSON.parse(localStorage.getItem('dws_scrapes') || '[]');
     // Clean out old fake demo jobs so user only sees real Apify venues
     const cleaned = raw.filter(j => !j.demo && !j.localDemo && !(j.id && String(j.id).startsWith('local-')));
-    if (cleaned.length !== raw.length) {
+    let healed = false;
+    cleaned.forEach(j => {
+      // Auto-heal any jobs that actually succeeded with items but got marked as error due to showToast
+      if (j.status === 'error' && (j.error === 'showToast is not defined' || (j.items && j.items.length > 0))) {
+        j.status = 'done';
+        j.error = null;
+        if (!j.total && j.items) j.total = j.items.length;
+        healed = true;
+      }
+    });
+    if (healed || cleaned.length !== raw.length) {
       localStorage.setItem('dws_scrapes', JSON.stringify(cleaned));
     }
     return cleaned;
@@ -8953,7 +8989,7 @@ async function runLiveApifyJob(job) {
     job.items = allItems;
     saveScrapeJob(job);
     renderScrapes();
-    showToast(`✅ Знайдено ${allItems.length} реальних закладів у ${job.city || job.niche}!`);
+    try { showToast(`✅ Знайдено ${allItems.length} реальних закладів у ${job.city || job.niche}!`); } catch (_) {}
     haptic('success');
   } catch (err) {
     console.error('[LiveApify] Error:', err);
@@ -8962,7 +8998,7 @@ async function runLiveApifyJob(job) {
     job.finishedAt = new Date().toISOString();
     saveScrapeJob(job);
     renderScrapes();
-    showToast(`Помилка скрапінгу: ${err.message}`);
+    try { showToast(`Помилка скрапінгу: ${err.message}`); } catch (_) {}
   }
 }
 
@@ -10053,7 +10089,7 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
     job.total = items.length;
     saveLocalNfcJobs(nfcRadarState.jobs);
     renderNfcRadar();
-    showToast(`✅ Знайдено ${items.length} реальних закладів у ${job.city || job.cluster}!`);
+    try { showToast(`✅ Знайдено ${items.length} реальних закладів у ${job.city || job.cluster}!`); } catch (_) {}
     haptic('success');
   } catch (err) {
     console.error('[NFC Apify] Error:', err);
@@ -10061,7 +10097,7 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
     job.error = err.message || 'Помилка виконання радару';
     saveLocalNfcJobs(nfcRadarState.jobs);
     renderNfcRadar();
-    showToast(`Помилка NFC радару: ${err.message}`);
+    try { showToast(`Помилка NFC радару: ${err.message}`); } catch (_) {}
   }
 }
 
