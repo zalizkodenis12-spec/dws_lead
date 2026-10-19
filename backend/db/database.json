@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1792441129243-9187",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "3d_site",
+      "subcategoryName": "3D сайт",
+      "sourceType": "freelancehunt",
+      "sourceName": "Freelancehunt",
+      "sourceUsername": "@freelancehunt",
+      "authorName": "Замовник на Freelancehunt",
+      "authorUsername": "@freelancehunt",
+      "title": "Ищу 3D-риггера / технического аниматора для персонажа под Unity",
+      "text": "Ищу 3D-риггера / технического аниматора для персонажа под Unity - 3000UAH\n\nИщу 3D-риггера / технического аниматора для персонажа под Unity Задача: подготовить гуманоидного 3D-персонажа для создания анимаций в Blender и дальнейшего использования в Unity.Что нужно сделать Нужен готовый проект Blender с гуманоидным персонажем и полноценной системой риггинга, которая подходит как...",
+      "url": "https://freelancehunt.com/project/shukayu-3d-rigera-tehnichnogo-animatora-dlya/1659892.html",
+      "date": "2026-10-19T20:18:49.242Z",
+      "dateFormatted": "Сьогодні, 23:18",
+      "budget": 3000,
+      "currency": "₴",
+      "country": "Freelancehunt",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 59,
+      "aiSummary": "Замовлення на Freelancehunt: 3d сайт з бюджетом 3000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792440570869-3720",
       "category": "development",
       "categoryName": "Веброзробка",
