@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792422568245-177",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Tilda Publishing News Chat",
+      "sourceUsername": "@tilda_official_chat",
+      "authorName": "Гульсина",
+      "authorUsername": "@tg_id_138532173",
+      "title": "Мы разработчики и у нас есть сайт на Tilda",
+      "text": "Мы разработчики и у нас есть сайт на Tilda\nЕсть страница «Что нового»  https://www.freshoffice.ru/blog/version\nна которой мы описываем технические функции которые мы выпустили к бизнес приложению.\n\nЕсть отдельно Help как отдельный ресурс, но на сайте нужен анонс релизов.\nОбычно это скучные страницы. Мы сделали раз, сделали, два и три.\nРешили поэкспериментировать и переработали все страницы, которые выпускали ранее.\nКаждая страница посвящена разным картинам искусства (открытых для публичного размещения)\n\nВсе страницы сделаны с Claude + он видит наши интерфейсы + человек\nВот один из примеров https://www.freshoffice.ru/092026\nИИ конечно помогает делать контент более лучшего качества.\nНо если не научить его - он будет делать также скучно как и без него)))\n\nОтдельное огромное мерси Tilda, мы вас любим.",
+      "date": "2026-10-19T15:09:28.243Z",
+      "dateFormatted": "Сьогодні, 18:09",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792421558929-428",
       "category": "marketing",
       "categoryName": "Маркетинг",
