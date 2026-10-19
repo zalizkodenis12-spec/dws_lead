@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792405698037-453",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Julia",
+      "authorUsername": "@tg_id_1069124792",
+      "title": "Вітаю)",
+      "text": "Вітаю)\nЯ SMM-спеціаліст, який допоможе не просто постити контент, а вибудувати зрозумілу систему роботи із соцмережами:\n→ SMM-стратегія\n→ контент-план\n→ створення та оформлення контенту\n→ ТЗ на зйомки або виїзд\n→ Reels / короткі відео\n→ аналіз статистики\n→ робота над залученням та впізнаваністю бренду\nШукаю саме довгострокову співпрацю, де зможу зануритися в проєкт і розвивати його.\n📍Івано-Франківськ або віддалено",
+      "date": "2026-10-19T10:28:18.036Z",
+      "dateFormatted": "Сьогодні, 13:28",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792404997125-384",
       "category": "marketing",
       "categoryName": "Маркетинг",
