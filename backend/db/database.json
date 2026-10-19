@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792407740540-680",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "ddle",
+      "authorUsername": "@ddle",
+      "title": "📃 Резюме Middle+ / Senior Frontend Developer от @Raym0nt, $2 000 – $3 000,...",
+      "text": "📃 Резюме Middle+ / Senior Frontend Developer от @Raym0nt, $2 000 – $3 000, Грузия, удаленно",
+      "date": "2026-10-19T11:02:20.539Z",
+      "dateFormatted": "Сьогодні, 14:02",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792406686387-991",
       "category": "development",
       "categoryName": "Веброзробка",
