@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792412629447-765",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "jsswpt",
+      "authorUsername": "@jsswpt",
+      "title": "📃 Резюме Frontend Developer от @jsswpt, от 200 000 ₽, удаленка, фуллтайм...",
+      "text": "📃 Резюме Frontend Developer от @jsswpt, от 200 000 ₽, удаленка, фуллтайм",
+      "date": "2026-10-19T12:23:49.447Z",
+      "dateFormatted": "Сьогодні, 15:23",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792412151303-406",
       "category": "development",
       "categoryName": "Веброзробка",
