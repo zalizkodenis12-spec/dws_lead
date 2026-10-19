@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792404061863-556",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Дистанция",
+      "sourceUsername": "@distantsiya",
+      "authorName": "olesya_dmit",
+      "authorUsername": "@olesya_dmit",
+      "title": "🔥 ТОПОВЫЕ ВАКАНСИИ НЕДЕЛИ",
+      "text": "🔥 ТОПОВЫЕ ВАКАНСИИ НЕДЕЛИ\n\n\n1. Instagram менеджер/SMM специалист для практикующего психолога – сексолога.\nУдаленка, ЗП 35 000 руб.\nПодробнее https://t.me/distantsiya/38526\n\n\n2. Ассистент по ежедневной отчетности.\nУдаленка, ЗП от 250 руб/час\nПодробнее https://t.me/distantsiya/38529\n\n\n3. Бизнес - ассистент.\nУдаленка, ЗП от 30 000 руб.\nПодробнее https://t.me/distantsiya/38540\n\n\n\n❗️ Хочешь попасть в ТОП? Пиши @olesya_dmit\nПубликация вакансий платная, 1 пост 400 руб., закреп на неделю в топе вакансий +200 руб.\n\n\n\n🌏 Канал Дистанции в Max\n🌎 Группа и Канал Дистанции в ВК\n🪩 Всё о работе и карьере",
+      "date": "2026-10-19T10:01:01.863Z",
+      "dateFormatted": "Сьогодні, 13:01",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792404011389-544",
       "category": "marketing",
       "categoryName": "Маркетинг",
