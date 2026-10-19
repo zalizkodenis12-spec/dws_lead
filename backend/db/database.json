@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792400886856-395",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Маркетинг Club",
+      "sourceUsername": "@marketing_network1",
+      "authorName": "Vla",
+      "authorUsername": "@schliegel",
+      "title": "Growth Strategist, AI Short Drama Creative Strategist, Brand Strategist, CM...",
+      "text": "Growth Strategist, AI Short Drama Creative Strategist, Brand Strategist, CMO\n\nПривіт! Маю 10+ років досвіду в маркетингу та брендингу (екс-Fedoriv, креативні агенції, продуктові стартапи, класичні корпорації).\nОстанній рік сфокусований на AI-проектах, побудові контентних систем та запуску AI-персонажів і мікродрам (вертикальних серіалів).\n\nЧим можу бути корисним проєкту:\n\n1) Знаходжу точки росту в продукті, комунікаціях та воронках залучення.\n\n2) Розбудовую контент-систему під алгоритми TikTok / Reels / Shorts, розробляю концепції та сценарії роликів.\n\n3) Розробляю концепції майбутніх АІ-серіалів, персонажів, АІ-інфлюєнсерів, прописую синопсис, сценарії, керую конвеєром продакшну.\n\n4) Перезапускаю бренди, оновлюю позиціонування, розробляю бренд та комунікаційні стратегії, будую системний маркетинг, лідогенерацію та продуктовий сторітелінг.\n\nЗараз відкритий до нових викликів і шукаю цікавий проєкт. Якщо у вас є задачі за цими напрямками, давайте поспілкуємося.\n\nКонтакт: @schliegel",
+      "date": "2026-10-19T09:08:06.856Z",
+      "dateFormatted": "Сьогодні, 12:08",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792400398570-938",
       "category": "development",
       "categoryName": "Веброзробка",
