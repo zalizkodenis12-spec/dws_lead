@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792408803883-886",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "SMM-ЧАТ | Telegram • Instagram • VK",
+      "sourceUsername": "@smm_chat",
+      "authorName": "Олег",
+      "authorUsername": "@tg_id_7431042857",
+      "title": "#инвайтинг #тгчаты #tgтрафик",
+      "text": "#инвайтинг #тгчаты #tgтрафик\n\n📱Нужен живой Telegram-чат, а не пустая группа?\n\nИнвайтинг*️⃣— это аккуратное добавление целевой аудитории в ваш Telegram-чат.\n\nБез ботов, без спама, по безопасным лимитам.\n\nЧто делаю:\n\n📍Подбираю чаты с нужной аудиторией\n📍Приглашаю целевых людей в ваш чат\n📍Настраиваю базовое оформление и первый пост\n📍После наполнения - передаю вам права владельца\n\n🔥На выходе — живой чат, который можно прогревать под заявки и продажи.\n\nРаботаю с экспертами и онлайн-бизнесом.\n\nПонимаю, как делать рост без блоков.",
+      "date": "2026-10-19T11:20:03.882Z",
+      "dateFormatted": "Сьогодні, 14:20",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792407740540-680",
       "category": "development",
       "categoryName": "Веброзробка",
