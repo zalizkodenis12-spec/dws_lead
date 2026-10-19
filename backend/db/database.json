@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792411868831-231",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Маркетинг Club",
+      "sourceUsername": "@marketing_network1",
+      "authorName": "Kathy English",
+      "authorUsername": "@tg_id_7620588368",
+      "title": "ИЩЕШЬ ПРОДВИЖЕНИЕ БЕЗ СЛОЖНЫХ СХЕМ?",
+      "text": "ИЩЕШЬ ПРОДВИЖЕНИЕ БЕЗ СЛОЖНЫХ СХЕМ?\n\nPOPUP — каталог заказов лайков, подписчиков и просмотров с понятным выбором соцсети и тарифа. Всё можно изучить до оплаты.\n\nЗайди и сравни →\nhttps://popup1.com/r/b319a366207140d1\n\n#накрутка #продвижение #телеграмм #smm #продвижениеканала #продвижениеаккаунта #активность #реакции #пиар #реклама #онлайнпродвижение #продвижениевсоцсетях #раскруткаканала",
+      "date": "2026-10-19T12:11:08.829Z",
+      "dateFormatted": "Сьогодні, 15:11",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792411329618-115",
       "category": "montage",
       "categoryName": "Монтаж",
