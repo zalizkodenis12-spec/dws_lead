@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792424117032-425",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "telegram_ads",
+      "subcategoryName": "Telegram реклама",
+      "sourceType": "chat",
+      "sourceName": "SMM-ЧАТ | Telegram • Instagram • VK",
+      "sourceUsername": "@smm_chat",
+      "authorName": "tg_id_8546325261",
+      "authorUsername": "@tg_id_8546325261",
+      "title": "#посевы #тгтрафик #закупырекламы",
+      "text": "#посевы #тгтрафик #закупырекламы\n\n📱Нужны живые подписчики в Telegram, а не просто цифры?\n\nПосевы — это размещение рекламы в живых Telegram-каналах с вашей целевой аудиторией.\n\nПодходит, если нужен быстрый и контролируемый рост.\n\nЧто делаю под ключ:\n\n📍 Подбираю каналы строго под вашу нишу\n📍 Проверяю активность и аудиторию\n📍 Готовлю текст / подбираю формат\n📍 Согласовываю размещения с админами\n📍 Запускаю и контролирую посевы\n\n🔥В итоге — живые подписчики и рост охватов без ботов и слива бюджета.\n\nРаботаю с экспертами и онлайн-бизнесом.\n\nПонимаю, как масштабироваться аккуратно и без мусорного трафика.\n\n➡️ СВЯЗЬ СО МНОЙ",
+      "date": "2026-10-19T15:35:17.031Z",
+      "dateFormatted": "Сьогодні, 18:35",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: telegram реклама.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792423711392-81",
       "category": "development",
       "categoryName": "Веброзробка",
