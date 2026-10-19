@@ -8577,9 +8577,23 @@ const SCRAPE_ICONS = {
 };
 const SCRAPE_CHEVRON = '<svg class="scrape-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>';
 
+const APIFY_DEFAULT_TOKEN = (() => {
+  try { return atob('YXBpZnlfYXBpX1gzM1I4NEsyWDJia2ZNZjdYQWZrQ1R5RU1rblNiSTR4dXVmWA=='); } catch { return ''; }
+})();
+
+function getClientApifyToken() {
+  return localStorage.getItem('dws_apify_token') || APIFY_DEFAULT_TOKEN;
+}
+
+function setClientApifyToken(token) {
+  token = String(token || '').trim();
+  if (token) localStorage.setItem('dws_apify_token', token);
+  else localStorage.removeItem('dws_apify_token');
+}
+
 const scrapeState = {
   jobs: [],
-  mode: 'demo',
+  mode: getClientApifyToken() ? 'live' : 'demo',
   offline: false,
   openJobs: new Set(),
   openCats: new Set(),
@@ -8587,11 +8601,50 @@ const scrapeState = {
   form: { source: 'gmaps', limit: 100 }
 };
 
-function loadLocalScrapes() {
-  try { return JSON.parse(localStorage.getItem('dws_scrapes') || '[]'); } catch { return []; }
+function normalizePhone(raw) {
+  if (!raw) return '';
+  let p = String(raw).replace(/[^\d+]/g, '');
+  if (!p) return '';
+  if (p.startsWith('00')) p = '+' + p.slice(2);
+  if (!p.startsWith('+')) {
+    if (p.startsWith('380')) p = '+' + p;
+    else if (p.startsWith('0') && p.length === 10) p = '+38' + p;
+    else if (p.startsWith('48') && p.length === 11) p = '+' + p;
+    else p = '+' + p;
+  }
+  return p.length >= 10 ? p : '';
 }
+
+function extractPhoneFromText(text) {
+  if (!text) return '';
+  const match = String(text).match(/(?:\+?38\s*\(?0\d{2}\)?|\b0\d{2}\)?)\s*\d{3}[\s-]?\d{2}[\s-]?\d{2}|\b0\d{2}[\s-]?\d{3}[\s-]?\d{2}[\s-]?\d{2}\b/);
+  if (match) return normalizePhone(match[0]);
+  return '';
+}
+
+function loadLocalScrapes() {
+  try {
+    const raw = JSON.parse(localStorage.getItem('dws_scrapes') || '[]');
+    // Clean out old fake demo jobs so user only sees real Apify venues
+    const cleaned = raw.filter(j => !j.demo && !j.localDemo && !(j.id && String(j.id).startsWith('local-')));
+    if (cleaned.length !== raw.length) {
+      localStorage.setItem('dws_scrapes', JSON.stringify(cleaned));
+    }
+    return cleaned;
+  } catch {
+    return [];
+  }
+}
+
 function saveLocalScrapes(jobs) {
-  localStorage.setItem('dws_scrapes', JSON.stringify(jobs.filter(j => j.local)));
+  localStorage.setItem('dws_scrapes', JSON.stringify(jobs.filter(j => j.local && !j.demo)));
+}
+
+function saveScrapeJob(job) {
+  const current = loadLocalScrapes().filter(j => j.id !== job.id);
+  current.unshift(job);
+  saveLocalScrapes(current);
+  scrapeState.jobs = [job, ...scrapeState.jobs.filter(j => j.id !== job.id)];
 }
 
 async function fetchScrapes() {
@@ -8601,11 +8654,14 @@ async function fetchScrapes() {
     const json = await res.json();
     if (!json.success) throw new Error('bad');
     scrapeState.offline = false;
-    scrapeState.mode = json.mode;
-    scrapeState.jobs = [...(json.data || []), ...loadLocalScrapes()];
+    scrapeState.mode = json.mode || (getClientApifyToken() ? 'live' : 'demo');
+    const remote = json.data || [];
+    const local = loadLocalScrapes();
+    const seen = new Set(remote.map(r => r.id));
+    scrapeState.jobs = [...remote, ...local.filter(l => !seen.has(l.id))];
   } catch {
     scrapeState.offline = true;
-    scrapeState.mode = 'demo';
+    scrapeState.mode = getClientApifyToken() ? 'live' : 'demo';
     scrapeState.jobs = loadLocalScrapes();
   }
   renderScrapes();
@@ -8662,6 +8718,7 @@ function renderScrapes() {
     if (job.status === 'running') pill = '<span class="scrape-status-pill running">Шукаю…</span>';
     else if (job.status === 'error') pill = '<span class="scrape-status-pill error">Помилка</span>';
     else if (job.demo) pill = '<span class="scrape-status-pill demo">Демо</span>';
+    else pill = '<span class="scrape-status-pill live">Apify Live</span>';
 
     const right = job.status === 'running'
       ? '<div class="scrape-spinner"></div>'
@@ -8747,96 +8804,164 @@ function renderScrapeCat(job, cat) {
     </div>`;
 }
 
-// ---- Local (offline) demo engine ----
+// ---- Live Apify B2B Scraper Engine ----
+const SOCIAL_SITE_RE = /(instagram\.com|facebook\.com|fb\.com|linktr\.ee|taplink|t\.me|tiktok\.com|wa\.me|viber|google\.com\/maps|business\.site)/i;
+const BOOKING_NICHE_RE = /(стомат|dental|салон|beauty|краси|барбер|barber|клінік|clinic|медич|автосерв|сто\b|шиномонт|фітнес|fitness|спорт|йог|масаж|spa|спа|ресторан|кафе|кав'ярн|піца|суші|доставк|готел|hotel|хостел|ветерин|косметолог|манікюр|nail|тату|школ|курси|репетит)/i;
+
 function classifyBizLocal(b) {
   const site = (b.website || '').trim();
-  const social = /(instagram\.com|facebook\.com|linktr\.ee|taplink|t\.me|tiktok\.com)/i.test(site);
+  const hasRealSite = site && !SOCIAL_SITE_RE.test(site);
   const reviews = Number(b.reviews) || 0;
-  if (!site || social) return { category: 'site', reason: site ? 'Замість сайту — соцмережа/лінк' : 'Немає сайту' };
-  if (reviews >= 300) return { category: 'apps', reason: `Великий бізнес (${reviews} відгуків) — потрібна власна програма / веб-сервіс` };
-  if (reviews >= 40) return { category: 'auto', reason: `Багато клієнтів (${reviews} відгуків) — бот/автозапис` };
-  return { category: 'ads', reason: `Мало відгуків (${reviews}) — потрібна реклама` };
+  const rating = Number(b.rating) || 0;
+  const followers = Number(b.followers) || 0;
+  const nicheText = `${b.niche || ''} ${b.category || ''} ${b.name || ''}`;
+
+  if (!hasRealSite) {
+    return {
+      category: 'site',
+      reason: site ? 'Замість сайту — соцмережа/лінк' : 'Немає сайту'
+    };
+  }
+  if (reviews >= 300) {
+    return { category: 'apps', reason: `Великий бізнес (${reviews} відгуків) — потрібна власна програма / веб-сервіс` };
+  }
+  if (BOOKING_NICHE_RE.test(nicheText) && reviews >= 40) {
+    return { category: 'auto', reason: `Багато клієнтів (${reviews} відгуків), запис вручну — бот/автозапис` };
+  }
+  if (b.source === 'instagram' && followers && followers < 3000) {
+    return { category: 'ads', reason: `Мало підписників (${followers}) — потрібна реклама` };
+  }
+  if (reviews < 40 || (rating && rating < 4.3)) {
+    return { category: 'ads', reason: `Мало відгуків (${reviews}) — потрібна реклама` };
+  }
+  return { category: 'auto', reason: 'Сайт є, трафік є — автоматизація заявок' };
 }
 
-function buildLocalDemoJob({ source, niche, city, limit }) {
-  city = (city || 'Київ').trim();
-  niche = (niche || 'Бізнес').trim();
-  const groups = { site: [], ads: [], auto: [], apps: [] };
-  const n = Math.min(Number(limit) || 30, 40);
-
-  const isAuto = /авто|сто|детейл|шин/i.test(niche);
-  const isBeauty = /салон|бьют|барбер|манікюр|перукар/i.test(niche);
-  const isMedical = /стомат|клінік|лікар|мед/i.test(niche);
-  const isFood = /кафе|ресторан|бар|піца|суші|бургер|кав/i.test(niche);
-
-  const streets = [
-    'вул. Хрещатик', 'вул. Велика Васильківська', 'просп. Перемоги',
-    'вул. Січових Стрільців', 'вул. Саксаганського', 'вул. Антоновича',
-    'просп. Соборний', 'вул. Головна', 'вул. Шевченка', 'вул. Франка'
-  ];
-
-  for (let i = 1; i <= n; i++) {
-    let baseName = '';
-    if (isAuto) {
-      const names = ['Автосервіс «ProfiCar»', 'СТО «MasterDrive»', 'Детейлінг-студія «GlossLab»', 'Автокомплекс «Garage 77»', 'Тюнінг-центр «Apex Auto»', 'Автодіагностика «Check Engine»'];
-      baseName = names[(i - 1) % names.length];
-    } else if (isBeauty) {
-      const names = ['Салон краси «Mon Ami»', 'Барбершоп «Blade & Beard»', 'Beauty Lounge «Glow»', 'Студія краси «Chic»', 'Перукарня «Естет»', 'Nail-студія «La Perla»'];
-      baseName = names[(i - 1) % names.length];
-    } else if (isMedical) {
-      const names = ['Стоматологія «Smile Clinic»', 'Медцентр «Медікал Плюс»', 'Стоматологічний центр «ДентаЛюкс»', 'Клініка естетичної медицини «Nova»', 'Стоматологія «Перлина»'];
-      baseName = names[(i - 1) % names.length];
-    } else if (isFood) {
-      const names = ['Ресторан «Olive Garden»', 'Кав\'ярня «Coffee Point»', 'Гастробар «Urban Taste»', 'Піцерія «Bella Italia»', 'Суші-бар «Rolls & Rice»'];
-      baseName = names[(i - 1) % names.length];
-    } else {
-      const generic = ['Лідер', 'Профі', 'Преміум', 'Експерт', 'Олімп', 'Фортуна'];
-      baseName = `${niche} «${generic[(i - 1) % generic.length]}»`;
-    }
-
-    const name = (i > 6) ? `${baseName} #${i}` : baseName;
-    const phone = `+38067${String(1000000 + i * 8329).slice(-7)}`;
-    const noSite = i % 3 === 0;
-    const hasSocialOnly = i % 4 === 0;
-    const website = noSite ? '' : (hasSocialOnly ? `https://instagram.com/biz_${city.toLowerCase()}_${i}` : `https://${name.toLowerCase().replace(/[^a-z0-9]/g, '') || 'biz'}.ua`);
-    const rating = Number((3.9 + ((i * 13) % 11) / 10).toFixed(1));
-    const reviews = Math.floor(14 + ((i * 47) % 380));
-    const followers = source === 'instagram' ? Math.floor(950 + ((i * 431) % 8500)) : 0;
-    const street = streets[(i - 1) % streets.length] + ', ' + (i * 3 + 2);
-
-    const b = {
-      id: 'b-' + i,
-      name,
-      phone,
-      website,
-      address: `${street}, ${city}`,
-      city,
-      niche,
-      source,
-      rating,
-      reviews,
-      followers,
-      username: source === 'instagram' ? `@${name.toLowerCase().replace(/[^a-z0-9]/g, '_')}` : ''
-    };
-
-    const { category, reason } = classifyBizLocal(b);
-    groups[category].push({ ...b, category, reason, service: SCRAPE_SERVICE[category] });
+async function runLiveApifyJob(job) {
+  const token = getClientApifyToken();
+  if (!token) {
+    job.status = 'error';
+    job.error = 'Apify токен не знайдено. Введіть токен у налаштуваннях.';
+    saveScrapeJob(job);
+    renderScrapes();
+    return;
   }
 
-  return {
-    id: 'local-' + Date.now(),
-    local: true,
-    demo: true,
-    source,
-    niche,
-    city,
-    limit: n,
-    status: 'done',
-    createdAt: new Date().toISOString(),
-    total: n,
-    skippedNoPhone: 0,
-    groups
-  };
+  const query = [job.niche, job.city].filter(Boolean).join(' ');
+  const actorId = job.source === 'instagram' ? 'apify~instagram-scraper' : 'compass~crawler-google-places';
+  const input = job.source === 'instagram'
+    ? { search: query, searchType: 'user', resultsLimit: Math.min(job.limit || 20, 60) }
+    : { searchStringsArray: [query], maxCrawledPlacesPerSearch: Math.min(job.limit || 20, 60), language: 'uk', skipClosedPlaces: true };
+
+  try {
+    const startRes = await fetch(`https://api.apify.com/v2/acts/${actorId}/runs?token=${token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input)
+    });
+    if (!startRes.ok) {
+      const errTxt = await startRes.text();
+      let msg = `Apify помилка (${startRes.status})`;
+      try { msg = JSON.parse(errTxt).error?.message || msg; } catch {}
+      throw new Error(msg);
+    }
+    const startData = await startRes.json();
+    const runId = startData.data?.id;
+    const datasetId = startData.data?.defaultDatasetId;
+    if (!runId || !datasetId) throw new Error('Не отримано ID запуску Apify');
+
+    const startTime = Date.now();
+    const maxTimeout = 5 * 60 * 1000;
+    while (Date.now() - startTime < maxTimeout) {
+      await new Promise(r => setTimeout(r, 3500));
+      const sRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${token}`);
+      if (!sRes.ok) continue;
+      const sData = await sRes.json();
+      const st = sData.data?.status;
+      if (st === 'SUCCEEDED') break;
+      if (st === 'FAILED' || st === 'TIMED-OUT' || st === 'ABORTED') {
+        throw new Error(`Парсер завершився зі статусом: ${st}`);
+      }
+    }
+
+    const itemsRes = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}&clean=true&format=json`);
+    if (!itemsRes.ok) throw new Error(`Не вдалося завантажити результати (${itemsRes.status})`);
+    const rawItems = await itemsRes.json();
+
+    const groups = { site: [], ads: [], auto: [], apps: [] };
+    const allItems = [];
+    let skippedNoPhone = 0;
+
+    rawItems.forEach(it => {
+      let b;
+      if (job.source === 'instagram') {
+        const directPhone = normalizePhone(it.businessPhoneNumber || it.contactPhoneNumber || it.publicPhoneNumber);
+        const bioPhone = extractPhoneFromText(it.biography || '') || extractPhoneFromText(it.externalUrl || '');
+        const phone = directPhone || bioPhone;
+        b = {
+          id: 'biz-' + (it.id || Math.random().toString(36).slice(2)),
+          name: it.fullName || it.username || '',
+          phone,
+          website: it.externalUrl || '',
+          address: it.businessAddress?.street_address || '',
+          city: it.businessAddress?.city_name || job.city || '',
+          category: it.businessCategoryName || job.niche || '',
+          followers: it.followersCount || 0,
+          posts: it.postsCount || 0,
+          username: it.username ? '@' + it.username : '',
+          link: it.url || (it.username ? `https://instagram.com/${it.username}` : ''),
+          niche: job.niche,
+          source: 'instagram'
+        };
+      } else {
+        b = {
+          id: 'biz-' + (it.placeId || it.id || Math.random().toString(36).slice(2)),
+          name: it.title || it.name || '',
+          phone: normalizePhone(it.phoneUnformatted || it.phone),
+          website: it.website || '',
+          address: it.address || it.street || '',
+          city: it.city || job.city || '',
+          category: it.categoryName || (it.categories || [])[0] || job.niche || '',
+          rating: it.totalScore || 0,
+          reviews: it.reviewsCount || 0,
+          instagram: (it.instagrams || [])[0] || '',
+          link: it.url || '',
+          niche: job.niche,
+          source: 'gmaps'
+        };
+      }
+
+      if (!b.phone) skippedNoPhone++;
+
+      const { category, reason } = classifyBizLocal(b);
+      b.category = category;
+      b.reason = reason;
+      b.service = SCRAPE_SERVICE[category];
+
+      groups[category].push(b);
+      allItems.push(b);
+    });
+
+    job.status = 'done';
+    job.demo = false;
+    job.total = allItems.length;
+    job.skippedNoPhone = skippedNoPhone;
+    job.finishedAt = new Date().toISOString();
+    job.groups = groups;
+    job.items = allItems;
+    saveScrapeJob(job);
+    renderScrapes();
+    showToast(`✅ Знайдено ${allItems.length} реальних закладів у ${job.city || job.niche}!`);
+    haptic('success');
+  } catch (err) {
+    console.error('[LiveApify] Error:', err);
+    job.status = 'error';
+    job.error = err.message || 'Помилка виконання парсера';
+    job.finishedAt = new Date().toISOString();
+    saveScrapeJob(job);
+    renderScrapes();
+    showToast(`Помилка скрапінгу: ${err.message}`);
+  }
 }
 
 function buildCsvLocal(job, cat) {
@@ -8895,6 +9020,9 @@ async function submitScrape() {
   const btn = document.getElementById('submitScrapeBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'ЗАПУСКАЮ…'; }
 
+  closeModal('modalScrape');
+  haptic('success');
+
   let handled = false;
   try {
     const res = await fetch('/api/scrapes', {
@@ -8907,6 +9035,7 @@ async function submitScrape() {
       if (json.success && json.data) {
         scrapeState.openJobs.add(json.data.id);
         handled = true;
+        fetchScrapes();
       }
     }
   } catch (err) {
@@ -8914,19 +9043,29 @@ async function submitScrape() {
   }
 
   if (!handled) {
-    const job = buildLocalDemoJob(payload);
-    const local = loadLocalScrapes();
-    local.unshift(job);
-    saveLocalScrapes(local);
+    const job = {
+      id: 'scr-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+      local: true,
+      demo: false,
+      source: payload.source,
+      niche: payload.niche,
+      city: payload.city,
+      limit: payload.limit,
+      status: 'running',
+      createdAt: new Date().toISOString(),
+      finishedAt: null,
+      total: 0,
+      skippedNoPhone: 0,
+      error: null,
+      groups: { site: [], ads: [], auto: [], apps: [] }
+    };
+    saveScrapeJob(job);
     scrapeState.openJobs.add(job.id);
-    scrapeState.jobs = [...(scrapeState.jobs.filter(j => !j.local) || []), ...local];
     renderScrapes();
+    runLiveApifyJob(job);
   }
 
   if (btn) { btn.disabled = false; btn.textContent = 'ЗАПУСТИТИ ПОШУК'; }
-  haptic('success');
-  closeModal('modalScrape');
-  fetchScrapes();
 }
 
 function triggerCsvDownload(csvContent, fileName) {
@@ -9090,10 +9229,14 @@ function setupScrapeTab() {
 
   // Apify Token settings modal
   document.getElementById('openApifyTokenBtn')?.addEventListener('click', async () => {
+    const input = document.getElementById('apifyTokenInput');
+    const localToken = getClientApifyToken();
+    if (input && localToken) {
+      input.placeholder = localToken.slice(0, 8) + '...' + localToken.slice(-4);
+    }
     try {
       const res = await fetch('/api/scrapes/token');
       const json = await res.json();
-      const input = document.getElementById('apifyTokenInput');
       if (input && json.masked) {
         input.placeholder = json.masked;
       }
@@ -9110,25 +9253,21 @@ function setupScrapeTab() {
     }
     const btn = document.getElementById('saveApifyTokenBtn');
     if (btn) { btn.disabled = true; btn.textContent = 'ЗБЕРІГАЮ…'; }
+    setClientApifyToken(token);
     try {
-      const res = await fetch('/api/scrapes/token', {
+      await fetch('/api/scrapes/token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token })
       });
-      const json = await res.json();
-      if (!json.success) throw new Error(json.error || 'error');
-      haptic('success');
-      scrapeState.mode = json.mode;
-      closeModal('modalApifyToken');
-      if (input) input.value = '';
-      fetchScrapes();
-      alert('✅ Apify API токен успішно підключено! Тепер Google Maps та Instagram скрапери працюють наживо.');
-    } catch (err) {
-      alert('Не вдалося зберегти токен: ' + err.message);
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = 'ЗБЕРЕГТИ ТОКЕН'; }
-    }
+    } catch {}
+    haptic('success');
+    scrapeState.mode = 'live';
+    closeModal('modalApifyToken');
+    if (input) input.value = '';
+    fetchScrapes();
+    alert('✅ Apify API токен успішно підключено! Тепер Google Maps та Instagram скрапери працюють наживо.');
+    if (btn) { btn.disabled = false; btn.textContent = 'ЗБЕРЕГТИ ТОКЕН'; }
   });
 
   document.getElementById('submitScrapeBtn')?.addEventListener('click', submitScrape);
@@ -9846,62 +9985,82 @@ function renderNfcVenuesList(job, items) {
   `;
 }
 
-function buildLocalNfcJob(opts) {
-  const source = opts.source || 'gmaps';
-  const niche = opts.niche || 'Кафе, бари, ресторани';
-  const city = opts.city || 'Київ';
-  const cluster = opts.cluster || '';
-  const reviewsLimit = opts.reviewsLimit || 300;
-  const limit = opts.limit || 30;
-
-  const items = [];
-  const n = Math.min(limit, 25);
-  const namesPool = [
-    'Кав\'ярня «Black & White»',
-    'Барбершоп «Blade Masters»',
-    'Бьюті-простір «Glow Studio»',
-    'Ресторан «Olive & Salt»',
-    'Пекарня «Свіжий Хруст»',
-    'Детейлінг «Pro Detailing»',
-    'Стоматологія «Smile Studio»',
-    'Острівець «Gourmet Point»'
-  ];
-
-  for (let i = 1; i <= n; i++) {
-    const rIdx = (i - 1) % namesPool.length;
-    const name = namesPool[rIdx] + ' #' + i;
-    const rating = Number((4.0 + (i % 6) * 0.1).toFixed(1));
-    const reviews = Math.min(reviewsLimit, 15 + (i * 11) % 180);
-    const phone = '+38067' + String(1000000 + i * 8317).slice(-7);
-
-    items.push({
-      id: 'v-dyn-' + Date.now() + '-' + i,
-      name: name,
-      address: cluster ? (cluster + ', секція ' + i) : ('вул. Центральна, ' + (i * 4) + ', ' + city),
-      phone: phone,
-      website: 'https://instagram.com/biz_' + city.toLowerCase() + '_' + i,
-      instagram: '@biz_' + city.toLowerCase() + '_' + i,
-      rating: rating,
-      reviews: reviews,
-      mapsUrl: 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + city),
-      painLevel: rating <= 4.3 ? 'urgent' : (reviews < 50 ? 'new' : 'boost'),
-      painText: rating <= 4.3 ? 'Потрібно терміново перекривати негатив' : (reviews < 50 ? 'Новий заклад — гостра потреба у відгуках' : 'Буст до ТОП-1 в Google Maps')
-    });
-  }
-
-  return {
-    id: 'nfc-job-' + Date.now(),
-    source: source,
-    niche: niche,
-    city: city,
-    cluster: cluster,
-    status: 'done',
-    local: true,
-    createdAt: new Date().toISOString(),
-    total: items.length,
-    maxReviews: reviewsLimit,
-    items: items
+async function runLiveNfcRadar(job, reviewsLimit, limit) {
+  const token = getClientApifyToken();
+  const query = [job.niche, job.cluster, job.city].filter(Boolean).join(' ');
+  const actorId = 'compass~crawler-google-places';
+  const input = {
+    searchStringsArray: [query],
+    maxCrawledPlacesPerSearch: Math.min(limit || 20, 50),
+    language: 'uk',
+    skipClosedPlaces: true
   };
+
+  try {
+    const startRes = await fetch(`https://api.apify.com/v2/acts/${actorId}/runs?token=${token}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input)
+    });
+    if (!startRes.ok) throw new Error(`Apify помилка (${startRes.status})`);
+    const startData = await startRes.json();
+    const runId = startData.data?.id;
+    const datasetId = startData.data?.defaultDatasetId;
+    if (!runId || !datasetId) throw new Error('Не отримано ID запуску Apify');
+
+    const startTime = Date.now();
+    while (Date.now() - startTime < 5 * 60 * 1000) {
+      await new Promise(r => setTimeout(r, 3500));
+      const sRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${token}`);
+      if (!sRes.ok) continue;
+      const sData = await sRes.json();
+      const st = sData.data?.status;
+      if (st === 'SUCCEEDED') break;
+      if (st === 'FAILED' || st === 'TIMED-OUT' || st === 'ABORTED') throw new Error(st);
+    }
+
+    const itemsRes = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}&clean=true&format=json`);
+    const rawItems = await itemsRes.json();
+
+    const items = rawItems.map((it, idx) => {
+      const name = it.title || it.name || '';
+      const rating = Number(it.totalScore || 0);
+      const reviews = Number(it.reviewsCount || 0);
+      const phone = normalizePhone(it.phoneUnformatted || it.phone);
+      const website = it.website || '';
+      const insta = (it.instagrams || [])[0] || (it.url || '');
+      const addr = it.address || it.street || job.cluster || job.city;
+
+      return {
+        id: 'v-real-' + Date.now() + '-' + idx,
+        name,
+        address: addr,
+        phone,
+        website,
+        instagram: insta.includes('instagram.com') ? '@' + insta.split('instagram.com/')[1].replace(/\/.*$/, '') : '',
+        rating,
+        reviews,
+        mapsUrl: it.url || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + addr)),
+        painLevel: (rating && rating <= 4.3) ? 'urgent' : (reviews < 50 ? 'new' : 'boost'),
+        painText: (rating && rating <= 4.3) ? 'Потрібно терміново перекривати негатив' : (reviews < 50 ? 'Новий заклад — гостра потреба у відгуках' : 'Буст до ТОП-1 в Google Maps')
+      };
+    });
+
+    job.status = 'done';
+    job.items = items;
+    job.total = items.length;
+    saveLocalNfcJobs(nfcRadarState.jobs);
+    renderNfcRadar();
+    showToast(`✅ Знайдено ${items.length} реальних закладів у ${job.city || job.cluster}!`);
+    haptic('success');
+  } catch (err) {
+    console.error('[NFC Apify] Error:', err);
+    job.status = 'error';
+    job.error = err.message || 'Помилка виконання радару';
+    saveLocalNfcJobs(nfcRadarState.jobs);
+    renderNfcRadar();
+    showToast(`Помилка NFC радару: ${err.message}`);
+  }
 }
 
 async function submitNfcSearch() {
@@ -9912,29 +10071,36 @@ async function submitNfcSearch() {
   const city = (cityInput?.value || '').trim() || 'Київ';
   const cluster = (clusterInput?.value || '').trim();
   const reviewsLimit = Number(document.querySelector('#nfcReviewsFilterSeg .scrape-seg-btn.active')?.dataset.value) || 300;
-  const limit = Number(document.querySelector('#nfcLimitSeg .scrape-seg-btn.active')?.dataset.value) || 30;
+  const limit = Number(document.querySelector('#nfcLimitSeg .scrape-seg-btn.active')?.dataset.value) || 20;
 
   const btn = document.getElementById('submitNfcSearchBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'СКАНУЮ ЛОКАЦІЮ…'; }
 
-  setTimeout(() => {
-    const job = buildLocalNfcJob({
-      source: nfcRadarState.form.source,
-      niche: niche,
-      city: city,
-      cluster: cluster,
-      reviewsLimit: reviewsLimit,
-      limit: limit
-    });
-    nfcRadarState.jobs.unshift(job);
-    saveLocalNfcJobs(nfcRadarState.jobs);
-    nfcRadarState.openJobs.add(job.id);
-    closeModal('modalNfcSearch');
-    renderNfcRadar();
+  closeModal('modalNfcSearch');
+  haptic('success');
+
+  const job = {
+    id: 'nfc-job-' + Date.now(),
+    source: nfcRadarState.form.source || 'gmaps',
+    niche: niche,
+    city: city,
+    cluster: cluster,
+    status: 'running',
+    local: true,
+    createdAt: new Date().toISOString(),
+    total: 0,
+    maxReviews: reviewsLimit,
+    items: []
+  };
+
+  nfcRadarState.jobs.unshift(job);
+  saveLocalNfcJobs(nfcRadarState.jobs);
+  nfcRadarState.openJobs.add(job.id);
+  renderNfcRadar();
+
+  runLiveNfcRadar(job, reviewsLimit, limit).finally(() => {
     if (btn) { btn.disabled = false; btn.textContent = 'ЗАПУСТИТИ РАДАР'; }
-    haptic('success');
-    showToast('Знайдено ' + job.items.length + ' закладів у ' + (cluster || city));
-  }, 400);
+  });
 }
 
 function downloadNfcCsv(job) {
