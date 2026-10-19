@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792404997125-384",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Yeva Meshko",
+      "authorUsername": "@tg_id_7965607289",
+      "title": "привіт! 👩🏼‍💻",
+      "text": "привіт! 👩🏼‍💻\nя єва, smm-спеціалістка, зараз активно шукаю проєкти для співпраці 🇺🇦🌍\n\n🍒 працюю з українським та іноземним ринками\n🍒 різні ніші: від експертів до брендів\n🍒 креативний контент, стратегії та залучення клієнтів\n🍒 віддалено + періодичні зйомки контенту в Рівному\n\nзараз розвиваю портфоліо й готова вкладатися в проєкти та створювати сильні кейси ✨\n\n🤍 пропоную 3 пробні дні співпраці, щоб ви могли оцінити мій підхід і навички.\nзацікавило? пишіть у приватні 💌",
+      "date": "2026-10-19T10:16:37.124Z",
+      "dateFormatted": "Сьогодні, 13:16",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 65,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792404885811-777",
       "category": "development",
       "categoryName": "Веброзробка",
