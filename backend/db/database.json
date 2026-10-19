@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792417908980-258",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "qb1ty",
+      "authorUsername": "@qb1ty",
+      "title": "🔥 Резюме Full-Stack Engineer от @qb1ty, от 80 000 ₽, удаленно или релокаци...",
+      "text": "🔥 Резюме Full-Stack Engineer от @qb1ty, от 80 000 ₽, удаленно или релокация, фуллтайм или проектная работа\n\n⭐ Сокращение расходов на S3 на ~80% за счет буферизации чанков логов в памяти\n⭐ Транзакционные откаты медиафайлов в AWS S3 при сбоях БД для борьбы с «осиротевшими» объектами\n⭐ Собственные open-source пакеты под React 19 и стейт-бридж для микрофронтендов с ссылкой на GitHub",
+      "date": "2026-10-19T13:51:48.980Z",
+      "dateFormatted": "Сьогодні, 16:51",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792417485084-3508",
       "category": "development",
       "categoryName": "Веброзробка",
