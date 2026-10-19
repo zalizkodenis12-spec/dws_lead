@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792424972635-194",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "osipov_artur",
+      "authorUsername": "@osipov_artur",
+      "title": "🔥 Резюме Frontend Developer от @osipov_artur, от 200 000 ₽, Россия, удален...",
+      "text": "🔥 Резюме Frontend Developer от @osipov_artur, от 200 000 ₽, Россия, удаленка, фуллтайм\n\n⭐ Отличная оцифровка результатов: оптимизация загрузки с 3.5 до 1.2 сек, тесты до 86% и рост трафика на 25%\n⭐ Понятный контекст крупных проектов (Сбер, М.Видео, Тензор) с описанием конкретных бизнес-задач\n⭐ Наличие ссылки на персональное портфолио с проектами",
+      "date": "2026-10-19T15:49:32.634Z",
+      "dateFormatted": "Сьогодні, 18:49",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792424683699-7484",
       "category": "development",
       "categoryName": "Веброзробка",
