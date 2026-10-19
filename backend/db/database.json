@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792434176694-570",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Marianna Anastasova",
+      "authorUsername": "@tg_id_814913941",
+      "title": "Добрый день!",
+      "text": "Добрый день!\nИщу 👀 специалиста или небольшую команду для комплексного создания и продвижения клинингового бизнеса в США.\n\nМне необходимо настроить полноценную систему привлечения клиентов:\n\n• Создание и оформление Instagram и Facebook Business.\n• Настройка Google Business Profile и Google Ads.\n• Создание профессионального сайта с описанием услуг, ориентировочными ценами и возможностью получить предварительный расчёт стоимости (Get a Free Estimate).\n• Настройка системы получения и обработки заявок от клиентов.\n• Объединение всех платформ в единую работающую систему.\n\nОсновные направления компании: Move-in/Move-out Cleaning, Post-Construction Cleaning и Airbnb Turnover, real estate agency.\n\nИнтересуют специалисты с опытом продвижения малого бизнеса на американском рынке, желательно в сфере клининговых услуг.\nПрошу присылать примеры выполненных проектов, стоимость первоначальной настройки, сроки реализации и условия дальнейшего сопровождения.\nБуду благодарна за предложения и рекомендации!",
+      "date": "2026-10-19T18:22:56.648Z",
+      "dateFormatted": "Сьогодні, 21:22",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792431876905-203",
       "category": "montage",
       "categoryName": "Монтаж",
