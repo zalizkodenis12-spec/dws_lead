@@ -433,10 +433,23 @@ app.post('/api/auth/verify-code', (req, res) => {
   }
 });
 
-// 7. MULTI-DEVICE ACCOUNT SYNC
+// 7. MULTI-DEVICE ACCOUNT SYNC WITH SECURE ISOLATION
 app.get('/api/account/:accountKey', (req, res) => {
   try {
-    const data = db.getAccountData(req.params.accountKey);
+    const rawKey = String(req.params.accountKey || '').trim().toLowerCase();
+    const authHeader = req.headers.authorization || '';
+
+    // If accessing the owner account (Denis Zalizko), ensure owner authorization
+    if (rawKey === 'zalizkodenis12') {
+      const isAuthorizedOwner = authHeader.includes('DWS-2026-STUDIO-ZALIZKO-PRO') ||
+                                authHeader.includes('dws_sec_') ||
+                                req.query.secret === 'DWS-2026-STUDIO-ZALIZKO-PRO';
+      if (!isAuthorizedOwner) {
+        return res.status(403).json({ success: false, error: 'Доступ обмежено. Профіль власника захищений кодом доступу.' });
+      }
+    }
+
+    const data = db.getAccountData(rawKey);
     res.json({ success: true, data });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -445,8 +458,21 @@ app.get('/api/account/:accountKey', (req, res) => {
 
 app.post('/api/account/sync', (req, res) => {
   try {
-    const { accountKey, crm, income, expenses, profile, takenLeadIds, username, name } = req.body;
-    const synced = db.syncAccount(accountKey, { crm, income, expenses, profile, takenLeadIds, username, name });
+    const { accountKey, crm, income, expenses, profile, takenLeadIds, username, name, avatar, role } = req.body;
+    const rawKey = String(accountKey || '').trim().toLowerCase();
+    const authHeader = req.headers.authorization || '';
+
+    // If attempting to overwrite owner account, verify owner authorization
+    if (rawKey === 'zalizkodenis12') {
+      const isAuthorizedOwner = authHeader.includes('DWS-2026-STUDIO-ZALIZKO-PRO') ||
+                                authHeader.includes('dws_sec_') ||
+                                req.query.secret === 'DWS-2026-STUDIO-ZALIZKO-PRO';
+      if (!isAuthorizedOwner) {
+        return res.status(403).json({ success: false, error: 'Заборонено перезаписувати дані власника без авторизації.' });
+      }
+    }
+
+    const synced = db.syncAccount(rawKey, { crm, income, expenses, profile, takenLeadIds, username, name, avatar, role });
     res.json({ success: true, data: synced });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

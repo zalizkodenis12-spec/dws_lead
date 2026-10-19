@@ -3777,15 +3777,20 @@ const normalizedExpenses = (savedExpensesRaw && Array.isArray(savedExpensesRaw.r
 // Resolve unique user profile for this device/session (Multi-user isolation)
 function getOrCreateUserIdentity() {
   const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+  const savedAvatar = localStorage.getItem('dws_user_avatar') || (tgUser?.photo_url || '');
+  const savedName = localStorage.getItem('dws_account_name');
+  const savedUser = localStorage.getItem('dws_account_user');
+  const savedRole = localStorage.getItem('dws_user_role');
   
   if (tgUser && tgUser.id) {
     const isDenis = (tgUser.username && (tgUser.username.toLowerCase() === 'zalizkodenis12' || tgUser.username.toLowerCase() === 'absolutikdenchik')) || String(tgUser.id) === '5278970111';
     if (isDenis) {
       return {
         key: 'zalizkodenis12',
-        name: 'Денис Залізко',
-        username: '@zalizkodenis12',
-        role: 'owner'
+        name: savedName || 'Денис Залізко',
+        username: savedUser || '@zalizkodenis12',
+        role: savedRole || 'owner',
+        avatar: savedAvatar
       };
     }
     // Prioritize clean Telegram username as the canonical key so same username across devices syncs 1:1!
@@ -3794,30 +3799,26 @@ function getOrCreateUserIdentity() {
     const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || ('Користувач #' + tgUser.id);
     return {
       key: userKey,
-      name: fullName,
-      username: tgUser.username ? ('@' + tgUser.username) : ('@' + userKey),
-      role: 'member'
+      name: savedName || fullName,
+      username: savedUser || (tgUser.username ? ('@' + tgUser.username) : ('@' + userKey)),
+      role: savedRole || 'member',
+      avatar: savedAvatar
     };
   }
 
   let savedKey = localStorage.getItem('dws_account_key');
-  let savedName = localStorage.getItem('dws_account_name');
-  let savedUser = localStorage.getItem('dws_account_user');
-
   if (!savedKey) {
     savedKey = 'dev_' + Math.random().toString(36).substring(2, 9);
-    savedName = 'Спеціаліст';
-    savedUser = '@' + savedKey;
     localStorage.setItem('dws_account_key', savedKey);
-    localStorage.setItem('dws_account_name', savedName);
-    localStorage.setItem('dws_account_user', savedUser);
   }
 
+  const isDenisKey = savedKey === 'zalizkodenis12';
   return {
     key: savedKey,
-    name: savedName || 'Спеціаліст',
-    username: savedUser || ('@' + savedKey),
-    role: savedKey === 'zalizkodenis12' ? 'owner' : 'member'
+    name: savedName || (isDenisKey ? 'Денис Залізко' : 'Спеціаліст'),
+    username: savedUser || (isDenisKey ? '@zalizkodenis12' : ('@' + savedKey)),
+    role: savedRole || (isDenisKey ? 'owner' : 'member'),
+    avatar: savedAvatar
   };
 }
 
@@ -3863,6 +3864,7 @@ const state = {
   accountUser: _initialIdentity.username,
   accountName: _initialIdentity.name,
   userRole: _initialIdentity.role,
+  userAvatar: _initialIdentity.avatar || '',
   requisites: (() => {
     let req = null;
     try {
@@ -7965,26 +7967,204 @@ function setupCrmFilterModal() {
 // ============================================================
 // ACCOUNT SYNC & RECOGNITION (MULTI-DEVICE LINKING)
 // ============================================================
+let pendingAvatarData = null;
+
 function updateProfileHeaderUI() {
   const nameEl = document.getElementById('profileDisplayName');
   const userEl = document.getElementById('profileDisplayUser');
-  const keyEl = document.getElementById('accountKeyBadge');
   const roleEl = document.getElementById('profileRoleBadge');
   const avatarEl = document.getElementById('profileAvatarBadge');
 
   if (nameEl) nameEl.textContent = state.accountName || 'Спеціаліст';
   if (userEl) userEl.textContent = state.accountUser || ('@' + state.accountKey);
-  if (keyEl) keyEl.textContent = 'ID: ' + (state.accountKey || '');
   if (roleEl) {
-    roleEl.textContent = state.userRole === 'owner' ? 'Власник' : 'Спеціаліст';
-    roleEl.style.background = state.userRole === 'owner' ? 'rgba(0,102,255,0.08)' : 'rgba(100,116,139,0.08)';
-    roleEl.style.color = state.userRole === 'owner' ? 'var(--brand)' : 'var(--text-muted)';
+    const isOwner = (state.userRole === 'owner' || state.accountKey === 'zalizkodenis12');
+    roleEl.textContent = isOwner ? 'Власник' : (state.userRole || 'Спеціаліст');
+    roleEl.style.background = isOwner ? 'rgba(0,102,255,0.08)' : 'rgba(100,116,139,0.08)';
+    roleEl.style.color = isOwner ? 'var(--brand)' : 'var(--text-muted)';
+    roleEl.style.borderColor = isOwner ? 'rgba(0,102,255,0.2)' : 'var(--border)';
   }
   if (avatarEl) {
-    const parts = (state.accountName || 'Спеціаліст').trim().split(/\s+/);
-    let initials = parts[0] ? parts[0][0].toUpperCase() : 'С';
-    if (parts[1]) initials += parts[1][0].toUpperCase();
-    avatarEl.textContent = initials;
+    const avatarUrl = state.userAvatar || localStorage.getItem('dws_user_avatar');
+    if (avatarUrl) {
+      avatarEl.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">`;
+    } else {
+      const parts = (state.accountName || 'Спеціаліст').trim().split(/\s+/);
+      let initials = parts[0] ? parts[0][0].toUpperCase() : 'С';
+      if (parts[1]) initials += parts[1][0].toUpperCase();
+      avatarEl.innerHTML = initials;
+    }
+  }
+}
+
+function openProfileEditModal() {
+  const nameInput = document.getElementById('editProfileNameInput');
+  const userInput = document.getElementById('editProfileUserInput');
+  const roleInput = document.getElementById('editProfileRoleInput');
+  const previewEl = document.getElementById('editProfileAvatarPreview');
+  const removePhotoBtn = document.getElementById('removePhotoBtn');
+
+  if (nameInput) nameInput.value = state.accountName || '';
+  if (userInput) userInput.value = state.accountUser || ('@' + state.accountKey);
+  if (roleInput) roleInput.value = (state.userRole === 'owner' || state.accountKey === 'zalizkodenis12') ? 'Власник' : (state.userRole || 'Спеціаліст');
+
+  const avatarUrl = state.userAvatar || localStorage.getItem('dws_user_avatar');
+  if (previewEl) {
+    if (avatarUrl) {
+      previewEl.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">`;
+      if (removePhotoBtn) removePhotoBtn.style.display = 'inline-flex';
+    } else {
+      const parts = (state.accountName || 'Спеціаліст').trim().split(/\s+/);
+      let initials = parts[0] ? parts[0][0].toUpperCase() : 'С';
+      if (parts[1]) initials += parts[1][0].toUpperCase();
+      previewEl.innerHTML = initials;
+      if (removePhotoBtn) removePhotoBtn.style.display = 'none';
+    }
+  }
+  openModal('modalEditProfile');
+}
+
+function setupProfileEditModal() {
+  const editBtn = document.getElementById('editProfileNameBtn');
+  const avatarWrap = document.getElementById('profileAvatarClickWrap');
+  const triggerPhotoBtn = document.getElementById('triggerPhotoUploadBtn');
+  const photoFile = document.getElementById('editProfilePhotoFile');
+  const removePhotoBtn = document.getElementById('removePhotoBtn');
+  const saveBtn = document.getElementById('saveProfileEditBtn');
+  const previewEl = document.getElementById('editProfileAvatarPreview');
+
+  if (editBtn) {
+    editBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pendingAvatarData = null;
+      openProfileEditModal();
+      haptic('light');
+    });
+  }
+  if (avatarWrap) {
+    avatarWrap.addEventListener('click', (e) => {
+      e.stopPropagation();
+      pendingAvatarData = null;
+      openProfileEditModal();
+      haptic('light');
+    });
+  }
+
+  if (triggerPhotoBtn && photoFile) {
+    triggerPhotoBtn.addEventListener('click', () => {
+      photoFile.click();
+    });
+  }
+
+  if (photoFile) {
+    photoFile.addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showToast('Будь ласка, оберіть файл зображення (JPG, PNG)');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const maxDim = 256;
+          let w = img.width;
+          let h = img.height;
+          if (w > maxDim || h > maxDim) {
+            if (w > h) {
+              h = Math.round((h * maxDim) / w);
+              w = maxDim;
+            } else {
+              w = Math.round((w * maxDim) / h);
+              h = maxDim;
+            }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+          pendingAvatarData = dataUrl;
+          if (previewEl) {
+            previewEl.innerHTML = `<img src="${dataUrl}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">`;
+          }
+          if (removePhotoBtn) removePhotoBtn.style.display = 'inline-flex';
+          haptic('light');
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  if (removePhotoBtn) {
+    removePhotoBtn.addEventListener('click', () => {
+      pendingAvatarData = '';
+      if (previewEl) {
+        const parts = ((document.getElementById('editProfileNameInput')?.value) || state.accountName || 'С').trim().split(/\s+/);
+        let initials = parts[0] ? parts[0][0].toUpperCase() : 'С';
+        if (parts[1]) initials += parts[1][0].toUpperCase();
+        previewEl.innerHTML = initials;
+      }
+      removePhotoBtn.style.display = 'none';
+      if (photoFile) photoFile.value = '';
+      haptic('light');
+    });
+  }
+
+  if (saveBtn) {
+    saveBtn.addEventListener('click', async () => {
+      const nameInput = document.getElementById('editProfileNameInput');
+      const userInput = document.getElementById('editProfileUserInput');
+      const roleInput = document.getElementById('editProfileRoleInput');
+
+      const newName = (nameInput?.value || '').trim();
+      const rawUser = (userInput?.value || '').trim();
+      const newRole = (roleInput?.value || '').trim();
+
+      if (newName) {
+        state.accountName = newName;
+        localStorage.setItem('dws_account_name', state.accountName);
+      }
+
+      if (rawUser) {
+        const cleanUser = rawUser.replace(/^@/, '');
+        // Security check: if current user is not Denis, prevent them from taking over zalizkodenis12
+        if (cleanUser.toLowerCase() === 'zalizkodenis12' && state.accountKey !== 'zalizkodenis12') {
+          showToast('Цей логін зарезервовано для власника');
+          return;
+        }
+        state.accountUser = rawUser.startsWith('@') ? rawUser : ('@' + rawUser);
+        localStorage.setItem('dws_account_user', state.accountUser);
+        if (state.accountKey !== 'zalizkodenis12') {
+          state.accountKey = cleanUser;
+          localStorage.setItem('dws_account_key', state.accountKey);
+        }
+      }
+
+      if (newRole) {
+        state.userRole = (newRole.toLowerCase() === 'власник') ? 'owner' : newRole;
+        localStorage.setItem('dws_user_role', state.userRole);
+      }
+
+      if (pendingAvatarData !== null) {
+        if (pendingAvatarData) {
+          state.userAvatar = pendingAvatarData;
+          localStorage.setItem('dws_user_avatar', pendingAvatarData);
+        } else {
+          state.userAvatar = '';
+          localStorage.removeItem('dws_user_avatar');
+        }
+      }
+
+      updateProfileHeaderUI();
+      closeModal('modalEditProfile');
+      haptic('success');
+      showToast('Профіль успішно оновлено!');
+      syncAccountToServer();
+    });
   }
 }
 
@@ -7994,44 +8174,37 @@ function setupAccountSync() {
   state.accountUser = ident.username;
   state.accountName = ident.name;
   state.userRole = ident.role;
+  if (ident.avatar) state.userAvatar = ident.avatar;
 
   localStorage.setItem('dws_account_key', state.accountKey);
   localStorage.setItem('dws_account_user', state.accountUser);
   localStorage.setItem('dws_account_name', state.accountName);
 
   updateProfileHeaderUI();
+  setupProfileEditModal();
 
-  // Allow editing name directly from profile
-  const editNameBtn = document.getElementById('editProfileNameBtn');
-  if (editNameBtn) {
-    editNameBtn.onclick = () => {
-      const current = state.accountName || 'Спеціаліст';
-      const newName = prompt('Введіть ваше ім\'я або назву профілю:', current);
-      if (newName && newName.trim()) {
-        state.accountName = newName.trim();
-        localStorage.setItem('dws_account_name', state.accountName);
-        updateProfileHeaderUI();
-        syncAccountToServer();
-        showToast('Ім\'я профілю оновлено!');
-      }
-    };
-  }
-
-  const quickDenisBtn = document.getElementById('quickLoginDenisBtn');
   const accountInput = document.getElementById('accountUserInput');
   const submitAccountBtn = document.getElementById('submitAccountBtn');
-
-  if (quickDenisBtn && accountInput) {
-    quickDenisBtn.addEventListener('click', () => {
-      accountInput.value = '@zalizkodenis12';
-      haptic('light');
-    });
-  }
 
   if (submitAccountBtn) {
     submitAccountBtn.addEventListener('click', async () => {
       const val = (accountInput?.value || '').trim();
-      const cleanKey = val.replace(/^@/, '') || 'zalizkodenis12';
+      const cleanKey = val.replace(/^@/, '');
+
+      // Security check: protect Denis's account from unauthorized takeover
+      if (cleanKey.toLowerCase() === 'zalizkodenis12') {
+        const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+        const isDenis = (tgUser && ((tgUser.username && (tgUser.username.toLowerCase() === 'zalizkodenis12' || tgUser.username.toLowerCase() === 'absolutikdenchik')) || String(tgUser.id) === '5278970111'));
+        if (!isDenis && state.accountKey !== 'zalizkodenis12') {
+          showToast('Доступ до акаунту власника обмежено');
+          return;
+        }
+      }
+
+      if (!cleanKey) {
+        showToast('Введіть коректний username');
+        return;
+      }
 
       state.accountKey = cleanKey;
       state.accountUser = val.startsWith('@') ? val : ('@' + cleanKey);
@@ -8041,11 +8214,13 @@ function setupAccountSync() {
       localStorage.setItem('dws_account_key', state.accountKey);
       localStorage.setItem('dws_account_user', state.accountUser);
       localStorage.setItem('dws_account_name', state.accountName);
+      localStorage.setItem('dws_user_role', state.userRole);
 
       updateProfileHeaderUI();
       haptic('success');
       closeModal('modalAccountLink');
       await loadAllData();
+      showToast('Акаунт підключено!');
     });
   }
 
@@ -8302,7 +8477,11 @@ function setupAccountSync() {
 async function fetchAccountData() {
   const key = state.accountKey || getOrCreateUserIdentity().key;
   try {
-    const res = await fetch('/api/account/' + encodeURIComponent(key));
+    const res = await fetch('/api/account/' + encodeURIComponent(key), {
+      headers: {
+        'Authorization': 'Bearer ' + (localStorage.getItem('dws_master_token') || 'DWS-2026-STUDIO-ZALIZKO-PRO')
+      }
+    });
     const json = await res.json();
     if (json.success && json.data) {
       if (Array.isArray(json.data.crm) && json.data.crm.length > 0) {
@@ -8321,9 +8500,22 @@ async function fetchAccountData() {
         json.data.takenLeadIds.forEach(id => state.takenLeadIds.add(id));
         localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
       }
+      if (json.data.avatar && !localStorage.getItem('dws_user_avatar')) {
+        state.userAvatar = json.data.avatar;
+        localStorage.setItem('dws_user_avatar', json.data.avatar);
+      }
+      if (json.data.name && !localStorage.getItem('dws_account_name')) {
+        state.accountName = json.data.name;
+        localStorage.setItem('dws_account_name', json.data.name);
+      }
+      if (json.data.username && !localStorage.getItem('dws_account_user')) {
+        state.accountUser = json.data.username;
+        localStorage.setItem('dws_account_user', json.data.username);
+      }
       if (json.data.updatedAt) {
         state.lastSyncTimestamp = new Date(json.data.updatedAt).getTime();
       }
+      updateProfileHeaderUI();
     }
   } catch (err) {
     console.warn('Account sync error:', err);
@@ -8405,11 +8597,16 @@ async function syncAccountToServer() {
   try {
     const res = await fetch('/api/account/sync', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + (localStorage.getItem('dws_master_token') || 'DWS-2026-STUDIO-ZALIZKO-PRO')
+      },
       body: JSON.stringify({
         accountKey: accountKey,
         username: state.accountUser || dynamicId.username,
         name: state.accountName || dynamicId.name,
+        role: state.userRole || dynamicId.role,
+        avatar: state.userAvatar || '',
         crm: state.crm || [],
         income: state.income || { records: [], currency: '₴' },
         expenses: state.expenses || { records: [], currency: '₴' },
@@ -8519,7 +8716,12 @@ async function pullLatestDataFromServer(force = false) {
   // 2. Server API polling
   try {
     isSyncingRemote = true;
-    const res = await fetch('/api/account/' + encodeURIComponent(key), { cache: 'no-store' }).catch(() => null);
+    const res = await fetch('/api/account/' + encodeURIComponent(key), {
+      cache: 'no-store',
+      headers: {
+        'Authorization': 'Bearer ' + (localStorage.getItem('dws_master_token') || 'DWS-2026-STUDIO-ZALIZKO-PRO')
+      }
+    }).catch(() => null);
     if (res && res.ok) {
       const json = await res.json();
       if (json.success && json.data) {
@@ -10116,8 +10318,23 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
   const baseQuery = [job.niche, job.cluster, job.city].filter(Boolean).join(' ');
   const searchStrings = [baseQuery];
   if (targetReviews <= 50) {
-    const newQuery = ['нове', job.niche || 'кафе', job.cluster, job.city].filter(Boolean).join(' ');
-    searchStrings.push(newQuery);
+    const city = job.city || 'Київ';
+    const cluster = job.cluster || '';
+    if (job.niche && (job.niche.toLowerCase().includes('кафе') || job.niche.toLowerCase().includes('ресторан') || job.niche.toLowerCase().includes('заклад') || job.niche.toLowerCase().includes('бар') || job.niche.toLowerCase().includes('кав'))) {
+      searchStrings.push(`кав'ярня ${cluster} ${city}`.trim());
+      searchStrings.push(`нова кав'ярня ${cluster} ${city}`.trim());
+      searchStrings.push(`пекарня ${cluster} ${city}`.trim());
+      searchStrings.push(`нове кафе ${cluster} ${city}`.trim());
+    } else {
+      searchStrings.push(`нове ${job.niche || ''} ${cluster} ${city}`.trim());
+      searchStrings.push(`новий ${job.niche || ''} ${cluster} ${city}`.trim());
+    }
+  } else if (targetReviews <= 150) {
+    const city = job.city || 'Київ';
+    const cluster = job.cluster || '';
+    if (job.niche && (job.niche.toLowerCase().includes('кафе') || job.niche.toLowerCase().includes('ресторан'))) {
+      searchStrings.push(`кав'ярня ${cluster} ${city}`.trim());
+    }
   }
 
   const actorId = 'compass~crawler-google-places';
@@ -10184,20 +10401,35 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
       });
     });
 
-    // STRICT REVIEWS FILTERING (Eliminate any venues exceeding user selected limit!):
+    // STRICT REVIEWS FILTERING & SORTING:
+    let filtered = mapped;
     if (targetReviews && targetReviews < 90000) {
-      mapped = mapped.filter(v => Number(v.reviews || 0) <= targetReviews);
+      filtered = mapped.filter(v => Number(v.reviews || 0) <= targetReviews);
     }
 
     // Sort: if targetReviews <= 50 or <= 150, sort ascending (least reviewed first)
     if (targetReviews <= 150) {
-      mapped.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
+      filtered.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
+    }
+
+    // Graceful fallback if area has very few spots under 50 reviews:
+    // If 0 places under 50 reviews were found, take the lowest-reviewed spots available
+    // (sorted ascending) rather than showing a blank screen, but cap at e.g. <= 120 reviews
+    if (targetReviews <= 50 && filtered.length === 0) {
+      const lowAlternative = mapped
+        .filter(v => Number(v.reviews || 0) <= 120)
+        .sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
+      if (lowAlternative.length > 0) {
+        filtered = lowAlternative;
+        try { showToast(`Заклади до 50 відгуків не знайдено — показано найновіші доступні (до ${Math.max(...filtered.map(x=>x.reviews))} відгуків)`); } catch (_) {}
+      }
     }
 
     // Slice to requested count
-    if (targetCount && targetCount > 0 && mapped.length > targetCount) {
-      mapped = mapped.slice(0, targetCount);
+    if (targetCount && targetCount > 0 && filtered.length > targetCount) {
+      filtered = filtered.slice(0, targetCount);
     }
+    mapped = filtered;
 
     job.status = 'done';
     job.items = mapped;

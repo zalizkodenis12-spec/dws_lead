@@ -511,6 +511,8 @@ export const db = {
     }
     if (payload.username) acc.username = payload.username;
     if (payload.name) acc.name = payload.name;
+    if (payload.avatar !== undefined) acc.avatar = payload.avatar;
+    if (payload.role !== undefined) acc.role = payload.role;
     acc.updatedAt = new Date().toISOString();
     data.accounts[cleanKey] = acc;
     writeDb(data);
