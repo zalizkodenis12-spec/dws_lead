@@ -9909,7 +9909,7 @@ function loadLocalNfcJobs() {
       return DEFAULT_NFC_RADAR_JOBS;
     }
     const parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
+    if (!Array.isArray(parsed)) {
       localStorage.setItem('dws_nfc_radars', JSON.stringify(DEFAULT_NFC_RADAR_JOBS));
       return DEFAULT_NFC_RADAR_JOBS;
     }
@@ -9920,7 +9920,19 @@ function loadLocalNfcJobs() {
         job.total = job.items.length;
       }
     });
-    return parsed;
+
+    // Auto-clean any empty searches with 0 items requested by user (e.g. Sky Park Vinnytsia and empty Kyiv Cafe)
+    const cleanJobs = parsed.filter(job => {
+      const count = (job.items ? job.items.length : 0) || job.total || 0;
+      const isSkyParkEmpty = (job.cluster && job.cluster.toLowerCase().includes('скай парк') && count === 0);
+      const isKyivCafeEmpty = (job.city && job.city.toLowerCase().includes('київ') && job.niche && job.niche.toLowerCase().includes('кафе') && count === 0);
+      return !isSkyParkEmpty && !isKyivCafeEmpty;
+    });
+
+    if (cleanJobs.length !== parsed.length) {
+      localStorage.setItem('dws_nfc_radars', JSON.stringify(cleanJobs));
+    }
+    return cleanJobs;
   } catch {
     return DEFAULT_NFC_RADAR_JOBS;
   }
@@ -10163,6 +10175,20 @@ function renderNfcRadar() {
           </div>
         </div>
       `;
+    } else if (job.status !== 'running') {
+      body = `
+        <div class="scrape-job-body" style="padding: 16px;">
+          <div style="font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 12px; line-height: 1.4;">
+            ${job.status === 'error' ? (job.error || 'Помилка виконання пошуку') : 'Закладів за цим фільтром не знайдено (0 точок).'}
+          </div>
+          <div style="display: flex; justify-content: center;">
+            <button type="button" class="btn btn--out btn--sm scrape-btn-delete" data-nfc-act="delete" data-job="${job.id}">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              <span>Видалити цей пошук</span>
+            </button>
+          </div>
+        </div>
+      `;
     }
 
     return `
@@ -10175,10 +10201,15 @@ function renderNfcRadar() {
             <div class="scrape-job-title">${job.cluster ? job.cluster : (job.niche + ' • ' + job.city)}</div>
             <div class="scrape-job-sub">${job.city} • ${date} ${pill}</div>
           </div>
-          <div class="scrape-job-count scrape-job-count-numonly">
-            <b>${count}</b>
+          <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
+            <div class="scrape-job-count scrape-job-count-numonly">
+              <b>${count}</b>
+            </div>
+            <button type="button" class="scrape-btn-quick-del" data-nfc-act="delete" data-job="${job.id}" title="Видалити цей пошук" style="background: none; border: none; padding: 5px; cursor: pointer; color: var(--text-muted); display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; transition: color 0.15s ease;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            ${SCRAPE_CHEVRON}
           </div>
-          ${SCRAPE_CHEVRON}
         </div>
         ${body}
       </div>
@@ -10554,12 +10585,30 @@ function sendNfcToTelegram(job, btn) {
 }
 
 function deleteNfcJob(job) {
-  if (!confirm('Видалити цей збір закладів?')) return;
-  nfcRadarState.jobs = nfcRadarState.jobs.filter(j => j.id !== job.id);
-  saveLocalNfcJobs(nfcRadarState.jobs);
-  nfcRadarState.openJobs.delete(job.id);
-  renderNfcRadar();
-  showToast('Збір видалено');
+  if (!job) return;
+  const doDelete = () => {
+    nfcRadarState.jobs = nfcRadarState.jobs.filter(j => j.id !== job.id);
+    saveLocalNfcJobs(nfcRadarState.jobs);
+    nfcRadarState.openJobs.delete(job.id);
+    renderNfcRadar();
+    showToast('Пошук видалено');
+    haptic('medium');
+  };
+
+  const count = (job.items ? job.items.length : 0) || job.total || 0;
+  const promptText = count === 0
+    ? 'Видалити цей порожній пошук з радару?'
+    : `Видалити цей пошук (${count} закладів)?`;
+
+  if (window.Telegram?.WebApp?.showConfirm) {
+    window.Telegram.WebApp.showConfirm(promptText, (ok) => {
+      if (ok) doDelete();
+    });
+  } else {
+    if (confirm(promptText)) {
+      doDelete();
+    }
+  }
 }
 
 // -------------------------------------------------------------
@@ -11099,6 +11148,7 @@ function setupNfcRadarTab() {
 
     const actBtn = e.target.closest('[data-nfc-act]');
     if (actBtn) {
+      e.stopPropagation();
       const job = nfcRadarState.jobs.find(j => j.id === actBtn.dataset.job);
       if (!job) return;
       const act = actBtn.dataset.nfcAct;
