@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792427547090-244",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Катерина",
+      "authorUsername": "@kateryna_kirpysheva",
+      "title": "Шукаю таргетолога на сіру нішу з оплатою до 600-800$/1 проєкт 🪩",
+      "text": "Шукаю таргетолога на сіру нішу з оплатою до 600-800$/1 проєкт 🪩\n\nМи - команда FBA, наші клієнти: ТурбоЗНО, Томас Кралов, Лілія Свірідова та інші. Працюємо з бюджетами від 1000$/дейлі\n\nНаразі шукаємо спеціаліста під проєкти: фінанси, інвестиції, форекс\n\n➡️ Оплата: фіксована ставка + % від бюджету (до 600$-800$ за 1 проєкт, залежить від спенду)\n➡️ Ненормований графік: бути на зв’язку з 10:00 до 19:00\n➡️ Ведення до 4-5 проєктів\n\nВсі деталі в формі: https://forms.gle/7A1sFassQvG6PnbN7\n\nКонтакт для звʼязку: @kateryna_kirpysheva 👩‍💻",
+      "date": "2026-10-19T16:32:27.090Z",
+      "dateFormatted": "Сьогодні, 19:32",
+      "budget": 33000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 87,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 33000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792425295346-135",
       "category": "montage",
       "categoryName": "Монтаж",
