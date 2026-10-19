@@ -2706,8 +2706,8 @@ body.dark-theme .order-leaf-badge.expected {
 }
 
 .scrape-api-dot.active {
-  background: var(--success);
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.45);
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(0, 102, 255, 0.45);
 }
 
 .scrape-sources {
@@ -2891,8 +2891,8 @@ body.dark-theme .order-leaf-badge.expected {
 }
 
 .scrape-status-pill.running { background: var(--accent-bg); color: var(--accent); }
-.scrape-status-pill.error { background: var(--danger-bg); color: var(--danger); }
-.scrape-status-pill.live { background: rgba(46, 204, 113, 0.12); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
+.scrape-status-pill.error { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(0, 102, 255, 0.35); }
+.scrape-status-pill.live { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(0, 102, 255, 0.35); }
 .scrape-status-pill.demo { background: var(--accent-bg); color: var(--accent); border: 1px solid rgba(0, 102, 255, 0.2); }
 
 .scrape-spinner {

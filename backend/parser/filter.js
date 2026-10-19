@@ -282,6 +282,74 @@ export function extractBudget(text) {
 }
 
 /**
+ * Strict Candidate Resume, Self-Promotion & Chit-Chat Detector
+ * Returns true if text is a candidate CV, freelancer pitch, or general discussion.
+ */
+export function isCandidateResumeOrSelfPromo(text, title = '') {
+  if (!text || typeof text !== 'string') return false;
+  const full = ((title || '') + '\n' + text).trim();
+  const lower = full.toLowerCase();
+
+  // 1. Explicit resume markers / hashtags / headers / lists
+  if (/^[#\s🔥📃📌]*резюме\b/i.test(full)) return true;
+  if (/резюме\s+[\w\s/–-]+\s+от\s+@/i.test(full)) return true;
+  if (/#(?:резюме|cv|resume|ищуработу|ищу_работу|ищузаказы|ищу_заказы|forhire|lookingforjob)\b/i.test(full)) return true;
+  if (/(?:моє|моё|мое)\s+резюме/i.test(lower)) return true;
+  if (/(?:ловіть|свіжі|добірка|свежие|подборка|лучшие)\s+резюме/i.test(lower)) return true;
+  if (/резюме\s+за\s+\d+/i.test(lower)) return true;
+  if (/^(?:резюме|cv|resume)\s*:/im.test(full)) return true;
+  if (/freelancer\/[\w-]+/i.test(full)) return true;
+
+  if (title && /резюме/i.test(title)) {
+    if (!/(?:ваканс|шукаємо|ищем|нужен|потрібен)/i.test(title)) {
+      return true;
+    }
+  }
+
+  // 2. Candidate job seeking statements (looking for a job, project for oneself)
+  if (/\b(?:шукаю|ищу)\s+(?:роботу|вакансію|вакансию|підробіток|подработку|проєкти|проекти|проекты|заказы|замовлення|клієнтів|клиентов)\b/i.test(lower)) {
+    return true;
+  }
+  if (/\b(?:в\s+пошуку\s+роботи|в\s+поиске\s+работы|відкритий\s+до\s+пропозицій|відкрита\s+до\s+пропозицій|открыт\s+к\s+предложениям|открыта\s+к\s+предложениям|рассмотрю\s+предложения|розгляну\s+пропозиції)\b/i.test(lower)) {
+    return true;
+  }
+  if (/\b(?:готовий|готова|готов)\s+(?:працювати|работать|взятися|взяться)\b/i.test(lower)) {
+    return true;
+  }
+
+  // 3. Candidate self sections (Обо мне, О себе, Про себе, Про мене, Мой стек, Мій стек, Бажана ЗП)
+  if (/(?:^|\n)\s*(?:обо\s+мне|о\s+себе|про\s+себе|про\s+мене|мо[йєё]\s+стек|стек\s+технологий|мо[иії]\s+навыки|мо[иії]\s+навички|бажана\s+зп|желаемая\s+зп|ожидания\s+по\s+зп)\s*:/i.test(full)) {
+    return true;
+  }
+
+  // 4. Candidate intro phrases: 'Всем привет, меня зовут ..., я веб-разработчик'
+  if (/(?:всім\s+привіт|всем\s+привет|привет|привіт)[\s\S]{1,40}(?:мене\s+звати|меня\s+зовут|я\s+—|я\s+-|я\s+)(?:веб|дизайн|таргет|маркет|разраб|розроб|програм|верст|монтаж)/i.test(lower)) {
+    return true;
+  }
+
+  // 5. Commercial pitches & self-promotions
+  if (/^(?:зальем\s+трафик|заллємо\s+трафік|сделаем\s+под\s+ключ|зробимо\s+під\s+ключ)/i.test(full)) return true;
+  if (/\b(?:предлагаю\s+услуги|пропоную\s+послуги|надаю\s+послуги|оказываю\s+услуги|возьму\s+на\s+ведение|візьму\s+на\s+ведення|возьму\s+(?:\d+|пару|несколько)\s+проект|візьму\s+(?:\d+|пару|кілька)\s+проєкт)\b/i.test(lower)) {
+    return true;
+  }
+  if (/(?:^|\n)\s*(?:мои\s+услуги|мої\s+послуги|мо[еєё]\s+портфолио|мо[еєё]\s+портфоліо|мои\s+кейсы|мої\s+кейси|ссылка\s+на\s+портфолио)\s*:/i.test(full)) {
+    return true;
+  }
+  if (/\bя\s+(?:веб-дизайнер|вебдизайнер|таргетолог|маркетолог|дизайнер|разработчик|розробник|программист|верстальщик|монтажер|видеомонтажер|відеомонтажер)\b/i.test(lower)) {
+    if (/я\s+[\w\s-]{1,30}(?:з\s+досвідом|с\s+опытом|занимаюсь|займаюся|розробляю|разрабатываю|сделаю|зроблю|помогу|допоможу|создаю|створюю|ищу|шукаю)/i.test(lower)) {
+      return true;
+    }
+  }
+
+  // 6. Non-job chat banter / forum advice / pinned messages
+  if (lower.startsWith('стек мощный') || lower.startsWith('скажу лайфхак') || lower.includes('канал с вакансиям переехал')) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
  * Precision Rule-Based Classifier.
  * Returns null if post should be filtered out.
  */
@@ -299,12 +367,17 @@ export function classifyLeadRuleBased(text, authorUsername = '') {
     if (lower.includes(botWord)) return null;
   }
 
+  // 1. Unconditionally reject Candidate Resumes & Freelancer Self-Promotions
+  if (isCandidateResumeOrSelfPromo(clean)) {
+    return null;
+  }
+
   // Reject CV / Resume hashtags immediately
   if (/#cv\b|#resume\b|#резюме\b|#ищуработу|#ищу_работу|#ищузаказы|#ищу_заказы|#forhire/i.test(clean)) {
     return null;
   }
 
-  // 1. Check Spam & Candidate Resumes
+  // 2. Check Spam & Employer Intent
   const isEmployerPosting = /шукаємо|іщем|ищем|требуется|требуются|вакансі[яї]|ваканси[яи]|в команду|в штат|открыта позиция|ищем разработчика|шукаємо розробника|нужен разработчик|потрібен розробник|нужен программист|потрібен програміст|замовлення|заказ\b/i.test(lower);
 
   // Reject technical questions & chit-chat disguised with tech keywords
