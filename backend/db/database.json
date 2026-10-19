@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792423711392-81",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "oper",
+      "authorUsername": "@oper",
+      "title": "🔥 Резюме Fullstack Developer (Go / React / PHP) от @KASTA_420, от $2 000,...",
+      "text": "🔥 Резюме Fullstack Developer (Go / React / PHP) от @KASTA_420, от $2 000, Батуми, удаленно, фуллтайм или парт-тайм\n\n⭐ Плотный упор на измеримые метрики: от DAU (15k+) и RPS до конкретных процентов снижения нагрузки (-60%) и 60 FPS на мобилках\n⭐ Четкая связка «проблема → решение → бизнес-выхлоп» в описании задач вместо сухого списка обязанностей\n⭐ Реальный DevOps и security-опыт с цифрами (отражено 421k+ бот-запросов, 0% downtime)",
+      "date": "2026-10-19T15:28:31.391Z",
+      "dateFormatted": "Сьогодні, 18:28",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792422881823-184",
       "category": "marketing",
       "categoryName": "Маркетинг",
