@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792504253497-594",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "VLASOVA",
+      "authorUsername": "@VlassovaaKarolina",
+      "title": "Вітаю❗️",
+      "text": "Вітаю❗️\n\nЯ SMM-спеціалістка та таргетолог із 2-річним досвідом роботи в цих нішах.\n\nЗараз відкрита до нових співпраць і готова допомогти вашому бізнесу розвиватися в соціальних мережах.\n\nЗ чим можу допомогти:\n✅повноцінне ведення Instagram;\n✅налаштування таргетованої реклами;\n✅упаковка та оформлення сторінки;\n✅разові послуги й консультації.\n\nМаю досвід роботи з різними нішами, реалізовані кейси та відгуки клієнтів.\n\n📍 Івано-Франківськ, Київ або віддалено.\n\n@VlassovaaKarolina",
+      "date": "2026-10-20T13:50:53.497Z",
+      "dateFormatted": "Сьогодні, 16:50",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 65,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792504152474-731",
       "category": "marketing",
       "categoryName": "Маркетинг",
