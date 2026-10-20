@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792506342685-212",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "SMM-ЧАТ | Telegram • Instagram • VK",
+      "sourceUsername": "@smm_chat",
+      "authorName": "Крис",
+      "authorUsername": "@Kris_lashes5",
+      "title": "#ищу  #монтаж  #Reels",
+      "text": "#ищу  #монтаж  #Reels\n\nИЩУ МОНТАЖ ДЛЯ REELS 🔥\nЕсть отснятый материал, но нет времени превращать его в готовые ролики?\n\nЗа плечами — 300+ видео. Один из роликов набрал 500 тыс. просмотров.\n\nМонтирую для экспертов, блогеров и бизнеса: убираю лишнее, нахожу сильное начало и делаю акцент на главном.\nПомогу показать вашу экспертность через Reels, которые цепляют с первых секунд и понятно доносят главное.\n\nДля обсуждения деталей пишите — @Kris_lashes5 🤗",
+      "date": "2026-10-20T14:25:42.683Z",
+      "dateFormatted": "Сьогодні, 17:25",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792505928478-64",
       "category": "montage",
       "categoryName": "Монтаж",
