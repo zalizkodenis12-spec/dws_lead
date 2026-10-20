@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792502101898-575",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "DOU Jobs: DevOps | SysAdmin",
+      "sourceUsername": "@dou_jobs",
+      "authorName": "dou_jobs",
+      "authorUsername": "@dou_jobs",
+      "title": "🔸 Senior AppSupport Engineer (DevOps, Python, AI); ID 103378 в SoftServe...",
+      "text": "🔸 Senior AppSupport Engineer (DevOps, Python, AI); ID 103378 в SoftServe\n📍 Київ, Харків, Львів, Дніпро, Одеса, Вінниця, Івано-Франківськ, Рівне, Тернопіль, Ужгород, Хмельницький, Чернівці, віддалено\nПРО РОЛЬ: Наша місія в SoftServe — надавати клієнтам якісний сервіс через ефективне приймання, діагностику та вирішення запитів, забезпечуючи стабільну й надійну роботу рішень після їх запуску в production.\nМи шукаємо Senior Application Support Engineer, який(а) підтримуватиме корпоративні…",
+      "date": "2026-10-20T13:15:01.898Z",
+      "dateFormatted": "Сьогодні, 16:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792501914835-600",
       "category": "montage",
       "categoryName": "Монтаж",
