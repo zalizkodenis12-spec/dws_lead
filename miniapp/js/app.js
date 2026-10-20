@@ -3827,6 +3827,7 @@ const _initialIdentity = getOrCreateUserIdentity();
 const state = {
   currentTab: 'tab-leads',
   theme: localStorage.getItem('dws_theme') || 'light',
+  lang: localStorage.getItem('dws_lang') || 'ua',
   allLeads: [...DEFAULT_DATA.leads],
   leads: [...DEFAULT_DATA.leads],
   takenLeadIds: new Set(Array.isArray(savedTakenIds) ? savedTakenIds : []),
@@ -4193,6 +4194,7 @@ function initMasterGatekeeper() {
 document.addEventListener('DOMContentLoaded', () => {
   initMasterGatekeeper();
   initTheme();
+  applyLanguage(state.lang, false);
   setupNav();
   setupModals();
   setupProfileCounters();
@@ -4254,6 +4256,183 @@ function toggleTheme() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ theme: newTheme })
   }).catch(() => {});
+}
+
+// ============================================================
+// INTERNATIONALIZATION (i18n: UA / EN)
+// ============================================================
+const I18N_TRANSLATIONS = {
+  ua: {
+    // Navigation
+    'nav.leads': 'Заявки',
+    'nav.crm': 'CRM',
+    'nav.income': 'Дохід',
+    'nav.expenses': 'Витрати',
+    'nav.profile': 'Профіль',
+    'nav.scrape': 'Скрапінг',
+    'nav.nfc': 'NFC',
+    'nav.requisites': 'Реквізити',
+
+    // Profile
+    'profile.lang': 'МОВА:',
+    'profile.langUa': 'Українська',
+    'profile.langEn': 'English',
+    'profile.theme': 'ТЕМА:',
+    'profile.themeLight': 'Світла',
+    'profile.themeDark': 'Темна',
+    'profile.sourcesLabel': 'БАЗА ДЖЕРЕЛ ПОШУКУ:',
+    'profile.chatsTxt': 'Telegram чатів',
+    'profile.channelsTxt': 'Telegram каналів',
+    'profile.manageSources': 'Керувати списком чатів та каналів',
+    'profile.saveBtn': 'ЗБЕРЕГТИ НАЛАШТУВАННЯ',
+
+    // Leads Feed & Header
+    'leads.title': 'Заявки',
+    'leads.today': 'сьогодні',
+    'leads.categories': 'Категорії',
+    'leads.filters': 'Фільтри',
+    'leads.searchPlaceholder': 'Веброзробка сайтів, маркетинг...',
+    'leads.searchBtn': 'ПОШУК',
+    'leads.noLeads': 'Заявок за вашими критеріями не знайдено',
+    'leads.takeToWork': 'ВЗЯТИ В РОБОТУ',
+    'leads.inWork': 'В РОБОТІ ✓',
+    'leads.write': 'Написати',
+    'leads.aiResponse': 'AI-відгук',
+    'leads.copyText': 'Копіювати текст',
+
+    // CRM
+    'crm.title': 'CRM',
+    'crm.leadsLabel': 'лідів',
+    'crm.requisitesBtn': 'РЕКВІЗИТИ (IBAN)',
+    'crm.stageAll': 'Всі',
+    'crm.stageInProgress': 'В процесі',
+    'crm.stageOffer': 'Оффер',
+    'crm.stagePayment': 'Оплата',
+
+    // Income & Expenses
+    'income.title': 'Аналітика доходу',
+    'income.total': 'Загальний дохід',
+    'income.avgCheck': 'Середній чек',
+    'expenses.title': 'Облік витрат',
+
+    // Toasts
+    'toast.langChanged': 'Мову змінено на Українську 🇺🇦',
+    'toast.saved': 'Збережено',
+    'toast.copied': 'Скопійовано в буфер!'
+  },
+  en: {
+    // Navigation
+    'nav.leads': 'Leads',
+    'nav.crm': 'CRM',
+    'nav.income': 'Income',
+    'nav.expenses': 'Expenses',
+    'nav.profile': 'Profile',
+    'nav.scrape': 'Scraping',
+    'nav.nfc': 'NFC',
+    'nav.requisites': 'Requisites',
+
+    // Profile
+    'profile.lang': 'LANGUAGE:',
+    'profile.langUa': 'Українська',
+    'profile.langEn': 'English',
+    'profile.theme': 'THEME:',
+    'profile.themeLight': 'Light',
+    'profile.themeDark': 'Dark',
+    'profile.sourcesLabel': 'SEARCH SOURCES DATABASE:',
+    'profile.chatsTxt': 'Telegram chats',
+    'profile.channelsTxt': 'Telegram channels',
+    'profile.manageSources': 'Manage chats & channels list',
+    'profile.saveBtn': 'SAVE SETTINGS',
+
+    // Leads Feed & Header
+    'leads.title': 'Leads',
+    'leads.today': 'today',
+    'leads.categories': 'Categories',
+    'leads.filters': 'Filters',
+    'leads.searchPlaceholder': 'Web development, marketing...',
+    'leads.searchBtn': 'SEARCH',
+    'leads.noLeads': 'No leads found matching your criteria',
+    'leads.takeToWork': 'TAKE TO WORK',
+    'leads.inWork': 'IN WORK ✓',
+    'leads.write': 'Write',
+    'leads.aiResponse': 'AI Response',
+    'leads.copyText': 'Copy text',
+
+    // CRM
+    'crm.title': 'CRM',
+    'crm.leadsLabel': 'leads',
+    'crm.requisitesBtn': 'REQUISITES (IBAN)',
+    'crm.stageAll': 'All',
+    'crm.stageInProgress': 'In Progress',
+    'crm.stageOffer': 'Offer',
+    'crm.stagePayment': 'Payment',
+
+    // Income & Expenses
+    'income.title': 'Income Analytics',
+    'income.total': 'Total Income',
+    'income.avgCheck': 'Average Check',
+    'expenses.title': 'Expense Tracking',
+
+    // Toasts
+    'toast.langChanged': 'Language switched to English 🇬🇧',
+    'toast.saved': 'Saved',
+    'toast.copied': 'Copied to clipboard!'
+  }
+};
+
+function t(key, fallback = '') {
+  const currentLang = state.lang || 'ua';
+  const dict = I18N_TRANSLATIONS[currentLang] || I18N_TRANSLATIONS.ua;
+  return dict[key] ?? fallback ?? key;
+}
+
+function applyLanguage(lang, triggerToast = false) {
+  const normalizedLang = (lang === 'en') ? 'en' : 'ua';
+  state.lang = normalizedLang;
+  localStorage.setItem('dws_lang', normalizedLang);
+  document.documentElement.lang = normalizedLang;
+
+  // Toggle active class on lang choice pills
+  document.querySelectorAll('.lang-choice-pill').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === normalizedLang);
+  });
+
+  // Translate all [data-i18n] text elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    const val = t(key);
+    if (val) {
+      el.textContent = val;
+    }
+  });
+
+  // Translate all [data-i18n-ph] input placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    const val = t(key);
+    if (val) {
+      el.setAttribute('placeholder', val);
+    }
+  });
+
+  // Re-render current tab if initialized
+  if (typeof renderCurrentTab === 'function') {
+    try {
+      renderCurrentTab();
+    } catch (e) {}
+  }
+
+  // Sync to backend profile
+  fetch('/api/profile', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ lang: normalizedLang })
+  }).catch(() => {});
+
+  if (triggerToast) {
+    haptic('medium');
+    showToast(t('toast.langChanged'));
+  }
 }
 
 // ============================================================
@@ -4609,7 +4788,7 @@ function renderLeads() {
         <!-- Action button -->
         <div class="lead-actions-row">
           <button class="btn btn--fill btn--block btn--take-crm ${lead.inCrm ? 'btn--out' : ''}" data-action="take-crm" data-id="${lead.id}">
-            ${lead.inCrm ? 'В РОБОТІ ✓' : 'ВЗЯТИ В РОБОТУ'}
+            ${lead.inCrm ? t('leads.inWork', 'В РОБОТІ ✓') : t('leads.takeToWork', 'ВЗЯТИ В РОБОТУ')}
           </button>
         </div>
       </div>
@@ -4750,14 +4929,14 @@ function markLeadTakenToCrm(lead, btn) {
   localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
 
   if (btn) {
-    btn.textContent = 'В РОБОТІ ✓';
+    btn.textContent = t('leads.inWork', 'В РОБОТІ ✓');
     btn.classList.add('btn--out');
     btn.classList.remove('btn--fill');
   }
 
   const domBtn = document.querySelector(`.lead-card[data-id="${lead.id}"] .btn--take-crm`);
   if (domBtn) {
-    domBtn.textContent = 'В РОБОТІ ✓';
+    domBtn.textContent = t('leads.inWork', 'В РОБОТІ ✓');
     domBtn.classList.add('btn--out');
     domBtn.classList.remove('btn--fill');
   }
@@ -5871,6 +6050,13 @@ function setupEventListeners() {
   document.querySelectorAll('.theme-choice-pill').forEach(btn => {
     btn.addEventListener('click', () => {
       applyTheme(btn.dataset.theme);
+    });
+  });
+
+  // Language toggle buttons in profile
+  document.querySelectorAll('.lang-choice-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      applyLanguage(btn.dataset.lang, true);
     });
   });
 

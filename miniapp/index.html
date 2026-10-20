@@ -91,10 +91,10 @@
       <section id="tab-leads" class="tab-view active">
         <!-- Section Header -->
         <div class="view-header">
-          <h1 class="view-title">Заявки</h1>
+          <h1 class="view-title" data-i18n="leads.title">Заявки</h1>
           <div class="leads-today-stat" id="leadsTodayCount">
             <span class="leads-count-num" id="leadsCountNum">17</span>
-            <span class="leads-count-label">сьогодні</span>
+            <span class="leads-count-label" data-i18n="leads.today">сьогодні</span>
           </div>
         </div>
 
@@ -103,12 +103,12 @@
           <div class="filter-pills-left">
             <button id="openNichesBtn" class="filter-pill">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
-              <span id="activeNicheLabel">Категорії</span>
+              <span id="activeNicheLabel" data-i18n="leads.categories">Категорії</span>
               <svg class="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </button>
             <button id="openFiltersBtn" class="filter-pill">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-              <span>Фільтри</span>
+              <span data-i18n="leads.filters">Фільтри</span>
             </button>
           </div>
           <div class="filter-pills-right">
@@ -122,9 +122,9 @@
         <div class="search-bar">
           <div class="search-input-wrap">
             <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <input type="text" id="leadSearchInput" placeholder="Веброзробка сайтів, маркетинг...">
+            <input type="text" id="leadSearchInput" placeholder="Веброзробка сайтів, маркетинг..." data-i18n-ph="leads.searchPlaceholder">
           </div>
-          <button id="leadSearchBtn" class="btn btn--fill btn--sm">ПОШУК</button>
+          <button id="leadSearchBtn" class="btn btn--fill btn--sm" data-i18n="leads.searchBtn">ПОШУК</button>
         </div>
 
         <!-- Active Filter Chips (if any selected) -->
@@ -300,36 +300,51 @@
 
           <!-- THEME SELECTION -->
           <div class="form-group">
-            <label class="form-label">ТЕМА:</label>
+            <label class="form-label" data-i18n="profile.theme">ТЕМА:</label>
             <div class="theme-selector-pills">
               <button type="button" class="theme-choice-pill" data-theme="light">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                <span>Світла</span>
+                <span data-i18n="profile.themeLight">Світла</span>
               </button>
               <button type="button" class="theme-choice-pill" data-theme="dark">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                <span>Темна</span>
+                <span data-i18n="profile.themeDark">Темна</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- LANGUAGE SELECTION (МОВА) -->
+          <div class="form-group">
+            <label class="form-label" data-i18n="profile.lang">МОВА:</label>
+            <div class="theme-selector-pills">
+              <button type="button" class="lang-choice-pill active" data-lang="ua">
+                <span style="font-size: 1.15rem; line-height: 1;">🇺🇦</span>
+                <span data-i18n="profile.langUa">Українська</span>
+              </button>
+              <button type="button" class="lang-choice-pill" data-lang="en">
+                <span style="font-size: 1.15rem; line-height: 1;">🇬🇧</span>
+                <span data-i18n="profile.langEn">English</span>
               </button>
             </div>
           </div>
 
           <!-- SOURCES INFO -->
           <div class="form-group">
-            <label class="form-label">БАЗА ДЖЕРЕЛ ПОШУКУ:</label>
+            <label class="form-label" data-i18n="profile.sourcesLabel">БАЗА ДЖЕРЕЛ ПОШУКУ:</label>
             <div class="sources-stat-box">
               <div class="sources-stat-item">
                 <span class="num" id="sourcesChatsCount">160</span>
-                <span class="txt">Telegram чатів</span>
+                <span class="txt" data-i18n="profile.chatsTxt">Telegram чатів</span>
               </div>
               <div class="sources-divider"></div>
               <div class="sources-stat-item">
                 <span class="num" id="sourcesChannelsCount">96</span>
-                <span class="txt">Telegram каналів</span>
+                <span class="txt" data-i18n="profile.channelsTxt">Telegram каналів</span>
               </div>
             </div>
             <button id="openSourcesBtn" class="btn btn--out btn--block btn--sm mt-2">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-              <span>Керувати списком чатів та каналів</span>
+              <span data-i18n="profile.manageSources">Керувати списком чатів та каналів</span>
             </button>
           </div>
 
@@ -355,7 +370,7 @@
             <input type="file" id="syncFileInput" accept=".json,application/json" style="display: none;">
           </div>
 
-          <button id="saveProfileBtn" class="btn btn--fill btn--block btn--lg">ЗБЕРЕГТИ НАЛАШТУВАННЯ</button>
+          <button id="saveProfileBtn" class="btn btn--fill btn--block btn--lg" data-i18n="profile.saveBtn">ЗБЕРЕГТИ НАЛАШТУВАННЯ</button>
         </div>
       </section>
 
@@ -583,35 +598,35 @@
     <nav class="app-nav">
       <button class="nav-btn active" data-tab="tab-leads">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-        <span>Заявки</span>
+        <span data-i18n="nav.leads">Заявки</span>
       </button>
       <button class="nav-btn" data-tab="tab-crm">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-        <span>CRM</span>
+        <span data-i18n="nav.crm">CRM</span>
       </button>
       <button class="nav-btn" data-tab="tab-income">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-        <span>Дохід</span>
+        <span data-i18n="nav.income">Дохід</span>
       </button>
       <button class="nav-btn" data-tab="tab-expenses">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
-        <span>Витрати</span>
+        <span data-i18n="nav.expenses">Витрати</span>
       </button>
       <button class="nav-btn" data-tab="tab-profile">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"></circle><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path></svg>
-        <span>Профіль</span>
+        <span data-i18n="nav.profile">Профіль</span>
       </button>
       <button class="nav-btn" data-tab="tab-scrape">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-        <span>Скрапінг</span>
+        <span data-i18n="nav.scrape">Скрапінг</span>
       </button>
       <button class="nav-btn" data-tab="tab-nfc-radar">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 3a9 9 0 0 1 9 9"></path><path d="M12 7a5 5 0 0 1 5 5"></path><circle cx="12" cy="12" r="1.5" fill="currentColor"></circle></svg>
-        <span>NFC</span>
+        <span data-i18n="nav.nfc">NFC</span>
       </button>
       <button class="nav-btn" data-tab="tab-requisites">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line><line x1="6" y1="15" x2="10" y2="15"></line></svg>
-        <span>Реквізити</span>
+        <span data-i18n="nav.requisites">Реквізити</span>
       </button>
     </nav>
 

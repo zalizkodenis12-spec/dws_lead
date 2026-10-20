@@ -1685,7 +1685,8 @@ body.dark-theme .crm-order-card-title {
   gap: 8px;
 }
 
-.theme-choice-pill {
+.theme-choice-pill,
+.lang-choice-pill {
   flex: 1;
   display: flex;
   align-items: center;
@@ -1702,7 +1703,8 @@ body.dark-theme .crm-order-card-title {
   transition: var(--trans);
 }
 
-.theme-choice-pill.active {
+.theme-choice-pill.active,
+.lang-choice-pill.active {
   border-color: var(--accent);
   background: var(--accent-bg);
   color: var(--accent);
