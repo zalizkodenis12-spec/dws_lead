@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792505878171-388",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "PHP — вакансии, поиск работы и аналитика",
+      "sourceUsername": "@php_jobs",
+      "authorName": "Arina Vinogradova",
+      "authorUsername": "@tg_id_8962671121",
+      "title": "да, в этом вся суть сейчас. просто вбиваешь свои ключевые слова и он присыл...",
+      "text": "да, в этом вся суть сейчас. просто вбиваешь свои ключевые слова и он присылает уведомление, когда кто-то пишет ищу разраба или нужен сайт. глянь тут https://xmb-nik.vercel.app/b/a-chat, там первые 5 дней бесплатно и без карты, как раз потестить удобно)",
+      "date": "2026-10-20T14:17:58.170Z",
+      "dateFormatted": "Сьогодні, 17:17",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792505737032-754",
       "category": "development",
       "categoryName": "Веброзробка",
