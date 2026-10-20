@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792501776144-394",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "seo",
+      "subcategoryName": "SEO оптимізація",
+      "sourceType": "chat",
+      "sourceName": "Tilda Publishing News Chat",
+      "sourceUsername": "@tilda_official_chat",
+      "authorName": "Константин Зубков",
+      "authorUsername": "@tg_id_7979236390",
+      "title": "Первая ошибка. Нужен ли вообще конкретному бизнесу/человеку сайт. Если нуже...",
+      "text": "Первая ошибка. Нужен ли вообще конкретному бизнесу/человеку сайт. Если нужен, то какие задачи он должен выполнять. Не на всех сайтах нужно заморачиваться с Seo. 7 ошибок из минимум 40 рекомендации от Яндекса и Гугла. Это примерно как на диктанте в тексте из 40 слов написать 33 слова с ошибками. Результат очевиден :)",
+      "date": "2026-10-20T13:09:36.140Z",
+      "dateFormatted": "Сьогодні, 16:09",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: seo оптимізація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792501434615-9119",
       "category": "development",
       "categoryName": "Веброзробка",
