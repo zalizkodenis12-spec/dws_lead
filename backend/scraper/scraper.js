@@ -186,23 +186,27 @@ function normalizeGmaps(item, niche, city) {
 }
 
 function normalizeInstagram(item, niche, city) {
-  const directPhone = normalizePhone(item.businessPhoneNumber || item.contactPhoneNumber || item.publicPhoneNumber);
-  const bioPhone = extractPhoneFromText(item.biography || '') || extractPhoneFromText(item.externalUrl || '');
+  const directPhone = normalizePhone(item.businessPhoneNumber || item.contactPhoneNumber || item.publicPhoneNumber || item.phone || item.phoneUnformatted);
+  const bioText = [item.biography, item.caption, item.text, item.externalUrl].filter(Boolean).join('\n');
+  const bioPhone = extractPhoneFromText(bioText);
   const phone = directPhone || bioPhone;
 
+  const rawUsername = (item.username || item.ownerUsername || (item.inputUrl ? item.inputUrl.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/.*$/, '') : '') || '').replace(/^@+/, '');
+  const name = (item.fullName || item.ownerFullName || item.title || (rawUsername ? '@' + rawUsername : '') || item.name || '').trim();
+
   return {
-    name: item.fullName || item.username || '',
+    name: name || (rawUsername ? '@' + rawUsername : 'Instagram бізнес'),
     phone,
     email: item.businessEmail || item.publicEmail || '',
-    website: item.externalUrl || '',
-    address: item.businessAddress?.street_address || '',
-    city: item.businessAddress?.city_name || city || '',
-    category: item.businessCategoryName || '',
-    followers: item.followersCount || 0,
-    posts: item.postsCount || 0,
-    username: item.username ? '@' + item.username : '',
-    link: item.url || (item.username ? `https://instagram.com/${item.username}` : ''),
-    biography: item.biography || '',
+    website: item.externalUrl || item.website || '',
+    address: item.businessAddress?.street_address || item.locationName || item.address || '',
+    city: item.businessAddress?.city_name || (item.locationName ? item.locationName.split(',')[0].trim() : '') || city || '',
+    category: item.businessCategoryName || niche || '',
+    followers: Number(item.followersCount || item.followers || 0),
+    posts: Number(item.postsCount || item.posts || 0),
+    username: rawUsername ? '@' + rawUsername : '',
+    link: (rawUsername ? `https://instagram.com/${rawUsername}` : '') || item.url || item.inputUrl || '',
+    biography: item.biography || item.caption || '',
     niche,
     source: 'instagram'
   };

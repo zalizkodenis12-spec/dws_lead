@@ -9342,7 +9342,13 @@ async function runLiveApifyJob(job) {
   const actorId = job.source === 'instagram' ? 'apify~instagram-scraper' : 'compass~crawler-google-places';
   const scrapeLimit = Math.max(10, Math.min(Number(job.limit) || 20, 500));
   const input = job.source === 'instagram'
-    ? { search: query, searchType: 'user', resultsLimit: scrapeLimit }
+    ? {
+        search: query,
+        searchType: 'user',
+        searchLimit: scrapeLimit,
+        resultsType: 'details',
+        resultsLimit: scrapeLimit
+      }
     : { searchStringsArray: [query], maxCrawledPlacesPerSearch: scrapeLimit, language: 'uk', skipClosedPlaces: true };
 
   try {
@@ -9382,26 +9388,36 @@ async function runLiveApifyJob(job) {
 
     const groups = { site: [], ads: [], auto: [], apps: [] };
     const allItems = [];
+    const seen = new Set();
     let skippedNoPhone = 0;
 
     rawItems.forEach(it => {
       let b;
       if (job.source === 'instagram') {
-        const directPhone = normalizePhone(it.businessPhoneNumber || it.contactPhoneNumber || it.publicPhoneNumber);
-        const bioPhone = extractPhoneFromText(it.biography || '') || extractPhoneFromText(it.externalUrl || '');
+        const rawUsername = (it.username || it.ownerUsername || (it.inputUrl ? it.inputUrl.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/.*$/, '') : '') || '').replace(/^@+/, '');
+        const name = (it.fullName || it.ownerFullName || it.title || (rawUsername ? '@' + rawUsername : '') || it.name || '').trim();
+        if (!name && !rawUsername) return;
+
+        const directPhone = normalizePhone(it.businessPhoneNumber || it.contactPhoneNumber || it.publicPhoneNumber || it.phone || it.phoneUnformatted);
+        const bioText = [it.biography, it.caption, it.text, it.externalUrl].filter(Boolean).join('\n');
+        const bioPhone = extractPhoneFromText(bioText);
         const phone = directPhone || bioPhone;
+        const website = it.externalUrl || it.website || '';
+        const followers = Number(it.followersCount || it.followers || 0);
+
         b = {
-          id: 'biz-' + (it.id || Math.random().toString(36).slice(2)),
-          name: it.fullName || it.username || '',
+          id: 'biz-' + (rawUsername || it.id || Math.random().toString(36).slice(2)),
+          name: name || (rawUsername ? '@' + rawUsername : 'Instagram бізнес'),
           phone,
-          website: it.externalUrl || '',
-          address: it.businessAddress?.street_address || '',
-          city: it.businessAddress?.city_name || job.city || '',
+          website,
+          address: it.businessAddress?.street_address || it.locationName || it.address || '',
+          city: it.businessAddress?.city_name || (it.locationName ? it.locationName.split(',')[0].trim() : '') || job.city || '',
           category: it.businessCategoryName || job.niche || '',
-          followers: it.followersCount || 0,
-          posts: it.postsCount || 0,
-          username: it.username ? '@' + it.username : '',
-          link: it.url || (it.username ? `https://instagram.com/${it.username}` : ''),
+          followers,
+          posts: Number(it.postsCount || it.posts || 0),
+          username: rawUsername ? '@' + rawUsername : '',
+          link: (rawUsername ? `https://instagram.com/${rawUsername}` : '') || it.url || it.inputUrl || '',
+          biography: it.biography || it.caption || '',
           niche: job.niche,
           source: 'instagram'
         };
@@ -9422,6 +9438,13 @@ async function runLiveApifyJob(job) {
           source: 'gmaps'
         };
       }
+
+      if (!b.name) return;
+
+      // Deduplication: prevent same business/profile from appearing multiple times
+      const dedupKey = (b.username || b.phone || b.name).toLowerCase();
+      if (seen.has(dedupKey)) return;
+      seen.add(dedupKey);
 
       if (!b.phone) skippedNoPhone++;
 
