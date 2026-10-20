@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792512790566-408",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Lisa Chebysheva",
+      "authorUsername": "@hr_ponomaryova",
+      "title": "✨Вакансия: Контентолог в Content Club✨",
+      "text": "✨Вакансия: Контентолог в Content Club✨\n\nИщем контентолога на part-time в онлайн-клуб для креаторов.\n\nЧто нужно делать:\n— Вести Instagram клуба: контент-план, посты, Reels и Stories.\n— Следить за трендами и готовить подборки идей для контента.\n— Создавать простые визуалы в Canva и Figma по шаблонам.\n— Давать обратную связь участницам по их Reels.\n— Публиковать материалы клуба и вести Direct.\n\nКого ищем:\n— Девушку, которая обожает Instagram и следит за трендами.\n— С хорошим визуальным вкусом и насмотренностью.\n— С базовыми навыками Canva и Figma.\n— С грамотной письменной речью и умением работать с несколькими задачами одновременно.\n\nУсловия: удалённо, part-time. Оплата обсуждается.\n\nЗаинтересовала вакансия? Присылай резюме и примеры работ в личные сообщения @hr_ponomaryova! 💌",
+      "date": "2026-10-20T16:13:10.565Z",
+      "dateFormatted": "Сьогодні, 19:13",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792512220359-7055",
       "category": "development",
       "categoryName": "Веброзробка",
