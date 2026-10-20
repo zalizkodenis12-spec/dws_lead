@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792503796756-598",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "backend",
+      "subcategoryName": "Backend & API розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "Joffreyg",
+      "authorUsername": "@Joffreyg",
+      "title": "📃 Резюме Junior backend-разработчик от @Joffreyg, $500–600, удаленка, парт...",
+      "text": "📃 Резюме Junior backend-разработчик от @Joffreyg, $500–600, удаленка, парт-тайм или стажировка",
+      "date": "2026-10-20T13:43:16.754Z",
+      "dateFormatted": "Сьогодні, 16:43",
+      "budget": 25000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: backend & api розробка з бюджетом 25000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792502927438-991",
       "category": "marketing",
       "categoryName": "Маркетинг",
