@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792508553804-760",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Ami",
+      "authorUsername": "@tg_id_943066311",
+      "title": "Привіт! 👋 Шукаю клієнтські проєкти з відеомонтажу (DaVinci Resolve). Зробл...",
+      "text": "Привіт! 👋 Шукаю клієнтські проєкти з відеомонтажу (DaVinci Resolve). Зроблю стильний і динамічний контент, який зачепить увагу з перших секунд. Разові задачі чи постійна співпраця — відкритий до всього.\nПишіть у ЛС, одразу надішлю портфоліо та приклади робіт 📩",
+      "date": "2026-10-20T15:02:33.801Z",
+      "dateFormatted": "Сьогодні, 18:02",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 60,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792507110029-401",
       "category": "marketing",
       "categoryName": "Маркетинг",
