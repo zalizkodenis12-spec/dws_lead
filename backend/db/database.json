@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792518467879-116",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "tiktok_ads",
+      "subcategoryName": "TikTok реклама",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Вікторія Тищенко",
+      "authorUsername": "@ukrinvestclub_SMM",
+      "title": "🔥Шукаємо Junior або Middle SMM до УкрІнвестКлубу (провідного інвестмедіа У...",
+      "text": "🔥Шукаємо Junior або Middle SMM до УкрІнвестКлубу (провідного інвестмедіа України) та для ведення особистого бренду Дмитра Карпіловського\n\n— лише full-time, з можливістю приїздити на зйомки 1-2 рази/місяць (Київ, або Львів)\n— гнучкий графік\n\n👉🏻Важливо: вам НЕ потрібно придумувати стратегії чи контент-плани з нуля! Ми даємо чіткий вектор, сенси та підтримку, всьому навчаємо та допомагаємо розвиватися.\n\n📬 Надсилайте резюме та портфоліо (з прикладами робіт у Figma та змонтованих Reels/TikTok): @ukrinvestclub_SMM",
+      "date": "2026-10-20T17:47:47.879Z",
+      "dateFormatted": "Сьогодні, 20:47",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 56,
+      "aiSummary": "Замовлення: tiktok реклама.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792517464061-243",
       "category": "development",
       "categoryName": "Веброзробка",
