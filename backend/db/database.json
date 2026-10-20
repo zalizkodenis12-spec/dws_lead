@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792512114478-812",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "google_ads",
+      "subcategoryName": "Google реклама",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Mariia",
+      "authorUsername": "@mariia7681",
+      "title": "Шукаємо PPC-спеціаліста з Google Ads 👀",
+      "text": "Шукаємо PPC-спеціаліста з Google Ads 👀\n\nДля мережі медичних клінік шукаємо фахівця для ведення 3 рекламних акаунтів.\n\n✅ Обов’язковий досвід роботи з медичною рекламою\n✅ Google Ads, GA4, GTM\n✅ Розуміння CRM та аналітики від кліка до фактичного запису пацієнта\n✅ Готовність виконати невелике тестове завдання в межах відбору\n\n💻 Віддалена робота\n💰 Оплата — за домовленістю\n\nТакож, буде коротке тестове завдання (НЕ пряме налаштування в акаунті)\n\nЯкщо зацікавила вакансія — пишіть в телеграм @mariia7681\n\nБудемо вдячні за рекомендації та репости 🫶",
+      "date": "2026-10-20T16:01:54.477Z",
+      "dateFormatted": "Сьогодні, 19:01",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 46,
+      "aiSummary": "Замовлення: google реклама.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792511240711-562",
       "category": "marketing",
       "categoryName": "Маркетинг",
