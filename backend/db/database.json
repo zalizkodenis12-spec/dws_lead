@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792502432463-761",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "𝓛𝓾𝓶𝓸𝓻",
+      "authorUsername": "@tg_id_1148832617",
+      "title": "Роблю відео монтаж",
+      "text": "Роблю відео монтаж\nдля Reels TikTok Shorts\n\n🌺Привіт! Мені 15 років, та я можу зробити для вас оформлення відеоматеріалу для вашого контенту за невелику плату, 100+ гривень в залежності від типу відеоролика. Дякую за увагу💕",
+      "date": "2026-10-20T13:20:32.462Z",
+      "dateFormatted": "Сьогодні, 16:20",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792502101898-575",
       "category": "development",
       "categoryName": "Веброзробка",
