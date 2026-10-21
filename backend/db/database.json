@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792612165756-181",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Anya",
+      "authorUsername": "@tg_id_5155318614",
+      "title": "Привіт усім! 💗",
+      "text": "Привіт усім! 💗\n\nШукаю нові проєкти для співпраці в б’юті-ніші та із салонами краси\n\nЧим можу бути корисна:\n- Написання та створення сторіз та каруселей\n- Монтаж простих Reels\n- Написання контент-планів\n\nВідкрита до нових проєктів і довгострокової співпраці 🤍\n\nПортфоліо надішлю в особисті повідомлення.\n\nЗа співпрацею — пиши в ЛС 💌",
+      "date": "2026-10-21T19:49:25.754Z",
+      "dateFormatted": "Сьогодні, 22:49",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 60,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792611829106-664",
       "category": "development",
       "categoryName": "Веброзробка",
