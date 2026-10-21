@@ -344,9 +344,30 @@ async function processJob(job) {
     await new Promise(r => setTimeout(r, 2500));
     items = buildDemoItems(source, niche, city || 'Київ', limit);
   } else if (source === 'gmaps') {
+    const gmapsQueries = [];
+    gmapsQueries.push(query);
+    if (city && niche) {
+      gmapsQueries.push(niche);
+      if (limit > 20) {
+        gmapsQueries.push(`${niche} центр ${city}`);
+        gmapsQueries.push(`кращі ${niche} ${city}`);
+        gmapsQueries.push(`${niche} ${city} район`);
+      }
+      if (limit > 50) {
+        gmapsQueries.push(`топ ${niche} ${city}`);
+        gmapsQueries.push(`популярні ${niche} ${city}`);
+        gmapsQueries.push(`нові ${niche} ${city}`);
+      }
+    } else {
+      gmapsQueries.push(niche);
+    }
+    const perSearchLimit = Math.max(25, Math.ceil((limit * 1.3) / gmapsQueries.length));
+
     const raw = await runApifyActor(ACTORS.gmaps, {
-      searchStringsArray: [query],
-      maxCrawledPlacesPerSearch: limit,
+      searchStringsArray: gmapsQueries,
+      locationQuery: city ? `${city}, Україна` : '',
+      city: city || '',
+      maxCrawledPlacesPerSearch: perSearchLimit,
       language: 'uk',
       skipClosedPlaces: true
     });
@@ -355,7 +376,7 @@ async function processJob(job) {
     const raw = await runApifyActor(ACTORS.instagram, {
       search: query,
       searchType: 'user',
-      searchLimit: Math.min(limit, 100),
+      searchLimit: limit,
       resultsType: 'details',
       resultsLimit: limit
     });
@@ -364,20 +385,22 @@ async function processJob(job) {
 
   // Дедуплікація та збереження контактів
   const seen = new Set();
-  const validBusinesses = [];
+  const allUnique = [];
   let skipped = 0;
   for (const b of items) {
     if (!b.phone && !b.username) {
       skipped++;
       continue;
     }
-    const dedupKey = b.phone || b.username || b.name;
+    const dedupKey = (b.phone || b.username || b.name).toLowerCase();
     if (seen.has(dedupKey)) continue;
     seen.add(dedupKey);
 
     const { category, reason } = classifyBusiness(b);
-    validBusinesses.push({ ...b, id: `b-${seen.size}`, category, reason, service: CATEGORIES[category].service });
+    allUnique.push({ ...b, id: `b-${seen.size}`, category, reason, service: CATEGORIES[category]?.service || 'Комплексний діджитал' });
   }
+
+  const validBusinesses = allUnique.slice(0, limit);
 
   updateJob(job.id, {
     status: 'done',

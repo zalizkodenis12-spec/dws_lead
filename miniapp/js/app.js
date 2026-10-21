@@ -9338,18 +9338,49 @@ async function runLiveApifyJob(job) {
     return;
   }
 
-  const query = [job.niche, job.city].filter(Boolean).join(' ');
+  const targetLimit = Math.max(10, Math.min(Number(job.limit) || 100, 500));
+  const baseQuery = [job.niche, job.city].filter(Boolean).join(' ');
   const actorId = job.source === 'instagram' ? 'apify~instagram-scraper' : 'compass~crawler-google-places';
-  const scrapeLimit = Math.max(10, Math.min(Number(job.limit) || 20, 500));
+
+  // Build targeted multi-queries for Google Maps so it easily returns 100+ places without pagination caps
+  const gmapsQueries = [];
+  gmapsQueries.push(baseQuery);
+  if (job.city && job.niche) {
+    gmapsQueries.push(job.niche);
+    if (targetLimit > 20) {
+      gmapsQueries.push(`${job.niche} центр ${job.city}`);
+      gmapsQueries.push(`кращі ${job.niche} ${job.city}`);
+      gmapsQueries.push(`${job.niche} ${job.city} район`);
+    }
+    if (targetLimit > 50) {
+      gmapsQueries.push(`топ ${job.niche} ${job.city}`);
+      gmapsQueries.push(`популярні ${job.niche} ${job.city}`);
+      gmapsQueries.push(`нові ${job.niche} ${job.city}`);
+    }
+  } else {
+    gmapsQueries.push(job.niche);
+  }
+
+  // Calculate perSearchLimit so total yields >= targetLimit
+  const perSearchLimit = Math.max(25, Math.ceil((targetLimit * 1.3) / gmapsQueries.length));
+  const locationQuery = job.city ? `${job.city}, Україна` : '';
+
   const input = job.source === 'instagram'
     ? {
-        search: query,
+        search: baseQuery,
         searchType: 'user',
-        searchLimit: scrapeLimit,
+        searchLimit: targetLimit,
         resultsType: 'details',
-        resultsLimit: scrapeLimit
+        resultsLimit: targetLimit
       }
-    : { searchStringsArray: [query], maxCrawledPlacesPerSearch: scrapeLimit, language: 'uk', skipClosedPlaces: true };
+    : {
+        searchStringsArray: gmapsQueries,
+        locationQuery: locationQuery,
+        city: job.city || '',
+        maxCrawledPlacesPerSearch: perSearchLimit,
+        language: 'uk',
+        skipClosedPlaces: true
+      };
 
   try {
     const startRes = await fetch(`https://api.apify.com/v2/acts/${actorId}/runs?token=${token}`, {
@@ -9386,7 +9417,6 @@ async function runLiveApifyJob(job) {
     if (!itemsRes.ok) throw new Error(`Не вдалося завантажити результати (${itemsRes.status})`);
     const rawItems = await itemsRes.json();
 
-    const groups = { site: [], ads: [], auto: [], apps: [] };
     const allItems = [];
     const seen = new Set();
     let skippedNoPhone = 0;
@@ -9453,20 +9483,26 @@ async function runLiveApifyJob(job) {
       b.reason = reason;
       b.service = SCRAPE_SERVICE[category];
 
-      groups[category].push(b);
       allItems.push(b);
+    });
+
+    // Cap to user requested targetLimit (e.g. 100)
+    const limitedItems = allItems.slice(0, targetLimit);
+    const finalGroups = { site: [], ads: [], auto: [], apps: [] };
+    limitedItems.forEach(b => {
+      (finalGroups[b.category] || finalGroups.ads).push(b);
     });
 
     job.status = 'done';
     job.demo = false;
-    job.total = allItems.length;
+    job.total = limitedItems.length;
     job.skippedNoPhone = skippedNoPhone;
     job.finishedAt = new Date().toISOString();
-    job.groups = groups;
-    job.items = allItems;
+    job.groups = finalGroups;
+    job.items = limitedItems;
     saveScrapeJob(job);
     renderScrapes();
-    try { showToast(`✅ Знайдено ${allItems.length} реальних закладів у ${job.city || job.niche}!`); } catch (_) {}
+    try { showToast(`✅ Знайдено ${limitedItems.length} реальних закладів у ${job.city || job.niche}!`); } catch (_) {}
     haptic('success');
   } catch (err) {
     console.error('[LiveApify] Error:', err);
@@ -9531,7 +9567,15 @@ async function submitScrape() {
     alert('Вкажіть нішу бізнесу');
     return;
   }
-  const payload = { source: scrapeState.form.source, niche, city, limit: scrapeState.form.limit };
+  const activeLimitBtn = document.querySelector('#scrapeLimitSeg .scrape-seg-btn.active');
+  const chosenLimit = activeLimitBtn ? Number(activeLimitBtn.dataset.value) : (scrapeState.form.limit || 100);
+  scrapeState.form.limit = chosenLimit;
+
+  const activeSourceBtn = document.querySelector('#scrapeSourceSeg .scrape-seg-btn.active');
+  const chosenSource = activeSourceBtn ? activeSourceBtn.dataset.value : (scrapeState.form.source || 'gmaps');
+  scrapeState.form.source = chosenSource;
+
+  const payload = { source: chosenSource, niche, city, limit: chosenLimit };
   const btn = document.getElementById('submitScrapeBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'ЗАПУСКАЮ…'; }
 
@@ -10547,40 +10591,36 @@ function renderNfcVenuesList(job, items) {
 async function runLiveNfcRadar(job, reviewsLimit, limit) {
   const token = getClientApifyToken();
   const targetReviews = Number(reviewsLimit || job.maxReviews || 300);
-  const targetCount = Number(limit || job.limit || 20);
-
-  // When searching for new/low-review places (<= 50 or <= 150), crawl more places (up to 120)
-  // so that after filtering out 3000-8000 review giants, we have plenty of real matching venues!
-  const crawlLimit = targetReviews <= 50
-    ? Math.max(targetCount * 4, 80)
-    : (targetReviews <= 150 ? Math.max(targetCount * 3, 60) : Math.max(targetCount, 25));
+  const activeNfcLimitBtn = document.querySelector('#nfcLimitSeg .scrape-seg-btn.active');
+  const targetCount = Number(limit || activeNfcLimitBtn?.dataset.value || job.limit || 30);
 
   const baseQuery = [job.niche, job.cluster, job.city].filter(Boolean).join(' ');
   const searchStrings = [baseQuery];
-  if (targetReviews <= 50) {
-    const city = job.city || 'Київ';
-    const cluster = job.cluster || '';
-    if (job.niche && (job.niche.toLowerCase().includes('кафе') || job.niche.toLowerCase().includes('ресторан') || job.niche.toLowerCase().includes('заклад') || job.niche.toLowerCase().includes('бар') || job.niche.toLowerCase().includes('кав'))) {
-      searchStrings.push(`кав'ярня ${cluster} ${city}`.trim());
-      searchStrings.push(`нова кав'ярня ${cluster} ${city}`.trim());
-      searchStrings.push(`пекарня ${cluster} ${city}`.trim());
-      searchStrings.push(`нове кафе ${cluster} ${city}`.trim());
-    } else {
-      searchStrings.push(`нове ${job.niche || ''} ${cluster} ${city}`.trim());
-      searchStrings.push(`новий ${job.niche || ''} ${cluster} ${city}`.trim());
+  const city = job.city || 'Київ';
+  const cluster = job.cluster || '';
+
+  if (job.niche) {
+    searchStrings.push(`${job.niche} ${city}`.trim());
+    if (cluster) searchStrings.push(`${job.niche} ${cluster} ${city}`.trim());
+    if (targetCount > 20) {
+      searchStrings.push(`кращі ${job.niche} ${cluster} ${city}`.trim());
+      searchStrings.push(`${job.niche} центр ${city}`.trim());
     }
-  } else if (targetReviews <= 150) {
-    const city = job.city || 'Київ';
-    const cluster = job.cluster || '';
-    if (job.niche && (job.niche.toLowerCase().includes('кафе') || job.niche.toLowerCase().includes('ресторан'))) {
-      searchStrings.push(`кав'ярня ${cluster} ${city}`.trim());
+    if (targetReviews <= 50) {
+      searchStrings.push(`нове ${job.niche} ${cluster} ${city}`.trim());
+      searchStrings.push(`нова ${job.niche} ${cluster} ${city}`.trim());
     }
   }
+
+  const perSearchLimit = Math.max(30, Math.ceil((targetCount * 1.5) / searchStrings.length));
+  const locationQuery = city ? `${city}, Україна` : '';
 
   const actorId = 'compass~crawler-google-places';
   const input = {
     searchStringsArray: searchStrings,
-    maxCrawledPlacesPerSearch: Math.min(crawlLimit, 120),
+    locationQuery: locationQuery,
+    city: city,
+    maxCrawledPlacesPerSearch: Math.min(perSearchLimit, 120),
     language: 'uk',
     skipClosedPlaces: true
   };
@@ -10701,7 +10741,7 @@ async function submitNfcSearch() {
   const city = (cityInput?.value || '').trim() || 'Київ';
   const cluster = (clusterInput?.value || '').trim();
   const reviewsLimit = Number(document.querySelector('#nfcReviewsFilterSeg .scrape-seg-btn.active')?.dataset.value) || nfcRadarState.form.reviewsLimit || 300;
-  const limit = Number(document.querySelector('#nfcLimitSeg .scrape-seg-btn.active')?.dataset.value) || nfcRadarState.form.limit || 20;
+  const limit = Number(document.querySelector('#nfcLimitSeg .scrape-seg-btn.active')?.dataset.value) || nfcRadarState.form.limit || 50;
 
   const btn = document.getElementById('submitNfcSearchBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'СКАНУЮ ЛОКАЦІЮ…'; }
