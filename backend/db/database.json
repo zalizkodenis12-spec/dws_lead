@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792616993496-328",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Kate",
+      "authorUsername": "@tg_id_1485154341",
+      "title": "ШУКАЮ МОНТАЖЕРА",
+      "text": "ШУКАЮ МОНТАЖЕРА\nЯкий у вас прайс за монтаж та можна приклади динамічного монтажу розмовних відео",
+      "date": "2026-10-21T21:09:53.494Z",
+      "dateFormatted": "Сьогодні, 00:09",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792615834167-248",
       "category": "marketing",
       "categoryName": "Маркетинг",
