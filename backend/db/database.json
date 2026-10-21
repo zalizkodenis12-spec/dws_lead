@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792615834167-248",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Маркетинг Club",
+      "sourceUsername": "@marketing_network1",
+      "authorName": "Kathy English",
+      "authorUsername": "@tg_id_7620588368",
+      "title": "ЗАЧЕМ СЛОЖНО, ЕСЛИ МОЖНО ПРОЩЕ?",
+      "text": "ЗАЧЕМ СЛОЖНО, ЕСЛИ МОЖНО ПРОЩЕ?\n\nОткрой POPUP, укажи соцсеть, сравни предложения и выбери то, что вписывается в бюджет. Услуги по подписчикам, лайкам и просмотрам доступны онлайн.\n\nНачни с каталога →\nhttps://popup1.com/r/b319a366207140d1\n\n#накрутка #продвижение #телеграмм #просмотры #раскрутка #соцсети #smm #продвижениеканала #продвижениеаккаунта #активность #реакции #пиар #реклама",
+      "date": "2026-10-21T20:50:34.166Z",
+      "dateFormatted": "Сьогодні, 23:50",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792615430437-8478",
       "category": "montage",
       "categoryName": "Монтаж",
