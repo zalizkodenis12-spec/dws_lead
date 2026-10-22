@@ -20,10 +20,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '25mb' }));
 
-// Serve Mini App static files
-app.use(express.static(MINIAPP_DIR));
+// Serve Mini App static files with no-store cache headers so updates apply immediately
+app.use(express.static(MINIAPP_DIR, {
+  etag: false,
+  lastModified: false,
+  setHeaders: (res) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  }
+}));
 
 // ============================================================
 // API ROUTES
@@ -382,21 +388,21 @@ app.post('/api/auth/verify-code', (req, res) => {
     }
 
     // Код вірний! Визначаємо особистий профіль для кожного користувача окремо
-    let accountKey = 'zalizkodenis12';
+    let accountKey = 'absolutikdenchik';
     let accountName = 'Денис Залізко';
-    let accountUser = '@zalizkodenis12';
+    let accountUser = '@absolutikdenchik';
     let role = 'owner';
 
     const isDenis = (tgUser && (
       (tgUser.username && (tgUser.username.toLowerCase() === 'zalizkodenis12' || tgUser.username.toLowerCase() === 'absolutikdenchik')) ||
       String(tgUser.id) === '5278970111'
-    )) || clientKey === 'zalizkodenis12';
+    )) || clientKey === 'zalizkodenis12' || clientKey === 'absolutikdenchik' || !clientKey;
 
     if (isDenis) {
       role = 'owner';
-      accountKey = 'zalizkodenis12';
+      accountKey = 'absolutikdenchik';
       accountName = 'Денис Залізко';
-      accountUser = '@zalizkodenis12';
+      accountUser = '@absolutikdenchik';
     } else if (tgUser && tgUser.id) {
       // Окремий співробітник / інший користувач у Telegram
       role = 'member';
@@ -406,16 +412,15 @@ app.post('/api/auth/verify-code', (req, res) => {
       accountUser = tgUser.username ? ('@' + tgUser.username) : ('@' + accountKey);
     } else if (clientKey) {
       // Окремий профіль браузера/десктопа
-      role = clientKey === 'zalizkodenis12' ? 'owner' : 'member';
-      accountKey = clientKey;
+      role = (clientKey === 'zalizkodenis12' || clientKey === 'absolutikdenchik') ? 'owner' : 'member';
+      accountKey = role === 'owner' ? 'absolutikdenchik' : clientKey;
       accountName = clientName || 'Спеціаліст';
-      accountUser = clientUser || ('@' + clientKey);
+      accountUser = role === 'owner' ? '@absolutikdenchik' : (clientUser || ('@' + clientKey));
     } else {
-      // Новий невідомий пристрій
-      role = 'member';
-      accountKey = 'dev_' + Math.random().toString(36).substring(2, 9);
-      accountName = 'Спеціаліст';
-      accountUser = '@' + accountKey;
+      role = 'owner';
+      accountKey = 'absolutikdenchik';
+      accountName = 'Денис Залізко';
+      accountUser = '@absolutikdenchik';
     }
 
     const token = 'dws_sec_' + Buffer.from(clean + ':' + Date.now()).toString('base64');
@@ -440,7 +445,7 @@ app.get('/api/account/:accountKey', (req, res) => {
     const authHeader = req.headers.authorization || '';
 
     // If accessing the owner account (Denis Zalizko), ensure owner authorization
-    if (rawKey === 'zalizkodenis12') {
+    if (rawKey === 'zalizkodenis12' || rawKey === 'absolutikdenchik') {
       const isAuthorizedOwner = authHeader.includes('DWS-2026-STUDIO-ZALIZKO-PRO') ||
                                 authHeader.includes('dws_sec_') ||
                                 req.query.secret === 'DWS-2026-STUDIO-ZALIZKO-PRO';
@@ -458,12 +463,11 @@ app.get('/api/account/:accountKey', (req, res) => {
 
 app.post('/api/account/sync', (req, res) => {
   try {
-    const { accountKey, crm, income, expenses, profile, takenLeadIds, username, name, avatar, role } = req.body;
-    const rawKey = String(accountKey || '').trim().toLowerCase();
+    const rawKey = String(req.body?.accountKey || '').trim().toLowerCase();
     const authHeader = req.headers.authorization || '';
 
     // If attempting to overwrite owner account, verify owner authorization
-    if (rawKey === 'zalizkodenis12') {
+    if (rawKey === 'zalizkodenis12' || rawKey === 'absolutikdenchik') {
       const isAuthorizedOwner = authHeader.includes('DWS-2026-STUDIO-ZALIZKO-PRO') ||
                                 authHeader.includes('dws_sec_') ||
                                 req.query.secret === 'DWS-2026-STUDIO-ZALIZKO-PRO';
@@ -472,7 +476,7 @@ app.post('/api/account/sync', (req, res) => {
       }
     }
 
-    const synced = db.syncAccount(rawKey, { crm, income, expenses, profile, takenLeadIds, username, name, avatar, role });
+    const synced = db.syncAccount(rawKey, req.body || {});
     res.json({ success: true, data: synced });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

@@ -8,7 +8,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const TOKEN = process.env.TELEGRAM_BOT_TOKEN || process.env.BOT_TOKEN || '';
-const APP_URL = process.env.TELEGRAM_APP_URL || process.env.WEBAPP_URL || 'https://dwslead-miniapp.vercel.app';
+const RAW_APP_URL = process.env.TELEGRAM_APP_URL || process.env.WEBAPP_URL || 'https://dwslead-miniapp.vercel.app';
+const APP_URL = RAW_APP_URL.includes('?') ? RAW_APP_URL : `${RAW_APP_URL}/?v=4.6.0`;
 const ADMIN_CHAT_ID = process.env.TELEGRAM_CHAT_ID || process.env.CHAT_ID || '5278970111';
 
 if (!TOKEN) {

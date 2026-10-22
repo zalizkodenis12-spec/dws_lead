@@ -454,10 +454,23 @@ export const db = {
     const data = readDb();
     if (!data.accounts) data.accounts = {};
     const cleanKey = String(accountKey).trim().toLowerCase().replace(/^@/, '') || 'default';
-    const isDenis = cleanKey === 'zalizkodenis12';
+    const isDenis = cleanKey === 'absolutikdenchik' || cleanKey === 'zalizkodenis12' || cleanKey === '5278970111';
+    const targetKey = isDenis ? 'absolutikdenchik' : cleanKey;
 
-    if (!data.accounts[cleanKey]) {
-      data.accounts[cleanKey] = {
+    if (!data.accounts[targetKey] && isDenis && data.accounts['zalizkodenis12']) {
+      data.accounts[targetKey] = {
+        ...data.accounts['zalizkodenis12'],
+        accountKey: 'absolutikdenchik',
+        username: '@absolutikdenchik'
+      };
+    }
+
+    if (!data.accounts[targetKey]) {
+      data.accounts[targetKey] = {
+        accountKey: targetKey,
+        username: isDenis ? '@absolutikdenchik' : ('@' + targetKey),
+        name: isDenis ? 'Денис Залізко' : 'Спеціаліст',
+        role: isDenis ? 'owner' : 'member',
         crm: isDenis ? (data.crm || []) : [],
         income: isDenis ? (data.income || { records: [], currency: '₴' }) : { records: [], currency: '₴' },
         expenses: isDenis ? (data.expenses || { records: [], currency: '₴' }) : { records: [], currency: '₴' },
@@ -467,16 +480,17 @@ export const db = {
       };
       writeDb(data);
     }
-    return data.accounts[cleanKey];
+    return data.accounts[targetKey];
   },
 
   syncAccount(accountKey = 'default', payload = {}) {
     const data = readDb();
     if (!data.accounts) data.accounts = {};
     const cleanKey = String(accountKey).trim().toLowerCase().replace(/^@/, '') || 'default';
-    const isDenis = cleanKey === 'zalizkodenis12';
+    const isDenis = cleanKey === 'absolutikdenchik' || cleanKey === 'zalizkodenis12' || cleanKey === '5278970111';
+    const targetKey = isDenis ? 'absolutikdenchik' : cleanKey;
 
-    const acc = data.accounts[cleanKey] || {
+    const acc = data.accounts[targetKey] || data.accounts['zalizkodenis12'] || {
       crm: isDenis ? (data.crm || []) : [],
       income: isDenis ? (data.income || { records: [], currency: '₴' }) : { records: [], currency: '₴' },
       expenses: isDenis ? (data.expenses || { records: [], currency: '₴' }) : { records: [], currency: '₴' },
@@ -509,10 +523,11 @@ export const db = {
         });
       }
     }
-    if (payload.username) acc.username = payload.username;
+    acc.accountKey = targetKey;
+    acc.username = isDenis ? '@absolutikdenchik' : (payload.username || acc.username || ('@' + targetKey));
     if (payload.name) acc.name = payload.name;
-    if (payload.avatar !== undefined) acc.avatar = payload.avatar;
-    if (payload.role !== undefined) acc.role = payload.role;
+    if (payload.avatar !== undefined && payload.avatar !== '') acc.avatar = payload.avatar;
+    if (payload.role !== undefined) acc.role = isDenis ? 'owner' : payload.role;
     if (payload.theme) acc.theme = payload.theme;
     if (payload.lang) acc.lang = payload.lang;
     if (payload.requisites) acc.requisites = payload.requisites;
@@ -521,8 +536,12 @@ export const db = {
     if (Array.isArray(payload.nfcJobs)) acc.nfcJobs = payload.nfcJobs;
     if (Array.isArray(payload.crmPinnedStages)) acc.crmPinnedStages = payload.crmPinnedStages;
     if (payload.deviceId) acc.deviceId = payload.deviceId;
+    if (payload.syncId) acc.syncId = payload.syncId;
     acc.updatedAt = payload.updatedAt || Date.now();
-    data.accounts[cleanKey] = acc;
+    data.accounts[targetKey] = acc;
+    if (isDenis) {
+      data.accounts['zalizkodenis12'] = acc;
+    }
     writeDb(data);
     return acc;
   }

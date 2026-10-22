@@ -3770,9 +3770,16 @@ const defaultExpensesRecords = [
   }
 ];
 
-const normalizedExpenses = (savedExpensesRaw && Array.isArray(savedExpensesRaw.records) && savedExpensesRaw.records.length > 0)
-  ? savedExpensesRaw
-  : { records: defaultExpensesRecords, currency: "₴" };
+const DEMO_EXPENSE_IDS = new Set(['exp-1792170001-1', 'exp-1792170002-2', 'exp-1792170003-3']);
+const cleanedSavedExpenses = (savedExpensesRaw && Array.isArray(savedExpensesRaw.records))
+  ? savedExpensesRaw.records.filter(r => r && !DEMO_EXPENSE_IDS.has(r.id))
+  : [];
+const normalizedExpenses = { records: cleanedSavedExpenses, currency: "₴" };
+
+function isOwnerAccountKey(k) {
+  const c = String(k || '').trim().toLowerCase().replace(/^@+/, '');
+  return !c || c === 'absolutikdenchik' || c === 'zalizkodenis12' || c === '5278970111' || c === 'tg_5278970111' || c.startsWith('dev_');
+}
 
 // Resolve unique user profile for this device/session (Cross-device 1:1 account sync)
 function getOrCreateUserIdentity() {
@@ -3782,19 +3789,20 @@ function getOrCreateUserIdentity() {
   const savedUser = localStorage.getItem('dws_account_user');
   const savedRole = localStorage.getItem('dws_user_role');
 
-  // If user explicitly linked a custom non-dev @username in Profile, honor it on this device
   const explicitCleanUser = (savedUser && !savedUser.startsWith('@dev_'))
     ? savedUser.replace(/^@+/, '').trim().toLowerCase()
     : '';
 
-  if (tgUser && tgUser.id && !explicitCleanUser) {
-    const isDenis = (tgUser.username && (tgUser.username.toLowerCase() === 'zalizkodenis12' || tgUser.username.toLowerCase() === 'absolutikdenchik')) || String(tgUser.id) === '5278970111';
+  if (tgUser && tgUser.id && (!explicitCleanUser || isOwnerAccountKey(explicitCleanUser))) {
+    const isDenis = (tgUser.username && isOwnerAccountKey(tgUser.username)) || String(tgUser.id) === '5278970111';
     if (isDenis) {
-      localStorage.setItem('dws_account_key', 'zalizkodenis12');
+      localStorage.setItem('dws_account_key', 'absolutikdenchik');
+      localStorage.setItem('dws_account_user', '@absolutikdenchik');
+      localStorage.setItem('dws_user_role', 'owner');
       return {
-        key: 'zalizkodenis12',
-        name: savedName || 'Денис Залізко',
-        username: '@zalizkodenis12',
+        key: 'absolutikdenchik',
+        name: (savedName && savedName !== 'Спеціаліст') ? savedName : 'Денис Залізко',
+        username: '@absolutikdenchik',
         role: 'owner',
         avatar: savedAvatar
       };
@@ -3815,24 +3823,22 @@ function getOrCreateUserIdentity() {
   if (explicitCleanUser) {
     savedKey = explicitCleanUser;
   }
-  // Migrate any legacy random dev_* key or empty key to canonical owner account 'zalizkodenis12'
-  if (!savedKey || savedKey.startsWith('dev_') || savedKey === 'absolutikdenchik') {
-    savedKey = 'zalizkodenis12';
+  // Migrate any legacy random dev_* key, zalizkodenis12, or empty key to canonical owner account 'absolutikdenchik'
+  if (isOwnerAccountKey(savedKey)) {
+    savedKey = 'absolutikdenchik';
     localStorage.setItem('dws_account_key', savedKey);
-    if (!savedUser || savedUser.startsWith('@dev_')) {
-      localStorage.setItem('dws_account_user', '@zalizkodenis12');
-    }
+    localStorage.setItem('dws_account_user', '@absolutikdenchik');
     if (!savedName || savedName === 'Спеціаліст') {
       localStorage.setItem('dws_account_name', 'Денис Залізко');
     }
     localStorage.setItem('dws_user_role', 'owner');
   }
 
-  const isDenisKey = savedKey === 'zalizkodenis12';
+  const isDenisKey = isOwnerAccountKey(savedKey);
   return {
-    key: savedKey,
+    key: isDenisKey ? 'absolutikdenchik' : savedKey,
     name: (savedName && savedName !== 'Спеціаліст') ? savedName : (isDenisKey ? 'Денис Залізко' : 'Спеціаліст'),
-    username: (savedUser && !savedUser.startsWith('@dev_')) ? savedUser : (isDenisKey ? '@zalizkodenis12' : ('@' + savedKey)),
+    username: isDenisKey ? '@absolutikdenchik' : ((savedUser && !savedUser.startsWith('@dev_')) ? savedUser : ('@' + savedKey)),
     role: isDenisKey ? 'owner' : (savedRole || 'member'),
     avatar: savedAvatar
   };
@@ -8171,10 +8177,15 @@ function updateProfileHeaderUI() {
   const roleEl = document.getElementById('profileRoleBadge');
   const avatarEl = document.getElementById('profileAvatarBadge');
 
-  if (nameEl) nameEl.textContent = state.accountName || 'Спеціаліст';
-  if (userEl) userEl.textContent = state.accountUser || ('@' + state.accountKey);
+  const isOwner = (state.userRole === 'owner' || isOwnerAccountKey(state.accountKey));
+  if (isOwner && (!state.accountUser || state.accountUser === '@zalizkodenis12' || state.accountUser.startsWith('@dev_'))) {
+    state.accountUser = '@absolutikdenchik';
+    state.accountKey = 'absolutikdenchik';
+  }
+
+  if (nameEl) nameEl.textContent = state.accountName || (isOwner ? 'Денис Залізко' : 'Спеціаліст');
+  if (userEl) userEl.textContent = state.accountUser || (isOwner ? '@absolutikdenchik' : ('@' + state.accountKey));
   if (roleEl) {
-    const isOwner = (state.userRole === 'owner' || state.accountKey === 'zalizkodenis12');
     roleEl.textContent = isOwner ? 'Власник' : (state.userRole || 'Спеціаліст');
     roleEl.style.background = isOwner ? 'rgba(0,102,255,0.08)' : 'rgba(100,116,139,0.08)';
     roleEl.style.color = isOwner ? 'var(--brand)' : 'var(--text-muted)';
@@ -8185,8 +8196,8 @@ function updateProfileHeaderUI() {
     if (avatarUrl) {
       avatarEl.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">`;
     } else {
-      const parts = (state.accountName || 'Спеціаліст').trim().split(/\s+/);
-      let initials = parts[0] ? parts[0][0].toUpperCase() : 'С';
+      const parts = (state.accountName || 'Денис Залізко').trim().split(/\s+/);
+      let initials = parts[0] ? parts[0][0].toUpperCase() : 'Д';
       if (parts[1]) initials += parts[1][0].toUpperCase();
       avatarEl.innerHTML = initials;
     }
@@ -8200,9 +8211,10 @@ function openProfileEditModal() {
   const previewEl = document.getElementById('editProfileAvatarPreview');
   const removePhotoBtn = document.getElementById('removePhotoBtn');
 
-  if (nameInput) nameInput.value = state.accountName || '';
-  if (userInput) userInput.value = state.accountUser || ('@' + state.accountKey);
-  if (roleInput) roleInput.value = (state.userRole === 'owner' || state.accountKey === 'zalizkodenis12') ? 'Власник' : (state.userRole || 'Спеціаліст');
+  const isOwner = (state.userRole === 'owner' || isOwnerAccountKey(state.accountKey));
+  if (nameInput) nameInput.value = state.accountName || (isOwner ? 'Денис Залізко' : '');
+  if (userInput) userInput.value = state.accountUser || (isOwner ? '@absolutikdenchik' : ('@' + state.accountKey));
+  if (roleInput) roleInput.value = isOwner ? 'Власник' : (state.userRole || 'Спеціаліст');
 
   const avatarUrl = state.userAvatar || localStorage.getItem('dws_user_avatar');
   if (previewEl) {
@@ -8210,8 +8222,8 @@ function openProfileEditModal() {
       previewEl.innerHTML = `<img src="${avatarUrl}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;">`;
       if (removePhotoBtn) removePhotoBtn.style.display = 'inline-flex';
     } else {
-      const parts = (state.accountName || 'Спеціаліст').trim().split(/\s+/);
-      let initials = parts[0] ? parts[0][0].toUpperCase() : 'С';
+      const parts = (state.accountName || 'Денис Залізко').trim().split(/\s+/);
+      let initials = parts[0] ? parts[0][0].toUpperCase() : 'Д';
       if (parts[1]) initials += parts[1][0].toUpperCase();
       previewEl.innerHTML = initials;
       if (removePhotoBtn) removePhotoBtn.style.display = 'none';
@@ -8299,8 +8311,8 @@ function setupProfileEditModal() {
     removePhotoBtn.addEventListener('click', () => {
       pendingAvatarData = '';
       if (previewEl) {
-        const parts = ((document.getElementById('editProfileNameInput')?.value) || state.accountName || 'С').trim().split(/\s+/);
-        let initials = parts[0] ? parts[0][0].toUpperCase() : 'С';
+        const parts = ((document.getElementById('editProfileNameInput')?.value) || state.accountName || 'Д').trim().split(/\s+/);
+        let initials = parts[0] ? parts[0][0].toUpperCase() : 'Д';
         if (parts[1]) initials += parts[1][0].toUpperCase();
         previewEl.innerHTML = initials;
       }
@@ -8329,16 +8341,18 @@ function setupProfileEditModal() {
       if (rawUser) {
         const cleanUser = rawUser.replace(/^@+/, '').trim().toLowerCase();
         if (cleanUser) {
-          if (cleanUser !== state.accountKey) switchedAccount = true;
-          state.accountKey = cleanUser;
-          state.accountUser = '@' + cleanUser;
+          const targetKey = isOwnerAccountKey(cleanUser) ? 'absolutikdenchik' : cleanUser;
+          const targetDisplay = isOwnerAccountKey(cleanUser) ? '@absolutikdenchik' : ('@' + cleanUser);
+          if (targetKey !== state.accountKey) switchedAccount = true;
+          state.accountKey = targetKey;
+          state.accountUser = targetDisplay;
           localStorage.setItem('dws_account_key', state.accountKey);
           localStorage.setItem('dws_account_user', state.accountUser);
         }
       }
 
       if (newRole) {
-        state.userRole = (newRole.toLowerCase() === 'власник' || state.accountKey === 'zalizkodenis12') ? 'owner' : newRole;
+        state.userRole = (newRole.toLowerCase() === 'власник' || isOwnerAccountKey(state.accountKey)) ? 'owner' : newRole;
         localStorage.setItem('dws_user_role', state.userRole);
       }
 
@@ -8387,17 +8401,19 @@ function setupAccountSync() {
   if (submitAccountBtn) {
     submitAccountBtn.addEventListener('click', async () => {
       const val = (accountInput?.value || '').trim();
-      const cleanKey = val.replace(/^@+/, '').trim().toLowerCase();
+      const rawClean = val.replace(/^@+/, '').trim().toLowerCase();
 
-      if (!cleanKey) {
+      if (!rawClean) {
         showToast('Введіть коректний username');
         return;
       }
 
+      const isOwner = isOwnerAccountKey(rawClean);
+      const cleanKey = isOwner ? 'absolutikdenchik' : rawClean;
       state.accountKey = cleanKey;
-      state.accountUser = '@' + cleanKey;
-      state.accountName = cleanKey === 'zalizkodenis12' ? 'Денис Залізко' : (state.accountName || ('Спеціаліст (' + cleanKey + ')'));
-      state.userRole = cleanKey === 'zalizkodenis12' ? 'owner' : 'member';
+      state.accountUser = isOwner ? '@absolutikdenchik' : ('@' + cleanKey);
+      state.accountName = isOwner ? 'Денис Залізко' : (state.accountName || ('Спеціаліст (' + cleanKey + ')'));
+      state.userRole = isOwner ? 'owner' : 'member';
 
       localStorage.setItem('dws_account_key', state.accountKey);
       localStorage.setItem('dws_account_user', state.accountUser);
@@ -8407,35 +8423,61 @@ function setupAccountSync() {
       updateProfileHeaderUI();
       haptic('success');
       closeModal('modalAccountLink');
-      await fetchAccountData(true);
+      await pullLatestDataFromServer(true, true);
       renderCurrentTab();
-      showToast('Акаунт @' + cleanKey + ' підключено та синхронізовано!');
+      showToast('Акаунт ' + state.accountUser + ' підключено та синхронізовано!');
     });
   }
 
-  // 1. 1-Click Cloud Sync button in Profile (pushes & pulls with Cloud KV + Telegram CloudStorage + Backend)
+  // 1A. Pure PUSH button: Send current device's data (Phone -> Cloud)
   const cloudSyncBtn = document.getElementById('cloudSyncTgBtn');
   if (cloudSyncBtn) {
     cloudSyncBtn.addEventListener('click', async () => {
       haptic('medium');
       const origText = cloudSyncBtn.textContent;
-      cloudSyncBtn.textContent = 'СИНХРОНІЗАЦІЯ...';
+      cloudSyncBtn.textContent = 'ВІДПРАВКА В ХМАРУ...';
       cloudSyncBtn.disabled = true;
 
       try {
-        await pullLatestDataFromServer(true);
         await syncAccountToServer();
         renderCurrentTab();
         updateProfileHeaderUI();
         haptic('success');
-        cloudSyncBtn.textContent = 'СИНХРОНІЗОВАНО ✓';
-        showToast('Акаунт синхронізовано між усіма пристроями!');
+        cloudSyncBtn.textContent = 'ВІДПРАВЛЕНО В ХМАРУ ✓';
+        showToast('Всі дані з цього пристрою вивантажено в хмару (@absolutikdenchik)!');
       } catch (e) {
         cloudSyncBtn.textContent = 'ЗБЕРЕЖЕНО ✓';
       } finally {
         setTimeout(() => {
           cloudSyncBtn.disabled = false;
-          cloudSyncBtn.textContent = origText || 'СИНХРОНІЗУВАТИ З ХМАРОЮ TELEGRAM';
+          cloudSyncBtn.textContent = origText || 'ВІДПРАВИТИ ДАНІ В ХМАРУ (З ТЕЛЕФОНУ)';
+        }, 2500);
+      }
+    });
+  }
+
+  // 1B. Pure PULL button: Receive cloud data onto current device (Cloud -> Laptop)
+  const pullCloudBtn = document.getElementById('pullCloudSyncBtn');
+  if (pullCloudBtn) {
+    pullCloudBtn.addEventListener('click', async () => {
+      haptic('medium');
+      const origText = pullCloudBtn.textContent;
+      pullCloudBtn.textContent = 'ЗАВАНТАЖЕННЯ З ХМАРИ...';
+      pullCloudBtn.disabled = true;
+
+      try {
+        await pullLatestDataFromServer(true, true);
+        renderCurrentTab();
+        updateProfileHeaderUI();
+        haptic('success');
+        pullCloudBtn.textContent = 'ДАНІ ЗАВАНТАЖЕНО ✓';
+        showToast('Всі дані акаунту @absolutikdenchik перенесено на цей пристрій!');
+      } catch (e) {
+        pullCloudBtn.textContent = 'ОНОВЛЕНО ✓';
+      } finally {
+        setTimeout(() => {
+          pullCloudBtn.disabled = false;
+          pullCloudBtn.textContent = origText || 'ОТРИМАТИ ДАНІ З ХМАРИ (НА НОУТБУК)';
         }, 2500);
       }
     });
@@ -8459,7 +8501,7 @@ function setupAccountSync() {
       URL.revokeObjectURL(url);
 
       exportFileBtn.textContent = 'ФАЙЛ ЗАВАНТАЖЕНО ✓';
-      setTimeout(() => { exportFileBtn.textContent = 'ЗАВАНТАЖИТИ ФАЙЛ БЕКАПУ НА НОУТБУК'; }, 2500);
+      setTimeout(() => { exportFileBtn.textContent = 'ЗАВАНТАЖИТИ ФАЙЛ БЕКАПУ (.JSON)'; }, 2500);
     });
   }
 
@@ -8479,14 +8521,13 @@ function setupAccountSync() {
       haptic('light');
       const origText = modalRestoreCloud.textContent;
       modalRestoreCloud.textContent = 'ЗАВАНТАЖЕННЯ З ХМАРИ...';
-      await pullLatestDataFromServer(true);
-      await fetchAccountData(true);
+      await pullLatestDataFromServer(true, true);
       haptic('success');
       modalRestoreCloud.textContent = origText;
       closeModal('modalSyncCode');
       renderCurrentTab();
       updateProfileHeaderUI();
-      showToast('Дані акаунту успішно оновлено з хмари!');
+      showToast('Дані акаунту @absolutikdenchik успішно оновлено з хмари!');
     });
   }
 
@@ -8558,11 +8599,18 @@ let isSyncingRemote = false;
 let isPushingSync = false;
 let pendingPushSync = false;
 
+function isMobileDevice() {
+  const tgPlat = String(window.Telegram?.WebApp?.platform || '').toLowerCase();
+  if (tgPlat === 'ios' || tgPlat === 'android') return true;
+  if (tgPlat === 'tdesktop' || tgPlat === 'macos' || tgPlat === 'weba' || tgPlat === 'webk') return false;
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '');
+}
+
 function getCleanAccountKey() {
-  const raw = state.accountKey || getOrCreateUserIdentity().key || 'zalizkodenis12';
+  const raw = state.accountKey || getOrCreateUserIdentity().key || 'absolutikdenchik';
   const cleaned = String(raw).trim().toLowerCase().replace(/^@+/, '').replace(/[^a-z0-9_.-]/g, '_');
-  if (!cleaned || cleaned.startsWith('dev_') || cleaned === 'absolutikdenchik') {
-    return 'zalizkodenis12';
+  if (isOwnerAccountKey(cleaned)) {
+    return 'absolutikdenchik';
   }
   return cleaned;
 }
@@ -8570,18 +8618,18 @@ function getCleanAccountKey() {
 function getCloudKvRecordUrl(accountKey) {
   const token = (typeof getClientApifyToken === 'function' ? getClientApifyToken() : '') ||
     (() => { try { return atob('YXBpZnlfYXBpX1gzM1I4NEsyWDJia2ZNZjdYQWZrQ1R5RU1rblNiSTR4dXVmWA=='); } catch { return ''; } })();
-  const safeKey = String(accountKey || 'zalizkodenis12').trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '_');
+  const safeKey = String(accountKey || 'absolutikdenchik').trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '_');
   return `https://api.apify.com/v2/key-value-stores/${DWS_CLOUD_KV_STORE_ID}/records/account_${safeKey}?token=${encodeURIComponent(token)}`;
 }
 
-function mergeArraysById(remoteArr, localArr) {
-  const rList = Array.isArray(remoteArr) ? remoteArr : [];
-  const lList = Array.isArray(localArr) ? localArr : [];
+function mergeArraysById(primaryArr, secondaryArr) {
+  const pList = Array.isArray(primaryArr) ? primaryArr : [];
+  const sList = Array.isArray(secondaryArr) ? secondaryArr : [];
   const map = new Map();
-  rList.forEach(item => {
+  pList.forEach(item => {
     if (item && item.id) map.set(item.id, item);
   });
-  lList.forEach(item => {
+  sList.forEach(item => {
     if (item && item.id && !map.has(item.id)) {
       map.set(item.id, item);
     }
@@ -8589,30 +8637,48 @@ function mergeArraysById(remoteArr, localArr) {
   return Array.from(map.values());
 }
 
+function stripDemoItemsFromCrm(list) {
+  if (!Array.isArray(list)) return [];
+  const hasReal = list.some(c => c && c.id && c.id !== 'crm-1' && !/^crm-[234]$/.test(c.id));
+  if (!hasReal) return list;
+  return list.filter(c => c && c.id !== 'crm-1' && !/^crm-[234]$/.test(c.id));
+}
+
+function stripDemoItemsFromExpenses(list) {
+  if (!Array.isArray(list)) return [];
+  return list.filter(r => r && !DEMO_EXPENSE_IDS.has(r.id));
+}
+
 function buildAccountSnapshot(nowTs = Date.now()) {
   const dynamicId = getOrCreateUserIdentity();
   const accountKey = getCleanAccountKey();
+  const isOwner = isOwnerAccountKey(accountKey);
   const localScrapes = typeof loadLocalScrapes === 'function' ? loadLocalScrapes() : [];
   const localNfc = (typeof nfcRadarState !== 'undefined' && Array.isArray(nfcRadarState.jobs) && nfcRadarState.jobs.length > 0)
     ? nfcRadarState.jobs
     : (typeof loadLocalNfcJobs === 'function' ? loadLocalNfcJobs() : []);
 
+  const cleanCrm = stripDemoItemsFromCrm(state.crm);
+  const cleanExpenses = stripDemoItemsFromExpenses(state.expenses?.records);
+
   return {
     app: 'DWS Lead',
-    version: '4.5.0',
+    version: '4.6.0',
     accountKey,
     deviceId: DWS_DEVICE_ID,
+    sourceDevice: isMobileDevice() ? 'phone' : 'laptop',
+    syncId: DWS_DEVICE_ID + '_' + nowTs,
     updatedAt: nowTs,
-    username: state.accountUser || dynamicId.username || ('@' + accountKey),
+    username: isOwner ? '@absolutikdenchik' : (state.accountUser || dynamicId.username || ('@' + accountKey)),
     name: state.accountName || dynamicId.name || 'Денис Залізко',
-    role: state.userRole || dynamicId.role || 'owner',
+    role: isOwner ? 'owner' : (state.userRole || dynamicId.role || 'member'),
     avatar: state.userAvatar || localStorage.getItem('dws_user_avatar') || '',
     theme: state.theme || localStorage.getItem('dws_theme') || 'light',
     lang: state.lang || localStorage.getItem('dws_lang') || 'ua',
-    crm: Array.isArray(state.crm) ? state.crm : [],
+    crm: cleanCrm,
     crmPinnedStages: Array.isArray(state.crmPinnedStages) ? state.crmPinnedStages : ['all', 'in_progress', 'offer', 'paid'],
     income: state.income || { records: [], currency: '₴' },
-    expenses: state.expenses || { records: [], currency: '₴' },
+    expenses: { ...(state.expenses || {}), records: cleanExpenses, currency: state.expenses?.currency || '₴' },
     profile: {
       ...(state.profile || {}),
       theme: state.theme || 'light',
@@ -8627,13 +8693,16 @@ function buildAccountSnapshot(nowTs = Date.now()) {
   };
 }
 
-function applyAccountSnapshot(d, mergeWithLocal = false) {
+function applyAccountSnapshot(d, mergeWithLocal = false, preferLocalOnMerge = false) {
   if (!d || typeof d !== 'object') return false;
   let hasChanges = false;
 
   // 1. CRM
   if (Array.isArray(d.crm)) {
-    const nextCrm = mergeWithLocal ? mergeArraysById(d.crm, state.crm) : d.crm;
+    const rawCrm = mergeWithLocal
+      ? (preferLocalOnMerge ? mergeArraysById(state.crm, d.crm) : mergeArraysById(d.crm, state.crm))
+      : d.crm;
+    const nextCrm = stripDemoItemsFromCrm(rawCrm);
     if (JSON.stringify(nextCrm) !== JSON.stringify(state.crm)) {
       state.crm = nextCrm;
       localStorage.setItem('dws_crm', JSON.stringify(state.crm));
@@ -8652,7 +8721,9 @@ function applyAccountSnapshot(d, mergeWithLocal = false) {
 
   // 3. Income
   if (d.income && Array.isArray(d.income.records)) {
-    const nextRecs = mergeWithLocal ? mergeArraysById(d.income.records, state.income?.records) : d.income.records;
+    const nextRecs = mergeWithLocal
+      ? (preferLocalOnMerge ? mergeArraysById(state.income?.records, d.income.records) : mergeArraysById(d.income.records, state.income?.records))
+      : d.income.records;
     const nextIncome = { ...d.income, records: nextRecs, currency: d.income.currency || '₴' };
     if (JSON.stringify(nextIncome) !== JSON.stringify(state.income)) {
       state.income = nextIncome;
@@ -8663,7 +8734,10 @@ function applyAccountSnapshot(d, mergeWithLocal = false) {
 
   // 4. Expenses
   if (d.expenses && Array.isArray(d.expenses.records)) {
-    const nextExpRecs = mergeWithLocal ? mergeArraysById(d.expenses.records, state.expenses?.records) : d.expenses.records;
+    const rawExpRecs = mergeWithLocal
+      ? (preferLocalOnMerge ? mergeArraysById(state.expenses?.records, d.expenses.records) : mergeArraysById(d.expenses.records, state.expenses?.records))
+      : d.expenses.records;
+    const nextExpRecs = stripDemoItemsFromExpenses(rawExpRecs);
     const nextExpenses = { ...d.expenses, records: nextExpRecs, currency: d.expenses.currency || '₴' };
     if (JSON.stringify(nextExpenses) !== JSON.stringify(state.expenses)) {
       state.expenses = nextExpenses;
@@ -8675,7 +8749,7 @@ function applyAccountSnapshot(d, mergeWithLocal = false) {
   // 5. Taken Lead IDs
   if (Array.isArray(d.takenLeadIds)) {
     const nextTaken = mergeWithLocal
-      ? Array.from(new Set([...d.takenLeadIds, ...(state.takenLeadIds || [])]))
+      ? Array.from(new Set([...(state.takenLeadIds || []), ...d.takenLeadIds]))
       : d.takenLeadIds;
     const curTaken = [...(state.takenLeadIds || [])];
     if (JSON.stringify(nextTaken) !== JSON.stringify(curTaken)) {
@@ -8687,7 +8761,9 @@ function applyAccountSnapshot(d, mergeWithLocal = false) {
 
   // 6. Profile & Requisites
   if (d.profile && typeof d.profile === 'object') {
-    const nextProfile = { ...state.profile, ...d.profile };
+    const nextProfile = preferLocalOnMerge
+      ? { ...d.profile, ...state.profile }
+      : { ...state.profile, ...d.profile };
     if (JSON.stringify(nextProfile) !== JSON.stringify(state.profile)) {
       state.profile = nextProfile;
       localStorage.setItem('dws_profile', JSON.stringify(state.profile));
@@ -8707,7 +8783,7 @@ function applyAccountSnapshot(d, mergeWithLocal = false) {
 
   const incomingReq = d.requisites || d.profile?.requisites;
   if (incomingReq && typeof incomingReq === 'object' && Object.keys(incomingReq).length > 0) {
-    if (JSON.stringify(incomingReq) !== JSON.stringify(state.requisites)) {
+    if (!preferLocalOnMerge && JSON.stringify(incomingReq) !== JSON.stringify(state.requisites)) {
       state.requisites = incomingReq;
       localStorage.setItem('dws_requisites', JSON.stringify(state.requisites));
       hasChanges = true;
@@ -8716,7 +8792,7 @@ function applyAccountSnapshot(d, mergeWithLocal = false) {
 
   // 7. Sources
   if (d.sources && (Array.isArray(d.sources.chats) || Array.isArray(d.sources.channels))) {
-    if (JSON.stringify(d.sources) !== JSON.stringify(state.sources)) {
+    if (!preferLocalOnMerge && JSON.stringify(d.sources) !== JSON.stringify(state.sources)) {
       state.sources = d.sources;
       localStorage.setItem('dws_sources', JSON.stringify(state.sources));
       updateSourcesDisplay();
@@ -8725,22 +8801,26 @@ function applyAccountSnapshot(d, mergeWithLocal = false) {
   }
 
   // 8. Theme & Language
-  const targetTheme = d.theme || d.profile?.theme;
-  if (targetTheme && (targetTheme === 'light' || targetTheme === 'dark') && targetTheme !== state.theme) {
-    applyTheme(targetTheme);
-    hasChanges = true;
-  }
+  if (!preferLocalOnMerge) {
+    const targetTheme = d.theme || d.profile?.theme;
+    if (targetTheme && (targetTheme === 'light' || targetTheme === 'dark') && targetTheme !== state.theme) {
+      applyTheme(targetTheme);
+      hasChanges = true;
+    }
 
-  const targetLang = d.lang || d.profile?.lang;
-  if (targetLang && (targetLang === 'ua' || targetLang === 'en') && targetLang !== state.lang) {
-    applyLanguage(targetLang, false);
-    hasChanges = true;
+    const targetLang = d.lang || d.profile?.lang;
+    if (targetLang && (targetLang === 'ua' || targetLang === 'en') && targetLang !== state.lang) {
+      applyLanguage(targetLang, false);
+      hasChanges = true;
+    }
   }
 
   // 9. Scrapes (B2B Google Maps / Instagram)
   if (Array.isArray(d.scrapes) && typeof scrapeState !== 'undefined') {
     const localScrapes = typeof loadLocalScrapes === 'function' ? loadLocalScrapes() : [];
-    const nextScrapes = mergeWithLocal ? mergeArraysById(d.scrapes, localScrapes) : d.scrapes;
+    const nextScrapes = mergeWithLocal
+      ? (preferLocalOnMerge ? mergeArraysById(localScrapes, d.scrapes) : mergeArraysById(d.scrapes, localScrapes))
+      : d.scrapes;
     if (JSON.stringify(nextScrapes) !== JSON.stringify(localScrapes)) {
       localStorage.setItem('dws_scrapes', JSON.stringify(nextScrapes));
       scrapeState.jobs = nextScrapes;
@@ -8751,7 +8831,9 @@ function applyAccountSnapshot(d, mergeWithLocal = false) {
   // 10. NFC Radar Jobs
   if (Array.isArray(d.nfcJobs) && typeof nfcRadarState !== 'undefined') {
     const localNfc = nfcRadarState.jobs || [];
-    const nextNfc = mergeWithLocal ? mergeArraysById(d.nfcJobs, localNfc) : d.nfcJobs;
+    const nextNfc = mergeWithLocal
+      ? (preferLocalOnMerge ? mergeArraysById(localNfc, d.nfcJobs) : mergeArraysById(d.nfcJobs, localNfc))
+      : d.nfcJobs;
     if (JSON.stringify(nextNfc) !== JSON.stringify(localNfc)) {
       localStorage.setItem('dws_nfc_radars', JSON.stringify(nextNfc));
       nfcRadarState.jobs = nextNfc;
@@ -8760,25 +8842,31 @@ function applyAccountSnapshot(d, mergeWithLocal = false) {
   }
 
   // 11. Account Header Identity (Name, Username, Avatar, Role)
+  const isOwner = isOwnerAccountKey(state.accountKey) || isOwnerAccountKey(d.accountKey) || isOwnerAccountKey(d.username);
   if (d.name && d.name !== state.accountName) {
     state.accountName = d.name;
     localStorage.setItem('dws_account_name', d.name);
     hasChanges = true;
   }
-  if (d.username && d.username !== state.accountUser) {
-    state.accountUser = d.username;
-    localStorage.setItem('dws_account_user', d.username);
+  const normalizedUsername = isOwner ? '@absolutikdenchik' : (d.username || state.accountUser);
+  if (normalizedUsername && normalizedUsername !== state.accountUser) {
+    state.accountUser = normalizedUsername;
+    localStorage.setItem('dws_account_user', normalizedUsername);
     hasChanges = true;
+  }
+  if (isOwner && state.accountKey !== 'absolutikdenchik') {
+    state.accountKey = 'absolutikdenchik';
+    localStorage.setItem('dws_account_key', 'absolutikdenchik');
   }
   if (d.role && d.role !== state.userRole) {
-    state.userRole = d.role;
-    localStorage.setItem('dws_user_role', d.role);
+    state.userRole = isOwner ? 'owner' : d.role;
+    localStorage.setItem('dws_user_role', state.userRole);
     hasChanges = true;
   }
-  if (typeof d.avatar === 'string' && d.avatar !== (state.userAvatar || '')) {
+  // Never let an empty remote avatar erase a valid local avatar
+  if (typeof d.avatar === 'string' && d.avatar.length > 0 && d.avatar !== (state.userAvatar || '')) {
     state.userAvatar = d.avatar;
-    if (d.avatar) localStorage.setItem('dws_user_avatar', d.avatar);
-    else localStorage.removeItem('dws_user_avatar');
+    localStorage.setItem('dws_user_avatar', d.avatar);
     hasChanges = true;
   }
 
@@ -8788,34 +8876,39 @@ function applyAccountSnapshot(d, mergeWithLocal = false) {
       state.lastSyncTimestamp = ts;
     }
   }
+  if (d.syncId) {
+    state.lastSeenSyncId = d.syncId;
+  }
 
   state.cloudSynced = true;
   return hasChanges;
 }
 
-async function fetchAccountData(forceExact = false) {
-  const key = getCleanAccountKey();
-  const seedFlagKey = 'dws_cloud_seeded_v3_' + key;
-  const isAlreadySeeded = Boolean(localStorage.getItem(seedFlagKey));
-
+async function fetchRemoteSnapshotForKey(key) {
   let bestRemoteData = null;
   let bestRemoteTs = 0;
 
+  const keysToTry = isOwnerAccountKey(key)
+    ? ['absolutikdenchik', 'zalizkodenis12']
+    : [key];
+
   // 1. Fetch from Universal Cloud KV Store (works on Vercel, Browser, Phone & Laptop)
-  try {
-    const kvUrl = getCloudKvRecordUrl(key) + '&_t=' + Date.now();
-    const kvRes = await fetch(kvUrl, { cache: 'no-store' }).catch(() => null);
-    if (kvRes && kvRes.ok) {
-      const kvData = await kvRes.json();
-      if (kvData && typeof kvData === 'object') {
-        const ts = typeof kvData.updatedAt === 'number' ? kvData.updatedAt : new Date(kvData.updatedAt || 0).getTime();
-        if (ts >= bestRemoteTs) {
-          bestRemoteTs = ts;
-          bestRemoteData = kvData;
+  for (const k of keysToTry) {
+    try {
+      const kvUrl = getCloudKvRecordUrl(k) + '&_t=' + Date.now();
+      const kvRes = await fetch(kvUrl, { cache: 'no-store' }).catch(() => null);
+      if (kvRes && kvRes.ok) {
+        const kvData = await kvRes.json().catch(() => null);
+        if (kvData && typeof kvData === 'object') {
+          const ts = typeof kvData.updatedAt === 'number' ? kvData.updatedAt : new Date(kvData.updatedAt || 0).getTime();
+          if (ts >= bestRemoteTs) {
+            bestRemoteTs = ts;
+            bestRemoteData = kvData;
+          }
         }
       }
-    }
-  } catch (e) {}
+    } catch (e) {}
+  }
 
   // 2. Also check local/backend API if available
   try {
@@ -8826,7 +8919,7 @@ async function fetchAccountData(forceExact = false) {
       }
     }).catch(() => null);
     if (apiRes && apiRes.ok) {
-      const apiJson = await apiRes.json();
+      const apiJson = await apiRes.json().catch(() => null);
       if (apiJson && apiJson.success && apiJson.data) {
         const ts = apiJson.data.updatedAt ? new Date(apiJson.data.updatedAt).getTime() : 0;
         if (ts > bestRemoteTs) {
@@ -8837,20 +8930,47 @@ async function fetchAccountData(forceExact = false) {
     }
   } catch (e) {}
 
-  if (bestRemoteData) {
-    const shouldMerge = !isAlreadySeeded && !forceExact;
-    applyAccountSnapshot(bestRemoteData, shouldMerge);
-    updateProfileHeaderUI();
-    if (!isAlreadySeeded) {
-      localStorage.setItem(seedFlagKey, 'true');
-      // Push unified state so both devices share the merged superset
-      syncAccountToServer();
+  return { bestRemoteData, bestRemoteTs };
+}
+
+async function fetchAccountData(forceExact = false) {
+  const key = getCleanAccountKey();
+  const isPhone = isMobileDevice();
+  const phoneMasterFlag = 'dws_phone_master_v46_synced';
+  const hasPhoneSyncedV46 = Boolean(localStorage.getItem(phoneMasterFlag));
+
+  // Clean demo items locally first
+  state.crm = stripDemoItemsFromCrm(state.crm);
+  if (state.expenses && Array.isArray(state.expenses.records)) {
+    state.expenses.records = stripDemoItemsFromExpenses(state.expenses.records);
+  }
+
+  const { bestRemoteData } = await fetchRemoteSnapshotForKey(key);
+
+  const localHasRealData =
+    (Array.isArray(state.crm) && state.crm.some(c => c && c.id !== 'crm-1')) ||
+    (Array.isArray(state.income?.records) && state.income.records.length > 0) ||
+    (Array.isArray(state.expenses?.records) && state.expenses.records.length > 0);
+
+  if (isPhone && !hasPhoneSyncedV46 && localHasRealData) {
+    // Phone has user's real data: merge any missing items WITH PHONE TAKING PRIORITY, then immediately push to Cloud so Laptop gets it!
+    if (bestRemoteData) {
+      applyAccountSnapshot(bestRemoteData, true, true);
     }
+    localStorage.setItem(phoneMasterFlag, 'true');
+    updateProfileHeaderUI();
+    await syncAccountToServer();
+    return;
+  }
+
+  if (bestRemoteData) {
+    applyAccountSnapshot(bestRemoteData, false, false);
+    if (isPhone) localStorage.setItem(phoneMasterFlag, 'true');
+    updateProfileHeaderUI();
   } else {
-    // No cloud record yet for this account: seed the cloud with current device data
-    localStorage.setItem(seedFlagKey, 'true');
+    if (isPhone) localStorage.setItem(phoneMasterFlag, 'true');
     state.cloudSynced = true;
-    syncAccountToServer();
+    await syncAccountToServer();
   }
 }
 
@@ -8910,10 +9030,9 @@ function resolveCloudData(key, items, cb) {
 
 async function syncAccountToServer() {
   const accountKey = getCleanAccountKey();
-  const nowTs = Date.now();
+  const nowTs = Math.max(Date.now(), (state.lastSyncTimestamp || 0) + 1);
   state.lastSyncTimestamp = nowTs;
   state.cloudSynced = true;
-  localStorage.setItem('dws_cloud_seeded_v3_' + accountKey, 'true');
 
   if (isPushingSync) {
     pendingPushSync = true;
@@ -8923,13 +9042,26 @@ async function syncAccountToServer() {
 
   try {
     const snapshot = buildAccountSnapshot(nowTs);
+    state.lastSeenSyncId = snapshot.syncId;
+    const bodyStr = JSON.stringify(snapshot);
 
     // 1. Universal Cloud KV Store (Primary cross-device sync for Phone & Laptop on Vercel/Telegram/Browser)
-    const kvPromise = fetch(getCloudKvRecordUrl(accountKey), {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(snapshot)
-    }).catch(() => null);
+    const kvPromises = [
+      fetch(getCloudKvRecordUrl(accountKey), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: bodyStr
+      }).catch(() => null)
+    ];
+    if (isOwnerAccountKey(accountKey)) {
+      kvPromises.push(
+        fetch(getCloudKvRecordUrl('zalizkodenis12'), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: bodyStr
+        }).catch(() => null)
+      );
+    }
 
     // 2. Telegram CloudStorage (Secondary sync inside Telegram client)
     const cs = window.Telegram?.WebApp?.CloudStorage;
@@ -8951,10 +9083,10 @@ async function syncAccountToServer() {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + (localStorage.getItem('dws_master_token') || 'DWS-2026-STUDIO-ZALIZKO-PRO')
       },
-      body: JSON.stringify(snapshot)
+      body: bodyStr
     }).catch(() => null);
 
-    await Promise.all([kvPromise, apiPromise]);
+    await Promise.all([...kvPromises, apiPromise]);
   } catch (err) {
     console.warn('Sync error:', err);
   } finally {
@@ -8981,53 +9113,27 @@ function renderCurrentTab() {
   else if (state.currentTab === 'tab-requisites') renderRequisitesTab();
 }
 
-async function pullLatestDataFromServer(force = false) {
-  if (isSyncingRemote || isPushingSync) return;
+async function pullLatestDataFromServer(force = false, forceApply = false) {
+  if ((isSyncingRemote || isPushingSync) && !forceApply) return;
   const key = getCleanAccountKey();
   if (!key) return;
 
   try {
     isSyncingRemote = true;
-    let remoteData = null;
-    let remoteTs = 0;
+    const { bestRemoteData: remoteData, bestRemoteTs: remoteTs } = await fetchRemoteSnapshotForKey(key);
 
-    // 1. Poll Universal Cloud KV Store
-    const kvRes = await fetch(getCloudKvRecordUrl(key) + '&_t=' + Date.now(), {
-      cache: 'no-store'
-    }).catch(() => null);
+    if (!remoteData) return;
 
-    if (kvRes && kvRes.ok) {
-      const kvJson = await kvRes.json().catch(() => null);
-      if (kvJson && typeof kvJson === 'object') {
-        remoteTs = typeof kvJson.updatedAt === 'number' ? kvJson.updatedAt : new Date(kvJson.updatedAt || 0).getTime();
-        remoteData = kvJson;
-      }
-    }
+    const isNewSyncId = Boolean(remoteData.syncId && remoteData.syncId !== state.lastSeenSyncId && remoteData.deviceId !== DWS_DEVICE_ID);
+    const isNewerTs = remoteTs > (state.lastSyncTimestamp || 0);
+    const shouldApply = forceApply || isNewerTs || isNewSyncId || (force && remoteData.deviceId !== DWS_DEVICE_ID);
 
-    // 2. Fallback/Compare with Local Backend API
-    const apiRes = await fetch('/api/account/' + encodeURIComponent(key), {
-      cache: 'no-store',
-      headers: {
-        'Authorization': 'Bearer ' + (localStorage.getItem('dws_master_token') || 'DWS-2026-STUDIO-ZALIZKO-PRO')
-      }
-    }).catch(() => null);
-
-    if (apiRes && apiRes.ok) {
-      const apiJson = await apiRes.json().catch(() => null);
-      if (apiJson && apiJson.success && apiJson.data) {
-        const apiTs = apiJson.data.updatedAt ? new Date(apiJson.data.updatedAt).getTime() : 0;
-        if (apiTs > remoteTs) {
-          remoteTs = apiTs;
-          remoteData = apiJson.data;
-        }
-      }
-    }
-
-    if (remoteData && (remoteTs > (state.lastSyncTimestamp || 0) || (force && remoteData.deviceId !== DWS_DEVICE_ID))) {
-      if (isPushingSync) return;
-      const changed = applyAccountSnapshot(remoteData, false);
+    if (shouldApply) {
+      if (isPushingSync && !forceApply) return;
+      const changed = applyAccountSnapshot(remoteData, false, false);
       state.lastSyncTimestamp = Math.max(state.lastSyncTimestamp || 0, remoteTs || Date.now());
-      if (changed) {
+      if (remoteData.syncId) state.lastSeenSyncId = remoteData.syncId;
+      if (changed || forceApply) {
         updateProfileHeaderUI();
         if (state.activeCrmLead) {
           const cur = (state.crm || []).find(c => c.id === state.activeCrmLead.id);
@@ -9047,10 +9153,10 @@ async function pullLatestDataFromServer(force = false) {
 }
 
 function startAutoSyncEngine() {
-  setInterval(() => pullLatestDataFromServer(false), 2500);
-  window.addEventListener('focus', () => pullLatestDataFromServer(true));
+  setInterval(() => pullLatestDataFromServer(false, false), 2500);
+  window.addEventListener('focus', () => pullLatestDataFromServer(true, false));
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) pullLatestDataFromServer(true);
+    if (!document.hidden) pullLatestDataFromServer(true, false);
   });
 }
 

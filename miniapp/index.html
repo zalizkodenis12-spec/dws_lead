@@ -272,7 +272,7 @@
                 </button>
               </div>
               <div style="margin-top: 4px;">
-                <span id="profileDisplayUser" style="font-size: 0.85rem; color: var(--brand); font-weight: 600;">@zalizkodenis12</span>
+                <span id="profileDisplayUser" style="font-size: 0.85rem; color: var(--brand); font-weight: 600;">@absolutikdenchik</span>
               </div>
             </div>
             <div id="profileRoleBadge" style="font-size: 0.74rem; font-weight: 700; padding: 5px 12px; border-radius: 20px; background: rgba(0,102,255,0.08); color: var(--brand); white-space: nowrap; border: 1px solid rgba(0,102,255,0.2);">Власник</div>
@@ -349,20 +349,23 @@
           <!-- MULTI-DEVICE CLOUD SYNC & LOGIN -->
           <div class="form-group" style="margin-top: 16px; padding: 16px; background: var(--white); border: 1px solid var(--border); border-radius: var(--rad); box-shadow: var(--shadow-sm);">
             <div style="margin-bottom: 8px;">
-              <label class="form-label" style="display: block; width: 100%; margin: 0; color: var(--brand); font-weight: 700; letter-spacing: 0.3px;">СИНХРОНІЗАЦІЯ (ТЕЛЕФОН / НОУТБУК):</label>
+              <label class="form-label" style="display: block; width: 100%; margin: 0; color: var(--brand); font-weight: 700; letter-spacing: 0.3px;">СИНХРОНІЗАЦІЯ АКАУНТУ (@ABSOLUTIKDENCHIK):</label>
             </div>
             <p class="form-hint" style="margin-bottom: 14px; font-size: 0.76rem; line-height: 1.4;">
-              Збережіть дані в хмару Telegram або завантажте файл бекапу, щоб відкрити свій профіль на ноутбуці без втрати клієнтів у CRM та історії доходів:
+              Автоматична синхронізація між телефоном і ноутбуком працює в реальному часі. Також ви можете примусово вивантажити дані з телефону або завантажити їх на ноутбук в 1 клік:
             </p>
             <div style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
               <button type="button" id="cloudSyncTgBtn" class="btn btn--fill btn--block" style="font-size: 0.8rem; padding: 12px 14px;">
-                СИНХРОНІЗУВАТИ З ХМАРОЮ TELEGRAM
+                ВІДПРАВИТИ ДАНІ В ХМАРУ (З ТЕЛЕФОНУ)
               </button>
-              <button type="button" id="exportBackupFileBtn" class="btn btn--fill btn--block" style="font-size: 0.8rem; padding: 12px 14px;">
-                ЗАВАНТАЖИТИ ФАЙЛ БЕКАПУ НА НОУТБУК
+              <button type="button" id="pullCloudSyncBtn" class="btn btn--fill btn--block" style="font-size: 0.8rem; padding: 12px 14px;">
+                ОТРИМАТИ ДАНІ З ХМАРИ (НА НОУТБУК)
               </button>
-              <button type="button" id="importBackupFileBtn" class="btn btn--fill btn--block" style="font-size: 0.8rem; padding: 12px 14px;">
-                ВІДНОВИТИ ДАНІ З ФАЙЛУ АБО ХМАРИ
+              <button type="button" id="exportBackupFileBtn" class="btn btn--out btn--block" style="font-size: 0.8rem; padding: 12px 14px;">
+                ЗАВАНТАЖИТИ ФАЙЛ БЕКАПУ (.JSON)
+              </button>
+              <button type="button" id="importBackupFileBtn" class="btn btn--out btn--block" style="font-size: 0.8rem; padding: 12px 14px;">
+                ВІДНОВИТИ ДАНІ З ФАЙЛУ АБО КОДУ
               </button>
             </div>
             <input type="file" id="syncFileInput" accept=".json,application/json" style="display: none;">
@@ -1982,6 +1985,6 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.5.0"></script>
+  <script src="js/app.js?v=4.6.0"></script>
 </body>
 </html>
