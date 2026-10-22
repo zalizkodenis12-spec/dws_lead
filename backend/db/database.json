@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792668399651-43",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Маркетинг Club",
+      "sourceUsername": "@marketing_network1",
+      "authorName": "Kathy English",
+      "authorUsername": "@tg_id_7620588368",
+      "title": "НЕ ЗНАЕШЬ, СКОЛЬКО СТОИТ АКТИВНОСТЬ? 💸",
+      "text": "НЕ ЗНАЕШЬ, СКОЛЬКО СТОИТ АКТИВНОСТЬ? 💸\n\nЗагляни в тарифы POPUP. Для разных платформ и показателей доступны разные варианты — можно подобрать подходящее предложение под свой бюджет.\n\nУзнать расценки →\nhttps://popup1.com/r/b319a366207140d1\n\n#накрутка #продвижение #телеграмм #просмотры #раскрутка #соцсети #smm #продвижениеканала #продвижениеаккаунта #активность #реакции #пиар #реклама",
+      "date": "2026-10-22T11:26:39.650Z",
+      "dateFormatted": "Сьогодні, 14:26",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792668047729-343",
       "category": "montage",
       "categoryName": "Монтаж",
