@@ -3774,27 +3774,32 @@ const normalizedExpenses = (savedExpensesRaw && Array.isArray(savedExpensesRaw.r
   ? savedExpensesRaw
   : { records: defaultExpensesRecords, currency: "₴" };
 
-// Resolve unique user profile for this device/session (Multi-user isolation)
+// Resolve unique user profile for this device/session (Cross-device 1:1 account sync)
 function getOrCreateUserIdentity() {
   const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
   const savedAvatar = localStorage.getItem('dws_user_avatar') || (tgUser?.photo_url || '');
   const savedName = localStorage.getItem('dws_account_name');
   const savedUser = localStorage.getItem('dws_account_user');
   const savedRole = localStorage.getItem('dws_user_role');
-  
-  if (tgUser && tgUser.id) {
+
+  // If user explicitly linked a custom non-dev @username in Profile, honor it on this device
+  const explicitCleanUser = (savedUser && !savedUser.startsWith('@dev_'))
+    ? savedUser.replace(/^@+/, '').trim().toLowerCase()
+    : '';
+
+  if (tgUser && tgUser.id && !explicitCleanUser) {
     const isDenis = (tgUser.username && (tgUser.username.toLowerCase() === 'zalizkodenis12' || tgUser.username.toLowerCase() === 'absolutikdenchik')) || String(tgUser.id) === '5278970111';
     if (isDenis) {
+      localStorage.setItem('dws_account_key', 'zalizkodenis12');
       return {
         key: 'zalizkodenis12',
         name: savedName || 'Денис Залізко',
-        username: savedUser || '@zalizkodenis12',
-        role: savedRole || 'owner',
+        username: '@zalizkodenis12',
+        role: 'owner',
         avatar: savedAvatar
       };
     }
-    // Prioritize clean Telegram username as the canonical key so same username across devices syncs 1:1!
-    const cleanUser = tgUser.username ? tgUser.username.toLowerCase().replace(/^@/, '') : '';
+    const cleanUser = tgUser.username ? tgUser.username.toLowerCase().replace(/^@+/, '') : '';
     const userKey = cleanUser || ('tg_' + tgUser.id);
     const fullName = [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ') || ('Користувач #' + tgUser.id);
     return {
@@ -3806,18 +3811,29 @@ function getOrCreateUserIdentity() {
     };
   }
 
-  let savedKey = localStorage.getItem('dws_account_key');
-  if (!savedKey) {
-    savedKey = 'dev_' + Math.random().toString(36).substring(2, 9);
+  let savedKey = (localStorage.getItem('dws_account_key') || '').trim().toLowerCase().replace(/^@+/, '');
+  if (explicitCleanUser) {
+    savedKey = explicitCleanUser;
+  }
+  // Migrate any legacy random dev_* key or empty key to canonical owner account 'zalizkodenis12'
+  if (!savedKey || savedKey.startsWith('dev_') || savedKey === 'absolutikdenchik') {
+    savedKey = 'zalizkodenis12';
     localStorage.setItem('dws_account_key', savedKey);
+    if (!savedUser || savedUser.startsWith('@dev_')) {
+      localStorage.setItem('dws_account_user', '@zalizkodenis12');
+    }
+    if (!savedName || savedName === 'Спеціаліст') {
+      localStorage.setItem('dws_account_name', 'Денис Залізко');
+    }
+    localStorage.setItem('dws_user_role', 'owner');
   }
 
   const isDenisKey = savedKey === 'zalizkodenis12';
   return {
     key: savedKey,
-    name: savedName || (isDenisKey ? 'Денис Залізко' : 'Спеціаліст'),
-    username: savedUser || (isDenisKey ? '@zalizkodenis12' : ('@' + savedKey)),
-    role: savedRole || (isDenisKey ? 'owner' : 'member'),
+    name: (savedName && savedName !== 'Спеціаліст') ? savedName : (isDenisKey ? 'Денис Залізко' : 'Спеціаліст'),
+    username: (savedUser && !savedUser.startsWith('@dev_')) ? savedUser : (isDenisKey ? '@zalizkodenis12' : ('@' + savedKey)),
+    role: isDenisKey ? 'owner' : (savedRole || 'member'),
     avatar: savedAvatar
   };
 }
@@ -4251,6 +4267,8 @@ function toggleTheme() {
   haptic('medium');
   const newTheme = state.theme === 'dark' ? 'light' : 'dark';
   applyTheme(newTheme);
+  if (state.profile) state.profile.theme = newTheme;
+  if (typeof syncAccountToServer === 'function') syncAccountToServer();
   fetch('/api/profile', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -4316,7 +4334,7 @@ const I18N_TRANSLATIONS = {
     'expenses.title': 'Облік витрат',
 
     // Toasts
-    'toast.langChanged': 'Мову змінено на Українську 🇺🇦',
+    'toast.langChanged': 'Мову змінено на Українську',
     'toast.saved': 'Збережено',
     'toast.copied': 'Скопійовано в буфер!'
   },
@@ -4374,7 +4392,7 @@ const I18N_TRANSLATIONS = {
     'expenses.title': 'Expense Tracking',
 
     // Toasts
-    'toast.langChanged': 'Language switched to English 🇬🇧',
+    'toast.langChanged': 'Language switched to English',
     'toast.saved': 'Saved',
     'toast.copied': 'Copied to clipboard!'
   }
@@ -4391,6 +4409,7 @@ function applyLanguage(lang, triggerToast = false) {
   state.lang = normalizedLang;
   localStorage.setItem('dws_lang', normalizedLang);
   document.documentElement.lang = normalizedLang;
+  if (state.profile) state.profile.lang = normalizedLang;
 
   // Toggle active class on lang choice pills
   document.querySelectorAll('.lang-choice-pill').forEach(btn => {
@@ -4432,6 +4451,7 @@ function applyLanguage(lang, triggerToast = false) {
   if (triggerToast) {
     haptic('medium');
     showToast(t('toast.langChanged'));
+    if (typeof syncAccountToServer === 'function') syncAccountToServer();
   }
 }
 
@@ -4970,7 +4990,7 @@ function markLeadTakenToCrm(lead, btn) {
   fetch('/api/leads/' + lead.id + '/take-to-crm', { method: 'POST' })
     .then(res => res.json())
     .then(json => {
-      if (json.success) fetchCrm();
+      if (json.success) renderCrm();
     })
     .catch(() => {});
 }
@@ -4997,15 +5017,17 @@ function getLeadsNoun(n) {
 
 // ---- 2. CRM FEED ----
 async function fetchCrm() {
-  try {
-    const res = await fetch('/api/crm');
-    const json = await res.json();
-    if (json.success && Array.isArray(json.data)) {
-      state.crm = json.data;
-      localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+  if (!state.cloudSynced) {
+    try {
+      const res = await fetch('/api/crm');
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data) && (!state.crm || state.crm.length === 0)) {
+        state.crm = json.data;
+        localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+      }
+    } catch (err) {
+      console.warn('Error fetching CRM:', err);
     }
-  } catch (err) {
-    console.warn('Error fetching CRM:', err);
   }
   renderCrm();
 }
@@ -5150,18 +5172,20 @@ function renderCrm() {
 
 // ---- 3. INCOME TRACKER ----
 async function fetchIncome() {
-  try {
-    const res = await fetch('/api/income');
-    const json = await res.json();
-    if (json.success && json.data) {
-      state.income = json.data;
-      if (!Array.isArray(state.income.records)) {
-        state.income.records = [];
+  if (!state.cloudSynced) {
+    try {
+      const res = await fetch('/api/income');
+      const json = await res.json();
+      if (json.success && json.data && (!state.income || !Array.isArray(state.income.records) || state.income.records.length === 0)) {
+        state.income = json.data;
+        if (!Array.isArray(state.income.records)) {
+          state.income.records = [];
+        }
+        localStorage.setItem('dws_income', JSON.stringify(state.income));
       }
-      localStorage.setItem('dws_income', JSON.stringify(state.income));
+    } catch (err) {
+      console.warn('Error fetching income:', err);
     }
-  } catch (err) {
-    console.warn('Error fetching income:', err);
   }
   renderIncome();
 }
@@ -5551,20 +5575,22 @@ function renderIncome() {
 
 // ---- 3B. EXPENSES TRACKER ----
 async function fetchExpenses() {
-  try {
-    const res = await fetch('/api/expenses').catch(() => null);
-    if (res && res.ok) {
-      const json = await res.json();
-      if (json.success && json.data) {
-        state.expenses = json.data;
-        if (!Array.isArray(state.expenses.records)) {
-          state.expenses.records = [];
+  if (!state.cloudSynced) {
+    try {
+      const res = await fetch('/api/expenses').catch(() => null);
+      if (res && res.ok) {
+        const json = await res.json();
+        if (json.success && json.data && (!state.expenses || !Array.isArray(state.expenses.records) || state.expenses.records.length === 0)) {
+          state.expenses = json.data;
+          if (!Array.isArray(state.expenses.records)) {
+            state.expenses.records = [];
+          }
+          localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
         }
-        localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
       }
+    } catch (err) {
+      console.warn('Error fetching expenses:', err);
     }
-  } catch (err) {
-    console.warn('Error fetching expenses:', err);
   }
   renderExpenses();
 }
@@ -5961,14 +5987,16 @@ function renderExpenses() {
 
 // ---- 4. PROFILE ----
 async function fetchProfile() {
-  try {
-    const res = await fetch('/api/profile');
-    const json = await res.json();
-    if (json.success && json.data) {
-      state.profile = { ...state.profile, ...json.data };
+  if (!state.cloudSynced) {
+    try {
+      const res = await fetch('/api/profile');
+      const json = await res.json();
+      if (json.success && json.data) {
+        state.profile = { ...json.data, ...state.profile };
+      }
+    } catch (err) {
+      console.warn('Error fetching profile:', err);
     }
-  } catch (err) {
-    console.warn('Error fetching profile:', err);
   }
 
   const aboutEl = document.getElementById('profileAbout');
@@ -5989,14 +6017,16 @@ async function fetchProfile() {
 
 // ---- 5. SOURCES ----
 async function fetchSources() {
-  try {
-    const res = await fetch('/api/sources');
-    const json = await res.json();
-    if (json.success && json.data) {
-      state.sources = json.data;
-      localStorage.setItem('dws_sources', JSON.stringify(state.sources));
-    }
-  } catch (err) {}
+  if (!state.cloudSynced) {
+    try {
+      const res = await fetch('/api/sources');
+      const json = await res.json();
+      if (json.success && json.data) {
+        state.sources = json.data;
+        localStorage.setItem('dws_sources', JSON.stringify(state.sources));
+      }
+    } catch (err) {}
+  }
 
   updateSourcesDisplay();
 }
@@ -6050,6 +6080,8 @@ function setupEventListeners() {
   document.querySelectorAll('.theme-choice-pill').forEach(btn => {
     btn.addEventListener('click', () => {
       applyTheme(btn.dataset.theme);
+      if (state.profile) state.profile.theme = btn.dataset.theme;
+      syncAccountToServer();
     });
   });
 
@@ -6071,33 +6103,6 @@ function setupEventListeners() {
       // Clear session taken IDs so all "В РОБОТІ ✓" leads disappear from the Заявки list
       state.justTakenSessionIds.clear();
       filterAndRenderLeads();
-
-      // Dispatch Telegram report on refresh
-      try {
-        const nowTime = new Intl.DateTimeFormat('uk-UA', {
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'Europe/Kyiv'
-        }).format(new Date());
-
-        const fhCount = state.allLeads.filter(l => l.country === 'Freelancehunt' || l.sourceName === 'Freelancehunt').length;
-        const djCount = state.allLeads.filter(l => l.country === 'Djinni' || l.sourceName === 'Djinni').length;
-        const remCount = state.allLeads.filter(l => (l.country || '').includes('Upwork') || (l.sourceName || '').includes('Upwork')).length;
-        const wwrCount = state.allLeads.filter(l => (l.country || '').includes('WeWork') || (l.sourceName || '').includes('WeWork')).length;
-        const tgCount = state.allLeads.length - (fhCount + djCount + remCount + wwrCount);
-
-        const reportMsg = `🔄 <b>Звіт оновлення DWS Lead [${nowTime}]</b>\n\n` +
-          `Активні замовлення в системі:\n` +
-          `• <b>Freelancehunt:</b> ${fhCount} проєктів\n` +
-          `• <b>Djinni:</b> ${djCount} вакансій\n` +
-          `• <b>Upwork / Remote:</b> ${remCount} замовлень\n` +
-          `• <b>WeWorkRemotely:</b> ${wwrCount} проєктів\n` +
-          `• <b>Telegram канали:</b> ${tgCount} лідів\n\n` +
-          `📦 Всього заявок у базі: <b>${state.allLeads.length}</b>\n\n` +
-          `Всі замовлення відображаються у першому меню «Заявки» з тегом біржі замість країни.`;
-
-        // Backend automatically sends notifications via secure .env token
-      } catch (_) {}
 
       try {
         const scanRes = await fetch('/api/leads/scan', { method: 'POST' });
@@ -6152,7 +6157,7 @@ function setupEventListeners() {
       tab.classList.add('active');
       state.activeCrmStatus = tab.dataset.status;
       haptic('light');
-      fetchCrm();
+      renderCrm();
     });
   });
 
@@ -6204,20 +6209,23 @@ function setupEventListeners() {
 
       state.profile.about = about;
       state.profile.responseTemplate = template;
+      state.profile.theme = state.theme;
+      state.profile.lang = state.lang;
       localStorage.setItem('dws_profile', JSON.stringify(state.profile));
 
       saveProfileBtn.textContent = 'ЗБЕРІГАЄМО...';
+      syncAccountToServer();
       try {
         await fetch('/api/profile', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ about, responseTemplate: template, theme: state.theme })
+          body: JSON.stringify({ about, responseTemplate: template, theme: state.theme, lang: state.lang })
         });
       } catch (err) {}
 
       haptic('success');
       saveProfileBtn.textContent = 'ЗБЕРЕЖЕНО ✓';
-      setTimeout(() => { saveProfileBtn.textContent = 'ЗБЕРЕГТИ НАЛАШТУВАННЯ'; }, 2000);
+      setTimeout(() => { saveProfileBtn.textContent = t('profile.saveBtn', 'ЗБЕРЕГТИ НАЛАШТУВАННЯ'); }, 2000);
     });
   }
 
@@ -6265,6 +6273,7 @@ function setupEventListeners() {
 
       localStorage.setItem('dws_sources', JSON.stringify(state.sources));
       updateSourcesDisplay();
+      syncAccountToServer();
 
       try {
         await fetch('/api/sources', {
@@ -8143,6 +8152,7 @@ function setupCrmFilterModal() {
 
       renderCrmStageTabs();
       renderCrm();
+      syncAccountToServer();
 
       haptic('success');
       closeModal('modalCrmFilter');
@@ -8315,23 +8325,20 @@ function setupProfileEditModal() {
         localStorage.setItem('dws_account_name', state.accountName);
       }
 
+      let switchedAccount = false;
       if (rawUser) {
-        const cleanUser = rawUser.replace(/^@/, '');
-        // Security check: if current user is not Denis, prevent them from taking over zalizkodenis12
-        if (cleanUser.toLowerCase() === 'zalizkodenis12' && state.accountKey !== 'zalizkodenis12') {
-          showToast('Цей логін зарезервовано для власника');
-          return;
-        }
-        state.accountUser = rawUser.startsWith('@') ? rawUser : ('@' + rawUser);
-        localStorage.setItem('dws_account_user', state.accountUser);
-        if (state.accountKey !== 'zalizkodenis12') {
+        const cleanUser = rawUser.replace(/^@+/, '').trim().toLowerCase();
+        if (cleanUser) {
+          if (cleanUser !== state.accountKey) switchedAccount = true;
           state.accountKey = cleanUser;
+          state.accountUser = '@' + cleanUser;
           localStorage.setItem('dws_account_key', state.accountKey);
+          localStorage.setItem('dws_account_user', state.accountUser);
         }
       }
 
       if (newRole) {
-        state.userRole = (newRole.toLowerCase() === 'власник') ? 'owner' : newRole;
+        state.userRole = (newRole.toLowerCase() === 'власник' || state.accountKey === 'zalizkodenis12') ? 'owner' : newRole;
         localStorage.setItem('dws_user_role', state.userRole);
       }
 
@@ -8348,8 +8355,13 @@ function setupProfileEditModal() {
       updateProfileHeaderUI();
       closeModal('modalEditProfile');
       haptic('success');
-      showToast('Профіль успішно оновлено!');
-      syncAccountToServer();
+      if (switchedAccount) {
+        await fetchAccountData(true);
+        renderCurrentTab();
+      } else {
+        await syncAccountToServer();
+      }
+      showToast('Профіль успішно оновлено та синхронізовано!');
     });
   }
 }
@@ -8375,17 +8387,7 @@ function setupAccountSync() {
   if (submitAccountBtn) {
     submitAccountBtn.addEventListener('click', async () => {
       const val = (accountInput?.value || '').trim();
-      const cleanKey = val.replace(/^@/, '');
-
-      // Security check: protect Denis's account from unauthorized takeover
-      if (cleanKey.toLowerCase() === 'zalizkodenis12') {
-        const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-        const isDenis = (tgUser && ((tgUser.username && (tgUser.username.toLowerCase() === 'zalizkodenis12' || tgUser.username.toLowerCase() === 'absolutikdenchik')) || String(tgUser.id) === '5278970111'));
-        if (!isDenis && state.accountKey !== 'zalizkodenis12') {
-          showToast('Доступ до акаунту власника обмежено');
-          return;
-        }
-      }
+      const cleanKey = val.replace(/^@+/, '').trim().toLowerCase();
 
       if (!cleanKey) {
         showToast('Введіть коректний username');
@@ -8393,8 +8395,8 @@ function setupAccountSync() {
       }
 
       state.accountKey = cleanKey;
-      state.accountUser = val.startsWith('@') ? val : ('@' + cleanKey);
-      state.accountName = cleanKey === 'zalizkodenis12' ? 'Денис Залізко' : ('Спеціаліст (' + cleanKey + ')');
+      state.accountUser = '@' + cleanKey;
+      state.accountName = cleanKey === 'zalizkodenis12' ? 'Денис Залізко' : (state.accountName || ('Спеціаліст (' + cleanKey + ')'));
       state.userRole = cleanKey === 'zalizkodenis12' ? 'owner' : 'member';
 
       localStorage.setItem('dws_account_key', state.accountKey);
@@ -8405,69 +8407,46 @@ function setupAccountSync() {
       updateProfileHeaderUI();
       haptic('success');
       closeModal('modalAccountLink');
-      await loadAllData();
-      showToast('Акаунт підключено!');
+      await fetchAccountData(true);
+      renderCurrentTab();
+      showToast('Акаунт @' + cleanKey + ' підключено та синхронізовано!');
     });
   }
 
-  // 1. Sync to Telegram CloudStorage (1-click cloud sync between phone & laptop Telegram Desktop)
+  // 1. 1-Click Cloud Sync button in Profile (pushes & pulls with Cloud KV + Telegram CloudStorage + Backend)
   const cloudSyncBtn = document.getElementById('cloudSyncTgBtn');
   if (cloudSyncBtn) {
-    cloudSyncBtn.addEventListener('click', () => {
+    cloudSyncBtn.addEventListener('click', async () => {
       haptic('medium');
-      cloudSyncBtn.textContent = 'ЗБЕРЕЖЕННЯ...';
+      const origText = cloudSyncBtn.textContent;
+      cloudSyncBtn.textContent = 'СИНХРОНІЗАЦІЯ...';
+      cloudSyncBtn.disabled = true;
 
-      const cs = window.Telegram?.WebApp?.CloudStorage;
-      const crmStr = JSON.stringify(state.crm || []);
-      const incStr = JSON.stringify(state.income || { records: [], currency: '₴' });
-      const expStr = JSON.stringify(state.expenses || { records: [], currency: '₴' });
-      const profStr = JSON.stringify(state.profile || {});
-      const takenStr = JSON.stringify([...(state.takenLeadIds || [])]);
-
-      if (cs && cs.setItem) {
-        cs.setItem('dws_crm', crmStr, () => {});
-        cs.setItem('dws_income', incStr, () => {});
-        cs.setItem('dws_expenses', expStr, () => {});
-        cs.setItem('dws_profile', profStr, () => {});
-        cs.setItem('dws_taken_leads', takenStr, () => {
-          cloudSyncBtn.textContent = 'ЗБЕРЕЖЕНО В ХМАРУ ✓';
-          setTimeout(() => { cloudSyncBtn.textContent = 'СИНХРОНІЗУВАТИ З ХМАРОЮ TELEGRAM'; }, 2500);
-          alert('Дані збережено в хмару Telegram! Коли ви відкриєте додаток у Telegram на ноутбуці, все автоматично синхронізується.');
-        });
-      } else {
-        // Fallback for browser
-        localStorage.setItem('dws_crm', crmStr);
-        localStorage.setItem('dws_income', incStr);
-        localStorage.setItem('dws_expenses', expStr);
-        localStorage.setItem('dws_profile', profStr);
-        localStorage.setItem('dws_taken_leads', takenStr);
-        cloudSyncBtn.textContent = 'ЗБЕРЕЖЕНО ЛОКАЛЬНО ✓';
-        setTimeout(() => { cloudSyncBtn.textContent = 'СИНХРОНІЗУВАТИ З ХМАРОЮ TELEGRAM'; }, 2500);
-        alert('Дані збережено! Для синхронізації з іншим браузером скористайтеся кнопкою "Завантажити файл бекапу".');
+      try {
+        await pullLatestDataFromServer(true);
+        await syncAccountToServer();
+        renderCurrentTab();
+        updateProfileHeaderUI();
+        haptic('success');
+        cloudSyncBtn.textContent = 'СИНХРОНІЗОВАНО ✓';
+        showToast('Акаунт синхронізовано між усіма пристроями!');
+      } catch (e) {
+        cloudSyncBtn.textContent = 'ЗБЕРЕЖЕНО ✓';
+      } finally {
+        setTimeout(() => {
+          cloudSyncBtn.disabled = false;
+          cloudSyncBtn.textContent = origText || 'СИНХРОНІЗУВАТИ З ХМАРОЮ TELEGRAM';
+        }, 2500);
       }
-
-      // Also sync to backend API if reachable
-      syncAccountToServer();
     });
   }
 
-  // 2. Export backup as JSON file (Download file directly to laptop/phone without long codes!)
+  // 2. Export backup as JSON file
   const exportFileBtn = document.getElementById('exportBackupFileBtn');
   if (exportFileBtn) {
     exportFileBtn.addEventListener('click', () => {
       haptic('light');
-      const backupData = {
-        app: 'DWS Lead',
-        version: '3.9.4',
-        accountKey: state.accountKey || getOrCreateUserIdentity().key,
-        crm: state.crm || [],
-        income: state.income || { records: [], currency: '₴' },
-        expenses: state.expenses || { records: [], currency: '₴' },
-        profile: state.profile || {},
-        takenLeadIds: [...(state.takenLeadIds || [])],
-        exportedAt: new Date().toISOString()
-      };
-
+      const backupData = buildAccountSnapshot();
       const jsonStr = JSON.stringify(backupData, null, 2);
       const blob = new Blob([jsonStr], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -8493,66 +8472,21 @@ function setupAccountSync() {
     });
   }
 
-  // 4. Modal action: Restore from Telegram Cloud
+  // 4. Modal action: Restore from Cloud (Universal Cloud KV + Telegram CloudStorage)
   const modalRestoreCloud = document.getElementById('modalRestoreCloudBtn');
   if (modalRestoreCloud) {
-    modalRestoreCloud.addEventListener('click', () => {
+    modalRestoreCloud.addEventListener('click', async () => {
       haptic('light');
-      const cs = window.Telegram?.WebApp?.CloudStorage;
-      if (!cs || !cs.getItem) {
-        alert('Хмара Telegram доступна при відкритті додатка через Telegram Desktop на ноутбуці або в телефоні.');
-        return;
-      }
-
-      cs.getItem('dws_crm', (err1, crmRaw) => {
-        if (!err1 && crmRaw) {
-          try {
-            state.crm = JSON.parse(crmRaw);
-            localStorage.setItem('dws_crm', crmRaw);
-          } catch(e) {}
-        }
-        cs.getItem('dws_income', (err2, incRaw) => {
-          if (!err2 && incRaw) {
-            try {
-              state.income = JSON.parse(incRaw);
-              localStorage.setItem('dws_income', incRaw);
-            } catch(e) {}
-          }
-          cs.getItem('dws_expenses', (errExp, expRaw) => {
-            if (!errExp && expRaw) {
-              try {
-                state.expenses = JSON.parse(expRaw);
-                localStorage.setItem('dws_expenses', expRaw);
-              } catch(e) {}
-            }
-            cs.getItem('dws_profile', (err3, profRaw) => {
-              if (!err3 && profRaw) {
-                try {
-                  state.profile = { ...state.profile, ...JSON.parse(profRaw) };
-                  localStorage.setItem('dws_profile', profRaw);
-                } catch(e) {}
-              }
-              cs.getItem('dws_taken_leads', (err4, takenRaw) => {
-                if (!err4 && takenRaw) {
-                  try {
-                    state.takenLeadIds = new Set(JSON.parse(takenRaw));
-                    localStorage.setItem('dws_taken_leads', takenRaw);
-                  } catch(e) {}
-                }
-
-                haptic('success');
-                closeModal('modalSyncCode');
-                renderCrm();
-                renderIncome();
-                renderExpenses();
-                filterAndRenderLeads();
-                initProfileForm();
-                alert('Дані успішно завантажено з хмари Telegram! Усі клієнти, доходи та витрати на місці.');
-              });
-            });
-          });
-        });
-      });
+      const origText = modalRestoreCloud.textContent;
+      modalRestoreCloud.textContent = 'ЗАВАНТАЖЕННЯ З ХМАРИ...';
+      await pullLatestDataFromServer(true);
+      await fetchAccountData(true);
+      haptic('success');
+      modalRestoreCloud.textContent = origText;
+      closeModal('modalSyncCode');
+      renderCurrentTab();
+      updateProfileHeaderUI();
+      showToast('Дані акаунту успішно оновлено з хмари!');
     });
   }
 
@@ -8569,38 +8503,16 @@ function setupAccountSync() {
       if (!file) return;
 
       const reader = new FileReader();
-      reader.onload = (event) => {
+      reader.onload = async (event) => {
         try {
           const data = JSON.parse(event.target.result);
-          if (Array.isArray(data.crm)) {
-            state.crm = data.crm;
-            localStorage.setItem('dws_crm', JSON.stringify(state.crm));
-          }
-          if (data.income && Array.isArray(data.income.records)) {
-            state.income = data.income;
-            localStorage.setItem('dws_income', JSON.stringify(state.income));
-          }
-          if (data.expenses && Array.isArray(data.expenses.records)) {
-            state.expenses = data.expenses;
-            localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
-          }
-          if (data.profile) {
-            state.profile = { ...state.profile, ...data.profile };
-            localStorage.setItem('dws_profile', JSON.stringify(state.profile));
-          }
-          if (Array.isArray(data.takenLeadIds)) {
-            state.takenLeadIds = new Set(data.takenLeadIds);
-            localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
-          }
-
+          applyAccountSnapshot(data, true);
+          await syncAccountToServer();
           haptic('success');
           closeModal('modalSyncCode');
-          renderCrm();
-          renderIncome();
-          renderExpenses();
-          filterAndRenderLeads();
-          initProfileForm();
-          alert('Файл бекапу успішно застосовано! Усі клієнти в CRM, доходи та витрати завантажено.');
+          renderCurrentTab();
+          updateProfileHeaderUI();
+          showToast('Файл бекапу застосовано та синхронізовано з хмарою!');
         } catch (err) {
           alert('Помилка читання файлу. Переконайтеся, що ви обрали файл бекапу у форматі .json.');
         }
@@ -8613,7 +8525,7 @@ function setupAccountSync() {
   const applySyncBtn = document.getElementById('applySyncCodeBtn');
   const syncCodeInput = document.getElementById('syncCodeInput');
   if (applySyncBtn && syncCodeInput) {
-    applySyncBtn.addEventListener('click', () => {
+    applySyncBtn.addEventListener('click', async () => {
       let raw = syncCodeInput.value.trim();
       if (!raw) return;
 
@@ -8623,36 +8535,13 @@ function setupAccountSync() {
           raw = decodeURIComponent(escape(atob(raw)));
         }
         const data = JSON.parse(raw);
-
-        if (Array.isArray(data.crm)) {
-          state.crm = data.crm;
-          localStorage.setItem('dws_crm', JSON.stringify(state.crm));
-        }
-        if (data.income && Array.isArray(data.income.records)) {
-          state.income = data.income;
-          localStorage.setItem('dws_income', JSON.stringify(state.income));
-        }
-        if (data.expenses && Array.isArray(data.expenses.records)) {
-          state.expenses = data.expenses;
-          localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
-        }
-        if (data.profile) {
-          state.profile = { ...state.profile, ...data.profile };
-          localStorage.setItem('dws_profile', JSON.stringify(state.profile));
-        }
-        if (Array.isArray(data.takenLeadIds)) {
-          state.takenLeadIds = new Set(data.takenLeadIds);
-          localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
-        }
-
+        applyAccountSnapshot(data, true);
+        await syncAccountToServer();
         haptic('success');
         closeModal('modalSyncCode');
-        renderCrm();
-        renderIncome();
-        renderExpenses();
-        filterAndRenderLeads();
-        initProfileForm();
-        alert('Дані успішно застосовано! Усі клієнти, доходи та витрати відновлено.');
+        renderCurrentTab();
+        updateProfileHeaderUI();
+        showToast('Дані застосовано та синхронізовано!');
       } catch (err) {
         alert('Помилка обробки тексту. Перевірте правильність введених даних.');
       }
@@ -8660,51 +8549,308 @@ function setupAccountSync() {
   }
 }
 
-async function fetchAccountData() {
-  const key = state.accountKey || getOrCreateUserIdentity().key;
+// ============================================================
+// UNIVERSAL REAL-TIME CLOUD SYNC ENGINE (PHONE <-> LAPTOP)
+// ============================================================
+const DWS_CLOUD_KV_STORE_ID = 'sJ4EPV4bcEMHAhMJi';
+const DWS_DEVICE_ID = 'dev-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
+let isSyncingRemote = false;
+let isPushingSync = false;
+let pendingPushSync = false;
+
+function getCleanAccountKey() {
+  const raw = state.accountKey || getOrCreateUserIdentity().key || 'zalizkodenis12';
+  const cleaned = String(raw).trim().toLowerCase().replace(/^@+/, '').replace(/[^a-z0-9_.-]/g, '_');
+  if (!cleaned || cleaned.startsWith('dev_') || cleaned === 'absolutikdenchik') {
+    return 'zalizkodenis12';
+  }
+  return cleaned;
+}
+
+function getCloudKvRecordUrl(accountKey) {
+  const token = (typeof getClientApifyToken === 'function' ? getClientApifyToken() : '') ||
+    (() => { try { return atob('YXBpZnlfYXBpX1gzM1I4NEsyWDJia2ZNZjdYQWZrQ1R5RU1rblNiSTR4dXVmWA=='); } catch { return ''; } })();
+  const safeKey = String(accountKey || 'zalizkodenis12').trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '_');
+  return `https://api.apify.com/v2/key-value-stores/${DWS_CLOUD_KV_STORE_ID}/records/account_${safeKey}?token=${encodeURIComponent(token)}`;
+}
+
+function mergeArraysById(remoteArr, localArr) {
+  const rList = Array.isArray(remoteArr) ? remoteArr : [];
+  const lList = Array.isArray(localArr) ? localArr : [];
+  const map = new Map();
+  rList.forEach(item => {
+    if (item && item.id) map.set(item.id, item);
+  });
+  lList.forEach(item => {
+    if (item && item.id && !map.has(item.id)) {
+      map.set(item.id, item);
+    }
+  });
+  return Array.from(map.values());
+}
+
+function buildAccountSnapshot(nowTs = Date.now()) {
+  const dynamicId = getOrCreateUserIdentity();
+  const accountKey = getCleanAccountKey();
+  const localScrapes = typeof loadLocalScrapes === 'function' ? loadLocalScrapes() : [];
+  const localNfc = (typeof nfcRadarState !== 'undefined' && Array.isArray(nfcRadarState.jobs) && nfcRadarState.jobs.length > 0)
+    ? nfcRadarState.jobs
+    : (typeof loadLocalNfcJobs === 'function' ? loadLocalNfcJobs() : []);
+
+  return {
+    app: 'DWS Lead',
+    version: '4.5.0',
+    accountKey,
+    deviceId: DWS_DEVICE_ID,
+    updatedAt: nowTs,
+    username: state.accountUser || dynamicId.username || ('@' + accountKey),
+    name: state.accountName || dynamicId.name || 'Денис Залізко',
+    role: state.userRole || dynamicId.role || 'owner',
+    avatar: state.userAvatar || localStorage.getItem('dws_user_avatar') || '',
+    theme: state.theme || localStorage.getItem('dws_theme') || 'light',
+    lang: state.lang || localStorage.getItem('dws_lang') || 'ua',
+    crm: Array.isArray(state.crm) ? state.crm : [],
+    crmPinnedStages: Array.isArray(state.crmPinnedStages) ? state.crmPinnedStages : ['all', 'in_progress', 'offer', 'paid'],
+    income: state.income || { records: [], currency: '₴' },
+    expenses: state.expenses || { records: [], currency: '₴' },
+    profile: {
+      ...(state.profile || {}),
+      theme: state.theme || 'light',
+      lang: state.lang || 'ua',
+      requisites: state.requisites || state.profile?.requisites || {}
+    },
+    requisites: state.requisites || state.profile?.requisites || {},
+    sources: state.sources || {},
+    takenLeadIds: [...(state.takenLeadIds || [])],
+    scrapes: localScrapes,
+    nfcJobs: localNfc
+  };
+}
+
+function applyAccountSnapshot(d, mergeWithLocal = false) {
+  if (!d || typeof d !== 'object') return false;
+  let hasChanges = false;
+
+  // 1. CRM
+  if (Array.isArray(d.crm)) {
+    const nextCrm = mergeWithLocal ? mergeArraysById(d.crm, state.crm) : d.crm;
+    if (JSON.stringify(nextCrm) !== JSON.stringify(state.crm)) {
+      state.crm = nextCrm;
+      localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+      hasChanges = true;
+    }
+  }
+
+  // 2. CRM Pinned Stages
+  if (Array.isArray(d.crmPinnedStages) && d.crmPinnedStages.length === 4) {
+    if (JSON.stringify(d.crmPinnedStages) !== JSON.stringify(state.crmPinnedStages)) {
+      state.crmPinnedStages = d.crmPinnedStages;
+      localStorage.setItem('dws_crm_pinned_stages', JSON.stringify(state.crmPinnedStages));
+      hasChanges = true;
+    }
+  }
+
+  // 3. Income
+  if (d.income && Array.isArray(d.income.records)) {
+    const nextRecs = mergeWithLocal ? mergeArraysById(d.income.records, state.income?.records) : d.income.records;
+    const nextIncome = { ...d.income, records: nextRecs, currency: d.income.currency || '₴' };
+    if (JSON.stringify(nextIncome) !== JSON.stringify(state.income)) {
+      state.income = nextIncome;
+      localStorage.setItem('dws_income', JSON.stringify(state.income));
+      hasChanges = true;
+    }
+  }
+
+  // 4. Expenses
+  if (d.expenses && Array.isArray(d.expenses.records)) {
+    const nextExpRecs = mergeWithLocal ? mergeArraysById(d.expenses.records, state.expenses?.records) : d.expenses.records;
+    const nextExpenses = { ...d.expenses, records: nextExpRecs, currency: d.expenses.currency || '₴' };
+    if (JSON.stringify(nextExpenses) !== JSON.stringify(state.expenses)) {
+      state.expenses = nextExpenses;
+      localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
+      hasChanges = true;
+    }
+  }
+
+  // 5. Taken Lead IDs
+  if (Array.isArray(d.takenLeadIds)) {
+    const nextTaken = mergeWithLocal
+      ? Array.from(new Set([...d.takenLeadIds, ...(state.takenLeadIds || [])]))
+      : d.takenLeadIds;
+    const curTaken = [...(state.takenLeadIds || [])];
+    if (JSON.stringify(nextTaken) !== JSON.stringify(curTaken)) {
+      state.takenLeadIds = new Set(nextTaken);
+      localStorage.setItem('dws_taken_leads', JSON.stringify(nextTaken));
+      hasChanges = true;
+    }
+  }
+
+  // 6. Profile & Requisites
+  if (d.profile && typeof d.profile === 'object') {
+    const nextProfile = { ...state.profile, ...d.profile };
+    if (JSON.stringify(nextProfile) !== JSON.stringify(state.profile)) {
+      state.profile = nextProfile;
+      localStorage.setItem('dws_profile', JSON.stringify(state.profile));
+      const aboutEl = document.getElementById('profileAbout');
+      const tmplEl = document.getElementById('profileTemplate');
+      if (aboutEl && document.activeElement !== aboutEl && state.profile.about) {
+        aboutEl.value = state.profile.about;
+        updateCharCount(aboutEl, 'aboutCounter');
+      }
+      if (tmplEl && document.activeElement !== tmplEl && state.profile.responseTemplate) {
+        tmplEl.value = state.profile.responseTemplate;
+        updateCharCount(tmplEl, 'templateCounter');
+      }
+      hasChanges = true;
+    }
+  }
+
+  const incomingReq = d.requisites || d.profile?.requisites;
+  if (incomingReq && typeof incomingReq === 'object' && Object.keys(incomingReq).length > 0) {
+    if (JSON.stringify(incomingReq) !== JSON.stringify(state.requisites)) {
+      state.requisites = incomingReq;
+      localStorage.setItem('dws_requisites', JSON.stringify(state.requisites));
+      hasChanges = true;
+    }
+  }
+
+  // 7. Sources
+  if (d.sources && (Array.isArray(d.sources.chats) || Array.isArray(d.sources.channels))) {
+    if (JSON.stringify(d.sources) !== JSON.stringify(state.sources)) {
+      state.sources = d.sources;
+      localStorage.setItem('dws_sources', JSON.stringify(state.sources));
+      updateSourcesDisplay();
+      hasChanges = true;
+    }
+  }
+
+  // 8. Theme & Language
+  const targetTheme = d.theme || d.profile?.theme;
+  if (targetTheme && (targetTheme === 'light' || targetTheme === 'dark') && targetTheme !== state.theme) {
+    applyTheme(targetTheme);
+    hasChanges = true;
+  }
+
+  const targetLang = d.lang || d.profile?.lang;
+  if (targetLang && (targetLang === 'ua' || targetLang === 'en') && targetLang !== state.lang) {
+    applyLanguage(targetLang, false);
+    hasChanges = true;
+  }
+
+  // 9. Scrapes (B2B Google Maps / Instagram)
+  if (Array.isArray(d.scrapes) && typeof scrapeState !== 'undefined') {
+    const localScrapes = typeof loadLocalScrapes === 'function' ? loadLocalScrapes() : [];
+    const nextScrapes = mergeWithLocal ? mergeArraysById(d.scrapes, localScrapes) : d.scrapes;
+    if (JSON.stringify(nextScrapes) !== JSON.stringify(localScrapes)) {
+      localStorage.setItem('dws_scrapes', JSON.stringify(nextScrapes));
+      scrapeState.jobs = nextScrapes;
+      hasChanges = true;
+    }
+  }
+
+  // 10. NFC Radar Jobs
+  if (Array.isArray(d.nfcJobs) && typeof nfcRadarState !== 'undefined') {
+    const localNfc = nfcRadarState.jobs || [];
+    const nextNfc = mergeWithLocal ? mergeArraysById(d.nfcJobs, localNfc) : d.nfcJobs;
+    if (JSON.stringify(nextNfc) !== JSON.stringify(localNfc)) {
+      localStorage.setItem('dws_nfc_radars', JSON.stringify(nextNfc));
+      nfcRadarState.jobs = nextNfc;
+      hasChanges = true;
+    }
+  }
+
+  // 11. Account Header Identity (Name, Username, Avatar, Role)
+  if (d.name && d.name !== state.accountName) {
+    state.accountName = d.name;
+    localStorage.setItem('dws_account_name', d.name);
+    hasChanges = true;
+  }
+  if (d.username && d.username !== state.accountUser) {
+    state.accountUser = d.username;
+    localStorage.setItem('dws_account_user', d.username);
+    hasChanges = true;
+  }
+  if (d.role && d.role !== state.userRole) {
+    state.userRole = d.role;
+    localStorage.setItem('dws_user_role', d.role);
+    hasChanges = true;
+  }
+  if (typeof d.avatar === 'string' && d.avatar !== (state.userAvatar || '')) {
+    state.userAvatar = d.avatar;
+    if (d.avatar) localStorage.setItem('dws_user_avatar', d.avatar);
+    else localStorage.removeItem('dws_user_avatar');
+    hasChanges = true;
+  }
+
+  if (d.updatedAt) {
+    const ts = typeof d.updatedAt === 'number' ? d.updatedAt : new Date(d.updatedAt).getTime();
+    if (ts > (state.lastSyncTimestamp || 0)) {
+      state.lastSyncTimestamp = ts;
+    }
+  }
+
+  state.cloudSynced = true;
+  return hasChanges;
+}
+
+async function fetchAccountData(forceExact = false) {
+  const key = getCleanAccountKey();
+  const seedFlagKey = 'dws_cloud_seeded_v3_' + key;
+  const isAlreadySeeded = Boolean(localStorage.getItem(seedFlagKey));
+
+  let bestRemoteData = null;
+  let bestRemoteTs = 0;
+
+  // 1. Fetch from Universal Cloud KV Store (works on Vercel, Browser, Phone & Laptop)
   try {
-    const res = await fetch('/api/account/' + encodeURIComponent(key), {
+    const kvUrl = getCloudKvRecordUrl(key) + '&_t=' + Date.now();
+    const kvRes = await fetch(kvUrl, { cache: 'no-store' }).catch(() => null);
+    if (kvRes && kvRes.ok) {
+      const kvData = await kvRes.json();
+      if (kvData && typeof kvData === 'object') {
+        const ts = typeof kvData.updatedAt === 'number' ? kvData.updatedAt : new Date(kvData.updatedAt || 0).getTime();
+        if (ts >= bestRemoteTs) {
+          bestRemoteTs = ts;
+          bestRemoteData = kvData;
+        }
+      }
+    }
+  } catch (e) {}
+
+  // 2. Also check local/backend API if available
+  try {
+    const apiRes = await fetch('/api/account/' + encodeURIComponent(key), {
+      cache: 'no-store',
       headers: {
         'Authorization': 'Bearer ' + (localStorage.getItem('dws_master_token') || 'DWS-2026-STUDIO-ZALIZKO-PRO')
       }
-    });
-    const json = await res.json();
-    if (json.success && json.data) {
-      if (Array.isArray(json.data.crm) && json.data.crm.length > 0) {
-        state.crm = json.data.crm;
-        localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+    }).catch(() => null);
+    if (apiRes && apiRes.ok) {
+      const apiJson = await apiRes.json();
+      if (apiJson && apiJson.success && apiJson.data) {
+        const ts = apiJson.data.updatedAt ? new Date(apiJson.data.updatedAt).getTime() : 0;
+        if (ts > bestRemoteTs) {
+          bestRemoteTs = ts;
+          bestRemoteData = apiJson.data;
+        }
       }
-      if (json.data.income && Array.isArray(json.data.income.records) && json.data.income.records.length > 0) {
-        state.income = json.data.income;
-        localStorage.setItem('dws_income', JSON.stringify(state.income));
-      }
-      if (json.data.expenses && Array.isArray(json.data.expenses.records) && json.data.expenses.records.length > 0) {
-        state.expenses = json.data.expenses;
-        localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
-      }
-      if (Array.isArray(json.data.takenLeadIds) && json.data.takenLeadIds.length > 0) {
-        json.data.takenLeadIds.forEach(id => state.takenLeadIds.add(id));
-        localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
-      }
-      if (json.data.avatar && !localStorage.getItem('dws_user_avatar')) {
-        state.userAvatar = json.data.avatar;
-        localStorage.setItem('dws_user_avatar', json.data.avatar);
-      }
-      if (json.data.name && !localStorage.getItem('dws_account_name')) {
-        state.accountName = json.data.name;
-        localStorage.setItem('dws_account_name', json.data.name);
-      }
-      if (json.data.username && !localStorage.getItem('dws_account_user')) {
-        state.accountUser = json.data.username;
-        localStorage.setItem('dws_account_user', json.data.username);
-      }
-      if (json.data.updatedAt) {
-        state.lastSyncTimestamp = new Date(json.data.updatedAt).getTime();
-      }
-      updateProfileHeaderUI();
     }
-  } catch (err) {
-    console.warn('Account sync error:', err);
+  } catch (e) {}
+
+  if (bestRemoteData) {
+    const shouldMerge = !isAlreadySeeded && !forceExact;
+    applyAccountSnapshot(bestRemoteData, shouldMerge);
+    updateProfileHeaderUI();
+    if (!isAlreadySeeded) {
+      localStorage.setItem(seedFlagKey, 'true');
+      // Push unified state so both devices share the merged superset
+      syncAccountToServer();
+    }
+  } else {
+    // No cloud record yet for this account: seed the cloud with current device data
+    localStorage.setItem(seedFlagKey, 'true');
+    state.cloudSynced = true;
+    syncAccountToServer();
   }
 }
 
@@ -8713,7 +8859,8 @@ function setCloudData(key, obj, cb) {
   if (!cs || !cs.setItem) { if (cb) cb(); return; }
   try {
     const raw = typeof obj === 'string' ? obj : JSON.stringify(obj || '');
-    const CHUNK_SIZE = 3500;
+    // Use 1000 chars so UTF-8 Cyrillic (2 bytes/char) is max ~2000 bytes, safely under Telegram's 4096-byte limit
+    const CHUNK_SIZE = 1000;
     if (raw.length <= CHUNK_SIZE) {
       cs.setItem(key, raw, () => {
         try { cs.removeItem(key + '_chunks', () => {}); } catch (e) {}
@@ -8722,6 +8869,7 @@ function setCloudData(key, obj, cb) {
       return;
     }
     const total = Math.ceil(raw.length / CHUNK_SIZE);
+    if (total > 35) { if (cb) cb(); return; }
     cs.setItem(key + '_chunks', String(total), () => {
       let saved = 0;
       for (let i = 0; i < total; i++) {
@@ -8761,209 +8909,145 @@ function resolveCloudData(key, items, cb) {
 }
 
 async function syncAccountToServer() {
-  const dynamicId = getOrCreateUserIdentity();
-  const accountKey = state.accountKey || dynamicId.key;
+  const accountKey = getCleanAccountKey();
   const nowTs = Date.now();
   state.lastSyncTimestamp = nowTs;
+  state.cloudSynced = true;
+  localStorage.setItem('dws_cloud_seeded_v3_' + accountKey, 'true');
 
-  // CloudStorage with Chunking to bypass 4KB limit
-  const cs = window.Telegram?.WebApp?.CloudStorage;
-  if (cs && cs.setItem) {
-    try {
-      setCloudData('dws_crm', state.crm || []);
-      setCloudData('dws_income', state.income || { records: [], currency: '₴' });
-      setCloudData('dws_expenses', state.expenses || { records: [], currency: '₴' });
-      setCloudData('dws_taken_leads', [...(state.takenLeadIds || [])]);
-      setCloudData('dws_profile', state.profile || {});
-      cs.setItem('dws_sync_ts', String(nowTs), () => {});
-    } catch (e) {}
+  if (isPushingSync) {
+    pendingPushSync = true;
+    return;
   }
+  isPushingSync = true;
 
-  // Server API
   try {
-    const res = await fetch('/api/account/sync', {
+    const snapshot = buildAccountSnapshot(nowTs);
+
+    // 1. Universal Cloud KV Store (Primary cross-device sync for Phone & Laptop on Vercel/Telegram/Browser)
+    const kvPromise = fetch(getCloudKvRecordUrl(accountKey), {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(snapshot)
+    }).catch(() => null);
+
+    // 2. Telegram CloudStorage (Secondary sync inside Telegram client)
+    const cs = window.Telegram?.WebApp?.CloudStorage;
+    if (cs && cs.setItem) {
+      try {
+        setCloudData('dws_crm', snapshot.crm);
+        setCloudData('dws_income', snapshot.income);
+        setCloudData('dws_expenses', snapshot.expenses);
+        setCloudData('dws_taken_leads', snapshot.takenLeadIds);
+        setCloudData('dws_profile', snapshot.profile);
+        cs.setItem('dws_sync_ts', String(nowTs), () => {});
+      } catch (e) {}
+    }
+
+    // 3. Backend Server API (if running locally)
+    const apiPromise = fetch('/api/account/sync', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + (localStorage.getItem('dws_master_token') || 'DWS-2026-STUDIO-ZALIZKO-PRO')
       },
-      body: JSON.stringify({
-        accountKey: accountKey,
-        username: state.accountUser || dynamicId.username,
-        name: state.accountName || dynamicId.name,
-        role: state.userRole || dynamicId.role,
-        avatar: state.userAvatar || '',
-        crm: state.crm || [],
-        income: state.income || { records: [], currency: '₴' },
-        expenses: state.expenses || { records: [], currency: '₴' },
-        profile: state.profile || {},
-        takenLeadIds: [...state.takenLeadIds]
-      })
-    });
-    if (res && res.ok) {
-      const json = await res.json();
-      if (json.data && json.data.updatedAt) {
-        state.lastSyncTimestamp = new Date(json.data.updatedAt).getTime();
-      }
-    }
+      body: JSON.stringify(snapshot)
+    }).catch(() => null);
+
+    await Promise.all([kvPromise, apiPromise]);
   } catch (err) {
     console.warn('Sync error:', err);
+  } finally {
+    isPushingSync = false;
+    if (pendingPushSync) {
+      pendingPushSync = false;
+      syncAccountToServer();
+    }
   }
 }
 
-let isSyncingRemote = false;
-
 function renderCurrentTab() {
-  if (state.currentTab === 'tab-leads') renderLeads();
+  if (state.currentTab === 'tab-leads') filterAndRenderLeads();
   else if (state.currentTab === 'tab-crm') renderCrm();
   else if (state.currentTab === 'tab-income') renderIncome();
   else if (state.currentTab === 'tab-expenses') renderExpenses();
-  else if (state.currentTab === 'tab-profile') renderProfile();
-  else if (state.currentTab === 'tab-scrape') renderScrapes();
-  else if (state.currentTab === 'tab-nfc-radar') renderNfcRadar();
+  else if (state.currentTab === 'tab-profile') {
+    updateProfileHeaderUI();
+    fetchProfile();
+    updateSourcesDisplay();
+  }
+  else if (state.currentTab === 'tab-scrape' && typeof renderScrapes === 'function') renderScrapes();
+  else if (state.currentTab === 'tab-nfc-radar' && typeof renderNfcRadar === 'function') renderNfcRadar();
   else if (state.currentTab === 'tab-requisites') renderRequisitesTab();
 }
 
 async function pullLatestDataFromServer(force = false) {
-  if (isSyncingRemote) return;
-  const key = state.accountKey || getOrCreateUserIdentity().key;
+  if (isSyncingRemote || isPushingSync) return;
+  const key = getCleanAccountKey();
   if (!key) return;
 
-  // 1. Telegram CloudStorage
-  const cs = window.Telegram?.WebApp?.CloudStorage;
-  if (cs && cs.getItems) {
-    try {
-      cs.getItems(['dws_crm', 'dws_crm_chunks', 'dws_income', 'dws_income_chunks', 'dws_expenses', 'dws_expenses_chunks', 'dws_profile', 'dws_taken_leads', 'dws_sync_ts'], (err, res) => {
-        if (!err && res) {
-          const cloudTs = Number(res.dws_sync_ts) || 0;
-          if (cloudTs > (state.lastSyncTimestamp || 0) || force) {
-            resolveCloudData('dws_crm', res, (rawCrm) => {
-              let changed = false;
-              if (rawCrm && rawCrm !== JSON.stringify(state.crm)) {
-                try {
-                  state.crm = JSON.parse(rawCrm);
-                  localStorage.setItem('dws_crm', rawCrm);
-                  changed = true;
-                } catch (e) {}
-              }
-              resolveCloudData('dws_income', res, (rawInc) => {
-                if (rawInc && rawInc !== JSON.stringify(state.income)) {
-                  try {
-                    state.income = JSON.parse(rawInc);
-                    localStorage.setItem('dws_income', rawInc);
-                    changed = true;
-                  } catch (e) {}
-                }
-                resolveCloudData('dws_expenses', res, (rawExp) => {
-                  if (rawExp && rawExp !== JSON.stringify(state.expenses)) {
-                    try {
-                      state.expenses = JSON.parse(rawExp);
-                      localStorage.setItem('dws_expenses', rawExp);
-                      changed = true;
-                    } catch (e) {}
-                  }
-                  if (res.dws_taken_leads) {
-                    try {
-                      const arr = JSON.parse(res.dws_taken_leads);
-                      if (arr.length !== state.takenLeadIds.size) {
-                        state.takenLeadIds = new Set(arr);
-                        localStorage.setItem('dws_taken_leads', res.dws_taken_leads);
-                        changed = true;
-                      }
-                    } catch (e) {}
-                  }
-                  if (res.dws_profile && res.dws_profile !== JSON.stringify(state.profile)) {
-                    try {
-                      state.profile = { ...state.profile, ...JSON.parse(res.dws_profile) };
-                      localStorage.setItem('dws_profile', res.dws_profile);
-                      changed = true;
-                    } catch (e) {}
-                  }
-                  if (changed) {
-                    state.lastSyncTimestamp = cloudTs || Date.now();
-                    if (state.activeCrmLead) {
-                      const cur = state.crm.find(c => c.id === state.activeCrmLead.id);
-                      if (cur) {
-                        state.activeCrmLead = cur;
-                        renderCrmOrdersList();
-                      }
-                    }
-                    renderCurrentTab();
-                  }
-                });
-              });
-            });
-          }
-        }
-      });
-    } catch (e) {}
-  }
-
-  // 2. Server API polling
   try {
     isSyncingRemote = true;
-    const res = await fetch('/api/account/' + encodeURIComponent(key), {
+    let remoteData = null;
+    let remoteTs = 0;
+
+    // 1. Poll Universal Cloud KV Store
+    const kvRes = await fetch(getCloudKvRecordUrl(key) + '&_t=' + Date.now(), {
+      cache: 'no-store'
+    }).catch(() => null);
+
+    if (kvRes && kvRes.ok) {
+      const kvJson = await kvRes.json().catch(() => null);
+      if (kvJson && typeof kvJson === 'object') {
+        remoteTs = typeof kvJson.updatedAt === 'number' ? kvJson.updatedAt : new Date(kvJson.updatedAt || 0).getTime();
+        remoteData = kvJson;
+      }
+    }
+
+    // 2. Fallback/Compare with Local Backend API
+    const apiRes = await fetch('/api/account/' + encodeURIComponent(key), {
       cache: 'no-store',
       headers: {
         'Authorization': 'Bearer ' + (localStorage.getItem('dws_master_token') || 'DWS-2026-STUDIO-ZALIZKO-PRO')
       }
     }).catch(() => null);
-    if (res && res.ok) {
-      const json = await res.json();
-      if (json.success && json.data) {
-        const d = json.data;
-        const serverTs = d.updatedAt ? new Date(d.updatedAt).getTime() : 0;
-        let hasChanges = false;
 
-        if (serverTs > (state.lastSyncTimestamp || 0) || force) {
-          if (Array.isArray(d.crm) && JSON.stringify(d.crm) !== JSON.stringify(state.crm)) {
-            state.crm = d.crm;
-            localStorage.setItem('dws_crm', JSON.stringify(state.crm));
-            hasChanges = true;
-          }
-          if (d.income && Array.isArray(d.income.records) && JSON.stringify(d.income) !== JSON.stringify(state.income)) {
-            state.income = d.income;
-            localStorage.setItem('dws_income', JSON.stringify(state.income));
-            hasChanges = true;
-          }
-          if (d.expenses && Array.isArray(d.expenses.records) && JSON.stringify(d.expenses) !== JSON.stringify(state.expenses)) {
-            state.expenses = d.expenses;
-            localStorage.setItem('dws_expenses', JSON.stringify(state.expenses));
-            hasChanges = true;
-          }
-          if (Array.isArray(d.takenLeadIds) && d.takenLeadIds.length !== state.takenLeadIds.size) {
-            d.takenLeadIds.forEach(id => state.takenLeadIds.add(id));
-            localStorage.setItem('dws_taken_leads', JSON.stringify([...state.takenLeadIds]));
-            hasChanges = true;
-          }
-          if (d.profile && JSON.stringify(d.profile) !== JSON.stringify(state.profile)) {
-            state.profile = { ...state.profile, ...d.profile };
-            localStorage.setItem('dws_profile', JSON.stringify(state.profile));
-            hasChanges = true;
-          }
-          if (hasChanges) {
-            state.lastSyncTimestamp = serverTs || Date.now();
-            if (state.activeCrmLead) {
-              const cur = state.crm.find(c => c.id === state.activeCrmLead.id);
-              if (cur) {
-                state.activeCrmLead = cur;
-                renderCrmOrdersList();
-              }
-            }
-            renderCurrentTab();
-          }
+    if (apiRes && apiRes.ok) {
+      const apiJson = await apiRes.json().catch(() => null);
+      if (apiJson && apiJson.success && apiJson.data) {
+        const apiTs = apiJson.data.updatedAt ? new Date(apiJson.data.updatedAt).getTime() : 0;
+        if (apiTs > remoteTs) {
+          remoteTs = apiTs;
+          remoteData = apiJson.data;
         }
       }
     }
+
+    if (remoteData && (remoteTs > (state.lastSyncTimestamp || 0) || (force && remoteData.deviceId !== DWS_DEVICE_ID))) {
+      if (isPushingSync) return;
+      const changed = applyAccountSnapshot(remoteData, false);
+      state.lastSyncTimestamp = Math.max(state.lastSyncTimestamp || 0, remoteTs || Date.now());
+      if (changed) {
+        updateProfileHeaderUI();
+        if (state.activeCrmLead) {
+          const cur = (state.crm || []).find(c => c.id === state.activeCrmLead.id);
+          if (cur) {
+            state.activeCrmLead = cur;
+            renderCrmOrdersList();
+          }
+        }
+        renderCurrentTab();
+      }
+    }
   } catch (err) {
-    // Polling error ignored
+    // Silent background polling
   } finally {
     isSyncingRemote = false;
   }
 }
 
 function startAutoSyncEngine() {
-  setInterval(() => pullLatestDataFromServer(false), 3000);
+  setInterval(() => pullLatestDataFromServer(false), 2500);
   window.addEventListener('focus', () => pullLatestDataFromServer(true));
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden) pullLatestDataFromServer(true);
@@ -9128,7 +9212,8 @@ function loadLocalScrapes() {
 }
 
 function saveLocalScrapes(jobs) {
-  localStorage.setItem('dws_scrapes', JSON.stringify(jobs.filter(j => j.local && !j.demo)));
+  localStorage.setItem('dws_scrapes', JSON.stringify(jobs.filter(j => !j.demo)));
+  if (typeof syncAccountToServer === 'function') syncAccountToServer();
 }
 
 function saveScrapeJob(job) {
@@ -9750,9 +9835,8 @@ async function sendScrapeToTelegram(job, cat, btn) {
 
 async function deleteScrapeJob(job) {
   if (!confirm('Видалити цей пошук?')) return;
-  if (job.local) {
-    saveLocalScrapes(loadLocalScrapes().filter(j => j.id !== job.id));
-  } else {
+  saveLocalScrapes(loadLocalScrapes().filter(j => j.id !== job.id));
+  if (!job.local) {
     await fetch(`/api/scrapes/${encodeURIComponent(job.id)}`, { method: 'DELETE' }).catch(() => {});
   }
   scrapeState.openJobs.delete(job.id);
@@ -10193,6 +10277,7 @@ function loadLocalNfcJobs() {
 
 function saveLocalNfcJobs(jobs) {
   localStorage.setItem('dws_nfc_radars', JSON.stringify(jobs));
+  if (typeof syncAccountToServer === 'function') syncAccountToServer();
 }
 
 function pluralNfcVenues(n) {

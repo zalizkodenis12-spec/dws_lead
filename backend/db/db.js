@@ -513,7 +513,15 @@ export const db = {
     if (payload.name) acc.name = payload.name;
     if (payload.avatar !== undefined) acc.avatar = payload.avatar;
     if (payload.role !== undefined) acc.role = payload.role;
-    acc.updatedAt = new Date().toISOString();
+    if (payload.theme) acc.theme = payload.theme;
+    if (payload.lang) acc.lang = payload.lang;
+    if (payload.requisites) acc.requisites = payload.requisites;
+    if (payload.sources) acc.sources = payload.sources;
+    if (Array.isArray(payload.scrapes)) acc.scrapes = payload.scrapes;
+    if (Array.isArray(payload.nfcJobs)) acc.nfcJobs = payload.nfcJobs;
+    if (Array.isArray(payload.crmPinnedStages)) acc.crmPinnedStages = payload.crmPinnedStages;
+    if (payload.deviceId) acc.deviceId = payload.deviceId;
+    acc.updatedAt = payload.updatedAt || Date.now();
     data.accounts[cleanKey] = acc;
     writeDb(data);
     return acc;
