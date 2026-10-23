@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792752809399-858",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "🇺🇦 Оголошення UKRAINE-CHAT 🇺🇦",
+      "sourceUsername": "@DIPLOMATIA_UA",
+      "authorName": "Даша",
+      "authorUsername": "@dashk_7654",
+      "title": "Возьму несколько человек к себе на работу в Трафик компанию. Оплата большая...",
+      "text": "Возьму несколько человек к себе на работу в Трафик компанию. Оплата большая, всему научу, за доп инфой в ЛС.",
+      "date": "2026-10-23T10:53:29.399Z",
+      "dateFormatted": "Сьогодні, 13:53",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792752723452-450",
       "category": "development",
       "categoryName": "Веброзробка",
