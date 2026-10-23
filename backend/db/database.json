@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792766172342-590",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "React Native & Expo Jobs - работа связанная с react-native",
+      "sourceUsername": "@react_native_jobs",
+      "authorName": "ՍոնՅա Արզումանյան",
+      "authorUsername": "@SonyaArzumanyan",
+      "title": "Hi everyone!",
+      "text": "Hi everyone!\nOne of my friends is currently looking for new opportunities as a Frontend Developer.\nHe has around 5 years of experience working with React and Next.js to build user-friendly, high-performance interfaces, as well as developing backend systems with NestJS.\nIf you know of any relevant projects, please feel free to contact me.\nThank you for your time!",
+      "date": "2026-10-23T14:36:12.341Z",
+      "dateFormatted": "Сьогодні, 17:36",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792765735323-861",
       "category": "montage",
       "categoryName": "Монтаж",
