@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792746266574-901",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Робота Житомир 🇺🇦 Вакансії",
+      "sourceUsername": "@rabotay_zhitomire",
+      "authorName": "Вакансії",
+      "authorUsername": "@_vadimv",
+      "title": "🌍 VISA MANAGER | УДАЛЁНКА",
+      "text": "🌍 VISA MANAGER | УДАЛЁНКА\n\n💸 $600 фикс + бонусы за депозиты + пассивный доход с каждой дальнейшей оплаты!\n\nИщем менеджеров для консультации клиентов по рабочим визам и миграции\n\n💼 Обязанности: общение с входящими клиентами в чате и по телефону, консультации и сопровождение до первого платежа.\n\n💰 Доход:\n\n• $600 фиксированная ставка\n• $100 за каждый депозит\n• 15% с последующих оплат клиентов\n•  обучение оплачивается - 100$\n\nГорячий трафик\n📩 От 10–15 входящих лидов в день.\n\n⏰ График: 08:00–18:00, при выполнении плана — до 17:00.\n\nХочешь узнать больше ,пиши:\n@hr_vadimv",
+      "date": "2026-10-23T09:04:26.573Z",
+      "dateFormatted": "Сьогодні, 12:04",
+      "budget": 25000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 78,
+      "aiSummary": "Замовлення: маркетинг з бюджетом 25000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792745608592-504",
       "category": "development",
       "categoryName": "Веброзробка",
