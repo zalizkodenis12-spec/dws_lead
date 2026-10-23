@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792754671386-84",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Yurovska Helen",
+      "authorUsername": "@Helen_Yurovska",
+      "title": "Hiring #UGCFarm #Head #RemoteWork",
+      "text": "Hiring #UGCFarm #Head #RemoteWork\n\n🚀 Head of Real UGC Farm | Remote\n\nЯк перетворити мережу креаторів на прибутковий бізнес? Ми шукаємо лідера, який готовий масштабувати проєкт від перших клієнтів до міжнародної мережі з 1 000+ креаторів!\n\n🔥 Ваші виклики:\n·       Масштабувати мережу UGC-креаторів у різних країнах.\n·       Розвивати продажі та залучати міжнародні бренди.\n·       Будувати ефективну бізнес-модель і контролювати unit-економіку та прибутковість напряму.\n·       Перевірити гіпотезу й запустити маркетплейс для брендів і креаторів.\n·       Формувати команду, оптимізувати процеси та відповідати за бізнес-результат.\n\n🎯 Що важливо:\n·       2+ роки досвіду з відповідальністю за виручку та маржу.\n·       Досвід продажу маркетингових послуг або контенту брендам.\n·       Управління віддаленою мережею від 100 виконавців.\n·       Розуміння TikTok, Reels, Shorts та аналітики.\n·       Англійська від B2 і практичне використання AI.\n\n📍 Формат: Full-time, remote.\nЦе можливість не просто керувати процесами, а побудувати й масштабувати власний бізнес-напрям із нуля.\n\n📩 Більше деталей -  ТГ @Helen_Yurovska",
+      "date": "2026-10-23T11:24:31.385Z",
+      "dateFormatted": "Сьогодні, 14:24",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792754637876-9005",
       "category": "marketing",
       "categoryName": "Маркетинг",
