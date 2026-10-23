@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792773988062-292",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "neer",
+      "authorUsername": "@neer",
+      "title": "🔥 Резюме Frontend Engineer (Vue / Nuxt) от @umarovsm, от $2 000, Москва, у...",
+      "text": "🔥 Резюме Frontend Engineer (Vue / Nuxt) от @umarovsm, от $2 000, Москва, удаленно, фуллтайм\n\n⭐ Чёткие и измеримые метрики перформанса: Core Web Vitals +60%, сжатие бандла на 30–40%, онбординг быстрее в 2 раза\n⭐ Реальные продукты с контекстом задач: от AI-чата с SSE и RTL до мультитенантной CRM и Word-аддона\n⭐ Наличие живого продакшена (fotostudio-light.ru), GitHub и актуального тулинга вроде Cursor/Claude Code",
+      "date": "2026-10-23T16:46:28.061Z",
+      "dateFormatted": "Сьогодні, 19:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792773254659-160",
       "category": "marketing",
       "categoryName": "Маркетинг",
