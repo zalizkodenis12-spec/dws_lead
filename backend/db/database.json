@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792780344835-964",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "avlo",
+      "authorUsername": "@avlo",
+      "title": "Шукаємо Meta Ads Specialist (Middle) 📊",
+      "text": "Шукаємо Meta Ads Specialist (Middle) 📊\n\nПотрібен спеціаліст для ведення клієнтських рекламних проєктів у Facebook та Instagram\n\nЩо важливо:\n• 1+ року досвіду з Meta Ads\n• Meta Pixel, Events Manager, Conversions API\n• аудиторії, ретаргетинг, креативи\n• аналіз CPL, CPA та якості лідів\n• тестування й масштабування кампаній\n• самостійність та відповідальність за результат\n\nДосвід із польським ринком - буде плюсом. Бажано Варшава, але розглянемо кандидатів з інших міст 🙌🏻￼\n\nПроєктна співпраця | Remote | Оплата за проєкт | Гнучке завантаження\n\nДля відгуку:\nkyrychenkopavlo.work@gmail.com\ninst: pavlokyrychenkooo\n\n#metaads #таргетованареклама #роботаваршава #вакансія",
+      "date": "2026-10-23T18:32:24.835Z",
+      "dateFormatted": "Сьогодні, 21:32",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Польща",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792780207253-599",
       "category": "marketing",
       "categoryName": "Маркетинг",
