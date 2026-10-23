@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792747139910-575",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "tend",
+      "authorUsername": "@tend",
+      "title": "🔥 Резюме Senior Frontend & Game Developer от @self_noname, $2 000 – $3 000...",
+      "text": "🔥 Резюме Senior Frontend & Game Developer от @self_noname, $2 000 – $3 000, Минск, удаленка\n\n⭐ Редкий комбо-стек: iGaming-математика со слотами на PixiJS/Spine плюс on-chain разработка под Solana и EVM\n⭐ Конкретные измеримые результаты: от −35% нагрузки на ноды и −40% багов до выдерживания 1000+ concurrent-сессий на вебсокетах\n⭐ Сквозное понимание индустрии: не просто верстка кнопок, а расчет GGR/NGR, PWA, антифрод и платежки",
+      "date": "2026-10-23T09:18:59.907Z",
+      "dateFormatted": "Сьогодні, 12:18",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792746266574-901",
       "category": "marketing",
       "categoryName": "Маркетинг",
