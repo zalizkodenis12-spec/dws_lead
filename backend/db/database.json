@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792778287579-568",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "SMM-ЧАТ | Telegram • Instagram • VK",
+      "sourceUsername": "@smm_chat",
+      "authorName": "Оля | Матрица Судьбы",
+      "authorUsername": "@voronkovski",
+      "title": "#помогу #монтажрилс",
+      "text": "#помогу #монтажрилс\n\nСоберу 1 Reels бесплатно — на вашем материале.\n\nСмотрите не на слова, а на результат: хук в первые секунды, склейки по смыслу и темпу, субтитры, которые читаются без звука.\n\nЗайдёт — работаем дальше. Не зайдёт — просто заберёте готовый ролик.\n\nНапишите в ЛС @voronkovski сферу и задачу — предложу, какой ролик собрать.",
+      "date": "2026-10-23T17:58:07.579Z",
+      "dateFormatted": "Сьогодні, 20:58",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792777316069-975",
       "category": "marketing",
       "categoryName": "Маркетинг",
