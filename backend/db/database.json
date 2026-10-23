@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792750056109-701",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "tiktok_ads",
+      "subcategoryName": "TikTok реклама",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "eql. Nika",
+      "authorUsername": "@eql_nika",
+      "title": "Привіт усім! ✨",
+      "text": "Привіт усім! ✨\n\nМаю кілька актуальних вакансій, можливо, щось зацікавить 😉\n\n🔥 Media Buyer FB Gambling\n🔥 Media Buyer TikTok Gambling\n🔥 Media Buyer FB Dating\n🌿 Affiliate Manager Nutra\n🎰 Affiliate Manager Gambling\n💻 Customer Support Fintech (Варшава)\n🎯 Media Buyer Unity Ads\n🚀 Head of Farm\n\nШукаємо спеціалістів від рівня Middle 💪🏻\n\nРозглядаєш щось із цього? Пиши - розповім детальніше про умови, команди та можливості 🙌🏻\n\n📩 Контакт: @eql_nika 🌸",
+      "date": "2026-10-23T10:07:36.109Z",
+      "dateFormatted": "Сьогодні, 13:07",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Польща",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: tiktok реклама.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792750007190-219",
       "category": "montage",
       "categoryName": "Монтаж",
