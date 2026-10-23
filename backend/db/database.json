@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792767440001-539",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Sofiya",
+      "authorUsername": "@tg_id_637332793",
+      "title": "Шукаю SMM-спеціаліста тільки у Варшаві для зйомки 🎬",
+      "text": "Шукаю SMM-спеціаліста тільки у Варшаві для зйомки 🎬",
+      "date": "2026-10-23T14:57:20.001Z",
+      "dateFormatted": "Сьогодні, 17:57",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Польща",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792767386999-989",
       "category": "development",
       "categoryName": "Веброзробка",
