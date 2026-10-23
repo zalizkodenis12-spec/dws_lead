@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792770721880-145",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Тетяна 👩🏻‍💻 Цюпило",
+      "authorUsername": "@tg_id_8753867732",
+      "title": "✨ Хочеш більше клієнтів та продажів для свого бізнесу?",
+      "text": "✨ Хочеш більше клієнтів та продажів для свого бізнесу?\n\nДопоможу налаштувати рекламу, яка працює на результат 📈\n\n📲 Facebook та Instagram\n🎯 Налаштування й ведення реклами\n💡 Стратегія, консультації та аудит рекламного кабінету\n🤖 Створення сайтів і чат-ботів\n\nДопоможу просувати твою справу та залучати нових клієнтів 💗\n\n📩 За деталями пиши в особисті повідомлення — із задоволенням проконсультую!",
+      "date": "2026-10-23T15:52:01.879Z",
+      "dateFormatted": "Сьогодні, 18:52",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1792770247766-130",
       "category": "marketing",
       "categoryName": "Маркетинг",
