@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792763222304-778",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Irina_MK26",
+      "authorUsername": "@Irina_MK26",
+      "title": "🤩 Вакансія: Head of Real UGC Farm | віддалена робота, full time",
+      "text": "🤩 Вакансія: Head of Real UGC Farm | віддалена робота, full time\n\n📍 Віддалено, full time\n\nЯк перетворити мережу креаторів на прибутковий бізнес?\nМи шукаємо лідера, який готовий масштабувати проєкт від перших клієнтів до міжнародної мережі з 1 000+ креаторів!\n\nВаші виклики:\n· Масштабувати мережу UGC-креаторів у різних країнах.\n· Розвивати продажі та залучати міжнародні бренди.\n· Будувати ефективну бізнес-модель і контролювати unit-економіку та прибутковість напряму.\n· Перевірити гіпотезу й запустити маркетплейс для брендів і креаторів.\n· Формувати команду, оптимізувати процеси та відповідати за бізнес-результат.\n\nЩо важливо:\n· 2+ роки досвіду з відповідальністю за виручку та маржу.\n· Досвід продажу маркетингових послуг або контенту брендам.\n· Управління віддаленою мережею від 100 виконавців.\n· Розуміння TikTok, Reels, Shorts та аналітики.\n· Англійська від B2 і практичне використання AI.\n\nДля звʼязку @Helen_Yurovska ✉️\n\n#UGCFarm #Head #RemoteWork #UGC\n\n🔗 Більше вакансій в нашому чаті\nРозмістити вакансію @Irina_MK26",
+      "date": "2026-10-23T13:47:02.304Z",
+      "dateFormatted": "Сьогодні, 16:47",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792761838168-3771",
       "category": "development",
       "categoryName": "Веброзробка",
