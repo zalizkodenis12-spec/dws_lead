@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792758685790-964",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "telegram_ads",
+      "subcategoryName": "Telegram реклама",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Karina HRG",
+      "authorUsername": "@ling",
+      "title": "🎰 Media Buyer (Telegram Ads / Gambling) 🎲",
+      "text": "🎰 Media Buyer (Telegram Ads / Gambling) 🎲\n\n🚀 Toba Group — група digital-компаній із 7-річним досвідом, 100+ людей у команді та 50+ GEO. Шукаємо Media Buyer у Toba Traffic, який вміє заливати Telegram Ads і масштабувати зв’язки в Gambling!\n\n♦️ Що важливо?\n\n• Досвід роботи з Telegram Ads у Gambling від 6 місяців;\n• Розуміння форматів реклами, воронок і роботи з креативами;\n• Уміння самостійно запускати, тестувати, аналізувати та масштабувати кампанії.\n\n♦️ Що пропонуємо?\n• Віддалений формат і гнучкий графік;\n• Конкурентну ставку + сильну бонусну сітку без прихованих KPI;\n• Безлімітні бюджети та стабільні трастові акаунти;\n• Власну CRM, AI-рішення та inhouse PWA;\n• Сильну команду дизайнерів, автономність і мінімум бюрократії;\n• Пряму роботу з рекламодавцями з усього світу та доступ до власних продуктів.\n\n📩 Є досвід у TG Ads? Пиши мені в Telegram — @karina_toba",
+      "date": "2026-10-23T12:31:25.790Z",
+      "dateFormatted": "Сьогодні, 15:31",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: telegram реклама.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792758238792-7472",
       "category": "development",
       "categoryName": "Веброзробка",
