@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1792780207253-599",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "seo",
+      "subcategoryName": "SEO оптимізація",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "anna_nnich",
+      "authorUsername": "@anna_nnich",
+      "title": "🚀 Шукаємо Junior SEO Specialist у Voice Marketing!",
+      "text": "🚀 Шукаємо Junior SEO Specialist у Voice Marketing!\n\nМаєш сертифікат з курсу по SEO й хочеш вирости у навичках поруч із сильним спеціалістом? Тобі до нас 👋\n\nКоротко про вакансію:\n• Повний Remote (09:00-18:00)\n• ЗП: 300-400$\n• Покриваємо витрати на навчання та надаємо реальні проекти у роботу разом з нашим спеціалістом\n• Робота з AI-оптимізацією (GEO/AIO) та міжнародними проєктами\n\nЩо чекаємо: базове розуміння GSC, GA4, Ahrefs/Serpstat та бажання лупати цю скалу 🔥\n\n💬 Надсилай резюме: @anna_nnich 📩\n\n#SEO #вакансія",
+      "date": "2026-10-23T18:30:07.214Z",
+      "dateFormatted": "Сьогодні, 21:30",
+      "budget": 16500,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 81,
+      "aiSummary": "Замовлення: seo оптимізація з бюджетом 16500 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1792779853436-9562",
       "category": "development",
       "categoryName": "Веброзробка",
