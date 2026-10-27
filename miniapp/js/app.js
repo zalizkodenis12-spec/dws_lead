@@ -8660,10 +8660,20 @@ function buildAccountSnapshot(nowTs = Date.now()) {
 
   const cleanCrm = stripDemoItemsFromCrm(state.crm);
   const cleanExpenses = stripDemoItemsFromExpenses(state.expenses?.records);
+  let seenPlaces = [];
+  let searchWaveOffsets = {};
+  try {
+    seenPlaces = JSON.parse(localStorage.getItem('dws_seen_places') || '[]');
+    if (!Array.isArray(seenPlaces)) seenPlaces = [];
+  } catch (e) { seenPlaces = []; }
+  try {
+    searchWaveOffsets = JSON.parse(localStorage.getItem('dws_search_wave_offsets') || '{}');
+    if (!searchWaveOffsets || typeof searchWaveOffsets !== 'object') searchWaveOffsets = {};
+  } catch (e) { searchWaveOffsets = {}; }
 
   return {
     app: 'DWS Lead',
-    version: '4.6.1',
+    version: '4.6.2',
     accountKey,
     deviceId: DWS_DEVICE_ID,
     sourceDevice: isMobileDevice() ? 'phone' : 'laptop',
@@ -8689,7 +8699,9 @@ function buildAccountSnapshot(nowTs = Date.now()) {
     sources: state.sources || {},
     takenLeadIds: [...(state.takenLeadIds || [])],
     scrapes: localScrapes,
-    nfcJobs: localNfc
+    nfcJobs: localNfc,
+    seenPlaces: seenPlaces.slice(-15000),
+    searchWaveOffsets
   };
 }
 
@@ -8839,6 +8851,32 @@ function applyAccountSnapshot(d, mergeWithLocal = false, preferLocalOnMerge = fa
       nfcRadarState.jobs = nextNfc;
       hasChanges = true;
     }
+  }
+
+  // 10b. Seen Places Registry & Search Wave Offsets (Cross-Device Deduplication)
+  if (Array.isArray(d.seenPlaces) && d.seenPlaces.length > 0) {
+    try {
+      const localSeen = JSON.parse(localStorage.getItem('dws_seen_places') || '[]');
+      const mergedSeen = Array.from(new Set([...(Array.isArray(localSeen) ? localSeen : []), ...d.seenPlaces]));
+      if (mergedSeen.length !== (Array.isArray(localSeen) ? localSeen.length : 0)) {
+        localStorage.setItem('dws_seen_places', JSON.stringify(mergedSeen.slice(-20000)));
+      }
+    } catch (e) {}
+  }
+  if (d.searchWaveOffsets && typeof d.searchWaveOffsets === 'object') {
+    try {
+      const localWaves = JSON.parse(localStorage.getItem('dws_search_wave_offsets') || '{}') || {};
+      let waveChanged = false;
+      for (const [wk, wv] of Object.entries(d.searchWaveOffsets)) {
+        if ((Number(wv) || 0) > (Number(localWaves[wk]) || 0)) {
+          localWaves[wk] = Number(wv);
+          waveChanged = true;
+        }
+      }
+      if (waveChanged) {
+        localStorage.setItem('dws_search_wave_offsets', JSON.stringify(localWaves));
+      }
+    } catch (e) {}
   }
 
   // 11. Account Header Identity (Name, Username, Avatar, Role)
@@ -9397,7 +9435,7 @@ function renderScrapes() {
     const isOpen = scrapeState.openJobs.has(job.id);
     const date = new Date(job.createdAt).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
     let pill = '';
-    if (job.status === 'running') pill = '<span class="scrape-status-pill running">Шукаю…</span>';
+    if (job.status === 'running') pill = `<span class="scrape-status-pill running">${escapeHtml(job.progressText || 'Шукаю…')}</span>`;
     else if (job.status === 'error') pill = '<span class="scrape-status-pill error">Помилка</span>';
     else if (job.demo) pill = '<span class="scrape-status-pill demo">Демо</span>';
     else pill = '<span class="scrape-status-pill live">Apify Live</span>';
@@ -9527,6 +9565,271 @@ function renderScrapeCat(job, cat) {
     </div>`;
 }
 
+// ============================================================
+// GLOBAL SEEN BUSINESSES REGISTRY & SMART DISTRICT QUERY ENGINE
+// Prevents returning duplicate venues on repeated searches and
+// rotates across city neighborhoods/sub-niches to find 100% NEW venues
+// ============================================================
+const CLIENT_CITY_DISTRICTS = {
+  'київ': ['Печерськ', 'Поділ', 'Оболонь', 'Позняки', 'Осокорки', 'Голосіївський', 'Шевченківський', 'Лук\'янівка', 'Солом\'янський', 'Троєщина', 'Дарниця', 'Лівобережна', 'Святошин', 'Нивки', 'Теремки', 'Виноградар', 'Шулявка', 'Деміївка', 'Березняки', 'Русанівка', 'Золоті Ворота', 'Хрещатик', 'Воздвиженка', 'Кловська'],
+  'вінниця': ['Вишенька', 'Замостя', 'Поділля', 'Слов\'янка', 'Центр', 'Урожай', 'Старе місто', 'Тяжилів', 'Київська', 'Корея', 'П\'ятничани', 'Академічний', 'Пирогова', 'Соборна', 'Келецька', 'Коцюбинського', 'Юність', 'Хмельницьке шосе', 'Барське шосе', 'Електромережа', 'Сабарів', 'Військове містечко'],
+  'львів': ['Галицький район', 'Франківський район', 'Сихів', 'Шевченківський район', 'Личаківський район', 'Залізничний район', 'Площа Ринок', 'Проспект Свободи', 'Наукова', 'Чорновола', 'Кульпарківська', 'Городоцька', 'Стрийська', 'Зелена', 'Левандовка', 'Рясне', 'Пасічна', 'Новий Львів'],
+  'одеса': ['Приморський район', 'Аркадія', 'Таїрова', 'Черемушки', 'Фонтан', 'Котовського', 'Дерибасівська', 'Центр', 'Французький бульвар', 'Малиновський район', 'Пересип', 'Молдаванка', 'Ланжерон', 'Катерининська', 'Рішельєвська'],
+  'дніпро': ['Соборний район', 'Шевченківський район', 'Центральний район', 'Перемога', 'Тополя', 'Сонячний', 'Лівобережний', 'Гагаріна', 'Яворницького', 'Калинова', 'Робоча', 'Кірова', 'Тітова', 'Правда', 'Кам\'янський'],
+  'харків': ['Шевченківський район', 'Київський район', 'Салтівка', 'Олексіївка', 'Наукова', 'Центр', 'Сумська', 'Пушкінська', 'Холодна Гора', 'Нові Будинки', 'Павлове Поле', 'Гагаріна', 'Ботанічний сад'],
+  'тернопіль': ['Центр', 'Дружба', 'Сонячний', 'Східний', 'Аляска', 'БАМ', 'Новий Світ', 'Канада', 'Кутківці', 'Оболоня', 'Руська', 'Злуки', 'Мазепи'],
+  'івано-франківськ': ['Центр', 'Пасічна', 'Каскад', 'Позитрон', 'БАМ', 'Кішлак', 'Майзлі', 'Гірка', 'Набережна', 'Незалежності', 'Коновальця', 'Чорновола'],
+  'хмельницький': ['Центр', 'Виставка', 'Озерна', 'Південно-Західний', 'Ракове', 'Гречани', 'Дубове', 'Заріччя', 'Кам\'янецька', 'Проскурівська', 'Подільська'],
+  'чернівці': ['Центр', 'Кобилянської', 'Головна', 'Гравітон', 'Роша', 'Калічанка', 'Садгора', 'Південно-Кільцева', 'Героїв Майдану', 'Руська', 'Університетська'],
+  'рівне': ['Центр', 'Ювілейний', 'Північний', 'Щасливе', 'Боярка', 'Басів Кут', 'Золотіїв', 'Соборна', 'Київська', 'Грушевського'],
+  'луцьк': ['Центр', '33-й квартал', '40-й квартал', '55-й мікрорайон', 'ГПЗ', 'Теремно', 'Красне', 'Волі', 'Соборності', 'Відродження'],
+  'житомир': ['Центр', 'Богунія', 'Корбутівка', 'Крошня', 'Польова', 'Мальованка', 'Київська', 'Велика Бердичівська', 'Перемоги'],
+  'полтава': ['Центр', 'Алмазний', 'Левада', 'Поділ', 'Сади', 'Брайлки', 'Половки', 'Соборності', 'Європейська'],
+  'черкаси': ['Центр', 'Митниця', 'Південно-Західний', 'Соснівка', 'Казбет', 'Сєдова', 'Хімселище', 'Шевченка', 'Смілянська'],
+  'ужгород': ['Центр', 'Новий район', 'Боздош', 'Минайська', 'Шахта', 'Радванка', 'Корзо', 'Свободи', 'Перемоги'],
+  'запоріжжя': ['Олександрівський', 'Вознесенівський', 'Дніпровський', 'Комунарський', 'Хортицький', 'Шевченківський', 'Соборний проспект', 'Бабурка', 'Космос', 'Бородинський'],
+  'миколаїв': ['Центральний район', 'Інгульський район', 'Заводський район', 'Корабельний район', 'Соборна', 'Намив', 'Ліски', 'Соляні']
+};
+
+const CLIENT_UNIVERSAL_ZONES = [
+  'центр', 'вулиця Соборна', 'вулиця Київська', 'вулиця Незалежності',
+  'вулиця Шевченка', 'вулиця Грушевського', 'проспект Миру', 'торговий центр',
+  'вокзал', 'ринок', 'мікрорайон', 'парк', 'площа', 'набережна', 'бульвар'
+];
+
+function extractBizSeenKeysClient(b, fallbackCity = '') {
+  if (!b || typeof b !== 'object') return [];
+  const keys = [];
+  if (b.placeId) keys.push(`pid:${String(b.placeId).trim()}`);
+  if (b.cid) keys.push(`cid:${String(b.cid).trim()}`);
+  if (b.phone) {
+    const digits = String(b.phone).replace(/[^\d]/g, '').slice(-9);
+    if (digits.length >= 9) keys.push(`tel:${digits}`);
+  }
+  const rawIg = (b.instagram || b.username || '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/^@+/, '').replace(/\/.*$/, '').toLowerCase().trim();
+  if (rawIg && rawIg !== 'client' && rawIg !== 'username' && !rawIg.startsWith('demo')) {
+    keys.push(`ig:${rawIg}`);
+  }
+  const cleanName = String(b.name || b.title || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '').trim();
+  const cleanCity = String(b.city || fallbackCity || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '').trim();
+  if (cleanName && cleanName.length >= 2) {
+    keys.push(`nc:${cleanName}|${cleanCity}`);
+  }
+  return keys;
+}
+
+const STATIC_DEMO_NFC_JOB_IDS = new Set(['nfc-job-kyiv-ocean', 'nfc-job-lviv-rynok', 'nfc-job-kyiv-obolon']);
+
+async function loadGlobalSeenRegistry() {
+  const seenSet = new Set();
+  let waveOffsets = {};
+
+  // 1. Load from localStorage
+  try {
+    const rawSeen = JSON.parse(localStorage.getItem('dws_seen_places') || '[]');
+    if (Array.isArray(rawSeen)) rawSeen.forEach(k => seenSet.add(k));
+  } catch (e) {}
+  try {
+    const rawWaves = JSON.parse(localStorage.getItem('dws_search_wave_offsets') || '{}');
+    if (rawWaves && typeof rawWaves === 'object') waveOffsets = { ...rawWaves };
+  } catch (e) {}
+
+  // 2. Harvest from all existing real jobs in scrapeState.jobs, nfcRadarState.jobs, and state.crm
+  const addBiz = (b, city) => {
+    extractBizSeenKeysClient(b, city).forEach(k => seenSet.add(k));
+  };
+  try {
+    (scrapeState.jobs || []).forEach(job => {
+      if (!job || job.demo) return;
+      const jCity = job.city || '';
+      if (Array.isArray(job.items)) job.items.forEach(b => addBiz(b, jCity));
+      if (job.groups && typeof job.groups === 'object') {
+        Object.values(job.groups).forEach(arr => {
+          if (Array.isArray(arr)) arr.forEach(b => addBiz(b, jCity));
+        });
+      }
+    });
+    (nfcRadarState.jobs || []).forEach(job => {
+      if (!job || STATIC_DEMO_NFC_JOB_IDS.has(job.id)) return;
+      const jCity = job.city || '';
+      if (Array.isArray(job.items)) job.items.forEach(b => addBiz(b, jCity));
+    });
+    (state.crm || []).forEach(c => {
+      if (c && c.id !== 'crm-1') addBiz(c, c.city || c.cluster || '');
+    });
+  } catch (e) {}
+
+  // 3. Merge with Backend /api/scrapes/seen AND Apify Cloud KV Store (seen_places_absolutikdenchik)
+  const token = getClientApifyToken();
+  const kvUrl = `https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/seen_places_absolutikdenchik?token=${encodeURIComponent(token)}&_t=${Date.now()}`;
+
+  await Promise.all([
+    fetch('/api/scrapes/seen', { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null)
+      .then(json => {
+        if (json && json.success) {
+          if (Array.isArray(json.keys)) json.keys.forEach(k => seenSet.add(k));
+          if (json.waveOffsets && typeof json.waveOffsets === 'object') {
+            for (const [wk, wv] of Object.entries(json.waveOffsets)) {
+              waveOffsets[wk] = Math.max(Number(waveOffsets[wk] || 0), Number(wv || 0));
+            }
+          }
+        }
+      })
+      .catch(() => null),
+    fetch(kvUrl, { cache: 'no-store' })
+      .then(r => r.ok ? r.json() : null)
+      .then(kv => {
+        if (kv && typeof kv === 'object') {
+          if (Array.isArray(kv.keys)) kv.keys.forEach(k => seenSet.add(k));
+          if (kv.waveOffsets && typeof kv.waveOffsets === 'object') {
+            for (const [wk, wv] of Object.entries(kv.waveOffsets)) {
+              waveOffsets[wk] = Math.max(Number(waveOffsets[wk] || 0), Number(wv || 0));
+            }
+          }
+        }
+      })
+      .catch(() => null)
+  ]);
+
+  // Persist merged snapshot locally
+  try {
+    localStorage.setItem('dws_seen_places', JSON.stringify(Array.from(seenSet).slice(-20000)));
+    localStorage.setItem('dws_search_wave_offsets', JSON.stringify(waveOffsets));
+  } catch (e) {}
+
+  return {
+    seenSet,
+    waveOffsets,
+    isBizSeen(b, fallbackCity = '') {
+      const keys = extractBizSeenKeysClient(b, fallbackCity);
+      return keys.some(k => seenSet.has(k));
+    },
+    markBizSeen(b, fallbackCity = '') {
+      const keys = extractBizSeenKeysClient(b, fallbackCity);
+      keys.forEach(k => seenSet.add(k));
+    }
+  };
+}
+
+async function saveGlobalSeenRegistry(newBusinesses = [], waveKey = '', nextWaveOffset = null, fallbackCity = '') {
+  try {
+    let seenArr = [];
+    let waveOffsets = {};
+    try { seenArr = JSON.parse(localStorage.getItem('dws_seen_places') || '[]'); } catch (e) {}
+    try { waveOffsets = JSON.parse(localStorage.getItem('dws_search_wave_offsets') || '{}'); } catch (e) {}
+    if (!Array.isArray(seenArr)) seenArr = [];
+    if (!waveOffsets || typeof waveOffsets !== 'object') waveOffsets = {};
+
+    const seenSet = new Set(seenArr);
+    for (const b of newBusinesses) {
+      extractBizSeenKeysClient(b, fallbackCity).forEach(k => seenSet.add(k));
+    }
+    if (waveKey && nextWaveOffset !== null && nextWaveOffset !== undefined) {
+      waveOffsets[waveKey] = Math.max(Number(waveOffsets[waveKey] || 0), Number(nextWaveOffset));
+    }
+
+    const finalKeys = Array.from(seenSet).slice(-20000);
+    localStorage.setItem('dws_seen_places', JSON.stringify(finalKeys));
+    localStorage.setItem('dws_search_wave_offsets', JSON.stringify(waveOffsets));
+
+    const token = getClientApifyToken();
+    const kvUrl = `https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/seen_places_absolutikdenchik?token=${encodeURIComponent(token)}`;
+    const payload = {
+      updatedAt: Date.now(),
+      keys: finalKeys,
+      waveOffsets
+    };
+
+    await Promise.all([
+      fetch('/api/scrapes/seen', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: newBusinesses,
+          waveKey,
+          nextWaveOffset,
+          city: fallbackCity
+        })
+      }).catch(() => null),
+      fetch(kvUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).catch(() => null)
+    ]);
+
+    if (typeof syncAccountToServer === 'function') {
+      syncAccountToServer();
+    }
+  } catch (err) {
+    console.warn('[SeenRegistry] Save error:', err);
+  }
+}
+
+function buildSmartDistrictQueriesClient(niche, city, cluster = '', waveIndex = 0, batchSize = 10) {
+  const cleanNiche = String(niche || '').trim();
+  const cleanCity = String(city || '').trim();
+  const cleanCluster = String(cluster || '').trim();
+  const cityLower = cleanCity.toLowerCase();
+
+  let subNiches = cleanNiche.split(/[,;/]+/).map(s => s.trim()).filter(Boolean);
+  const nLower = cleanNiche.toLowerCase();
+  if (/кафе|ресторан|бар|кав/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'кав\'ярня', 'ресторан', 'кафе', 'піцерія', 'суші бар', 'кондитерська', 'паб', 'пекарня', 'бургерна', 'гастробар', 'бістро', 'кальянна']));
+  } else if (/салон|б'юті|косметолог|перукар|манікюр|нігт/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'салон краси', 'студія манікюру', 'косметологія', 'перукарня', 'бров бар', 'студія краси', 'лазерна епіляція', 'візаж']));
+  } else if (/стоматолог|клінік|медиц/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'стоматологія', 'стоматологічна клініка', 'медичний центр', 'приватна клініка', 'ортодонтія', 'лабораторія']));
+  } else if (/авто|сто|шиномонтаж|детейлінг|мийк/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'автосервіс', 'СТО', 'детейлінг', 'автомийка', 'шиномонтаж', 'діагностика авто', 'кузовний ремонт']));
+  } else if (/фітнес|спорт|зал|йог/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'фітнес клуб', 'тренажерний зал', 'спортзал', 'студія йоги', 'пілатес', 'стретчинг', 'кросфіт']));
+  } else if (/квіт|флорист|подарун/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'квітковий магазин', 'доставка квітів', 'флористика', 'студія квітів', 'подарунки']));
+  } else if (/барбер|чоловіч/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'барбершоп', 'чоловіча перукарня', 'barbershop', 'чоловічий салон']));
+  } else if (/масаж|спа|spa/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'масажний салон', 'студія масажу', 'СПА салон', 'корекція фігури', 'релакс студія']));
+  }
+  if (!subNiches.length) subNiches = [cleanNiche];
+
+  let districts = [];
+  for (const [k, arr] of Object.entries(CLIENT_CITY_DISTRICTS)) {
+    if (cityLower.includes(k)) {
+      districts = arr;
+      break;
+    }
+  }
+  if (!districts.length) districts = CLIENT_UNIVERSAL_ZONES;
+
+  const candidatePool = [];
+  if (cleanCluster) {
+    for (const sn of subNiches) {
+      if (cleanCity) candidatePool.push(`${sn} ${cleanCluster} ${cleanCity}`);
+      else candidatePool.push(`${sn} ${cleanCluster}`);
+    }
+  }
+  for (const d of districts) {
+    for (const sn of subNiches) {
+      if (cleanCity) candidatePool.push(`${sn} ${d} ${cleanCity}`);
+      else candidatePool.push(`${sn} ${d}`);
+    }
+  }
+  for (const sn of subNiches) {
+    if (cleanCity) candidatePool.push(`${sn} ${cleanCity}`);
+    else candidatePool.push(sn);
+  }
+
+  const uniquePool = Array.from(new Set(candidatePool));
+  const startIdx = (waveIndex * batchSize) % uniquePool.length;
+  const selected = [];
+  for (let i = 0; i < Math.min(batchSize, uniquePool.length); i++) {
+    selected.push(uniquePool[(startIdx + i) % uniquePool.length]);
+  }
+  return selected;
+}
+
 // ---- Live Apify B2B Scraper Engine ----
 const SOCIAL_SITE_RE = /(instagram\.com|facebook\.com|fb\.com|linktr\.ee|taplink|t\.me|tiktok\.com|wa\.me|viber|google\.com\/maps|business\.site)/i;
 const BOOKING_NICHE_RE = /(стомат|dental|салон|beauty|краси|барбер|barber|клінік|clinic|медич|автосерв|сто\b|шиномонт|фітнес|fitness|спорт|йог|масаж|spa|спа|ресторан|кафе|кав'ярн|піца|суші|доставк|готел|hotel|хостел|ветерин|косметолог|манікюр|nail|тату|школ|курси|репетит)/i;
@@ -9560,6 +9863,42 @@ function classifyBizLocal(b) {
   return { category: 'auto', reason: 'Сайт є, трафік є — автоматизація заявок' };
 }
 
+async function runSingleApifyActorClient(actorId, input, token) {
+  const startRes = await fetch(`https://api.apify.com/v2/acts/${actorId}/runs?token=${token}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input)
+  });
+  if (!startRes.ok) {
+    const errTxt = await startRes.text();
+    let msg = `Apify помилка (${startRes.status})`;
+    try { msg = JSON.parse(errTxt).error?.message || msg; } catch {}
+    throw new Error(msg);
+  }
+  const startData = await startRes.json();
+  const runId = startData.data?.id;
+  const datasetId = startData.data?.defaultDatasetId;
+  if (!runId || !datasetId) throw new Error('Не отримано ID запуску Apify');
+
+  const startTime = Date.now();
+  const maxTimeout = 5 * 60 * 1000;
+  while (Date.now() - startTime < maxTimeout) {
+    await new Promise(r => setTimeout(r, 3200));
+    const sRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${token}`);
+    if (!sRes.ok) continue;
+    const sData = await sRes.json();
+    const st = sData.data?.status;
+    if (st === 'SUCCEEDED') break;
+    if (st === 'FAILED' || st === 'TIMED-OUT' || st === 'ABORTED') {
+      throw new Error(`Парсер завершився зі статусом: ${st}`);
+    }
+  }
+
+  const itemsRes = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}&clean=true&format=json`);
+  if (!itemsRes.ok) throw new Error(`Не вдалося завантажити результати (${itemsRes.status})`);
+  return await itemsRes.json();
+}
+
 async function runLiveApifyJob(job) {
   const token = getClientApifyToken();
   if (!token) {
@@ -9570,213 +9909,181 @@ async function runLiveApifyJob(job) {
     return;
   }
 
-  const targetLimit = Math.max(10, Math.min(Number(job.limit) || 100, 500));
+  const targetLimit = Math.max(5, Math.min(Number(job.limit) || 100, 500));
   const baseQuery = [job.niche, job.city].filter(Boolean).join(' ');
   const actorId = job.source === 'instagram' ? 'apify~instagram-scraper' : 'compass~crawler-google-places';
 
-  // Build targeted multi-queries for Google Maps so it easily returns 100+ places without pagination caps
-  const gmapsQueries = [];
-  gmapsQueries.push(baseQuery);
-  if (job.city && job.niche) {
-    gmapsQueries.push(job.niche);
-    if (targetLimit > 20) {
-      gmapsQueries.push(`${job.niche} центр ${job.city}`);
-      gmapsQueries.push(`кращі ${job.niche} ${job.city}`);
-      gmapsQueries.push(`${job.niche} ${job.city} район`);
-    }
-    if (targetLimit > 50) {
-      gmapsQueries.push(`топ ${job.niche} ${job.city}`);
-      gmapsQueries.push(`популярні ${job.niche} ${job.city}`);
-      gmapsQueries.push(`нові ${job.niche} ${job.city}`);
-    }
-  } else {
-    gmapsQueries.push(job.niche);
-  }
-
-  // Calculate perSearchLimit so total yields >= targetLimit
-  const perSearchLimit = Math.max(25, Math.ceil((targetLimit * 1.3) / gmapsQueries.length));
-  const locationQuery = job.city ? `${job.city}, Україна` : '';
-
-  const input = job.source === 'instagram'
-    ? {
-        search: baseQuery,
-        searchType: 'user',
-        searchLimit: targetLimit,
-        resultsType: 'details',
-        resultsLimit: targetLimit
-      }
-    : {
-        searchStringsArray: gmapsQueries,
-        locationQuery: locationQuery,
-        city: job.city || '',
-        maxCrawledPlacesPerSearch: perSearchLimit,
-        language: 'uk',
-        skipClosedPlaces: true,
-        scrapeSocialMediaProfiles: {
-          instagrams: true,
-          facebooks: false,
-          youtubes: false,
-          tiktoks: false,
-          twitters: false
-        }
-      };
-
   try {
-    const startRes = await fetch(`https://api.apify.com/v2/acts/${actorId}/runs?token=${token}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input)
-    });
-    if (!startRes.ok) {
-      const errTxt = await startRes.text();
-      let msg = `Apify помилка (${startRes.status})`;
-      try { msg = JSON.parse(errTxt).error?.message || msg; } catch {}
-      throw new Error(msg);
-    }
-    const startData = await startRes.json();
-    const runId = startData.data?.id;
-    const datasetId = startData.data?.defaultDatasetId;
-    if (!runId || !datasetId) throw new Error('Не отримано ID запуску Apify');
-
-    const startTime = Date.now();
-    const maxTimeout = 5 * 60 * 1000;
-    while (Date.now() - startTime < maxTimeout) {
-      await new Promise(r => setTimeout(r, 3500));
-      const sRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${token}`);
-      if (!sRes.ok) continue;
-      const sData = await sRes.json();
-      const st = sData.data?.status;
-      if (st === 'SUCCEEDED') break;
-      if (st === 'FAILED' || st === 'TIMED-OUT' || st === 'ABORTED') {
-        throw new Error(`Парсер завершився зі статусом: ${st}`);
-      }
-    }
-
-    const itemsRes = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}&clean=true&format=json`);
-    if (!itemsRes.ok) throw new Error(`Не вдалося завантажити результати (${itemsRes.status})`);
-    const rawItems = await itemsRes.json();
+    const reg = await loadGlobalSeenRegistry();
+    const waveKey = `scrape:${job.source || 'gmaps'}:${String(job.niche || '').toLowerCase().trim()}:${String(job.city || '').toLowerCase().trim()}`;
+    let currentWave = Number(reg.waveOffsets[waveKey] || 0);
 
     const allItems = [];
-    const seen = new Set();
     let skippedNoPhone = 0;
+    const maxWaves = 3;
 
-    rawItems.forEach(it => {
-      let b;
+    for (let wave = 0; wave < maxWaves; wave++) {
+      if (allItems.length >= targetLimit) break;
+      const needed = targetLimit - allItems.length;
+
+      job.progressText = wave === 0
+        ? `Шукаю 0/${targetLimit} нових…`
+        : `Хвиля ${wave + 1}: знайдено ${allItems.length}/${targetLimit} нових…`;
+      renderScrapes();
+
+      let input;
       if (job.source === 'instagram') {
-        const rawUsername = (it.username || it.ownerUsername || (it.inputUrl ? it.inputUrl.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/.*$/, '') : '') || '').replace(/^@+/, '');
-        const name = (it.fullName || it.ownerFullName || it.title || (rawUsername ? '@' + rawUsername : '') || it.name || '').trim();
-        if (!name && !rawUsername) return;
-
-        const directPhone = normalizePhone(it.businessPhoneNumber || it.contactPhoneNumber || it.publicPhoneNumber || it.phone || it.phoneUnformatted);
-        const bioText = [it.biography, it.caption, it.text, it.externalUrl].filter(Boolean).join('\n');
-        const bioPhone = extractPhoneFromText(bioText);
-        const phone = directPhone || bioPhone;
-        const website = it.externalUrl || it.website || '';
-        const followers = Number(it.followersCount || it.followers || 0);
-
-        b = {
-          id: 'biz-' + (rawUsername || it.id || Math.random().toString(36).slice(2)),
-          name: name || (rawUsername ? '@' + rawUsername : 'Instagram бізнес'),
-          phone,
-          website,
-          address: it.businessAddress?.street_address || it.locationName || it.address || '',
-          city: it.businessAddress?.city_name || (it.locationName ? it.locationName.split(',')[0].trim() : '') || job.city || '',
-          category: it.businessCategoryName || job.niche || '',
-          followers,
-          posts: Number(it.postsCount || it.posts || 0),
-          username: rawUsername ? '@' + rawUsername : '',
-          link: (rawUsername ? `https://instagram.com/${rawUsername}` : '') || it.url || it.inputUrl || '',
-          biography: it.biography || it.caption || '',
-          niche: job.niche,
-          source: 'instagram'
+        const igQueries = buildSmartDistrictQueriesClient(job.niche, job.city, '', currentWave, 4);
+        currentWave++;
+        const searchStr = igQueries.slice(0, 2).join(', ') || baseQuery;
+        const searchLim = Math.min(250, Math.max(targetLimit * 3, 60));
+        input = {
+          search: searchStr,
+          searchType: 'user',
+          searchLimit: searchLim,
+          resultsType: 'details',
+          resultsLimit: searchLim
         };
       } else {
-        const name = (it.title || it.name || '').trim();
-        const placeId = it.placeId || it.id || '';
-        const cid = it.cid || '';
-        const addr = it.address || it.street || '';
-        const phone = normalizePhone(it.phoneUnformatted || it.phone);
-        const website = it.website || '';
-
-        // Extract Instagram from website or instagrams array
-        let instagram = (it.instagrams || [])[0] || '';
-        if (!instagram && website && /instagram\.com/i.test(website)) {
-          const m = website.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
-          if (m && m[1]) instagram = '@' + m[1].replace(/\/.*$/, '');
-        }
-        if (instagram && !instagram.startsWith('@') && !instagram.startsWith('http')) {
-          instagram = '@' + instagram;
-        }
-
-        // Extract Telegram from website, telegrams array or phone
-        let telegram = (it.telegrams || [])[0] || '';
-        if (!telegram && website && /t\.me/i.test(website)) {
-          const m = website.match(/t\.me\/([a-zA-Z0-9_+]+)/i);
-          if (m && m[1]) telegram = '@' + m[1];
-        }
-        const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
-        const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
-
-        // Direct Google Maps business place card
-        let link = it.url || '';
-        if (!link || !link.includes('google.com/maps')) {
-          if (placeId) {
-            link = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
-          } else if (cid) {
-            link = `https://maps.google.com/?cid=${encodeURIComponent(cid)}`;
-          } else {
-            link = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((name + ' ' + (addr || job.city || '')).trim())}`;
-          }
-        }
-
-        b = {
-          id: 'biz-' + (placeId || Math.random().toString(36).slice(2)),
-          name,
-          placeId,
-          cid,
-          phone,
-          website,
-          address: addr,
-          city: it.city || job.city || '',
-          category: it.categoryName || (it.categories || [])[0] || job.niche || '',
-          rating: it.totalScore || 0,
-          reviews: it.reviewsCount || 0,
-          instagram,
-          telegram,
-          telegramPhone,
-          link,
-          mapsUrl: link,
-          niche: job.niche,
-          source: 'gmaps'
+        const batchSize = Math.min(14, Math.max(6, Math.ceil(needed / 12) + 4));
+        const gmapsQueries = buildSmartDistrictQueriesClient(job.niche, job.city, '', currentWave, batchSize);
+        currentWave++;
+        const perSearchLimit = Math.max(30, Math.ceil((needed * 1.8) / gmapsQueries.length));
+        const locationQuery = job.city ? `${job.city}, Україна` : '';
+        input = {
+          searchStringsArray: gmapsQueries,
+          locationQuery: locationQuery,
+          maxCrawledPlacesPerSearch: Math.min(perSearchLimit, 100),
+          language: 'uk',
+          skipClosedPlaces: true
         };
       }
 
-      if (!b.name) return;
+      const rawItems = await runSingleApifyActorClient(actorId, input, token);
 
-      // Deduplication: prevent same business/profile from appearing multiple times
-      const dedupKey = (b.username || b.phone || b.name).toLowerCase();
-      if (seen.has(dedupKey)) return;
-      seen.add(dedupKey);
+      for (const it of rawItems) {
+        if (allItems.length >= targetLimit) break;
+        let b;
+        if (job.source === 'instagram') {
+          const rawUsername = (it.username || it.ownerUsername || (it.inputUrl ? it.inputUrl.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/.*$/, '') : '') || '').replace(/^@+/, '');
+          const name = (it.fullName || it.ownerFullName || it.title || (rawUsername ? '@' + rawUsername : '') || it.name || '').trim();
+          if (!name && !rawUsername) continue;
 
-      if (!b.phone) skippedNoPhone++;
+          const directPhone = normalizePhone(it.businessPhoneNumber || it.contactPhoneNumber || it.publicPhoneNumber || it.phone || it.phoneUnformatted);
+          const bioText = [it.biography, it.caption, it.text, it.externalUrl].filter(Boolean).join('\n');
+          const bioPhone = extractPhoneFromText(bioText);
+          const phone = directPhone || bioPhone;
+          const website = it.externalUrl || it.website || '';
+          const followers = Number(it.followersCount || it.followers || 0);
 
-      const { category, reason } = classifyBizLocal(b);
-      b.category = category;
-      b.reason = reason;
-      b.service = SCRAPE_SERVICE[category];
+          b = {
+            id: 'biz-' + (rawUsername || it.id || Math.random().toString(36).slice(2)),
+            name: name || (rawUsername ? '@' + rawUsername : 'Instagram бізнес'),
+            phone,
+            website,
+            address: it.businessAddress?.street_address || it.locationName || it.address || '',
+            city: it.businessAddress?.city_name || (it.locationName ? it.locationName.split(',')[0].trim() : '') || job.city || '',
+            category: it.businessCategoryName || job.niche || '',
+            followers,
+            posts: Number(it.postsCount || it.posts || 0),
+            username: rawUsername ? '@' + rawUsername : '',
+            instagram: rawUsername ? '@' + rawUsername : '',
+            link: (rawUsername ? `https://instagram.com/${rawUsername}` : '') || it.url || it.inputUrl || '',
+            biography: it.biography || it.caption || '',
+            niche: job.niche,
+            source: 'instagram'
+          };
+        } else {
+          const name = (it.title || it.name || '').trim();
+          const placeId = it.placeId || it.id || '';
+          const cid = it.cid || '';
+          const addr = it.address || it.street || '';
+          const phone = normalizePhone(it.phoneUnformatted || it.phone);
+          const website = it.website || '';
 
-      allItems.push(b);
-    });
+          let instagram = (it.instagrams || [])[0] || '';
+          if (!instagram && website && /instagram\.com/i.test(website)) {
+            const m = website.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
+            if (m && m[1]) instagram = '@' + m[1].replace(/\/.*$/, '');
+          }
+          if (instagram && !instagram.startsWith('@') && !instagram.startsWith('http')) {
+            instagram = '@' + instagram;
+          }
 
-    // Cap to user requested targetLimit (e.g. 100)
+          let telegram = (it.telegrams || [])[0] || '';
+          if (!telegram && website && /t\.me/i.test(website)) {
+            const m = website.match(/t\.me\/([a-zA-Z0-9_+]+)/i);
+            if (m && m[1]) telegram = '@' + m[1];
+          }
+          const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
+          const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
+
+          let link = it.url || '';
+          if (!link || !link.includes('google.com/maps')) {
+            if (placeId) {
+              link = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
+            } else if (cid) {
+              link = `https://maps.google.com/?cid=${encodeURIComponent(cid)}`;
+            } else {
+              link = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((name + ' ' + (addr || job.city || '')).trim())}`;
+            }
+          }
+
+          b = {
+            id: 'biz-' + (placeId || Math.random().toString(36).slice(2)),
+            name,
+            placeId,
+            cid,
+            phone,
+            website,
+            address: addr,
+            city: it.city || job.city || '',
+            category: it.categoryName || (it.categories || [])[0] || job.niche || '',
+            rating: it.totalScore || 0,
+            reviews: it.reviewsCount || 0,
+            instagram,
+            telegram,
+            telegramPhone,
+            link,
+            mapsUrl: link,
+            niche: job.niche,
+            source: 'gmaps'
+          };
+        }
+
+        if (!b.name) continue;
+
+        // Global + current-run deduplication: skip any business already seen in past or current searches!
+        if (reg.isBizSeen(b, job.city)) continue;
+        reg.markBizSeen(b, job.city);
+
+        if (!b.phone) skippedNoPhone++;
+
+        const { category, reason } = classifyBizLocal(b);
+        b.category = category;
+        b.reason = reason;
+        b.service = SCRAPE_SERVICE[category];
+
+        allItems.push(b);
+      }
+
+      job.total = allItems.length;
+      job.progressText = `Знайдено ${allItems.length}/${targetLimit} нових…`;
+      renderScrapes();
+    }
+
     const limitedItems = allItems.slice(0, targetLimit);
     const finalGroups = { site: [], ads: [], auto: [], apps: [] };
     limitedItems.forEach(b => {
       (finalGroups[b.category] || finalGroups.ads).push(b);
     });
 
+    // Save newly found businesses to Global Seen Registry (localStorage + Backend + Cloud KV)
+    await saveGlobalSeenRegistry(limitedItems, waveKey, currentWave, job.city);
+
     job.status = 'done';
     job.demo = false;
+    job.progressText = '';
     job.total = limitedItems.length;
     job.skippedNoPhone = skippedNoPhone;
     job.finishedAt = new Date().toISOString();
@@ -9784,11 +10091,12 @@ async function runLiveApifyJob(job) {
     job.items = limitedItems;
     saveScrapeJob(job);
     renderScrapes();
-    try { showToast(`✅ Знайдено ${limitedItems.length} реальних закладів у ${job.city || job.niche}!`); } catch (_) {}
+    try { showToast(`✅ Знайдено ${limitedItems.length} НОВИХ закладів у ${job.city || job.niche}!`); } catch (_) {}
     haptic('success');
   } catch (err) {
     console.error('[LiveApify] Error:', err);
     job.status = 'error';
+    job.progressText = '';
     job.error = err.message || 'Помилка виконання парсера';
     job.finishedAt = new Date().toISOString();
     saveScrapeJob(job);
@@ -9864,47 +10172,27 @@ async function submitScrape() {
   closeModal('modalScrape');
   haptic('success');
 
-  let handled = false;
-  try {
-    const res = await fetch('/api/scrapes', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (res.ok) {
-      const json = await res.json();
-      if (json.success && json.data) {
-        scrapeState.openJobs.add(json.data.id);
-        handled = true;
-        fetchScrapes();
-      }
-    }
-  } catch (err) {
-    // Backend offline / static Vercel host
-  }
-
-  if (!handled) {
-    const job = {
-      id: 'scr-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
-      local: true,
-      demo: false,
-      source: payload.source,
-      niche: payload.niche,
-      city: payload.city,
-      limit: payload.limit,
-      status: 'running',
-      createdAt: new Date().toISOString(),
-      finishedAt: null,
-      total: 0,
-      skippedNoPhone: 0,
-      error: null,
-      groups: { site: [], ads: [], auto: [], apps: [] }
-    };
-    saveScrapeJob(job);
-    scrapeState.openJobs.add(job.id);
-    renderScrapes();
-    runLiveApifyJob(job);
-  }
+  const job = {
+    id: 'scr-' + Date.now() + '-' + Math.floor(Math.random() * 1000),
+    local: true,
+    demo: false,
+    source: payload.source,
+    niche: payload.niche,
+    city: payload.city,
+    limit: payload.limit,
+    status: 'running',
+    progressText: `Шукаю 0/${payload.limit} нових…`,
+    createdAt: new Date().toISOString(),
+    finishedAt: null,
+    total: 0,
+    skippedNoPhone: 0,
+    error: null,
+    groups: { site: [], ads: [], auto: [], apps: [] }
+  };
+  saveScrapeJob(job);
+  scrapeState.openJobs.add(job.id);
+  renderScrapes();
+  runLiveApifyJob(job);
 
   if (btn) { btn.disabled = false; btn.textContent = 'ЗАПУСТИТИ ПОШУК'; }
 }
@@ -10454,9 +10742,7 @@ function loadLocalNfcJobs() {
       return DEFAULT_NFC_RADAR_JOBS;
     }
     parsed.forEach(job => {
-      const maxRev = Number(job.maxReviews);
-      if (maxRev && maxRev < 90000 && Array.isArray(job.items)) {
-        job.items = job.items.filter(v => (Number(v.reviews) || 0) <= maxRev);
+      if (Array.isArray(job.items)) {
         job.total = job.items.length;
       }
     });
@@ -10550,10 +10836,6 @@ function getJobFlatItems(job) {
       if (Array.isArray(l)) flat.push(...l);
     });
     list = flat;
-  }
-  const maxRev = Number(job.maxReviews);
-  if (maxRev && maxRev < 90000) {
-    list = list.filter(v => (Number(v.reviews) || 0) <= maxRev);
   }
   return list;
 }
@@ -10770,7 +11052,7 @@ function renderNfcRadar() {
     const isOpen = nfcRadarState.openJobs.has(job.id);
     const date = new Date(job.createdAt).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
     let pill = '<span class="scrape-status-pill demo">Локація</span>';
-    if (job.status === 'running') pill = '<span class="scrape-status-pill running">Шукаю…</span>';
+    if (job.status === 'running') pill = `<span class="scrape-status-pill running">${escapeHtml(job.progressText || 'Шукаю…')}</span>`;
 
     const items = getJobFlatItems(job);
     const count = items.length || job.total || 0;
@@ -10992,185 +11274,168 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
   const token = getClientApifyToken();
   const targetReviews = Number(reviewsLimit || job.maxReviews || 300);
   const activeNfcLimitBtn = document.querySelector('#nfcLimitSeg .scrape-seg-btn.active');
-  const targetCount = Number(limit || activeNfcLimitBtn?.dataset.value || job.limit || 30);
+  const targetCount = Math.max(5, Number(limit || activeNfcLimitBtn?.dataset.value || job.limit || 30));
 
-  const baseQuery = [job.niche, job.cluster, job.city].filter(Boolean).join(' ');
-  const searchStrings = [baseQuery];
-  const city = job.city || 'Київ';
-  const cluster = job.cluster || '';
-
-  if (job.niche) {
-    searchStrings.push(`${job.niche} ${city}`.trim());
-    if (cluster) searchStrings.push(`${job.niche} ${cluster} ${city}`.trim());
-    if (targetCount > 20) {
-      searchStrings.push(`кращі ${job.niche} ${cluster} ${city}`.trim());
-      searchStrings.push(`${job.niche} центр ${city}`.trim());
-    }
-    if (targetReviews <= 50) {
-      searchStrings.push(`нове ${job.niche} ${cluster} ${city}`.trim());
-      searchStrings.push(`нова ${job.niche} ${cluster} ${city}`.trim());
-    }
-  }
-
-  const perSearchLimit = Math.max(30, Math.ceil((targetCount * 1.5) / searchStrings.length));
-  const locationQuery = city ? `${city}, Україна` : '';
-
+  const city = (job.city || 'Київ').trim();
+  const cluster = (job.cluster || '').trim();
   const actorId = 'compass~crawler-google-places';
-  const input = {
-    searchStringsArray: searchStrings,
-    locationQuery: locationQuery,
-    city: city,
-    maxCrawledPlacesPerSearch: Math.min(perSearchLimit, 120),
-    language: 'uk',
-    skipClosedPlaces: true,
-    scrapeSocialMediaProfiles: {
-      instagrams: true,
-      facebooks: false,
-      youtubes: false,
-      tiktoks: false,
-      twitters: false
-    }
-  };
 
   try {
-    const startRes = await fetch(`https://api.apify.com/v2/acts/${actorId}/runs?token=${token}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input)
-    });
-    if (!startRes.ok) throw new Error(`Apify помилка (${startRes.status})`);
-    const startData = await startRes.json();
-    const runId = startData.data?.id;
-    const datasetId = startData.data?.defaultDatasetId;
-    if (!runId || !datasetId) throw new Error('Не отримано ID запуску Apify');
+    const reg = await loadGlobalSeenRegistry();
+    const waveKey = `nfc:${String(job.niche || '').toLowerCase().trim()}:${city.toLowerCase()}:${cluster.toLowerCase()}`;
+    let currentWave = Number(reg.waveOffsets[waveKey] || 0);
 
-    const startTime = Date.now();
-    while (Date.now() - startTime < 5 * 60 * 1000) {
-      await new Promise(r => setTimeout(r, 3500));
-      const sRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${token}`);
-      if (!sRes.ok) continue;
-      const sData = await sRes.json();
-      const st = sData.data?.status;
-      if (st === 'SUCCEEDED') break;
-      if (st === 'FAILED' || st === 'TIMED-OUT' || st === 'ABORTED') throw new Error(st);
-    }
+    const runSeenKeys = new Set();
+    const isSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).some(k => runSeenKeys.has(k));
+    const markSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).forEach(k => runSeenKeys.add(k));
 
-    const itemsRes = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}&clean=true&format=json`);
-    const rawItems = await itemsRes.json();
+    const strictMatched = [];
+    const overflowUnseenPool = [];
+    const maxWaves = 3;
 
-    // Map and deduplicate by placeId / title
-    const seenNames = new Set();
-    let mapped = [];
-    rawItems.forEach((it, idx) => {
-      const name = (it.title || it.name || '').trim();
-      if (!name || seenNames.has(name.toLowerCase())) return;
-      seenNames.add(name.toLowerCase());
+    for (let wave = 0; wave < maxWaves; wave++) {
+      if (strictMatched.length >= targetCount) break;
+      const needed = targetCount - strictMatched.length;
 
-      const placeId = it.placeId || it.id || '';
-      const cid = it.cid || '';
-      const rating = Number(it.totalScore || 0);
-      const reviews = Number(it.reviewsCount || 0);
-      const phone = normalizePhone(it.phoneUnformatted || it.phone);
-      const website = it.website || '';
-      const addr = it.address || it.street || job.cluster || job.city;
+      job.progressText = wave === 0
+        ? `Шукаю 0/${targetCount} нових…`
+        : `Хвиля ${wave + 1}: ${strictMatched.length}/${targetCount} нових…`;
+      renderNfcRadar();
 
-      // Extract Instagram
-      let insta = (it.instagrams || [])[0] || '';
-      if (!insta && website && /instagram\.com/i.test(website)) {
-        const m = website.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
-        if (m && m[1]) insta = '@' + m[1].replace(/\/.*$/, '');
-      }
-      if (insta.includes('instagram.com/')) {
-        insta = '@' + insta.split('instagram.com/')[1].replace(/\/.*$/, '');
-      } else if (insta && !insta.startsWith('@') && !insta.startsWith('http')) {
-        insta = '@' + insta;
-      }
+      const batchSize = Math.min(14, Math.max(8, Math.ceil(needed / 8) + 4));
+      const searchStrings = buildSmartDistrictQueriesClient(job.niche, city, cluster, currentWave, batchSize);
+      currentWave++;
 
-      // Extract Telegram
-      let telegram = (it.telegrams || [])[0] || '';
-      if (!telegram && website && /t\.me/i.test(website)) {
-        const m = website.match(/t\.me\/([a-zA-Z0-9_+]+)/i);
-        if (m && m[1]) telegram = '@' + m[1];
-      }
-      const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
-      const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
+      // Request higher multiplier when filtering by strict low reviews (<= 50 or <= 150)
+      const reviewMultiplier = targetReviews <= 50 ? 3.2 : (targetReviews <= 150 ? 2.4 : 1.8);
+      const perSearchLimit = Math.max(30, Math.min(100, Math.ceil((needed * reviewMultiplier) / searchStrings.length)));
+      const locationQuery = city ? `${city}, Україна` : '';
 
-      // Direct Google Maps business place card
-      let mapsUrl = it.url || '';
-      if (!mapsUrl || !mapsUrl.includes('google.com/maps')) {
-        if (placeId) {
-          mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
-        } else if (cid) {
-          mapsUrl = `https://maps.google.com/?cid=${encodeURIComponent(cid)}`;
-        } else {
-          mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((name + ' ' + addr).trim())}`;
+      const input = {
+        searchStringsArray: searchStrings,
+        locationQuery: locationQuery,
+        maxCrawledPlacesPerSearch: perSearchLimit,
+        language: 'uk',
+        skipClosedPlaces: true
+      };
+
+      const rawItems = await runSingleApifyActorClient(actorId, input, token);
+
+      rawItems.forEach((it, idx) => {
+        const name = (it.title || it.name || '').trim();
+        if (!name) return;
+
+        const placeId = it.placeId || it.id || '';
+        const cid = it.cid || '';
+        const rating = Number(it.totalScore || 0);
+        const reviews = Number(it.reviewsCount || 0);
+        const phone = normalizePhone(it.phoneUnformatted || it.phone);
+        const website = it.website || '';
+        const addr = it.address || it.street || job.cluster || job.city;
+
+        let insta = (it.instagrams || [])[0] || '';
+        if (!insta && website && /instagram\.com/i.test(website)) {
+          const m = website.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
+          if (m && m[1]) insta = '@' + m[1].replace(/\/.*$/, '');
         }
-      }
+        if (insta.includes('instagram.com/')) {
+          insta = '@' + insta.split('instagram.com/')[1].replace(/\/.*$/, '');
+        } else if (insta && !insta.startsWith('@') && !insta.startsWith('http')) {
+          insta = '@' + insta;
+        }
 
-      mapped.push({
-        id: 'v-real-' + Date.now() + '-' + idx,
-        name,
-        placeId,
-        cid,
-        address: addr,
-        phone,
-        website,
-        instagram: insta,
-        telegram,
-        telegramPhone,
-        rating,
-        reviews,
-        mapsUrl,
-        painLevel: (rating && rating <= 4.3) ? 'urgent' : (reviews < 50 ? 'new' : 'boost'),
-        painText: (rating && rating <= 4.3) ? 'Потрібно терміново перекривати негатив' : (reviews < 50 ? 'Новий заклад — гостра потреба у відгуках' : 'Буст до ТОП-1 в Google Maps')
+        let telegram = (it.telegrams || [])[0] || '';
+        if (!telegram && website && /t\.me/i.test(website)) {
+          const m = website.match(/t\.me\/([a-zA-Z0-9_+]+)/i);
+          if (m && m[1]) telegram = '@' + m[1];
+        }
+        const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
+        const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
+
+        let mapsUrl = it.url || '';
+        if (!mapsUrl || !mapsUrl.includes('google.com/maps')) {
+          if (placeId) {
+            mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
+          } else if (cid) {
+            mapsUrl = `https://maps.google.com/?cid=${encodeURIComponent(cid)}`;
+          } else {
+            mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((name + ' ' + addr).trim())}`;
+          }
+        }
+
+        const venueObj = {
+          id: 'v-real-' + Date.now() + '-' + wave + '-' + idx,
+          name,
+          placeId,
+          cid,
+          address: addr,
+          city,
+          phone,
+          website,
+          instagram: insta,
+          telegram,
+          telegramPhone,
+          rating,
+          reviews,
+          mapsUrl,
+          lat: it.location?.lat || null,
+          lng: it.location?.lng || null,
+          painLevel: (rating && rating <= 4.3) ? 'urgent' : (reviews < 50 ? 'new' : 'boost'),
+          painText: (rating && rating <= 4.3) ? 'Потрібно терміново перекривати негатив' : (reviews < 50 ? 'Новий заклад — гостра потреба у відгуках' : 'Буст до ТОП-1 в Google Maps')
+        };
+
+        // Skip if already seen in any previous search OR in this run
+        if (reg.isBizSeen(venueObj, city) || isSeenInThisRun(venueObj)) return;
+        markSeenInThisRun(venueObj);
+
+        if (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews) {
+          strictMatched.push(venueObj);
+        } else {
+          overflowUnseenPool.push(venueObj);
+        }
       });
-    });
 
-    // STRICT REVIEWS FILTERING & SORTING:
-    let filtered = mapped;
-    if (targetReviews && targetReviews < 90000) {
-      filtered = mapped.filter(v => Number(v.reviews || 0) <= targetReviews);
+      job.total = Math.min(targetCount, strictMatched.length);
+      job.progressText = `Знайдено ${Math.min(targetCount, strictMatched.length)}/${targetCount} нових…`;
+      renderNfcRadar();
     }
 
-    // Sort: if targetReviews <= 50 or <= 150, sort ascending (least reviewed first)
+    // Sort strictMatched: if targetReviews <= 150, sort ascending by reviews (newest/smallest venues first)
     if (targetReviews <= 150) {
-      filtered.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
+      strictMatched.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
     }
 
-    // Graceful fallback if area has very few spots under 50 reviews:
-    // If 0 places under 50 reviews were found, take the lowest-reviewed spots available
-    // (sorted ascending) rather than showing a blank screen, but cap at e.g. <= 120 reviews
-    if (targetReviews <= 50 && filtered.length === 0) {
-      const lowAlternative = mapped
-        .filter(v => Number(v.reviews || 0) <= 120)
-        .sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
-      if (lowAlternative.length > 0) {
-        filtered = lowAlternative;
-        try { showToast(`Заклади до 50 відгуків не знайдено — показано найновіші доступні (до ${Math.max(...filtered.map(x=>x.reviews))} відгуків)`); } catch (_) {}
-      }
+    // Guarantee exact targetCount: if strict filter yielded fewer than targetCount after 3 district waves,
+    // top up the remaining slots with the lowest-reviewed unseen venues from overflowUnseenPool!
+    let finalVenues = [...strictMatched];
+    if (finalVenues.length < targetCount && overflowUnseenPool.length > 0) {
+      overflowUnseenPool.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
+      const neededExtra = targetCount - finalVenues.length;
+      finalVenues.push(...overflowUnseenPool.slice(0, neededExtra));
     }
 
-    // Slice to requested count
-    if (targetCount && targetCount > 0 && filtered.length > targetCount) {
-      filtered = filtered.slice(0, targetCount);
-    }
-    mapped = filtered;
+    finalVenues = finalVenues.slice(0, targetCount);
+
+    // Save ONLY the delivered venues to the permanent Global Seen Registry
+    await saveGlobalSeenRegistry(finalVenues, waveKey, currentWave, city);
 
     job.status = 'done';
-    job.items = mapped;
-    job.total = mapped.length;
+    job.progressText = '';
+    job.items = finalVenues;
+    job.total = finalVenues.length;
     saveLocalNfcJobs(nfcRadarState.jobs);
     renderNfcRadar();
 
-    if (mapped.length === 0) {
-      try { showToast(`Усі знайдені заклади мали більше ${targetReviews} відгуків. Спробуйте вказати район або розширити фільтр.`); } catch (_) {}
+    if (finalVenues.length === 0) {
+      try { showToast(`Нових закладів за цим запитом не знайдено. Спробуйте іншу нішу або місто.`); } catch (_) {}
     } else {
-      try { showToast(`✅ Знайдено ${mapped.length} закладів (відгуків ≤ ${targetReviews}) у ${job.city || job.cluster}!`); } catch (_) {}
+      try { showToast(`✅ Знайдено ${finalVenues.length} НОВИХ закладів у ${job.city || job.cluster}!`); } catch (_) {}
     }
     haptic('success');
   } catch (err) {
     console.error('[NFC Apify] Error:', err);
     job.status = 'error';
+    job.progressText = '';
     job.error = err.message || 'Помилка виконання радару';
     saveLocalNfcJobs(nfcRadarState.jobs);
     renderNfcRadar();
@@ -11201,6 +11466,7 @@ async function submitNfcSearch() {
     city: city,
     cluster: cluster,
     status: 'running',
+    progressText: `Шукаю 0/${limit} нових…`,
     local: true,
     createdAt: new Date().toISOString(),
     total: 0,

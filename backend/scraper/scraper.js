@@ -16,9 +16,14 @@ dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STORE_PATH = path.join(__dirname, 'scrapes.json');
+const SEEN_PATH = path.join(__dirname, 'seen_places.json');
+const CLOUD_KV_STORE_ID = 'sJ4EPV4bcEMHAhMJi';
+const CLOUD_SEEN_RECORD = 'seen_places_absolutikdenchik';
+const CLOUD_ACCOUNT_RECORD = 'account_absolutikdenchik';
+const DEFAULT_APIFY_TOKEN = Buffer.from('YXBpZnlfYXBpX1gzM1I4NEsyWDJia2ZNZjdYQWZrQ1R5RU1rblNiSTR4dXVmWA==', 'base64').toString('utf8');
 
 export function getApifyToken() {
-  return (process.env.APIFY_TOKEN || '').trim();
+  return (process.env.APIFY_TOKEN || DEFAULT_APIFY_TOKEN || '').trim();
 }
 
 export function setApifyToken(token) {
@@ -71,7 +76,11 @@ function readStore() {
 }
 
 function writeStore(data) {
-  fs.writeFileSync(STORE_PATH, JSON.stringify(data, null, 2), 'utf-8');
+  try {
+    fs.writeFileSync(STORE_PATH, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (e) {
+    console.warn('[Scraper] writeStore warning:', e.message);
+  }
 }
 
 function updateJob(id, updates) {
@@ -97,6 +106,171 @@ export function deleteJob(id) {
   data.jobs = data.jobs.filter(j => j.id !== id);
   writeStore(data);
   return data.jobs.length !== before;
+}
+
+// ---------------- SEEN VENUES REGISTRY (BACKEND + CLOUD KV) ----------------
+export function extractBizSeenKeys(b, fallbackCity = '') {
+  if (!b || typeof b !== 'object') return [];
+  const keys = [];
+  if (b.placeId) keys.push('pid:' + String(b.placeId).trim());
+  if (b.cid) keys.push('cid:' + String(b.cid).trim());
+  const digits = String(b.phone || '').replace(/\D/g, '');
+  if (digits.length >= 9) keys.push('tel:' + digits.slice(-9));
+  const rawIg = String(b.username || b.instagram || '').toLowerCase().replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/[@/]/g, '').trim();
+  if (rawIg && rawIg.length >= 2) keys.push('ig:' + rawIg);
+  const cleanName = String(b.name || b.title || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+  const cleanCity = String(b.city || fallbackCity || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, '');
+  if (cleanName && cleanName.length >= 2) {
+    keys.push('nc:' + cleanName + '|' + cleanCity);
+  }
+  return keys;
+}
+
+function readLocalSeenFile() {
+  try {
+    if (fs.existsSync(SEEN_PATH)) {
+      const parsed = JSON.parse(fs.readFileSync(SEEN_PATH, 'utf-8'));
+      return {
+        keys: Array.isArray(parsed.keys) ? parsed.keys : [],
+        waveOffsets: (parsed.waveOffsets && typeof parsed.waveOffsets === 'object') ? parsed.waveOffsets : {},
+        updatedAt: parsed.updatedAt || 0
+      };
+    }
+  } catch {}
+  return { keys: [], waveOffsets: {}, updatedAt: 0 };
+}
+
+function writeLocalSeenFile(data) {
+  try {
+    fs.writeFileSync(SEEN_PATH, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (e) {
+    console.warn('[Scraper] writeLocalSeenFile warning:', e.message);
+  }
+}
+
+export async function getSeenData() {
+  const local = readLocalSeenFile();
+  const keySet = new Set(local.keys);
+  const waveOffsets = { ...local.waveOffsets };
+
+  // Seed from local scrapes.json jobs
+  const store = readStore();
+  (store.jobs || []).forEach(job => {
+    if (job.demo) return;
+    const flat = [];
+    if (Array.isArray(job.items)) flat.push(...job.items);
+    if (job.groups && typeof job.groups === 'object') {
+      Object.values(job.groups).forEach(arr => { if (Array.isArray(arr)) flat.push(...arr); });
+    }
+    flat.forEach(b => extractBizSeenKeys(b, job.city).forEach(k => keySet.add(k)));
+  });
+
+  // Sync from Apify Cloud KV Store (both seen_places record and account record)
+  const token = getApifyToken();
+  if (token) {
+    try {
+      const [seenRes, accRes] = await Promise.all([
+        fetch(`https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/${CLOUD_SEEN_RECORD}?token=${token}`).catch(() => null),
+        fetch(`https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/${CLOUD_ACCOUNT_RECORD}?token=${token}`).catch(() => null)
+      ]);
+      if (seenRes && seenRes.ok) {
+        const cloudSeen = await seenRes.json().catch(() => null);
+        if (cloudSeen && typeof cloudSeen === 'object') {
+          if (Array.isArray(cloudSeen.keys)) cloudSeen.keys.forEach(k => keySet.add(k));
+          if (cloudSeen.waveOffsets && typeof cloudSeen.waveOffsets === 'object') {
+            Object.entries(cloudSeen.waveOffsets).forEach(([wk, val]) => {
+              waveOffsets[wk] = Math.max(Number(waveOffsets[wk] || 0), Number(val || 0));
+            });
+          }
+        }
+      }
+      if (accRes && accRes.ok) {
+        const acc = await accRes.json().catch(() => null);
+        if (acc && typeof acc === 'object') {
+          if (Array.isArray(acc.seenPlaces)) acc.seenPlaces.forEach(k => keySet.add(k));
+          if (acc.searchWaveOffsets && typeof acc.searchWaveOffsets === 'object') {
+            Object.entries(acc.searchWaveOffsets).forEach(([wk, val]) => {
+              waveOffsets[wk] = Math.max(Number(waveOffsets[wk] || 0), Number(val || 0));
+            });
+          }
+          (acc.scrapes || []).forEach(job => {
+            if (job.demo) return;
+            const flat = [];
+            if (Array.isArray(job.items)) flat.push(...job.items);
+            if (job.groups && typeof job.groups === 'object') {
+              Object.values(job.groups).forEach(arr => { if (Array.isArray(arr)) flat.push(...arr); });
+            }
+            flat.forEach(b => extractBizSeenKeys(b, job.city).forEach(k => keySet.add(k)));
+          });
+          (acc.nfcJobs || []).forEach(job => {
+            if (job.demo || String(job.id || '').startsWith('nfc-job-kyiv') || String(job.id || '').startsWith('nfc-job-lviv') || String(job.id || '').startsWith('nfc-job-odesa')) return;
+            (job.items || []).forEach(b => extractBizSeenKeys(b, job.city).forEach(k => keySet.add(k)));
+          });
+          (acc.crm || []).forEach(c => extractBizSeenKeys(c, c.city).forEach(k => keySet.add(k)));
+        }
+      }
+    } catch (e) {
+      console.warn('[Scraper] Cloud seen fetch warning:', e.message);
+    }
+  }
+
+  const merged = {
+    keys: [...keySet],
+    waveOffsets,
+    updatedAt: Date.now()
+  };
+  writeLocalSeenFile(merged);
+  return { ...merged, seenSet: keySet };
+}
+
+export async function registerSeenBusinesses(arg1 = [], waveKeyArg = '', nextWaveOffsetArg = null, cityArg = '') {
+  let items = [];
+  let keys = [];
+  let waveKey = waveKeyArg;
+  let nextWaveOffset = nextWaveOffsetArg;
+  let city = cityArg;
+  if (Array.isArray(arg1)) {
+    items = arg1;
+  } else if (arg1 && typeof arg1 === 'object') {
+    items = arg1.items || [];
+    keys = arg1.keys || [];
+    waveKey = arg1.waveKey ?? waveKeyArg;
+    nextWaveOffset = arg1.nextWaveOffset ?? nextWaveOffsetArg;
+    city = arg1.city ?? cityArg;
+  }
+
+  const current = await getSeenData();
+  const keySet = new Set(current.keys);
+  const waveOffsets = { ...current.waveOffsets };
+
+  if (Array.isArray(keys)) keys.forEach(k => { if (k) keySet.add(String(k)); });
+  if (Array.isArray(items)) {
+    items.forEach(b => extractBizSeenKeys(b, city).forEach(k => keySet.add(k)));
+  }
+  if (waveKey && nextWaveOffset !== null && nextWaveOffset !== undefined) {
+    waveOffsets[waveKey] = Math.max(Number(waveOffsets[waveKey] || 0), Number(nextWaveOffset));
+  }
+
+  const payload = {
+    keys: [...keySet],
+    waveOffsets,
+    updatedAt: Date.now()
+  };
+  writeLocalSeenFile(payload);
+
+  const token = getApifyToken();
+  if (token) {
+    try {
+      await fetch(`https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/${CLOUD_SEEN_RECORD}?token=${token}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+    } catch (e) {
+      console.warn('[Scraper] Cloud seen save warning:', e.message);
+    }
+  }
+  return payload;
 }
 
 // ---------------- HELPERS ----------------
@@ -378,79 +552,193 @@ export function startScrape({ source = 'gmaps', niche = '', city = '', limit = 5
   return job;
 }
 
+const CITY_DISTRICT_POOLS = {
+  'київ': ['Печерськ', 'Поділ', 'Оболонь', 'Позняки', 'Осокорки', 'Голосіївський', 'Шевченківський', 'Лук\'янівка', 'Солом\'янський', 'Троєщина', 'Дарниця', 'Лівобережна', 'Святошин', 'Нивки', 'Теремки', 'Виноградар', 'Шулявка', 'Деміївка', 'Березняки', 'Русанівка', 'Золоті Ворота', 'Хрещатик', 'Воздвиженка', 'Кловська'],
+  'вінниця': ['Вишенька', 'Замостя', 'Поділля', 'Слов\'янка', 'Центр', 'Урожай', 'Старе місто', 'Тяжилів', 'Київська', 'Корея', 'П\'ятничани', 'Академічний', 'Пирогова', 'Соборна', 'Келецька', 'Коцюбинського', 'Юність', 'Хмельницьке шосе', 'Барське шосе', 'Електромережа', 'Сабарів', 'Військове містечко'],
+  'львів': ['Галицький район', 'Франківський район', 'Сихів', 'Шевченківський район', 'Личаківський район', 'Залізничний район', 'Площа Ринок', 'Проспект Свободи', 'Наукова', 'Чорновола', 'Кульпарківська', 'Городоцька', 'Стрийська', 'Зелена', 'Левандовка', 'Рясне', 'Пасічна', 'Новий Львів'],
+  'одеса': ['Приморський район', 'Аркадія', 'Таїрова', 'Черемушки', 'Фонтан', 'Котовського', 'Дерибасівська', 'Центр', 'Французький бульвар', 'Малиновський район', 'Пересип', 'Молдаванка', 'Ланжерон', 'Катерининська', 'Рішельєвська'],
+  'дніпро': ['Соборний район', 'Шевченківський район', 'Центральний район', 'Перемога', 'Тополя', 'Сонячний', 'Лівобережний', 'Гагаріна', 'Яворницького', 'Калинова', 'Робоча', 'Кірова', 'Тітова', 'Правда', 'Кам\'янський'],
+  'харків': ['Шевченківський район', 'Київський район', 'Салтівка', 'Олексіївка', 'Наукова', 'Центр', 'Сумська', 'Пушкінська', 'Холодна Гора', 'Нові Будинки', 'Павлове Поле', 'Гагаріна', 'Ботанічний сад'],
+  'тернопіль': ['Центр', 'Дружба', 'Сонячний', 'Східний', 'Аляска', 'БАМ', 'Новий Світ', 'Канада', 'Кутківці', 'Оболоня', 'Руська', 'Злуки', 'Мазепи'],
+  'івано-франківськ': ['Центр', 'Пасічна', 'Каскад', 'Позитрон', 'БАМ', 'Кішлак', 'Майзлі', 'Гірка', 'Набережна', 'Незалежності', 'Коновальця', 'Чорновола'],
+  'хмельницький': ['Центр', 'Виставка', 'Озерна', 'Південно-Західний', 'Ракове', 'Гречани', 'Дубове', 'Заріччя', 'Кам\'янецька', 'Проскурівська', 'Подільська'],
+  'чернівці': ['Центр', 'Кобилянської', 'Головна', 'Гравітон', 'Роша', 'Калічанка', 'Садгора', 'Південно-Кільцева', 'Героїв Майдану', 'Руська', 'Університетська'],
+  'рівне': ['Центр', 'Ювілейний', 'Північний', 'Щасливе', 'Боярка', 'Басів Кут', 'Золотіїв', 'Соборна', 'Київська', 'Грушевського'],
+  'луцьк': ['Центр', '33-й квартал', '40-й квартал', '55-й мікрорайон', 'ГПЗ', 'Теремно', 'Красне', 'Волі', 'Соборності', 'Відродження'],
+  'житомир': ['Центр', 'Богунія', 'Корбутівка', 'Крошня', 'Польова', 'Мальованка', 'Київська', 'Велика Бердичівська', 'Перемоги'],
+  'полтава': ['Центр', 'Алмазний', 'Левада', 'Поділ', 'Сади', 'Брайлки', 'Половки', 'Соборності', 'Європейська'],
+  'черкаси': ['Центр', 'Митниця', 'Південно-Західний', 'Соснівка', 'Казбет', 'Сєдова', 'Хімселище', 'Шевченка', 'Смілянська'],
+  'ужгород': ['Центр', 'Новий район', 'Боздош', 'Минайська', 'Шахта', 'Радванка', 'Корзо', 'Свободи', 'Перемоги']
+};
+
+const UNIVERSAL_AREA_ZONES = [
+  'центр', 'вулиця Соборна', 'вулиця Київська', 'вулиця Незалежності',
+  'вулиця Шевченка', 'вулиця Грушевського', 'проспект Миру', 'торговий центр',
+  'вокзал', 'ринок', 'мікрорайон', 'парк', 'площа', 'набережна', 'бульвар'
+];
+
+export function buildSmartDistrictQueries(niche, city, waveIndex = 0, batchSize = 10) {
+  const cleanNiche = String(niche || '').trim();
+  const cleanCity = String(city || '').trim();
+  const cityLower = cleanCity.toLowerCase();
+
+  let subNiches = cleanNiche.split(/[,;/]+/).map(s => s.trim()).filter(Boolean);
+  const nLower = cleanNiche.toLowerCase();
+  if (/кафе|ресторан|бар|кав/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'кав\'ярня', 'ресторан', 'кафе', 'піцерія', 'суші бар', 'кондитерська', 'паб', 'пекарня', 'бургерна', 'гастробар']));
+  } else if (/салон|б'юті|косметолог|перукар|манікюр|нігт/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'салон краси', 'студія манікюру', 'косметологія', 'перукарня', 'бров бар', 'студія краси', 'лазерна епіляція']));
+  } else if (/стоматолог|клінік|медиц/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'стоматологія', 'стоматологічна клініка', 'медичний центр', 'приватна клініка', 'ортодонтія']));
+  } else if (/авто|сто|шиномонтаж|детейлінг|мийк/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'автосервіс', 'СТО', 'детейлінг', 'автомийка', 'шиномонтаж', 'діагностика авто']));
+  } else if (/фітнес|спорт|зал|йог/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'фітнес клуб', 'тренажерний зал', 'спортзал', 'студія йоги', 'пілатес', 'стретчинг']));
+  } else if (/квіт|флорист|подарун/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'квітковий магазин', 'доставка квітів', 'флористика', 'студія квітів']));
+  } else if (/барбер|чоловіч/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'барбершоп', 'чоловіча перукарня', 'barbershop']));
+  } else if (/масаж|спа|spa/i.test(nLower) && subNiches.length <= 3) {
+    subNiches = Array.from(new Set([...subNiches, 'масажний салон', 'студія масажу', 'СПА салон', 'корекція фігури']));
+  }
+  if (!subNiches.length) subNiches = [cleanNiche];
+
+  let districts = [];
+  for (const [k, arr] of Object.entries(CITY_DISTRICT_POOLS)) {
+    if (cityLower.includes(k)) {
+      districts = arr;
+      break;
+    }
+  }
+  if (!districts.length) districts = UNIVERSAL_AREA_ZONES;
+
+  const candidatePool = [];
+  for (const sn of subNiches) {
+    if (cleanCity) candidatePool.push(`${sn} ${cleanCity}`);
+    else candidatePool.push(sn);
+  }
+  for (const d of districts) {
+    for (const sn of subNiches) {
+      if (cleanCity) candidatePool.push(`${sn} ${d} ${cleanCity}`);
+      else candidatePool.push(`${sn} ${d}`);
+    }
+  }
+
+  const uniquePool = Array.from(new Set(candidatePool));
+  const startIdx = (waveIndex * batchSize) % uniquePool.length;
+  const selected = [];
+  for (let i = 0; i < Math.min(batchSize, uniquePool.length); i++) {
+    selected.push(uniquePool[(startIdx + i) % uniquePool.length]);
+  }
+  return selected;
+}
+
 async function processJob(job) {
   const { source, niche, city, limit } = job;
   const query = [niche, city].filter(Boolean).join(' ');
-  let items;
 
   if (!getApifyToken()) {
     await new Promise(r => setTimeout(r, 2500));
-    items = buildDemoItems(source, niche, city || 'Київ', limit);
-  } else if (source === 'gmaps') {
-    const gmapsQueries = [];
-    gmapsQueries.push(query);
-    if (city && niche) {
-      gmapsQueries.push(niche);
-      if (limit > 20) {
-        gmapsQueries.push(`${niche} центр ${city}`);
-        gmapsQueries.push(`кращі ${niche} ${city}`);
-        gmapsQueries.push(`${niche} ${city} район`);
-      }
-      if (limit > 50) {
-        gmapsQueries.push(`топ ${niche} ${city}`);
-        gmapsQueries.push(`популярні ${niche} ${city}`);
-        gmapsQueries.push(`нові ${niche} ${city}`);
-      }
-    } else {
-      gmapsQueries.push(niche);
-    }
-    const perSearchLimit = Math.max(25, Math.ceil((limit * 1.3) / gmapsQueries.length));
-
-    const raw = await runApifyActor(ACTORS.gmaps, {
-      searchStringsArray: gmapsQueries,
-      locationQuery: city ? `${city}, Україна` : '',
-      city: city || '',
-      maxCrawledPlacesPerSearch: perSearchLimit,
-      language: 'uk',
-      skipClosedPlaces: true,
-      scrapeSocialMediaProfiles: {
-        instagrams: true,
-        facebooks: false,
-        youtubes: false,
-        tiktoks: false,
-        twitters: false
-      }
+    const demoItems = buildDemoItems(source, niche, city || 'Київ', limit);
+    const allDemo = demoItems.map((b, idx) => {
+      const { category, reason } = classifyBusiness(b);
+      return { ...b, id: `b-${idx + 1}`, category, reason, service: CATEGORIES[category]?.service || 'Комплексний діджитал' };
     });
-    items = raw.map(it => normalizeGmaps(it, niche, city));
-  } else {
-    const raw = await runApifyActor(ACTORS.instagram, {
-      search: query,
-      searchType: 'user',
-      searchLimit: limit,
-      resultsType: 'details',
-      resultsLimit: limit
+    updateJob(job.id, {
+      status: 'done',
+      finishedAt: new Date().toISOString(),
+      total: allDemo.length,
+      skippedNoPhone: 0,
+      groups: groupByCategory(allDemo)
     });
-    items = raw.map(it => normalizeInstagram(it, niche, city));
+    return;
   }
 
-  // Дедуплікація та збереження контактів
-  const seen = new Set();
+  const seenData = await getSeenData();
+  const seenSet = seenData.seenSet;
+  const waveKey = `${source}:${String(niche).toLowerCase().trim()}:${String(city).toLowerCase().trim()}`;
+  let currentWave = Number(seenData.waveOffsets[waveKey] || 0);
+
+  const isBusinessSeen = (b) => {
+    const keys = extractBizSeenKeys(b, city);
+    return keys.some(k => seenSet.has(k));
+  };
+  const markBusinessSeenInRun = (b) => {
+    const keys = extractBizSeenKeys(b, city);
+    for (const k of keys) seenSet.add(k);
+  };
+
   const allUnique = [];
   let skipped = 0;
-  for (const b of items) {
-    if (!b.phone && !b.username) {
-      skipped++;
-      continue;
-    }
-    const dedupKey = (b.phone || b.username || b.name).toLowerCase();
-    if (seen.has(dedupKey)) continue;
-    seen.add(dedupKey);
+  const maxWaves = 3;
 
-    const { category, reason } = classifyBusiness(b);
-    allUnique.push({ ...b, id: `b-${seen.size}`, category, reason, service: CATEGORIES[category]?.service || 'Комплексний діджитал' });
+  for (let wave = 0; wave < maxWaves; wave++) {
+    if (allUnique.length >= limit) break;
+    const needed = limit - allUnique.length;
+    let waveItems = [];
+
+    if (source === 'gmaps') {
+      const batchSize = Math.min(14, Math.max(6, Math.ceil(needed / 12) + 4));
+      const gmapsQueries = buildSmartDistrictQueries(niche, city, currentWave, batchSize);
+      currentWave++;
+      const perSearchLimit = Math.max(30, Math.ceil((needed * 1.8) / gmapsQueries.length));
+
+      console.log(`[Scraper] Wave ${wave + 1}/${maxWaves} (${gmapsQueries.length} district queries, perSearch=${perSearchLimit}):`, gmapsQueries.slice(0, 4));
+      const raw = await runApifyActor(ACTORS.gmaps, {
+        searchStringsArray: gmapsQueries,
+        locationQuery: city ? `${city}, Україна` : '',
+        maxCrawledPlacesPerSearch: perSearchLimit,
+        language: 'uk',
+        skipClosedPlaces: true
+      });
+      waveItems = raw.map(it => normalizeGmaps(it, niche, city));
+    } else {
+      const igQueries = buildSmartDistrictQueries(niche, city, currentWave, 4);
+      currentWave++;
+      const igSearchStr = igQueries.slice(0, 2).join(', ');
+      const searchLim = Math.min(250, Math.max(limit * 3, 60));
+      const raw = await runApifyActor(ACTORS.instagram, {
+        search: igSearchStr || query,
+        searchType: 'user',
+        searchLimit: searchLim,
+        resultsType: 'details',
+        resultsLimit: searchLim
+      });
+      waveItems = raw.map(it => normalizeInstagram(it, niche, city));
+    }
+
+    for (const b of waveItems) {
+      if (!b.phone && !b.username && !b.website) {
+        skipped++;
+        continue;
+      }
+      if (isBusinessSeen(b)) {
+        continue;
+      }
+      markBusinessSeenInRun(b);
+
+      const { category, reason } = classifyBusiness(b);
+      allUnique.push({
+        ...b,
+        id: `b-${allUnique.length + 1}`,
+        category,
+        reason,
+        service: CATEGORIES[category]?.service || 'Комплексний діджитал'
+      });
+      if (allUnique.length >= limit) break;
+    }
+
+    // Update intermediate progress on job
+    updateJob(job.id, {
+      total: allUnique.length,
+      skippedNoPhone: skipped
+    });
   }
 
   const validBusinesses = allUnique.slice(0, limit);
+
+  // Register newly returned businesses in global seen registry + Cloud KV
+  await registerSeenBusinesses(validBusinesses, waveKey, currentWave, city);
 
   updateJob(job.id, {
     status: 'done',
@@ -459,7 +747,7 @@ async function processJob(job) {
     skippedNoPhone: skipped,
     groups: groupByCategory(validBusinesses)
   });
-  console.log(`[Scraper] ✅ ${query}: ${validBusinesses.length} бізнесів збережено (відсіяно ${skipped})`);
+  console.log(`[Scraper] ✅ ${query}: ${validBusinesses.length}/${limit} НОВИХ бізнесів збережено (відсіяно без контактів: ${skipped})`);
 }
 
 // ---------------- EXPORT ----------------

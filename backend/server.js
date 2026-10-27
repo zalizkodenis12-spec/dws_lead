@@ -8,7 +8,7 @@ import { analyzeLeadAi, generatePersonalizedOffer } from './ai/gemini.js';
 import { ingestMessage, loadSources, saveSourcesToFile, scanPublicChannels, startMonitor } from './parser/monitor.js';
 import { sendScanReport } from './bot.js';
 import './bot.js';
-import { startScrape, listJobs, getJob, deleteJob, buildCsv, csvFileName, sendCsvToTelegram, scraperMode, setApifyToken, getApifyToken } from './scraper/scraper.js';
+import { startScrape, listJobs, getJob, deleteJob, buildCsv, csvFileName, sendCsvToTelegram, scraperMode, setApifyToken, getApifyToken, getSeenData, registerSeenBusinesses } from './scraper/scraper.js';
 
 dotenv.config();
 
@@ -500,6 +500,34 @@ app.post('/api/scrapes/token', (req, res) => {
     const saved = setApifyToken(token);
     const masked = saved ? saved.slice(0, 8) + '...' + saved.slice(-4) : '';
     res.json({ success: true, hasToken: !!saved, masked, mode: scraperMode() });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get('/api/scrapes/seen', async (req, res) => {
+  try {
+    const data = await getSeenData();
+    res.json({
+      success: true,
+      keys: Array.from(data.seenSet),
+      waveOffsets: data.waveOffsets || {},
+      totalSeen: data.seenSet.size
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/scrapes/seen', async (req, res) => {
+  try {
+    const { items = [], waveKey = '', nextWaveOffset = null, city = '' } = req.body || {};
+    const data = await registerSeenBusinesses(items, waveKey, nextWaveOffset, city);
+    res.json({
+      success: true,
+      totalSeen: (data.keys || []).length,
+      waveOffsets: data.waveOffsets || {}
+    });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
