@@ -169,17 +169,60 @@ function groupByCategory(businesses) {
 
 // ---------------- NORMALIZERS ----------------
 function normalizeGmaps(item, niche, city) {
+  const name = item.title || item.name || '';
+  const placeId = item.placeId || item.id || '';
+  const cid = item.cid || '';
+  const address = item.address || item.street || '';
+  const phone = normalizePhone(item.phoneUnformatted || item.phone);
+  const website = item.website || '';
+
+  // Extract Instagram from website or instagrams array
+  let instagram = (item.instagrams || [])[0] || '';
+  if (!instagram && website && /instagram\.com/i.test(website)) {
+    const m = website.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
+    if (m && m[1]) instagram = '@' + m[1].replace(/\/.*$/, '');
+  }
+  if (instagram && !instagram.startsWith('@') && !instagram.startsWith('http')) {
+    instagram = '@' + instagram;
+  }
+
+  // Extract Telegram from website, telegrams array or phone
+  let telegram = (item.telegrams || [])[0] || '';
+  if (!telegram && website && /t\.me/i.test(website)) {
+    const m = website.match(/t\.me\/([a-zA-Z0-9_+]+)/i);
+    if (m && m[1]) telegram = '@' + m[1];
+  }
+  const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
+  const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
+
+  // Direct business place card URL (opens place details, reviews, photos instead of raw coordinate pin)
+  let mapsUrl = item.url || '';
+  if (!mapsUrl || !mapsUrl.includes('google.com/maps')) {
+    if (placeId) {
+      mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
+    } else if (cid) {
+      mapsUrl = `https://maps.google.com/?cid=${encodeURIComponent(cid)}`;
+    } else {
+      mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((name + ' ' + (address || city || '')).trim())}`;
+    }
+  }
+
   return {
-    name: item.title || item.name || '',
-    phone: normalizePhone(item.phoneUnformatted || item.phone),
-    website: item.website || '',
-    address: item.address || item.street || '',
+    name,
+    placeId,
+    cid,
+    phone,
+    website,
+    address,
     city: item.city || city || '',
     category: item.categoryName || (item.categories || [])[0] || '',
     rating: item.totalScore || 0,
     reviews: item.reviewsCount || 0,
-    instagram: (item.instagrams || [])[0] || '',
-    link: item.url || '',
+    instagram,
+    telegram,
+    telegramPhone,
+    link: mapsUrl,
+    mapsUrl,
     niche,
     source: 'gmaps'
   };
@@ -369,7 +412,14 @@ async function processJob(job) {
       city: city || '',
       maxCrawledPlacesPerSearch: perSearchLimit,
       language: 'uk',
-      skipClosedPlaces: true
+      skipClosedPlaces: true,
+      scrapeSocialMediaProfiles: {
+        instagrams: true,
+        facebooks: false,
+        youtubes: false,
+        tiktoks: false,
+        twitters: false
+      }
     });
     items = raw.map(it => normalizeGmaps(it, niche, city));
   } else {

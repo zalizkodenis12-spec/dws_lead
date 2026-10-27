@@ -8663,7 +8663,7 @@ function buildAccountSnapshot(nowTs = Date.now()) {
 
   return {
     app: 'DWS Lead',
-    version: '4.6.0',
+    version: '4.6.1',
     accountKey,
     deviceId: DWS_DEVICE_ID,
     sourceDevice: isMobileDevice() ? 'phone' : 'laptop',
@@ -9451,16 +9451,57 @@ function renderScrapeCat(job, cat) {
   const items = job.groups?.[cat] || [];
   const key = job.id + ':' + cat;
   const isOpen = scrapeState.openCats.has(key);
-  const rows = items.map((b, idx) => `
-    <tr>
-      <td style="font-weight:700; color:var(--muted);">${idx + 1}</td>
-      <td style="font-weight:700; color:var(--black);">${escapeHtml(b.name)}</td>
-      <td><a href="tel:${escapeHtml(b.phone)}" style="color:var(--accent); font-weight:600; text-decoration:none;">${escapeHtml(b.phone)}</a></td>
-      <td style="color:var(--muted); font-size:0.75rem;">${escapeHtml(b.reason || '—')}</td>
-      <td>${escapeHtml(b.city || job.city || '—')}</td>
-      <td>${b.website ? `<a href="${escapeHtml(b.website)}" target="_blank" rel="noopener" style="color:var(--accent); font-weight:600; text-decoration:underline;">відкрити</a>` : '—'}</td>
-      <td>${b.source === 'instagram' ? `${b.followers || 0} підп.` : `${b.rating ? Number(b.rating).toFixed(1) : '—'} ★ (${b.reviews || 0})`}</td>
-    </tr>`).join('');
+  const rows = items.map((b, idx) => {
+    const cleanPhone = (b.phone || '').replace(/[^\d]/g, '');
+    const tgUrl = b.telegram ? (b.telegram.startsWith('http') ? b.telegram : 'https://t.me/' + b.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
+    const cleanInsta = (b.instagram || (b.source === 'instagram' ? b.username : '') || '').replace(/^@+/, '');
+    const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent((b.name || '') + ' ' + (b.city || job.city || ''))}`;
+    
+    // Direct Google Maps business place card
+    let mapUrl = b.link || b.mapsUrl || '';
+    if (!mapUrl || !mapUrl.includes('google.com/maps')) {
+      if (b.placeId) {
+        mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(b.name)}&query_place_id=${encodeURIComponent(b.placeId)}`;
+      } else if (b.cid) {
+        mapUrl = `https://maps.google.com/?cid=${encodeURIComponent(b.cid)}`;
+      } else {
+        mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(((b.name || '') + ' ' + (b.address || b.city || job.city || '')).trim())}`;
+      }
+    }
+
+    return `
+      <tr>
+        <td style="font-weight:700; color:var(--muted);">${idx + 1}</td>
+        <td style="font-weight:700;">
+          <a href="${mapUrl}" target="_blank" rel="noopener" style="color:var(--black); text-decoration:none; display:inline-flex; align-items:center; gap:4px;" title="Відкрити картку закладу в Google Maps">
+            <span>${escapeHtml(b.name)}</span>
+            <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
+        </td>
+        <td>
+          <div style="display:inline-flex; align-items:center; gap:6px;">
+            <a href="tel:${escapeHtml(b.phone)}" style="color:var(--accent); font-weight:600; text-decoration:none;">${escapeHtml(b.phone || '—')}</a>
+            ${tgUrl ? `<a href="${tgUrl}" target="_blank" rel="noopener" style="color:#0088cc; font-size:0.75rem; font-weight:700; background:rgba(0,136,204,0.12); padding:1px 6px; border-radius:4px; text-decoration:none;" title="Написати в Telegram">TG</a>` : ''}
+          </div>
+        </td>
+        <td style="color:var(--muted); font-size:0.75rem;">${escapeHtml(b.reason || '—')}</td>
+        <td>${escapeHtml(b.city || job.city || '—')}</td>
+        <td>
+          <div style="display:flex; flex-direction:column; gap:2px;">
+            ${b.website ? `<a href="${escapeHtml(b.website)}" target="_blank" rel="noopener" style="color:var(--accent); font-weight:600; text-decoration:underline; font-size:0.8rem;">вебсайт</a>` : ''}
+            <a href="${instaUrl}" target="_blank" rel="noopener" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; font-size:0.75rem; font-weight:600; text-decoration:none;" title="${cleanInsta ? 'Instagram профіль' : 'Шукати в Instagram'}">
+              ${cleanInsta ? '@' + cleanInsta : '🔍 Insta'}
+            </a>
+          </div>
+        </td>
+        <td>${b.source === 'instagram' ? `${b.followers || 0} підп.` : `${b.rating ? Number(b.rating).toFixed(1) : '—'} ★ (${b.reviews || 0})`}</td>
+        <td style="text-align:right;">
+          <button type="button" class="btn btn--fill btn--xs" data-scrape-act="crm-add" data-job="${job.id}" data-biz-idx="${idx}" data-cat="${cat}" title="Додати заклад у CRM" style="padding:4px 8px; font-size:0.75rem;">
+            + CRM
+          </button>
+        </td>
+      </tr>`;
+  }).join('');
 
   return `
     <div class="scrape-cat ${isOpen ? 'open' : ''}">
@@ -9474,7 +9515,7 @@ function renderScrapeCat(job, cat) {
         ${items.length ? `
           <div class="scrape-table-wrap">
             <table class="scrape-table">
-              <thead><tr><th>#</th><th>БІЗНЕС</th><th>ТЕЛЕФОН</th><th>БІЛЬ / ПРИЧИНА</th><th>МІСТО</th><th>САЙТ / INSTA</th><th>${job.source === 'instagram' ? 'ПІДПИСНИКИ' : 'РЕЙТИНГ · ВІДГУКИ'}</th></tr></thead>
+              <thead><tr><th>#</th><th>БІЗНЕС (КАРТА)</th><th>ТЕЛЕФОН / TG</th><th>БІЛЬ / ПРИЧИНА</th><th>МІСТО</th><th>САЙТ / INSTA</th><th>${job.source === 'instagram' ? 'ПІДПИСНИКИ' : 'РЕЙТИНГ · ВІДГУКИ'}</th><th style="text-align:right;">ДІЯ</th></tr></thead>
               <tbody>${rows}</tbody>
             </table>
           </div>
@@ -9570,7 +9611,14 @@ async function runLiveApifyJob(job) {
         city: job.city || '',
         maxCrawledPlacesPerSearch: perSearchLimit,
         language: 'uk',
-        skipClosedPlaces: true
+        skipClosedPlaces: true,
+        scrapeSocialMediaProfiles: {
+          instagrams: true,
+          facebooks: false,
+          youtubes: false,
+          tiktoks: false,
+          twitters: false
+        }
       };
 
   try {
@@ -9643,18 +9691,61 @@ async function runLiveApifyJob(job) {
           source: 'instagram'
         };
       } else {
+        const name = (it.title || it.name || '').trim();
+        const placeId = it.placeId || it.id || '';
+        const cid = it.cid || '';
+        const addr = it.address || it.street || '';
+        const phone = normalizePhone(it.phoneUnformatted || it.phone);
+        const website = it.website || '';
+
+        // Extract Instagram from website or instagrams array
+        let instagram = (it.instagrams || [])[0] || '';
+        if (!instagram && website && /instagram\.com/i.test(website)) {
+          const m = website.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
+          if (m && m[1]) instagram = '@' + m[1].replace(/\/.*$/, '');
+        }
+        if (instagram && !instagram.startsWith('@') && !instagram.startsWith('http')) {
+          instagram = '@' + instagram;
+        }
+
+        // Extract Telegram from website, telegrams array or phone
+        let telegram = (it.telegrams || [])[0] || '';
+        if (!telegram && website && /t\.me/i.test(website)) {
+          const m = website.match(/t\.me\/([a-zA-Z0-9_+]+)/i);
+          if (m && m[1]) telegram = '@' + m[1];
+        }
+        const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
+        const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
+
+        // Direct Google Maps business place card
+        let link = it.url || '';
+        if (!link || !link.includes('google.com/maps')) {
+          if (placeId) {
+            link = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
+          } else if (cid) {
+            link = `https://maps.google.com/?cid=${encodeURIComponent(cid)}`;
+          } else {
+            link = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((name + ' ' + (addr || job.city || '')).trim())}`;
+          }
+        }
+
         b = {
-          id: 'biz-' + (it.placeId || it.id || Math.random().toString(36).slice(2)),
-          name: it.title || it.name || '',
-          phone: normalizePhone(it.phoneUnformatted || it.phone),
-          website: it.website || '',
-          address: it.address || it.street || '',
+          id: 'biz-' + (placeId || Math.random().toString(36).slice(2)),
+          name,
+          placeId,
+          cid,
+          phone,
+          website,
+          address: addr,
           city: it.city || job.city || '',
           category: it.categoryName || (it.categories || [])[0] || job.niche || '',
           rating: it.totalScore || 0,
           reviews: it.reviewsCount || 0,
-          instagram: (it.instagrams || [])[0] || '',
-          link: it.url || '',
+          instagram,
+          telegram,
+          telegramPhone,
+          link,
+          mapsUrl: link,
           niche: job.niche,
           source: 'gmaps'
         };
@@ -10031,6 +10122,12 @@ function setupScrapeTab() {
       if (act === 'csv') downloadScrapeCsv(job, actBtn.dataset.cat);
       else if (act === 'send') sendScrapeToTelegram(job, actBtn.dataset.cat, actBtn);
       else if (act === 'delete') deleteScrapeJob(job);
+      else if (act === 'crm-add') {
+        const cat = actBtn.dataset.cat;
+        const idx = Number(actBtn.dataset.bizIdx);
+        const biz = job.groups?.[cat]?.[idx];
+        if (biz) addBizToCrm(biz, job.city);
+      }
       return;
     }
     if (e.target.closest('a')) return;
@@ -10411,15 +10508,35 @@ function getClusterRouteUrl(job) {
 }
 
 function getVenueNavigationUrl(venue, job) {
-  const addr = venue.address || venue.name;
-  const city = job?.city || '';
-  const query = city && !addr.includes(city) ? (addr + ', ' + city) : addr;
-  return 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(query);
+  const name = venue.name || '';
+  const addr = venue.address || '';
+  const city = job?.cluster || job?.city || '';
+  const query = [name, addr, city].filter(Boolean).join(', ');
+  let url = 'https://www.google.com/maps/dir/?api=1&destination=' + encodeURIComponent(query);
+  if (venue.placeId) {
+    url += '&destination_place_id=' + encodeURIComponent(venue.placeId);
+  }
+  return url;
 }
 
 function getVenueMapsUrl(venue, job) {
-  if (venue.mapsUrl) return venue.mapsUrl;
-  const q = venue.name + ' ' + (venue.address || job?.city || '');
+  // Direct Google Maps place link
+  if (venue.mapsUrl && (venue.mapsUrl.includes('google.com/maps') || venue.mapsUrl.includes('maps.google.com'))) {
+    return venue.mapsUrl;
+  }
+  if (venue.url && (venue.url.includes('google.com/maps') || venue.url.includes('maps.google.com'))) {
+    return venue.url;
+  }
+  if (venue.placeId) {
+    return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(venue.name || '') + '&query_place_id=' + encodeURIComponent(venue.placeId);
+  }
+  if (venue.cid) {
+    return 'https://maps.google.com/?cid=' + encodeURIComponent(venue.cid);
+  }
+  if (venue.link && (venue.link.includes('google.com/maps') || venue.link.includes('maps.google.com'))) {
+    return venue.link;
+  }
+  const q = [venue.name, venue.address || job?.cluster || job?.city].filter(Boolean).join(' ');
   return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
 }
 
@@ -10475,12 +10592,42 @@ function copyVenueNfcPitch(venue, job) {
   const infoEl = document.getElementById('venuePitchVenueInfo');
   const textEl = document.getElementById('venuePitchText');
 
+  const starStr = venue.rating ? Number(venue.rating).toFixed(1) : '—';
+  const revStr = venue.reviews || 0;
+  const addrStr = venue.address || job?.cluster || job?.city || '—';
+  const mapUrl = getVenueMapsUrl(venue, job);
+  const cleanPhone = (venue.phone || '').replace(/[^\d]/g, '');
+  const tgUrl = venue.telegram ? (venue.telegram.startsWith('http') ? venue.telegram : 'https://t.me/' + venue.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
+  const cleanInsta = (venue.instagram || '').replace(/^@+/, '');
+  const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent((venue.name || '') + ' ' + (job?.city || ''))}`;
+  const igDirectUrl = cleanInsta ? `https://ig.me/m/${cleanInsta}` : '';
+
   if (titleEl) titleEl.textContent = 'Офер: ' + (venue.name || 'Заклад');
   if (infoEl) {
-    const starStr = venue.rating ? Number(venue.rating).toFixed(1) : '—';
-    const revStr = venue.reviews || 0;
-    const addrStr = venue.address || job?.cluster || job?.city || '—';
-    infoEl.innerHTML = `<b>Заклад:</b> ${escapeHtml(venue.name)} &bull; <b>Рейтинг:</b> ★ ${starStr} (${revStr})<br><b>Адреса:</b> ${escapeHtml(addrStr)}`;
+    infoEl.innerHTML = `
+      <div style="font-size:0.85rem; font-weight:700; color:var(--black); margin-bottom:4px;">
+        ${escapeHtml(venue.name)} &bull; ★ ${starStr} (${revStr})
+      </div>
+      <div style="font-size:0.75rem; color:var(--muted); margin-bottom:8px;">
+        ${escapeHtml(addrStr)}
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
+        <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="display:inline-flex; align-items:center; gap:4px; font-weight:600;">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span>Точка в Google Maps</span>
+        </a>
+        ${tgUrl ? `
+          <a href="${tgUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="display:inline-flex; align-items:center; gap:4px; color:#0088cc; border-color:#0088cc; font-weight:600;">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+            <span>${venue.telegram ? venue.telegram : 'Telegram ' + (venue.phone || '')}</span>
+          </a>
+        ` : ''}
+        <a href="${instaUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="display:inline-flex; align-items:center; gap:4px; color:#E1306C; border-color:#E1306C; font-weight:600;">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
+          <span>${cleanInsta ? '@' + cleanInsta : '🔍 Знайти в Instagram'}</span>
+        </a>
+      </div>
+    `;
   }
   if (textEl) textEl.value = pitch;
 
@@ -10499,15 +10646,47 @@ function copyVenueNfcPitch(venue, job) {
     };
   }
 
+  const directTgBtn = document.getElementById('openVenueDirectTgBtn');
+  if (directTgBtn) {
+    if (tgUrl) {
+      directTgBtn.style.display = 'inline-flex';
+      directTgBtn.onclick = () => {
+        const val = textEl ? textEl.value : pitch;
+        if (navigator.clipboard?.writeText) navigator.clipboard.writeText(val);
+        showToast('Текст скопійовано! Відкриваю чат Telegram...');
+        haptic('light');
+        if (window.Telegram?.WebApp?.openTelegramLink) {
+          window.Telegram.WebApp.openTelegramLink(tgUrl);
+        } else {
+          window.open(tgUrl, '_blank');
+        }
+      };
+    } else {
+      directTgBtn.style.display = 'none';
+    }
+  }
+
+  const directIgBtn = document.getElementById('openVenueDirectIgBtn');
+  if (directIgBtn) {
+    directIgBtn.onclick = () => {
+      const val = textEl ? textEl.value : pitch;
+      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(val);
+      showToast('Текст скопійовано! Відкриваю Instagram...');
+      haptic('light');
+      const targetIg = igDirectUrl || instaUrl;
+      window.open(targetIg, '_blank');
+    };
+  }
+
   const shareTgBtn = document.getElementById('shareVenuePitchTgBtn');
   if (shareTgBtn) {
     shareTgBtn.onclick = () => {
       const val = textEl ? textEl.value : pitch;
-      const tgUrl = 'https://t.me/share/url?url=' + encodeURIComponent('') + '&text=' + encodeURIComponent(val);
+      const shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent('') + '&text=' + encodeURIComponent(val);
       if (window.Telegram?.WebApp?.openTelegramLink) {
-        window.Telegram.WebApp.openTelegramLink(tgUrl);
+        window.Telegram.WebApp.openTelegramLink(shareUrl);
       } else {
-        window.open(tgUrl, '_blank');
+        window.open(shareUrl, '_blank');
       }
     };
   }
@@ -10670,12 +10849,27 @@ function renderNfcVenuesList(job, items) {
           ? '<span class="nfc-pain-chip new">Новий заклад: мало відгуків</span>'
           : '<span class="nfc-pain-chip boost">Буст до ТОП-1</span>');
 
+      const mapUrl = getVenueMapsUrl(v, job);
+      const cleanPhone = (v.phone || '').replace(/[^\d]/g, '');
+      const tgUrl = v.telegram ? (v.telegram.startsWith('http') ? v.telegram : 'https://t.me/' + v.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
+      const cleanInsta = (v.instagram || '').replace(/^@+/, '');
+      const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
+
       return `
         <tr class="nfc-table-row">
           <td class="col-idx">${idx + 1}</td>
           <td class="col-name">
-            <div class="biz-title">${v.name}</div>
-            <div class="biz-addr">${v.address || '—'}</div>
+            <div class="biz-title">
+              <a href="${mapUrl}" target="_blank" rel="noopener" style="color:var(--black); text-decoration:none; font-weight:700; display:inline-flex; align-items:center; gap:4px;" title="Відкрити точку в Google Maps">
+                <span>${escapeHtml(v.name)}</span>
+                <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              </a>
+            </div>
+            <div class="biz-addr">${escapeHtml(v.address || '—')}</div>
+            <div style="display:flex; gap:8px; margin-top:3px; font-size:0.75rem;">
+              ${tgUrl ? `<a href="${tgUrl}" target="_blank" rel="noopener" style="color:#0088cc; font-weight:700; text-decoration:none;">💬 TG</a>` : ''}
+              <a href="${instaUrl}" target="_blank" rel="noopener" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; font-weight:600; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : '🔍 Insta'}</a>
+            </div>
           </td>
           <td class="col-rating">
             <span class="rating-star">★ ${v.rating ? Number(v.rating).toFixed(1) : '—'}</span>
@@ -10700,7 +10894,7 @@ function renderNfcVenuesList(job, items) {
           <thead>
             <tr>
               <th>#</th>
-              <th>Заклад / Адреса</th>
+              <th>Заклад (Google Maps) / Контакти</th>
               <th>Рейтинг</th>
               <th>Потреба</th>
               <th>Дії</th>
@@ -10723,13 +10917,20 @@ function renderNfcVenuesList(job, items) {
 
         const navUrl = getVenueNavigationUrl(v, job);
         const mapUrl = getVenueMapsUrl(v, job);
+        const cleanPhone = (v.phone || '').replace(/[^\d]/g, '');
+        const tgUrl = v.telegram ? (v.telegram.startsWith('http') ? v.telegram : 'https://t.me/' + v.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
+        const cleanInsta = (v.instagram || '').replace(/^@+/, '');
+        const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
 
         return `
           <div class="nfc-venue-card">
             <div class="nfc-venue-top-row">
               <div class="nfc-venue-title-wrap">
                 <span class="nfc-venue-idx">#${idx + 1}</span>
-                <span class="nfc-venue-name" title="${v.name}">${v.name}</span>
+                <a href="${mapUrl}" target="_blank" rel="noopener" class="nfc-venue-name" title="Відкрити точку закладу в Google Maps" style="text-decoration:none; color:inherit;">
+                  <span>${escapeHtml(v.name)}</span>
+                  <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="var(--accent)" stroke-width="2.5" style="margin-left:2px; vertical-align:middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                </a>
               </div>
               <div class="nfc-venue-score-badge ${(v.rating && v.rating <= 4.3) ? 'warning' : 'good'}">
                 ★ ${v.rating ? Number(v.rating).toFixed(1) : '—'} <span class="revs">(${v.reviews || 0})</span>
@@ -10744,7 +10945,7 @@ function renderNfcVenuesList(job, items) {
             <div class="nfc-venue-meta">
               <div class="nfc-meta-item">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <a href="${mapUrl}" target="_blank" rel="noopener" class="nfc-addr-link">${v.address || job.cluster || job.city}</a>
+                <a href="${mapUrl}" target="_blank" rel="noopener" class="nfc-addr-link" title="Відкрити точку в Google Maps">${escapeHtml(v.address || job.cluster || job.city)}</a>
               </div>
               ${v.phone ? `
                 <div class="nfc-meta-item">
@@ -10752,12 +10953,16 @@ function renderNfcVenuesList(job, items) {
                   <a href="tel:${v.phone}" class="nfc-phone-link">${v.phone}</a>
                 </div>
               ` : ''}
-              ${v.instagram ? `
+              ${tgUrl ? `
                 <div class="nfc-meta-item">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
-                  <a href="https://instagram.com/${v.instagram.replace('@', '')}" target="_blank" rel="noopener" class="nfc-insta-link">${v.instagram}</a>
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
+                  <a href="${tgUrl}" target="_blank" rel="noopener" class="nfc-tg-link" style="color:#0088cc; font-weight:600;">${v.telegram || 'Telegram'}</a>
                 </div>
               ` : ''}
+              <div class="nfc-meta-item">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
+                <a href="${instaUrl}" target="_blank" rel="noopener" class="nfc-insta-link" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; font-weight:600;">${cleanInsta ? '@' + cleanInsta : '🔍 Insta пошук'}</a>
+              </div>
             </div>
 
             <div class="nfc-venue-actions-row">
@@ -10767,8 +10972,12 @@ function renderNfcVenuesList(job, items) {
               <button type="button" class="btn btn--fill btn--sm nfc-crm-btn" data-nfc-act="crm" data-job="${job.id}" data-venue="${v.id}">
                 <span>CRM</span>
               </button>
+              <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn--out btn--sm" title="Відкрити точку в Google Maps" style="display:inline-flex; align-items:center; gap:3px;">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                <span>Точка</span>
+              </a>
               <a href="${navUrl}" target="_blank" rel="noopener" class="btn btn--out btn--sm nfc-route-btn" title="Прокласти маршрут пішки до закладу">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
                 <span>Шлях</span>
               </a>
             </div>
@@ -10813,7 +11022,14 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
     city: city,
     maxCrawledPlacesPerSearch: Math.min(perSearchLimit, 120),
     language: 'uk',
-    skipClosedPlaces: true
+    skipClosedPlaces: true,
+    scrapeSocialMediaProfiles: {
+      instagrams: true,
+      facebooks: false,
+      youtubes: false,
+      tiktoks: false,
+      twitters: false
+    }
   };
 
   try {
@@ -10850,23 +11066,61 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
       if (!name || seenNames.has(name.toLowerCase())) return;
       seenNames.add(name.toLowerCase());
 
+      const placeId = it.placeId || it.id || '';
+      const cid = it.cid || '';
       const rating = Number(it.totalScore || 0);
       const reviews = Number(it.reviewsCount || 0);
       const phone = normalizePhone(it.phoneUnformatted || it.phone);
       const website = it.website || '';
-      const insta = (it.instagrams || [])[0] || (it.url || '');
       const addr = it.address || it.street || job.cluster || job.city;
+
+      // Extract Instagram
+      let insta = (it.instagrams || [])[0] || '';
+      if (!insta && website && /instagram\.com/i.test(website)) {
+        const m = website.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
+        if (m && m[1]) insta = '@' + m[1].replace(/\/.*$/, '');
+      }
+      if (insta.includes('instagram.com/')) {
+        insta = '@' + insta.split('instagram.com/')[1].replace(/\/.*$/, '');
+      } else if (insta && !insta.startsWith('@') && !insta.startsWith('http')) {
+        insta = '@' + insta;
+      }
+
+      // Extract Telegram
+      let telegram = (it.telegrams || [])[0] || '';
+      if (!telegram && website && /t\.me/i.test(website)) {
+        const m = website.match(/t\.me\/([a-zA-Z0-9_+]+)/i);
+        if (m && m[1]) telegram = '@' + m[1];
+      }
+      const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
+      const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
+
+      // Direct Google Maps business place card
+      let mapsUrl = it.url || '';
+      if (!mapsUrl || !mapsUrl.includes('google.com/maps')) {
+        if (placeId) {
+          mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
+        } else if (cid) {
+          mapsUrl = `https://maps.google.com/?cid=${encodeURIComponent(cid)}`;
+        } else {
+          mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((name + ' ' + addr).trim())}`;
+        }
+      }
 
       mapped.push({
         id: 'v-real-' + Date.now() + '-' + idx,
         name,
+        placeId,
+        cid,
         address: addr,
         phone,
         website,
-        instagram: insta.includes('instagram.com') ? '@' + insta.split('instagram.com/')[1].replace(/\/.*$/, '') : '',
+        instagram: insta,
+        telegram,
+        telegramPhone,
         rating,
         reviews,
-        mapsUrl: it.url || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name + ' ' + addr)),
+        mapsUrl,
         painLevel: (rating && rating <= 4.3) ? 'urgent' : (reviews < 50 ? 'new' : 'boost'),
         painText: (rating && rating <= 4.3) ? 'Потрібно терміново перекривати негатив' : (reviews < 50 ? 'Новий заклад — гостра потреба у відгуках' : 'Буст до ТОП-1 в Google Maps')
       });
@@ -11762,6 +12016,11 @@ function showMapVenueCard(v, job, idx) {
   const mapUrl = getVenueMapsUrl(v, job);
   const curStatus = v.walkStatus || 'new';
 
+  const cleanPhone = (v.phone || '').replace(/[^\d]/g, '');
+  const tgUrl = v.telegram ? (v.telegram.startsWith('http') ? v.telegram : 'https://t.me/' + v.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
+  const cleanInsta = (v.instagram || '').replace(/^@+/, '');
+  const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
+
   card.innerHTML = `
     <div class="nfc-map-sheet-header">
       <div class="nfc-map-sheet-title">#${idx + 1} ${escapeHtml(v.name)}</div>
@@ -11769,13 +12028,20 @@ function showMapVenueCard(v, job, idx) {
     </div>
     <div class="nfc-map-sheet-addr">${escapeHtml(v.address || job?.cluster || job?.city || '—')}</div>
 
-    <div class="nfc-map-sheet-contacts">
-      <a href="${mapUrl}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:4px; font-weight:700;">
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
-        <span>Відкрити в Google Maps</span>
+    <div class="nfc-map-sheet-contacts" style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:8px 0;">
+      <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="display:inline-flex; align-items:center; gap:4px; font-weight:700;">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+        <span>Точка в Google Maps</span>
       </a>
-      ${v.phone ? `<a href="tel:${v.phone}">тел: ${v.phone}</a>` : ''}
-      ${v.instagram ? `<a href="https://instagram.com/${v.instagram.replace('@', '')}" target="_blank" rel="noopener">${v.instagram}</a>` : ''}
+      ${v.phone ? `<a href="tel:${v.phone}" class="btn btn--out btn--xs">📞 ${v.phone}</a>` : ''}
+      ${tgUrl ? `
+        <a href="${tgUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="color:#0088cc; border-color:#0088cc; font-weight:700;">
+          💬 Telegram
+        </a>
+      ` : ''}
+      <a href="${instaUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; border-color:${cleanInsta ? '#E1306C' : 'var(--border)'}; font-weight:600;">
+        📸 ${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}
+      </a>
     </div>
 
     <div class="form-row gap-2" style="margin-top: 6px;">
