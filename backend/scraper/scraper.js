@@ -297,6 +297,76 @@ export function extractPhoneFromText(text) {
   return '';
 }
 
+export function isUkrainianMobilePhone(raw) {
+  if (!raw) return false;
+  const digits = String(raw).replace(/\D/g, '');
+  return /^(?:380|0)(50|66|95|99|67|68|96|97|98|77|63|73|93|91|92|94)\d{7}$/.test(digits);
+}
+
+export function cleanInstagramHandle(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  const str = raw.trim();
+  const m = str.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
+  if (m && m[1]) {
+    const user = m[1].replace(/[\/?#].*$/, '').trim();
+    if (!['explore', 'p', 'reels', 'reel', 'stories', 'direct', 'accounts', 'tags', 'tv'].includes(user.toLowerCase())) {
+      return '@' + user;
+    }
+  }
+  const handleMatch = str.match(/(?:^|\s)@([a-zA-Z0-9._]{3,30})(?:\s|$|[.,!?])/);
+  if (handleMatch && handleMatch[1]) {
+    return '@' + handleMatch[1];
+  }
+  if (!str.startsWith('http') && !str.includes('/') && !str.includes(' ') && str.length >= 3 && str.length <= 30) {
+    return str.startsWith('@') ? str : ('@' + str);
+  }
+  return '';
+}
+
+export function extractInstagramFromGmapsItem(item) {
+  if (!item || typeof item !== 'object') return '';
+
+  if (Array.isArray(item.instagrams) && item.instagrams.length > 0) {
+    for (const ig of item.instagrams) {
+      const clean = cleanInstagramHandle(ig);
+      if (clean) return clean;
+    }
+  }
+
+  if (typeof item.website === 'string' && /instagram\.com/i.test(item.website)) {
+    const clean = cleanInstagramHandle(item.website);
+    if (clean) return clean;
+  }
+
+  if (Array.isArray(item.webResults) && item.webResults.length > 0) {
+    for (const res of item.webResults) {
+      const u = res?.url || res?.link || '';
+      if (typeof u === 'string' && /instagram\.com/i.test(u)) {
+        const clean = cleanInstagramHandle(u);
+        if (clean) return clean;
+      }
+      const title = res?.title || '';
+      if (typeof title === 'string' && /instagram\.com/i.test(title)) {
+        const clean = cleanInstagramHandle(title);
+        if (clean) return clean;
+      }
+    }
+  }
+
+  const metaDump = [
+    item.description,
+    typeof item.additionalInfo === 'object' ? JSON.stringify(item.additionalInfo) : item.additionalInfo,
+    Array.isArray(item.placesTags) ? item.placesTags.join(' ') : ''
+  ].filter(Boolean).join(' ');
+
+  if (metaDump && /instagram\.com/i.test(metaDump)) {
+    const clean = cleanInstagramHandle(metaDump);
+    if (clean) return clean;
+  }
+
+  return '';
+}
+
 const SOCIAL_SITE_RE = /(instagram\.com|facebook\.com|fb\.com|linktr\.ee|taplink|t\.me|tiktok\.com|wa\.me|viber|google\.com\/maps|business\.site)/i;
 const BOOKING_NICHE_RE = /(стомат|dental|салон|beauty|краси|барбер|barber|клінік|clinic|медич|автосерв|сто\b|шиномонт|фітнес|fitness|спорт|йог|масаж|spa|спа|ресторан|кафе|кав'ярн|піца|суші|доставк|готел|hotel|хостел|ветерин|косметолог|манікюр|nail|тату|школ|курси|репетит)/i;
 
@@ -362,15 +432,8 @@ function normalizeGmaps(item, niche, city) {
   const phone = normalizePhone(item.phoneUnformatted || item.phone);
   const website = item.website || '';
 
-  // Extract Instagram from website or instagrams array
-  let instagram = (item.instagrams || [])[0] || '';
-  if (!instagram && website && /instagram\.com/i.test(website)) {
-    const m = website.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
-    if (m && m[1]) instagram = '@' + m[1].replace(/\/.*$/, '');
-  }
-  if (instagram && !instagram.startsWith('@') && !instagram.startsWith('http')) {
-    instagram = '@' + instagram;
-  }
+  // Deep extraction of Instagram from web results, website, instagrams array, etc.
+  const instagram = extractInstagramFromGmapsItem(item);
 
   // Extract Telegram from website, telegrams array or phone
   let telegram = (item.telegrams || [])[0] || '';
@@ -379,7 +442,13 @@ function normalizeGmaps(item, niche, city) {
     if (m && m[1]) telegram = '@' + m[1];
   }
   const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
+  const isMobile = isUkrainianMobilePhone(cleanPhone);
+  const viberUrl = isMobile ? ('viber://chat?number=%2B' + (cleanPhone.startsWith('380') ? cleanPhone : ('38' + cleanPhone))) : '';
   const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
+
+  // STRICT OUTREACH FILTER:
+  // Skip places where user cannot reach out (no Instagram, no mobile phone for Viber/Telegram, no website)
+  if (!instagram && !isMobile && !website) return null;
 
   // Direct business place card URL (opens place details, reviews, photos instead of raw coordinate pin)
   let mapsUrl = item.url || '';
@@ -398,6 +467,8 @@ function normalizeGmaps(item, niche, city) {
     placeId,
     cid,
     phone,
+    isMobile,
+    viberUrl,
     website,
     address,
     city: item.city || city || '',
@@ -701,7 +772,8 @@ async function processJob(job) {
         locationQuery: city ? `${city}, Україна` : '',
         maxCrawledPlacesPerSearch: perSearchLimit,
         language: 'uk',
-        skipClosedPlaces: true
+        skipClosedPlaces: true,
+        includeWebResults: true
       });
       waveItems = raw.map(it => normalizeGmaps(it, niche, city)).filter(Boolean);
     } else {
@@ -746,6 +818,13 @@ async function processJob(job) {
       skippedNoPhone: skipped
     });
   }
+
+  // Priority sorting: venues with direct Instagram FIRST!
+  allUnique.sort((a, b) => {
+    const aHasIg = (a.instagram || a.username) ? 1 : 0;
+    const bHasIg = (b.instagram || b.username) ? 1 : 0;
+    return bHasIg - aHasIg;
+  });
 
   const validBusinesses = allUnique.slice(0, limit);
 

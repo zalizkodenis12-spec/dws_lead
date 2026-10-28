@@ -9332,6 +9332,90 @@ function extractPhoneFromText(text) {
   return '';
 }
 
+function isUkrainianMobilePhone(raw) {
+  if (!raw) return false;
+  const digits = String(raw).replace(/\D/g, '');
+  // Matches Ukrainian mobile numbers: 380 + 9 mobile digits OR 0 + 9 mobile digits
+  // Operator prefixes: 50, 66, 95, 99 (Vodafone), 67, 68, 96, 97, 98, 77 (Kyivstar), 63, 73, 93 (lifecell), 91, 92, 94
+  return /^(?:380|0)(50|66|95|99|67|68|96|97|98|77|63|73|93|91|92|94)\d{7}$/.test(digits);
+}
+
+function getViberDirectUrl(rawPhone) {
+  if (!rawPhone) return '';
+  const digits = String(rawPhone).replace(/\D/g, '');
+  if (!digits) return '';
+  const clean380 = digits.startsWith('380') ? digits : (digits.startsWith('0') ? ('38' + digits) : digits);
+  return 'viber://chat?number=%2B' + clean380;
+}
+
+function cleanInstagramHandle(raw) {
+  if (!raw || typeof raw !== 'string') return '';
+  const str = raw.trim();
+  const m = str.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
+  if (m && m[1]) {
+    const user = m[1].replace(/[\/?#].*$/, '').trim();
+    if (!['explore', 'p', 'reels', 'reel', 'stories', 'direct', 'accounts', 'tags', 'tv'].includes(user.toLowerCase())) {
+      return '@' + user;
+    }
+  }
+  const handleMatch = str.match(/(?:^|\s)@([a-zA-Z0-9._]{3,30})(?:\s|$|[.,!?])/);
+  if (handleMatch && handleMatch[1]) {
+    return '@' + handleMatch[1];
+  }
+  if (!str.startsWith('http') && !str.includes('/') && !str.includes(' ') && str.length >= 3 && str.length <= 30) {
+    return str.startsWith('@') ? str : ('@' + str);
+  }
+  return '';
+}
+
+function extractInstagramFromApifyItem(it) {
+  if (!it || typeof it !== 'object') return '';
+
+  // 1. Direct instagrams array from crawler
+  if (Array.isArray(it.instagrams) && it.instagrams.length > 0) {
+    for (const ig of it.instagrams) {
+      const clean = cleanInstagramHandle(ig);
+      if (clean) return clean;
+    }
+  }
+
+  // 2. Direct website field (many Ukrainian venues use their instagram profile as website)
+  if (typeof it.website === 'string' && /instagram\.com/i.test(it.website)) {
+    const clean = cleanInstagramHandle(it.website);
+    if (clean) return clean;
+  }
+
+  // 3. Web Results from Google Maps ("Результати веб-пошуку")
+  if (Array.isArray(it.webResults) && it.webResults.length > 0) {
+    for (const res of it.webResults) {
+      const u = res?.url || res?.link || '';
+      if (typeof u === 'string' && /instagram\.com/i.test(u)) {
+        const clean = cleanInstagramHandle(u);
+        if (clean) return clean;
+      }
+      const title = res?.title || '';
+      if (typeof title === 'string' && /instagram\.com/i.test(title)) {
+        const clean = cleanInstagramHandle(title);
+        if (clean) return clean;
+      }
+    }
+  }
+
+  // 4. Metadata search: additionalInfo, description, placesTags
+  const metaDump = [
+    it.description,
+    typeof it.additionalInfo === 'object' ? JSON.stringify(it.additionalInfo) : it.additionalInfo,
+    Array.isArray(it.placesTags) ? it.placesTags.join(' ') : ''
+  ].filter(Boolean).join(' ');
+
+  if (metaDump && /instagram\.com/i.test(metaDump)) {
+    const clean = cleanInstagramHandle(metaDump);
+    if (clean) return clean;
+  }
+
+  return '';
+}
+
 function loadLocalScrapes() {
   try {
     const raw = JSON.parse(localStorage.getItem('dws_scrapes') || '[]');
@@ -9492,9 +9576,10 @@ function renderScrapeCat(job, cat) {
   const isOpen = scrapeState.openCats.has(key);
   const rows = items.map((b, idx) => {
     const cleanPhone = (b.phone || '').replace(/[^\d]/g, '');
-    const tgUrl = b.telegram ? (b.telegram.startsWith('http') ? b.telegram : 'https://t.me/' + b.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
+    const isMobile = isUkrainianMobilePhone(cleanPhone);
+    const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
     const cleanInsta = (b.instagram || (b.source === 'instagram' ? b.username : '') || '').replace(/^@+/, '');
-    const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent((b.name || '') + ' ' + (b.city || job.city || ''))}`;
+    const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((b.name || '') + ' ' + (b.city || job.city || ''))}`;
     
     // Direct Google Maps business place card
     let mapUrl = b.link || b.mapsUrl || '';
@@ -9518,8 +9603,9 @@ function renderScrapeCat(job, cat) {
           </a>
         </td>
         <td>
-          <div style="display:inline-flex; align-items:center; gap:6px;">
+          <div style="display:inline-flex; align-items:center; flex-wrap:wrap; gap:6px;">
             <a href="tel:${escapeHtml(b.phone)}" style="color:var(--accent); font-weight:600; text-decoration:none;">${escapeHtml(b.phone || '—')}</a>
+            ${isMobile ? `<a href="${viberUrl}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:2px; font-size:0.7rem; font-weight:700; color:#7360F2; background:rgba(115,96,242,0.12); padding:1px 6px; border-radius:6px; text-decoration:none;" title="Написати у Viber">Viber</a>` : ''}
           </div>
         </td>
         <td style="color:var(--muted); font-size:0.75rem;">${escapeHtml(b.reason || '—')}</td>
@@ -9527,7 +9613,7 @@ function renderScrapeCat(job, cat) {
         <td>
           <div style="display:flex; flex-direction:column; gap:2px;">
             ${b.website ? `<a href="${escapeHtml(b.website)}" target="_blank" rel="noopener" style="color:var(--accent); font-weight:600; text-decoration:underline; font-size:0.8rem;">вебсайт</a>` : ''}
-            <a href="${instaUrl}" target="_blank" rel="noopener" style="color:var(--accent); font-size:0.75rem; font-weight:700; text-decoration:none;" title="${cleanInsta ? 'Instagram профіль' : 'Шукати в Instagram'}">
+            <a href="${instaUrl}" target="_blank" rel="noopener" style="color:#007aff; font-size:0.75rem; font-weight:700; text-decoration:none;" title="${cleanInsta ? 'Instagram профіль' : 'Шукати в Instagram'}">
               ${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}
             </a>
           </div>
@@ -9975,7 +10061,8 @@ async function runLiveApifyJob(job) {
           locationQuery: locationQuery,
           maxCrawledPlacesPerSearch: Math.min(perSearchLimit, 100),
           language: 'uk',
-          skipClosedPlaces: true
+          skipClosedPlaces: true,
+          includeWebResults: true
         };
       }
 
@@ -10033,14 +10120,8 @@ async function runLiveApifyJob(job) {
           const phone = normalizePhone(it.phoneUnformatted || it.phone);
           const website = it.website || '';
 
-          let instagram = (it.instagrams || [])[0] || '';
-          if (!instagram && website && /instagram\.com/i.test(website)) {
-            const m = website.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
-            if (m && m[1]) instagram = '@' + m[1].replace(/\/.*$/, '');
-          }
-          if (instagram && !instagram.startsWith('@') && !instagram.startsWith('http')) {
-            instagram = '@' + instagram;
-          }
+          // Deep extraction of Instagram from web results, website, instagrams array, etc.
+          const instagram = extractInstagramFromApifyItem(it);
 
           let telegram = (it.telegrams || [])[0] || '';
           if (!telegram && website && /t\.me/i.test(website)) {
@@ -10048,7 +10129,13 @@ async function runLiveApifyJob(job) {
             if (m && m[1]) telegram = '@' + m[1];
           }
           const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
+          const isMobile = isUkrainianMobilePhone(cleanPhone);
+          const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
           const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
+
+          // STRICT OUTREACH FILTER:
+          // Skip places where user cannot reach out (no Instagram, no mobile phone for Viber/Telegram, no website)
+          if (!instagram && !isMobile && !website) continue;
 
           let link = it.url || '';
           if (!link || !link.includes('google.com/maps')) {
@@ -10067,6 +10154,8 @@ async function runLiveApifyJob(job) {
             placeId,
             cid,
             phone,
+            isMobile,
+            viberUrl,
             website,
             address: addr,
             city: it.city || job.city || '',
@@ -10103,6 +10192,13 @@ async function runLiveApifyJob(job) {
       job.progressText = `Знайдено ${allItems.length}/${targetLimit} нових…`;
       renderScrapes();
     }
+
+    // Priority sorting: venues with direct Instagram FIRST!
+    allItems.sort((a, b) => {
+      const aHasIg = (a.instagram || a.username) ? 1 : 0;
+      const bHasIg = (b.instagram || b.username) ? 1 : 0;
+      return bHasIg - aHasIg;
+    });
 
     const limitedItems = allItems.slice(0, targetLimit);
     const finalGroups = { site: [], ads: [], auto: [], apps: [] };
@@ -10911,10 +11007,12 @@ function copyVenueNfcPitch(venue, job) {
   const addrStr = venue.address || job?.cluster || job?.city || '—';
   const mapUrl = getVenueMapsUrl(venue, job);
   const cleanPhone = (venue.phone || '').replace(/[^\d]/g, '');
+  const isMobile = isUkrainianMobilePhone(cleanPhone);
+  const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
   const tgUrl = venue.telegram ? (venue.telegram.startsWith('http') ? venue.telegram : 'https://t.me/' + venue.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
   const cleanInsta = (venue.instagram || '').replace(/^@+/, '');
-  const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent((venue.name || '') + ' ' + (job?.city || ''))}`;
-  const igDirectUrl = cleanInsta ? `https://ig.me/m/${cleanInsta}` : '';
+  const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((venue.name || '') + ' ' + (job?.city || ''))}`;
+  const igDirectUrl = cleanInsta ? `https://ig.me/m/${cleanInsta}` : instaUrl;
 
   if (titleEl) titleEl.textContent = 'Офер: ' + (venue.name || 'Заклад');
   if (infoEl) {
@@ -10934,6 +11032,12 @@ function copyVenueNfcPitch(venue, job) {
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
           <span>${cleanInsta ? '@' + cleanInsta : 'Знайти в Instagram'}</span>
         </a>
+        ${isMobile ? `
+          <a href="${viberUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="display:inline-flex; align-items:center; gap:4px; color:#7360F2; border-color:#7360F2; font-weight:600;">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span>Написати у Viber</span>
+          </a>
+        ` : ''}
       </div>
     `;
   }
@@ -10969,6 +11073,22 @@ function copyVenueNfcPitch(venue, job) {
       const targetIg = igDirectUrl || instaUrl;
       window.open(targetIg, '_blank');
     };
+  }
+
+  const directViberBtn = document.getElementById('openVenueDirectViberBtn');
+  if (directViberBtn) {
+    if (isMobile && viberUrl) {
+      directViberBtn.style.display = 'inline-flex';
+      directViberBtn.onclick = () => {
+        const val = textEl ? textEl.value : pitch;
+        if (navigator.clipboard?.writeText) navigator.clipboard.writeText(val);
+        showToast('Текст оферу скопійовано! Відкриваю Viber...');
+        haptic('light');
+        window.open(viberUrl, '_blank');
+      };
+    } else {
+      directViberBtn.style.display = 'none';
+    }
   }
 
   const shareTgBtn = document.getElementById('shareVenuePitchTgBtn');
@@ -11144,9 +11264,10 @@ function renderNfcVenuesList(job, items) {
 
       const mapUrl = getVenueMapsUrl(v, job);
       const cleanPhone = (v.phone || '').replace(/[^\d]/g, '');
-      const tgUrl = v.telegram ? (v.telegram.startsWith('http') ? v.telegram : 'https://t.me/' + v.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
+      const isMobile = isUkrainianMobilePhone(cleanPhone);
+      const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
       const cleanInsta = (v.instagram || '').replace(/^@+/, '');
-      const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
+      const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
 
       return `
         <tr class="nfc-table-row">
@@ -11159,8 +11280,9 @@ function renderNfcVenuesList(job, items) {
               </a>
             </div>
             <div class="biz-addr">${escapeHtml(v.address || '—')}</div>
-            <div style="display:flex; gap:8px; margin-top:3px; font-size:0.75rem;">
-              <a href="${instaUrl}" target="_blank" rel="noopener" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; font-weight:600; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}</a>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:3px; font-size:0.75rem;">
+              <a href="${instaUrl}" target="_blank" rel="noopener" style="color:${cleanInsta ? '#007aff' : 'var(--accent)'}; font-weight:700; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}</a>
+              ${isMobile ? `<a href="${viberUrl}" target="_blank" rel="noopener" style="color:#7360F2; font-weight:700; text-decoration:none;">Viber</a>` : ''}
             </div>
           </td>
           <td class="col-rating">
@@ -11210,8 +11332,10 @@ function renderNfcVenuesList(job, items) {
         const navUrl = getVenueNavigationUrl(v, job);
         const mapUrl = getVenueMapsUrl(v, job);
         const cleanPhone = (v.phone || '').replace(/[^\d]/g, '');
+        const isMobile = isUkrainianMobilePhone(cleanPhone);
+        const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
         const cleanInsta = (v.instagram || '').replace(/^@+/, '');
-        const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
+        const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
 
         return `
           <div class="nfc-venue-card">
@@ -11239,14 +11363,15 @@ function renderNfcVenuesList(job, items) {
                 <a href="${mapUrl}" target="_blank" rel="noopener" class="nfc-addr-link" title="Відкрити точку в Google Maps">${escapeHtml(v.address || job.cluster || job.city)}</a>
               </div>
               ${v.phone ? `
-                <div class="nfc-meta-item">
+                <div class="nfc-meta-item" style="display:inline-flex; align-items:center; gap:6px;">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                   <a href="tel:${v.phone}" class="nfc-phone-link">${v.phone}</a>
+                  ${isMobile ? `<a href="${viberUrl}" target="_blank" rel="noopener" class="viber-badge-link" style="display:inline-flex; align-items:center; gap:2px; font-size:0.7rem; font-weight:700; color:#7360F2; background:rgba(115,96,242,0.12); padding:1px 6px; border-radius:6px; text-decoration:none;" title="Написати у Viber">Viber</a>` : ''}
                 </div>
               ` : ''}
               <div class="nfc-meta-item">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
-                <a href="${instaUrl}" target="_blank" rel="noopener" class="nfc-insta-link" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; font-weight:600;">${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}</a>
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="${cleanInsta ? '#E1306C' : 'currentColor'}" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
+                <a href="${instaUrl}" target="_blank" rel="noopener" class="nfc-insta-link" style="color:${cleanInsta ? '#E1306C' : 'var(--accent)'}; font-weight:700; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Знайти в Instagram'}</a>
               </div>
             </div>
 
@@ -11315,7 +11440,8 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
         locationQuery: locationQuery,
         maxCrawledPlacesPerSearch: perSearchLimit,
         language: 'uk',
-        skipClosedPlaces: true
+        skipClosedPlaces: true,
+        includeWebResults: true
       };
 
       const rawItems = await runSingleApifyActorClient(actorId, input, token);
@@ -11341,16 +11467,8 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
         const website = it.website || '';
         const addr = it.address || it.street || job.cluster || job.city;
 
-        let insta = (it.instagrams || [])[0] || '';
-        if (!insta && website && /instagram\.com/i.test(website)) {
-          const m = website.match(/instagram\.com\/([a-zA-Z0-9._]+)/i);
-          if (m && m[1]) insta = '@' + m[1].replace(/\/.*$/, '');
-        }
-        if (insta.includes('instagram.com/')) {
-          insta = '@' + insta.split('instagram.com/')[1].replace(/\/.*$/, '');
-        } else if (insta && !insta.startsWith('@') && !insta.startsWith('http')) {
-          insta = '@' + insta;
-        }
+        // Deep extraction of Instagram from web results, website, instagrams array, etc.
+        const insta = extractInstagramFromApifyItem(it);
 
         let telegram = (it.telegrams || [])[0] || '';
         if (!telegram && website && /t\.me/i.test(website)) {
@@ -11358,7 +11476,13 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
           if (m && m[1]) telegram = '@' + m[1];
         }
         const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
+        const isMobile = isUkrainianMobilePhone(cleanPhone);
+        const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
         const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
+
+        // STRICT OUTREACH FILTER:
+        // Skip ghost venues where user cannot reach out (no Instagram, no mobile phone for Viber/Telegram, no website)
+        if (!insta && !isMobile && !website) return;
 
         let mapsUrl = it.url || '';
         if (!mapsUrl || !mapsUrl.includes('google.com/maps')) {
@@ -11379,6 +11503,8 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
           address: addr,
           city,
           phone,
+          isMobile,
+          viberUrl,
           website,
           instagram: insta,
           telegram,
@@ -11408,16 +11534,28 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
       renderNfcRadar();
     }
 
-    // Sort strictMatched: if targetReviews <= 150, sort ascending by reviews (newest/smallest venues first)
-    if (targetReviews <= 150) {
-      strictMatched.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
-    }
+    // Priority sorting: venues with direct Instagram FIRST!
+    // Within the same group, sort ascending by reviews (newest/low reviews first) if targetReviews <= 150
+    strictMatched.sort((a, b) => {
+      const aHasIg = a.instagram ? 1 : 0;
+      const bHasIg = b.instagram ? 1 : 0;
+      if (bHasIg !== aHasIg) return bHasIg - aHasIg;
+      if (targetReviews <= 150) {
+        return (Number(a.reviews) || 0) - (Number(b.reviews) || 0);
+      }
+      return 0;
+    });
 
     // Guarantee exact targetCount: if strict filter yielded fewer than targetCount after 3 district waves,
     // top up the remaining slots with the lowest-reviewed unseen venues from overflowUnseenPool!
     let finalVenues = [...strictMatched];
     if (finalVenues.length < targetCount && overflowUnseenPool.length > 0) {
-      overflowUnseenPool.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
+      overflowUnseenPool.sort((a, b) => {
+        const aHasIg = a.instagram ? 1 : 0;
+        const bHasIg = b.instagram ? 1 : 0;
+        if (bHasIg !== aHasIg) return bHasIg - aHasIg;
+        return (Number(a.reviews) || 0) - (Number(b.reviews) || 0);
+      });
       const neededExtra = targetCount - finalVenues.length;
       finalVenues.push(...overflowUnseenPool.slice(0, neededExtra));
     }
