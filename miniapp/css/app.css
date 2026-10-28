@@ -3703,10 +3703,10 @@ body.dark-theme .order-leaf-badge.expected {
   text-decoration-color: #0052cc;
 }
 
-/* 3 Action Buttons in 1 Row: 50% (Offer, Blue), 25% (CRM, Blue), 25% (Route) */
+/* 3 Action Buttons in 1 Single Row: Готовий офер (40%), Шлях (30%), CRM (30%) */
 .nfc-venue-actions-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 1.35fr 1fr 1fr;
   gap: 6px;
   width: 100%;
   margin-top: 4px;

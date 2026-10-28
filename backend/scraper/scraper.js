@@ -343,7 +343,19 @@ function groupByCategory(businesses) {
 
 // ---------------- NORMALIZERS ----------------
 function normalizeGmaps(item, niche, city) {
-  const name = item.title || item.name || '';
+  const name = (item.title || item.name || '').trim();
+  if (!name) return null;
+
+  // Filter out places with 0 reviews
+  const reviews = Number(item.reviewsCount || 0);
+  if (reviews <= 0) return null;
+
+  // Filter out closed or not yet opened places
+  const isClosed = Boolean(item.isClosed || item.temporarilyClosed || item.permanentlyClosed);
+  const textToCheck = `${name} ${item.openingHours || ''} ${item.additionalInfo ? JSON.stringify(item.additionalInfo) : ''} ${item.categoryName || ''}`;
+  const isOpeningSoon = /(скоро відкри|opening soon|ще не відкри|незабаром відкри|coming soon)/i.test(textToCheck);
+  if (isClosed || isOpeningSoon) return null;
+
   const placeId = item.placeId || item.id || '';
   const cid = item.cid || '';
   const address = item.address || item.street || '';
@@ -691,7 +703,7 @@ async function processJob(job) {
         language: 'uk',
         skipClosedPlaces: true
       });
-      waveItems = raw.map(it => normalizeGmaps(it, niche, city));
+      waveItems = raw.map(it => normalizeGmaps(it, niche, city)).filter(Boolean);
     } else {
       const igQueries = buildSmartDistrictQueries(niche, city, currentWave, 4);
       currentWave++;

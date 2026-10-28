@@ -9519,7 +9519,6 @@ function renderScrapeCat(job, cat) {
         <td>
           <div style="display:inline-flex; align-items:center; gap:6px;">
             <a href="tel:${escapeHtml(b.phone)}" style="color:var(--accent); font-weight:600; text-decoration:none;">${escapeHtml(b.phone || '—')}</a>
-            ${tgUrl ? `<a href="${tgUrl}" target="_blank" rel="noopener" style="color:#0088cc; font-size:0.75rem; font-weight:700; background:rgba(0,136,204,0.12); padding:1px 6px; border-radius:4px; text-decoration:none;" title="Написати в Telegram">TG</a>` : ''}
           </div>
         </td>
         <td style="color:var(--muted); font-size:0.75rem;">${escapeHtml(b.reason || '—')}</td>
@@ -9527,8 +9526,8 @@ function renderScrapeCat(job, cat) {
         <td>
           <div style="display:flex; flex-direction:column; gap:2px;">
             ${b.website ? `<a href="${escapeHtml(b.website)}" target="_blank" rel="noopener" style="color:var(--accent); font-weight:600; text-decoration:underline; font-size:0.8rem;">вебсайт</a>` : ''}
-            <a href="${instaUrl}" target="_blank" rel="noopener" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; font-size:0.75rem; font-weight:600; text-decoration:none;" title="${cleanInsta ? 'Instagram профіль' : 'Шукати в Instagram'}">
-              ${cleanInsta ? '@' + cleanInsta : '🔍 Insta'}
+            <a href="${instaUrl}" target="_blank" rel="noopener" style="color:var(--accent); font-size:0.75rem; font-weight:700; text-decoration:none;" title="${cleanInsta ? 'Instagram профіль' : 'Шукати в Instagram'}">
+              ${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}
             </a>
           </div>
         </td>
@@ -9553,7 +9552,7 @@ function renderScrapeCat(job, cat) {
         ${items.length ? `
           <div class="scrape-table-wrap">
             <table class="scrape-table">
-              <thead><tr><th>#</th><th>БІЗНЕС (КАРТА)</th><th>ТЕЛЕФОН / TG</th><th>БІЛЬ / ПРИЧИНА</th><th>МІСТО</th><th>САЙТ / INSTA</th><th>${job.source === 'instagram' ? 'ПІДПИСНИКИ' : 'РЕЙТИНГ · ВІДГУКИ'}</th><th style="text-align:right;">ДІЯ</th></tr></thead>
+              <thead><tr><th>#</th><th>БІЗНЕС (КАРТА)</th><th>ТЕЛЕФОН</th><th>БІЛЬ / ПРИЧИНА</th><th>МІСТО</th><th>САЙТ / INSTA</th><th>${job.source === 'instagram' ? 'ПІДПИСНИКИ' : 'РЕЙТИНГ · ВІДГУКИ'}</th><th style="text-align:right;">ДІЯ</th></tr></thead>
               <tbody>${rows}</tbody>
             </table>
           </div>
@@ -9995,6 +9994,18 @@ async function runLiveApifyJob(job) {
           };
         } else {
           const name = (it.title || it.name || '').trim();
+          if (!name) continue;
+
+          // Filter out places with 0 reviews
+          const reviews = Number(it.reviewsCount || 0);
+          if (reviews <= 0) continue;
+
+          // Filter out closed or not yet opened places
+          const isClosed = Boolean(it.isClosed || it.temporarilyClosed || it.permanentlyClosed);
+          const textToCheck = `${name} ${it.openingHours || ''} ${it.additionalInfo ? JSON.stringify(it.additionalInfo) : ''} ${it.categoryName || ''}`;
+          const isOpeningSoon = /(скоро відкри|opening soon|ще не відкри|незабаром відкри|coming soon)/i.test(textToCheck);
+          if (isClosed || isOpeningSoon) continue;
+
           const placeId = it.placeId || it.id || '';
           const cid = it.cid || '';
           const addr = it.address || it.street || '';
@@ -10898,15 +10909,9 @@ function copyVenueNfcPitch(venue, job) {
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
           <span>Точка в Google Maps</span>
         </a>
-        ${tgUrl ? `
-          <a href="${tgUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="display:inline-flex; align-items:center; gap:4px; color:#0088cc; border-color:#0088cc; font-weight:600;">
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
-            <span>${venue.telegram ? venue.telegram : 'Telegram ' + (venue.phone || '')}</span>
-          </a>
-        ` : ''}
         <a href="${instaUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="display:inline-flex; align-items:center; gap:4px; color:#E1306C; border-color:#E1306C; font-weight:600;">
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
-          <span>${cleanInsta ? '@' + cleanInsta : '🔍 Знайти в Instagram'}</span>
+          <span>${cleanInsta ? '@' + cleanInsta : 'Знайти в Instagram'}</span>
         </a>
       </div>
     `;
@@ -10930,22 +10935,7 @@ function copyVenueNfcPitch(venue, job) {
 
   const directTgBtn = document.getElementById('openVenueDirectTgBtn');
   if (directTgBtn) {
-    if (tgUrl) {
-      directTgBtn.style.display = 'inline-flex';
-      directTgBtn.onclick = () => {
-        const val = textEl ? textEl.value : pitch;
-        if (navigator.clipboard?.writeText) navigator.clipboard.writeText(val);
-        showToast('Текст скопійовано! Відкриваю чат Telegram...');
-        haptic('light');
-        if (window.Telegram?.WebApp?.openTelegramLink) {
-          window.Telegram.WebApp.openTelegramLink(tgUrl);
-        } else {
-          window.open(tgUrl, '_blank');
-        }
-      };
-    } else {
-      directTgBtn.style.display = 'none';
-    }
+    directTgBtn.style.display = 'none';
   }
 
   const directIgBtn = document.getElementById('openVenueDirectIgBtn');
@@ -11149,8 +11139,7 @@ function renderNfcVenuesList(job, items) {
             </div>
             <div class="biz-addr">${escapeHtml(v.address || '—')}</div>
             <div style="display:flex; gap:8px; margin-top:3px; font-size:0.75rem;">
-              ${tgUrl ? `<a href="${tgUrl}" target="_blank" rel="noopener" style="color:#0088cc; font-weight:700; text-decoration:none;">💬 TG</a>` : ''}
-              <a href="${instaUrl}" target="_blank" rel="noopener" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; font-weight:600; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : '🔍 Insta'}</a>
+              <a href="${instaUrl}" target="_blank" rel="noopener" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; font-weight:600; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}</a>
             </div>
           </td>
           <td class="col-rating">
@@ -11200,7 +11189,6 @@ function renderNfcVenuesList(job, items) {
         const navUrl = getVenueNavigationUrl(v, job);
         const mapUrl = getVenueMapsUrl(v, job);
         const cleanPhone = (v.phone || '').replace(/[^\d]/g, '');
-        const tgUrl = v.telegram ? (v.telegram.startsWith('http') ? v.telegram : 'https://t.me/' + v.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
         const cleanInsta = (v.instagram || '').replace(/^@+/, '');
         const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
 
@@ -11235,15 +11223,9 @@ function renderNfcVenuesList(job, items) {
                   <a href="tel:${v.phone}" class="nfc-phone-link">${v.phone}</a>
                 </div>
               ` : ''}
-              ${tgUrl ? `
-                <div class="nfc-meta-item">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg>
-                  <a href="${tgUrl}" target="_blank" rel="noopener" class="nfc-tg-link" style="color:#0088cc; font-weight:600;">${v.telegram || 'Telegram'}</a>
-                </div>
-              ` : ''}
               <div class="nfc-meta-item">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
-                <a href="${instaUrl}" target="_blank" rel="noopener" class="nfc-insta-link" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; font-weight:600;">${cleanInsta ? '@' + cleanInsta : '🔍 Insta пошук'}</a>
+                <a href="${instaUrl}" target="_blank" rel="noopener" class="nfc-insta-link" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; font-weight:600;">${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}</a>
               </div>
             </div>
 
@@ -11251,17 +11233,13 @@ function renderNfcVenuesList(job, items) {
               <button type="button" class="btn btn--fill btn--sm nfc-pitch-btn" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}">
                 <span>Готовий офер</span>
               </button>
-              <button type="button" class="btn btn--fill btn--sm nfc-crm-btn" data-nfc-act="crm" data-job="${job.id}" data-venue="${v.id}">
-                <span>CRM</span>
-              </button>
-              <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn--out btn--sm" title="Відкрити точку в Google Maps" style="display:inline-flex; align-items:center; gap:3px;">
-                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                <span>Точка</span>
-              </a>
               <a href="${navUrl}" target="_blank" rel="noopener" class="btn btn--out btn--sm nfc-route-btn" title="Прокласти маршрут пішки до закладу">
                 <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
                 <span>Шлях</span>
               </a>
+              <button type="button" class="btn btn--fill btn--sm nfc-crm-btn" data-nfc-act="crm" data-job="${job.id}" data-venue="${v.id}">
+                <span>CRM</span>
+              </button>
             </div>
           </div>
         `;
@@ -11325,10 +11303,19 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
         const name = (it.title || it.name || '').trim();
         if (!name) return;
 
+        const reviews = Number(it.reviewsCount || 0);
+        // Filter out venues with 0 reviews
+        if (reviews <= 0) return;
+
+        // Filter out closed or not yet opened places
+        const isClosed = Boolean(it.isClosed || it.temporarilyClosed || it.permanentlyClosed);
+        const textToCheck = `${name} ${it.openingHours || ''} ${it.additionalInfo ? JSON.stringify(it.additionalInfo) : ''} ${it.categoryName || ''}`;
+        const isOpeningSoon = /(скоро відкри|opening soon|ще не відкри|незабаром відкри|coming soon)/i.test(textToCheck);
+        if (isClosed || isOpeningSoon) return;
+
         const placeId = it.placeId || it.id || '';
         const cid = it.cid || '';
         const rating = Number(it.totalScore || 0);
-        const reviews = Number(it.reviewsCount || 0);
         const phone = normalizePhone(it.phoneUnformatted || it.phone);
         const website = it.website || '';
         const addr = it.address || it.street || job.cluster || job.city;
@@ -12300,11 +12287,6 @@ function showMapVenueCard(v, job, idx) {
         <span>Точка в Google Maps</span>
       </a>
       ${v.phone ? `<a href="tel:${v.phone}" class="btn btn--out btn--xs">📞 ${v.phone}</a>` : ''}
-      ${tgUrl ? `
-        <a href="${tgUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="color:#0088cc; border-color:#0088cc; font-weight:700;">
-          💬 Telegram
-        </a>
-      ` : ''}
       <a href="${instaUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; border-color:${cleanInsta ? '#E1306C' : 'var(--border)'}; font-weight:600;">
         📸 ${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}
       </a>
