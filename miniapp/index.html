@@ -693,18 +693,18 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">КАТЕГОРІЯ / НІША:</label>
-          <input type="text" id="nfcNicheInput" class="form-input" placeholder="Введіть нішу (наприклад: Кафе, Стоматологія, Салон...)" value="Кафе, бари, ресторани">
+          <label class="form-label">КАТЕГОРІЯ / НІША: <span style="color:var(--accent);">*</span></label>
+          <input type="text" id="nfcNicheInput" class="form-input" placeholder="Введіть нішу (наприклад: Кафе, Стоматологія, Салон...)" value="Кафе, бари, ресторани" required>
         </div>
 
         <div class="form-group">
-          <label class="form-label">МІСТО / РЕГІОН:</label>
-          <input type="text" id="nfcCityInput" class="form-input" placeholder="Введіть будь-яке місто, село чи регіон..." value="Київ">
+          <label class="form-label">МІСТО / РЕГІОН: <span style="color:var(--accent);">*</span></label>
+          <input type="text" id="nfcCityInput" class="form-input" placeholder="Введіть будь-яке місто чи населений пункт..." value="Київ" required>
         </div>
 
         <div class="form-group">
-          <label class="form-label">ЛОКАЦІЯ / РАЙОН / ТРЦ (СКУПЧЕННЯ):</label>
-          <input type="text" id="nfcClusterInput" class="form-input" placeholder="Наприклад: ТРЦ Ocean Plaza, Поділ, Хрещатик, Оболонь...">
+          <label class="form-label">РАЙОН / ТРЦ / ЛОКАЦІЯ <span style="color:var(--muted); font-size:0.75rem; font-weight:normal; text-transform:none;">(необов'язково)</span>:</label>
+          <input type="text" id="nfcClusterInput" class="form-input" placeholder="Необов'язково (наприклад: Вишенька, Поділ, ТРЦ...). Якщо не вказано — шукає по всьому місту">
         </div>
 
         <div class="form-group">
@@ -1989,6 +1989,6 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.6.3"></script>
+  <script src="js/app.js?v=4.6.4"></script>
 </body>
 </html>

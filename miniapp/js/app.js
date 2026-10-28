@@ -8594,6 +8594,7 @@ function setupAccountSync() {
 // UNIVERSAL REAL-TIME CLOUD SYNC ENGINE (PHONE <-> LAPTOP)
 // ============================================================
 const DWS_CLOUD_KV_STORE_ID = 'sJ4EPV4bcEMHAhMJi';
+const CLOUD_KV_STORE_ID = DWS_CLOUD_KV_STORE_ID;
 const DWS_DEVICE_ID = 'dev-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
 let isSyncingRemote = false;
 let isPushingSync = false;
@@ -9660,9 +9661,9 @@ async function loadGlobalSeenRegistry() {
 
   // 3. Merge with Backend /api/scrapes/seen AND Apify Cloud KV Store (seen_places_absolutikdenchik)
   const token = getClientApifyToken();
-  const kvUrl = `https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/seen_places_absolutikdenchik?token=${encodeURIComponent(token)}&_t=${Date.now()}`;
+  const kvUrl = token ? `https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/seen_places_absolutikdenchik?token=${encodeURIComponent(token)}&_t=${Date.now()}` : '';
 
-  await Promise.all([
+  const syncPromises = [
     fetch('/api/scrapes/seen', { cache: 'no-store' })
       .then(r => r.ok ? r.json() : null)
       .then(json => {
@@ -9675,21 +9676,28 @@ async function loadGlobalSeenRegistry() {
           }
         }
       })
-      .catch(() => null),
-    fetch(kvUrl, { cache: 'no-store' })
-      .then(r => r.ok ? r.json() : null)
-      .then(kv => {
-        if (kv && typeof kv === 'object') {
-          if (Array.isArray(kv.keys)) kv.keys.forEach(k => seenSet.add(k));
-          if (kv.waveOffsets && typeof kv.waveOffsets === 'object') {
-            for (const [wk, wv] of Object.entries(kv.waveOffsets)) {
-              waveOffsets[wk] = Math.max(Number(waveOffsets[wk] || 0), Number(wv || 0));
+      .catch(() => null)
+  ];
+
+  if (kvUrl) {
+    syncPromises.push(
+      fetch(kvUrl, { cache: 'no-store' })
+        .then(r => r.ok ? r.json() : null)
+        .then(kv => {
+          if (kv && typeof kv === 'object') {
+            if (Array.isArray(kv.keys)) kv.keys.forEach(k => seenSet.add(k));
+            if (kv.waveOffsets && typeof kv.waveOffsets === 'object') {
+              for (const [wk, wv] of Object.entries(kv.waveOffsets)) {
+                waveOffsets[wk] = Math.max(Number(waveOffsets[wk] || 0), Number(wv || 0));
+              }
             }
           }
-        }
-      })
-      .catch(() => null)
-  ]);
+        })
+        .catch(() => null)
+    );
+  }
+
+  await Promise.all(syncPromises);
 
   // Persist merged snapshot locally
   try {
@@ -9733,14 +9741,14 @@ async function saveGlobalSeenRegistry(newBusinesses = [], waveKey = '', nextWave
     localStorage.setItem('dws_search_wave_offsets', JSON.stringify(waveOffsets));
 
     const token = getClientApifyToken();
-    const kvUrl = `https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/seen_places_absolutikdenchik?token=${encodeURIComponent(token)}`;
+    const kvUrl = token ? `https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/seen_places_absolutikdenchik?token=${encodeURIComponent(token)}` : '';
     const payload = {
       updatedAt: Date.now(),
       keys: finalKeys,
       waveOffsets
     };
 
-    await Promise.all([
+    const savePromises = [
       fetch('/api/scrapes/seen', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -9750,13 +9758,20 @@ async function saveGlobalSeenRegistry(newBusinesses = [], waveKey = '', nextWave
           nextWaveOffset,
           city: fallbackCity
         })
-      }).catch(() => null),
-      fetch(kvUrl, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
       }).catch(() => null)
-    ]);
+    ];
+
+    if (kvUrl) {
+      savePromises.push(
+        fetch(kvUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).catch(() => null)
+      );
+    }
+
+    await Promise.all(savePromises);
 
     if (typeof syncAccountToServer === 'function') {
       syncAccountToServer();
@@ -9807,6 +9822,12 @@ function buildSmartDistrictQueriesClient(niche, city, cluster = '', waveIndex = 
     for (const sn of subNiches) {
       if (cleanCity) candidatePool.push(`${sn} ${cleanCluster} ${cleanCity}`);
       else candidatePool.push(`${sn} ${cleanCluster}`);
+    }
+  } else {
+    // If no cluster specified: search across the entire city first!
+    for (const sn of subNiches) {
+      if (cleanCity) candidatePool.push(`${sn} ${cleanCity}`);
+      else candidatePool.push(sn);
     }
   }
   for (const d of districts) {
@@ -11093,8 +11114,8 @@ function renderNfcRadar() {
             ${SCRAPE_ICONS[job.source] || SCRAPE_ICONS.gmaps}
           </div>
           <div class="scrape-job-info">
-            <div class="scrape-job-title">${job.cluster ? job.cluster : (job.niche + ' • ' + job.city)}</div>
-            <div class="scrape-job-sub">${job.city} • ${date} ${pill}</div>
+            <div class="scrape-job-title">${job.cluster ? job.cluster : (job.niche || 'Заклади')}</div>
+            <div class="scrape-job-sub">${job.city}${job.cluster ? '' : ' (все місто)'} • ${date} ${pill}</div>
           </div>
           <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
             <div class="scrape-job-count scrape-job-count-numonly">
@@ -11416,7 +11437,8 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
     if (finalVenues.length === 0) {
       try { showToast(`Нових закладів за цим запитом не знайдено. Спробуйте іншу нішу або місто.`); } catch (_) {}
     } else {
-      try { showToast(`✅ Знайдено ${finalVenues.length} НОВИХ закладів у ${job.city || job.cluster}!`); } catch (_) {}
+      const locLabel = job.cluster ? `${job.cluster}, ${job.city}` : job.city;
+      try { showToast(`✅ Знайдено ${finalVenues.length} НОВИХ закладів (${locLabel})!`); } catch (_) {}
     }
     haptic('success');
   } catch (err) {
@@ -11434,9 +11456,21 @@ async function submitNfcSearch() {
   const nicheInput = document.getElementById('nfcNicheInput');
   const cityInput = document.getElementById('nfcCityInput');
   const clusterInput = document.getElementById('nfcClusterInput');
-  const niche = (nicheInput?.value || '').trim() || 'Кафе, бари, ресторани';
-  const city = (cityInput?.value || '').trim() || 'Київ';
-  const cluster = (clusterInput?.value || '').trim();
+  const niche = (nicheInput?.value || '').trim();
+  const city = (cityInput?.value || '').trim();
+  const cluster = (clusterInput?.value || '').trim(); // Необов'язково: якщо не вказано — пошук по всьому місту
+
+  if (!niche) {
+    showToast('Вкажіть категорію або нішу бізнесу');
+    nicheInput?.focus();
+    return;
+  }
+  if (!city) {
+    showToast('Вкажіть місто для пошуку');
+    cityInput?.focus();
+    return;
+  }
+
   const reviewsLimit = Number(document.querySelector('#nfcReviewsFilterSeg .scrape-seg-btn.active')?.dataset.value) || nfcRadarState.form.reviewsLimit || 300;
   const limit = Number(document.querySelector('#nfcLimitSeg .scrape-seg-btn.active')?.dataset.value) || nfcRadarState.form.limit || 50;
 
