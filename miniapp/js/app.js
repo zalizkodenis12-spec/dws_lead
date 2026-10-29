@@ -9309,6 +9309,11 @@ const SCRAPE_ICONS = {
 };
 const SCRAPE_CHEVRON = '<svg class="scrape-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>';
 
+const GOOGLE_MAPS_DEFAULT_KEY = 'AIzaSyCPkkYJHF46FDTQRSvbF6fn3vgwM7zNGKY';
+function getClientGoogleMapsKey() {
+  return localStorage.getItem('dws_google_maps_key') || GOOGLE_MAPS_DEFAULT_KEY;
+}
+
 const APIFY_DEFAULT_TOKEN = (() => {
   try { return atob('YXBpZnlfYXBpX1gzM1I4NEsyWDJia2ZNZjdYQWZrQ1R5RU1rblNiSTR4dXVmWA=='); } catch { return ''; }
 })();
@@ -11460,6 +11465,153 @@ function renderNfcVenuesList(job, items) {
   `;
 }
 
+async function searchPlacesApiDirect(query, key, pageToken = '') {
+  const bodyPayload = {
+    textQuery: query,
+    languageCode: 'uk',
+    maxResultCount: 20
+  };
+  if (pageToken) bodyPayload.pageToken = pageToken;
+
+  const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Goog-Api-Key': key,
+      'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.googleMapsUri,places.location,places.businessStatus,nextPageToken'
+    },
+    body: JSON.stringify(bodyPayload)
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Google Places API error (${res.status}): ${errText.slice(0, 150)}`);
+  }
+  return await res.json();
+}
+
+async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cluster, reg, waveKey, currentWave) {
+  const key = getClientGoogleMapsKey();
+  if (!key) return null;
+
+  const runSeenKeys = new Set();
+  const isSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).some(k => runSeenKeys.has(k));
+  const markSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).forEach(k => runSeenKeys.add(k));
+
+  const strictMatched = [];
+  const overflowPool = [];
+
+  const baseQuery = [job.niche, cluster, city].filter(Boolean).join(' ');
+  const districtQueries = buildSmartDistrictQueriesClient(job.niche, city, cluster, currentWave, 4);
+  const searchQueries = [baseQuery, ...districtQueries];
+
+  for (let qIdx = 0; qIdx < searchQueries.length; qIdx++) {
+    if (strictMatched.length >= targetCount) break;
+
+    const q = searchQueries[qIdx];
+    job.progressText = `Google Places API (${strictMatched.length}/${targetCount})…`;
+    renderNfcRadar();
+
+    let pageToken = '';
+    for (let page = 0; page < 2; page++) {
+      if (strictMatched.length >= targetCount) break;
+
+      let data = null;
+      try {
+        data = await searchPlacesApiDirect(q, key, pageToken);
+      } catch (err) {
+        console.warn('[GooglePlaces] Search error:', err.message);
+        break;
+      }
+      if (!data || !Array.isArray(data.places) || data.places.length === 0) break;
+
+      data.places.forEach((p, idx) => {
+        const name = (p.displayName?.text || '').trim();
+        if (!name) return;
+
+        if (p.businessStatus === 'CLOSED_TEMPORARILY' || p.businessStatus === 'CLOSED_PERMANENTLY') return;
+
+        const reviews = Number(p.userRatingCount || 0);
+        if (reviews <= 0) return;
+
+        const rating = Number(p.rating || 0);
+        const rawPhone = p.internationalPhoneNumber || p.nationalPhoneNumber || '';
+        const phone = normalizePhone(rawPhone);
+        const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
+        const isMobile = isUkrainianMobilePhone(cleanPhone);
+        const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
+        const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
+
+        const website = p.websiteUri || '';
+        let insta = '';
+        if (website && /instagram\.com/i.test(website)) {
+          insta = cleanInstagramHandle(website);
+        }
+
+        // Strict outreach filter: must have Instagram or mobile phone or website
+        if (!insta && !isMobile && !website) return;
+
+        const addr = p.formattedAddress || cluster || city;
+        const mapsUrl = p.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + addr)}`;
+
+        const venueObj = {
+          id: 'v-gmp-' + Date.now() + '-' + qIdx + '-' + idx,
+          name,
+          placeId: p.id || '',
+          address: addr,
+          city,
+          phone,
+          isMobile,
+          viberUrl,
+          website,
+          instagram: insta,
+          telegram: '',
+          telegramPhone,
+          rating,
+          reviews,
+          mapsUrl,
+          lat: p.location?.latitude || null,
+          lng: p.location?.longitude || null,
+          painLevel: (rating && rating <= 4.3) ? 'urgent' : (reviews < 50 ? 'new' : 'boost'),
+          painText: (rating && rating <= 4.3) ? 'Потрібно терміново перекривати негатив' : (reviews < 50 ? 'Новий заклад — гостра потреба у відгуках' : 'Буст до ТОП-1 в Google Maps')
+        };
+
+        if (reg.isBizSeen(venueObj, city) || isSeenInThisRun(venueObj)) return;
+        markSeenInThisRun(venueObj);
+
+        if (insta && (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews)) {
+          strictMatched.push(venueObj);
+        } else if (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews) {
+          overflowPool.push(venueObj);
+        }
+      });
+
+      if (!data.nextPageToken) break;
+      pageToken = data.nextPageToken;
+      await new Promise(r => setTimeout(r, 600));
+    }
+  }
+
+  strictMatched.sort((a, b) => {
+    const aIg = a.instagram ? 1 : 0;
+    const bIg = b.instagram ? 1 : 0;
+    if (bIg !== aIg) return bIg - aIg;
+    return (Number(a.reviews) || 0) - (Number(b.reviews) || 0);
+  });
+
+  let finalVenues = [...strictMatched];
+  if (finalVenues.length < targetCount && overflowPool.length > 0) {
+    overflowPool.sort((a, b) => {
+      const aIg = a.instagram ? 1 : 0;
+      const bIg = b.instagram ? 1 : 0;
+      if (bIg !== aIg) return bIg - aIg;
+      return (Number(a.reviews) || 0) - (Number(b.reviews) || 0);
+    });
+    finalVenues.push(...overflowPool.slice(0, targetCount - finalVenues.length));
+  }
+
+  return finalVenues.slice(0, targetCount);
+}
+
 async function runLiveNfcRadar(job, reviewsLimit, limit) {
   const token = getClientApifyToken();
   const targetReviews = Number(reviewsLimit || job.maxReviews || 300);
@@ -11480,7 +11632,33 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
     const markSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).forEach(k => runSeenKeys.add(k));
 
     // ------------------------------------------------------------
-    // 1. FREE LOCAL GOOGLE MAPS ENGINE (Puppeteer + Chrome, No Apify)
+    // 1. OFFICIAL GOOGLE PLACES API (NEW) - ZERO WAIT, ZERO SERVERS, 100% PHONE NATIVE
+    // ------------------------------------------------------------
+    try {
+      job.progressText = `Пошук через Google Places (0/${targetCount})…`;
+      renderNfcRadar();
+
+      const placesVenues = await runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cluster, reg, waveKey, currentWave);
+      if (Array.isArray(placesVenues) && placesVenues.length > 0) {
+        await saveGlobalSeenRegistry(placesVenues, waveKey, currentWave, city);
+        job.status = 'done';
+        job.progressText = '';
+        job.items = placesVenues;
+        job.total = placesVenues.length;
+        saveLocalNfcJobs(nfcRadarState.jobs);
+        renderNfcRadar();
+
+        const locLabel = job.cluster ? `${job.cluster}, ${job.city}` : job.city;
+        try { showToast(`✅ Знайдено ${placesVenues.length} закладів у Google Maps (${locLabel})!`); } catch (_) {}
+        haptic('success');
+        return;
+      }
+    } catch (gmpErr) {
+      console.warn('[GooglePlaces] Fallback to other engines:', gmpErr.message);
+    }
+
+    // ------------------------------------------------------------
+    // 2. FREE LOCAL GOOGLE MAPS ENGINE (Puppeteer + Chrome, No Apify)
     // ------------------------------------------------------------
     const customEndpoint = (localStorage.getItem('dws_scraper_url') || '').trim();
     const localEndpoint = customEndpoint ? `${customEndpoint.replace(/\/+$/, '')}/api/scraper/live-nfc` : '/api/scraper/live-nfc';
