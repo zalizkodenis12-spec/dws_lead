@@ -11009,17 +11009,95 @@ function generateNfcPitch(venue, job) {
     .replace(/\{CITY\}/gi, city);
 }
 
-function sendInstantVenueNfcPitch(venue, job, btnEl) {
-  const pitch = generateNfcPitch(venue, job);
-
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(pitch).catch(() => {
-      fallbackCopy(pitch, venue.name);
-    });
-  } else {
-    fallbackCopy(pitch, venue.name);
+function copyTextToClipboardSync(text) {
+  let ok = false;
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '-9999px';
+    ta.setAttribute('readonly', '');
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, 99999);
+    ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+  } catch (e) {
+    console.warn('execCommand failed:', e);
   }
 
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).catch(() => {});
+  }
+  return ok;
+}
+
+function openContactActionModal(venue, job) {
+  if (!venue || !venue.phone) return;
+  const rawPhone = venue.phone;
+  const clean = rawPhone.replace(/\D/g, '');
+  const clean380 = clean.startsWith('380') ? clean : (clean.startsWith('0') ? ('38' + clean) : clean);
+
+  const titleEl = document.getElementById('contactActionTitle');
+  if (titleEl) titleEl.textContent = `Зв'язок: ${venue.name}`;
+  const phoneDisplayEl = document.getElementById('contactActionPhoneDisplay');
+  if (phoneDisplayEl) phoneDisplayEl.textContent = rawPhone;
+
+  // 1. Call Button
+  const callBtn = document.getElementById('contactCallBtn');
+  if (callBtn) {
+    callBtn.onclick = () => {
+      haptic('light');
+      window.location.href = `tel:+${clean380}`;
+    };
+  }
+
+  // 2. Viber Button
+  const viberBtn = document.getElementById('contactViberBtn');
+  if (viberBtn) {
+    viberBtn.onclick = () => {
+      haptic('light');
+      const viberUrl = `viber://chat?number=%2B${clean380}`;
+      if (window.Telegram?.WebApp?.openLink) {
+        window.Telegram.WebApp.openLink(viberUrl);
+      } else {
+        window.location.href = viberUrl;
+      }
+    };
+  }
+
+  // 3. Telegram Button
+  const tgBtn = document.getElementById('contactTgBtn');
+  if (tgBtn) {
+    tgBtn.onclick = () => {
+      haptic('light');
+      const tgUrl = `https://t.me/+${clean380}`;
+      if (window.Telegram?.WebApp?.openTelegramLink) {
+        window.Telegram.WebApp.openTelegramLink(tgUrl);
+      } else {
+        window.open(tgUrl, '_blank');
+      }
+    };
+  }
+
+  // 4. Copy Phone Button
+  const copyBtn = document.getElementById('contactCopyPhoneBtn');
+  if (copyBtn) {
+    copyBtn.onclick = () => {
+      copyTextToClipboardSync(rawPhone);
+      showToast(`Номер ${rawPhone} скопійовано!`);
+      haptic('success');
+    };
+  }
+
+  openModal('modalContactAction');
+}
+
+function sendInstantVenueNfcPitch(venue, job, btnEl) {
+  const pitch = generateNfcPitch(venue, job);
+  copyTextToClipboardSync(pitch);
   haptic('success');
 
   if (btnEl) {
@@ -11030,7 +11108,7 @@ function sendInstantVenueNfcPitch(venue, job, btnEl) {
     setTimeout(() => {
       if (spanEl) spanEl.textContent = origText;
       else btnEl.textContent = origText;
-    }, 2000);
+    }, 2500);
   }
 
   const cleanInsta = (venue.instagram || '')
@@ -11038,21 +11116,19 @@ function sendInstantVenueNfcPitch(venue, job, btnEl) {
     .replace(/^@+/, '')
     .replace(/[\/?#].*$/, '')
     .trim();
-  const cleanPhone = (venue.phone || '').replace(/[^\d]/g, '');
-  const isMobile = isUkrainianMobilePhone(cleanPhone);
-  const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
+
+  // Show clear notification to user that text is in clipboard and ready to paste
+  showToast(`📋 Оффер скопійовано! Вставте його в чат (довге натискання -> Вставити)`);
 
   if (cleanInsta) {
-    const igDirectUrl = `https://ig.me/m/${cleanInsta}?text=${encodeURIComponent(pitch)}`;
-    showToast(`Скопійовано! Відкриваю чат Instagram @${cleanInsta}...`);
-    window.open(igDirectUrl, '_blank');
-  } else if (isMobile && viberUrl) {
-    showToast(`Скопійовано! Відкриваю чат у Viber (${venue.name})...`);
-    window.open(viberUrl, '_blank');
+    const igDirectUrl = `https://ig.me/m/${cleanInsta}`;
+    if (window.Telegram?.WebApp?.openLink) {
+      window.Telegram.WebApp.openLink(igDirectUrl);
+    } else {
+      window.open(igDirectUrl, '_blank');
+    }
   } else {
-    const searchUrl = `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((venue.name || '') + ' ' + (job?.city || ''))}`;
-    showToast(`Скопійовано! Шукаю Instagram «${venue.name}»...`);
-    window.open(searchUrl, '_blank');
+    openContactActionModal(venue, job);
   }
 }
 
@@ -11353,7 +11429,7 @@ function renderNfcVenuesList(job, items) {
             <div class="biz-addr">${escapeHtml(v.address || '—')}</div>
             <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:3px; font-size:0.75rem;">
               <a href="${instaUrl}" target="_blank" rel="noopener" style="color:${cleanInsta ? '#007aff' : 'var(--accent)'}; font-weight:700; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}</a>
-              ${isMobile ? `<a href="${viberUrl}" target="_blank" rel="noopener" style="color:#7360F2; font-weight:700; text-decoration:none;">Viber</a>` : ''}
+              ${v.phone ? `<button type="button" class="nfc-contact-btn" data-nfc-contact="${v.id}" data-job="${job.id}" style="background:none; border:none; padding:0; color:var(--accent); font-weight:700; cursor:pointer; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px; font-family:inherit;">📞 ${escapeHtml(v.phone)} ${isMobile ? '<span style="color:#7360F2; background:rgba(115,96,242,0.14); padding:1px 5px; border-radius:4px; font-weight:850;">Viber</span>' : ''}</button>` : ''}
             </div>
           </td>
           <td class="col-rating">
@@ -11434,10 +11510,12 @@ function renderNfcVenuesList(job, items) {
                 <a href="${mapUrl}" target="_blank" rel="noopener" class="nfc-addr-link" title="Відкрити точку в Google Maps">${escapeHtml(v.address || job.cluster || job.city)}</a>
               </div>
               ${v.phone ? `
-                <div class="nfc-meta-item" style="display:inline-flex; align-items:center; gap:6px;">
-                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-                  <a href="tel:${v.phone}" class="nfc-phone-link">${v.phone}</a>
-                  ${isMobile ? `<a href="${viberUrl}" target="_blank" rel="noopener" class="viber-badge-link" style="display:inline-flex; align-items:center; gap:2px; font-size:0.7rem; font-weight:700; color:#7360F2; background:rgba(115,96,242,0.12); padding:1px 6px; border-radius:6px; text-decoration:none;" title="Написати у Viber">Viber</a>` : ''}
+                <div class="nfc-meta-item">
+                  <button type="button" class="nfc-contact-btn" data-nfc-contact="${v.id}" data-job="${job.id}" style="background:none; border:none; padding:0; display:inline-flex; align-items:center; gap:6px; cursor:pointer; text-align:left; font-family:inherit;">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    <span style="color:var(--accent); font-weight:700; text-decoration:underline;">${v.phone}</span>
+                    ${isMobile ? `<span class="viber-badge-pill" style="font-size:0.7rem; font-weight:800; color:#7360F2; background:rgba(115,96,242,0.14); padding:2px 7px; border-radius:6px;">Viber</span>` : ''}
+                  </button>
                 </div>
               ` : ''}
               <div class="nfc-meta-item">
@@ -12543,6 +12621,16 @@ function setupNfcRadarTab() {
   document.getElementById('submitNfcSearchBtn')?.addEventListener('click', submitNfcSearch);
 
   document.getElementById('nfcRadarJobsList')?.addEventListener('click', (e) => {
+    const contactBtn = e.target.closest('[data-nfc-contact]');
+    if (contactBtn) {
+      e.stopPropagation();
+      const job = nfcRadarState.jobs.find(j => j.id === contactBtn.dataset.job);
+      const items = job ? getJobFlatItems(job) : [];
+      const venue = items.find(v => (v.id === contactBtn.dataset.nfcContact || v.name === contactBtn.dataset.nfcContact));
+      if (venue) openContactActionModal(venue, job);
+      return;
+    }
+
     const pitchBtn = e.target.closest('[data-nfc-act="pitch"]');
     if (pitchBtn) {
       const job = nfcRadarState.jobs.find(j => j.id === pitchBtn.dataset.job);
@@ -12754,7 +12842,7 @@ function showMapVenueCard(v, job, idx) {
         <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
         <span>Точка в Google Maps</span>
       </a>
-      ${v.phone ? `<a href="tel:${v.phone}" class="btn btn--out btn--xs">📞 ${v.phone}</a>` : ''}
+      ${v.phone ? `<button type="button" class="btn btn--out btn--xs" data-map-contact="${v.id}" style="font-weight:700;">📞 ${v.phone}</button>` : ''}
       <a href="${instaUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; border-color:${cleanInsta ? '#E1306C' : 'var(--border)'}; font-weight:600;">
         📸 ${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}
       </a>
@@ -12789,6 +12877,10 @@ function showMapVenueCard(v, job, idx) {
   const mapCrmBtn = card.querySelector('[data-nfc-act="crm"]');
   if (mapCrmBtn) {
     mapCrmBtn.addEventListener('click', () => addBizToCrm(v, job?.cluster || job?.city));
+  }
+  const mapContactBtn = card.querySelector('[data-map-contact]');
+  if (mapContactBtn) {
+    mapContactBtn.addEventListener('click', () => openContactActionModal(v, job));
   }
 
   // Walk status click handler
