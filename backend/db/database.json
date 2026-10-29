@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1793293437693-491",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "gram",
+      "authorUsername": "@gram",
+      "title": "💼 💜 Вакансія: Project Manager у команду RIZNI | робота в Києві, full time...",
+      "text": "💼 💜 Вакансія: Project Manager у команду RIZNI | робота в Києві, full time\n\n📍Київ, offline, full time\n\n\nМи — SMM-агенція, яка займається комплексним просуванням брендів у соцмережах: від розробки стратегії до створення контенту та професійних зйомок.\n\nШукаємо людину з досвідом у проєктному менеджменті, яка вміє організовувати процеси, комунікувати з клієнтами та працювати в команді.\n\nЩоб дізнатися більше про вакансію, умови роботи або надіслати резюме, пишіть у Telegram!\n\nДля звʼязку @rizni_smm ✉️\n\n#проджект #менеджер #робота #вакансія #Київ #роботаКиїв #діджитал\n\n🔗 Більше вакансій в нашому чаті\nРозмістити вакансію @Irina_MK26",
+      "date": "2026-10-29T17:03:57.690Z",
+      "dateFormatted": "Сьогодні, 19:03",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1793292651476-640",
       "category": "development",
       "categoryName": "Веброзробка",
