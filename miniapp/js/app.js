@@ -9636,7 +9636,7 @@ function renderScrapeCat(job, cat) {
         <td>
           <div style="display:inline-flex; align-items:center; flex-wrap:wrap; gap:6px;">
             <a href="tel:${escapeHtml(b.phone)}" style="color:var(--accent); font-weight:600; text-decoration:none;">${escapeHtml(b.phone || '—')}</a>
-            ${isMobile ? `<a href="${viberUrl}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:2px; font-size:0.7rem; font-weight:700; color:#7360F2; background:rgba(115,96,242,0.12); padding:1px 6px; border-radius:6px; text-decoration:none;" title="Написати у Viber">Viber</a>` : ''}
+            ${isMobile ? `<a href="${viberUrl}" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:2px; font-size:0.7rem; font-weight:700; color:#0066FF; background:rgba(0,102,255,0.12); padding:1px 6px; border-radius:6px; text-decoration:none;" title="Написати у Viber">Viber</a>` : ''}
           </div>
         </td>
         <td style="color:var(--muted); font-size:0.75rem;">${escapeHtml(b.reason || '—')}</td>
@@ -10097,7 +10097,16 @@ async function runLiveApifyJob(job) {
         };
       }
 
-      const rawItems = await runSingleApifyActorClient(actorId, input, token);
+      let rawItems = [];
+      try {
+        rawItems = await runSingleApifyActorClient(actorId, input, token);
+      } catch (apifyErr) {
+        if (/Monthly usage hard limit exceeded|credit|quota/i.test(apifyErr.message)) {
+          console.warn('[Apify] Limit exceeded, ending waves:', apifyErr.message);
+          break;
+        }
+        throw apifyErr;
+      }
 
       for (const it of rawItems) {
         if (allItems.length >= targetLimit) break;
@@ -11041,7 +11050,7 @@ function openContactActionModal(venue, job) {
   const clean380 = clean.startsWith('380') ? clean : (clean.startsWith('0') ? ('38' + clean) : clean);
 
   const titleEl = document.getElementById('contactActionTitle');
-  if (titleEl) titleEl.textContent = `Зв'язок: ${venue.name}`;
+  if (titleEl) titleEl.textContent = "Зв'язок";
   const phoneDisplayEl = document.getElementById('contactActionPhoneDisplay');
   if (phoneDisplayEl) phoneDisplayEl.textContent = rawPhone;
 
@@ -11117,17 +11126,28 @@ function sendInstantVenueNfcPitch(venue, job, btnEl) {
     .replace(/[\/?#].*$/, '')
     .trim();
 
-  // Show clear notification to user that text is in clipboard and ready to paste
-  showToast(`📋 Оффер скопійовано! Вставте його в чат (довге натискання -> Вставити)`);
+  const cleanPhone = (venue.phone || '').replace(/\D/g, '');
+  const clean380 = cleanPhone.startsWith('380') ? cleanPhone : (cleanPhone.startsWith('0') ? ('38' + cleanPhone) : cleanPhone);
+  const isMobile = venue.isMobile || (cleanPhone && isUkrainianMobilePhone(cleanPhone));
 
   if (cleanInsta) {
+    showToast(`📋 Оффер скопійовано! Вставте в Instagram Direct (довге натискання -> «Вставити»)`);
     const igDirectUrl = `https://ig.me/m/${cleanInsta}`;
     if (window.Telegram?.WebApp?.openLink) {
       window.Telegram.WebApp.openLink(igDirectUrl);
     } else {
       window.open(igDirectUrl, '_blank');
     }
+  } else if (isMobile) {
+    showToast(`📋 Оффер скопійовано! Відкриваємо Viber (довге натискання -> «Вставити»)`);
+    const viberUrl = `viber://chat?number=%2B${clean380}`;
+    if (window.Telegram?.WebApp?.openLink) {
+      window.Telegram.WebApp.openLink(viberUrl);
+    } else {
+      window.location.href = viberUrl;
+    }
   } else {
+    showToast(`📋 Оффер скопійовано! Оберіть спосіб зв'язку`);
     openContactActionModal(venue, job);
   }
 }
@@ -11180,7 +11200,7 @@ function copyVenueNfcPitch(venue, job) {
           <span>${cleanInsta ? '@' + cleanInsta : 'Знайти в Instagram'}</span>
         </a>
         ${isMobile ? `
-          <a href="${viberUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="display:inline-flex; align-items:center; gap:4px; color:#7360F2; border-color:#7360F2; font-weight:600;">
+          <a href="${viberUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="display:inline-flex; align-items:center; gap:4px; color:#0066FF; border-color:#0066FF; font-weight:600;">
             <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
             <span>Написати у Viber</span>
           </a>
@@ -11429,7 +11449,7 @@ function renderNfcVenuesList(job, items) {
             <div class="biz-addr">${escapeHtml(v.address || '—')}</div>
             <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:3px; font-size:0.75rem;">
               <a href="${instaUrl}" target="_blank" rel="noopener" style="color:${cleanInsta ? '#007aff' : 'var(--accent)'}; font-weight:700; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}</a>
-              ${v.phone ? `<button type="button" class="nfc-contact-btn" data-nfc-contact="${v.id}" data-job="${job.id}" style="background:none; border:none; padding:0; color:var(--accent); font-weight:700; cursor:pointer; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px; font-family:inherit;">📞 ${escapeHtml(v.phone)} ${isMobile ? '<span style="color:#7360F2; background:rgba(115,96,242,0.14); padding:1px 5px; border-radius:4px; font-weight:850;">Viber</span>' : ''}</button>` : ''}
+              ${v.phone ? `<button type="button" class="nfc-contact-btn" data-nfc-contact="${v.id}" data-job="${job.id}" style="background:none; border:none; padding:0; color:var(--accent); font-weight:700; cursor:pointer; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px; font-family:inherit;">📞 ${escapeHtml(v.phone)} ${isMobile ? '<span style="color:#0066FF; background:rgba(0,102,255,0.12); padding:1px 5px; border-radius:4px; font-weight:850;">Viber</span>' : ''}</button>` : ''}
             </div>
           </td>
           <td class="col-rating">
@@ -11514,7 +11534,7 @@ function renderNfcVenuesList(job, items) {
                   <button type="button" class="nfc-contact-btn" data-nfc-contact="${v.id}" data-job="${job.id}" style="background:none; border:none; padding:0; display:inline-flex; align-items:center; gap:6px; cursor:pointer; text-align:left; font-family:inherit;">
                     <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
                     <span style="color:var(--accent); font-weight:700; text-decoration:underline;">${v.phone}</span>
-                    ${isMobile ? `<span class="viber-badge-pill" style="font-size:0.7rem; font-weight:800; color:#7360F2; background:rgba(115,96,242,0.14); padding:2px 7px; border-radius:6px;">Viber</span>` : ''}
+                    ${isMobile ? `<span class="viber-badge-pill" style="font-size:0.7rem; font-weight:800; color:#0066FF; background:rgba(0,102,255,0.12); padding:2px 7px; border-radius:6px;">Viber</span>` : ''}
                   </button>
                 </div>
               ` : ''}
@@ -11575,24 +11595,30 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
   const isSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).some(k => runSeenKeys.has(k));
   const markSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).forEach(k => runSeenKeys.add(k));
 
-  const strictMatched = [];
-  const overflowPool = [];
+  const strictMatched = []; // Has Instagram AND reviews <= targetReviews
+  const viberMatched = [];  // Has Viber/mobile phone AND reviews <= targetReviews
+  const otherMatched = [];  // Has website/other AND reviews <= targetReviews
+  const overflowPool = [];  // Has contact, but reviews > targetReviews (for fallback to guarantee count)
 
   const baseQuery = [job.niche, cluster, city].filter(Boolean).join(' ');
-  const districtQueries = buildSmartDistrictQueriesClient(job.niche, city, cluster, currentWave, 4);
+  const districtQueries = buildSmartDistrictQueriesClient(job.niche, city, cluster, currentWave, 24);
   const searchQueries = [baseQuery, ...districtQueries];
 
   for (let qIdx = 0; qIdx < searchQueries.length; qIdx++) {
-    if (strictMatched.length >= targetCount) break;
+    const totalCollected = strictMatched.length + viberMatched.length + otherMatched.length;
+    if (totalCollected >= targetCount && (strictMatched.length + viberMatched.length) >= Math.min(targetCount, 12)) {
+      break;
+    }
+    if (totalCollected >= targetCount * 2) {
+      break;
+    }
 
     const q = searchQueries[qIdx];
-    job.progressText = `Google Places API (${strictMatched.length}/${targetCount})…`;
+    job.progressText = `Google Places API (${Math.min(targetCount, totalCollected)}/${targetCount})…`;
     renderNfcRadar();
 
     let pageToken = '';
     for (let page = 0; page < 2; page++) {
-      if (strictMatched.length >= targetCount) break;
-
       let data = null;
       try {
         data = await searchPlacesApiDirect(q, key, pageToken);
@@ -11625,7 +11651,7 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
           insta = cleanInstagramHandle(website);
         }
 
-        // Strict outreach filter: must have Instagram or mobile phone or website
+        // Must have Instagram OR mobile phone (Viber) OR website
         if (!insta && !isMobile && !website) return;
 
         const addr = p.formattedAddress || cluster || city;
@@ -11656,35 +11682,43 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
         if (reg.isBizSeen(venueObj, city) || isSeenInThisRun(venueObj)) return;
         markSeenInThisRun(venueObj);
 
-        if (insta && (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews)) {
-          strictMatched.push(venueObj);
-        } else if (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews) {
+        const meetsReviews = (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews);
+
+        if (meetsReviews) {
+          if (insta) {
+            strictMatched.push(venueObj);
+          } else if (isMobile) {
+            viberMatched.push(venueObj);
+          } else {
+            otherMatched.push(venueObj);
+          }
+        } else {
           overflowPool.push(venueObj);
         }
       });
 
       if (!data.nextPageToken) break;
       pageToken = data.nextPageToken;
-      await new Promise(r => setTimeout(r, 600));
+      await new Promise(r => setTimeout(r, 400));
     }
   }
 
-  strictMatched.sort((a, b) => {
-    const aIg = a.instagram ? 1 : 0;
-    const bIg = b.instagram ? 1 : 0;
-    if (bIg !== aIg) return bIg - aIg;
+  // Sort lowest reviews first
+  strictMatched.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
+  viberMatched.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
+  otherMatched.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
+  overflowPool.sort((a, b) => {
+    const aHasContact = (a.instagram || a.isMobile) ? 1 : 0;
+    const bHasContact = (b.instagram || b.isMobile) ? 1 : 0;
+    if (bHasContact !== aHasContact) return bHasContact - aHasContact;
     return (Number(a.reviews) || 0) - (Number(b.reviews) || 0);
   });
 
-  let finalVenues = [...strictMatched];
+  // Assemble final venues to guarantee exact targetCount
+  const finalVenues = [...strictMatched, ...viberMatched, ...otherMatched];
   if (finalVenues.length < targetCount && overflowPool.length > 0) {
-    overflowPool.sort((a, b) => {
-      const aIg = a.instagram ? 1 : 0;
-      const bIg = b.instagram ? 1 : 0;
-      if (bIg !== aIg) return bIg - aIg;
-      return (Number(a.reviews) || 0) - (Number(b.reviews) || 0);
-    });
-    finalVenues.push(...overflowPool.slice(0, targetCount - finalVenues.length));
+    const needed = targetCount - finalVenues.length;
+    finalVenues.push(...overflowPool.slice(0, needed));
   }
 
   return finalVenues.slice(0, targetCount);
@@ -11818,7 +11852,16 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
         includeWebResults: false
       };
 
-      const rawItems = await runSingleApifyActorClient(actorId, input, token);
+      let rawItems = [];
+      try {
+        rawItems = await runSingleApifyActorClient(actorId, input, token);
+      } catch (apifyErr) {
+        if (/Monthly usage hard limit exceeded|credit|quota/i.test(apifyErr.message)) {
+          console.warn('[Apify] Limit exceeded, ending waves:', apifyErr.message);
+          break;
+        }
+        throw apifyErr;
+      }
 
       rawItems.forEach((it, idx) => {
         const name = (it.title || it.name || '').trim();
