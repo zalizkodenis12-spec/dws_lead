@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1793294935768-911",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "︎ ︎ ︎ ︎ ︎",
+      "authorUsername": "@tg_id_8405406133",
+      "title": "🎬 НУЖНЫ ВИДЕО ДЛЯ TIKTOK, YOUTUBE SHORTS И REELS?",
+      "text": "🎬 НУЖНЫ ВИДЕО ДЛЯ TIKTOK, YOUTUBE SHORTS И REELS?\n🔥 Создаю видео с помощью нейросетей и занимаюсь монтажом роликов!\n✅ Видео по вашим идеям и сценариям ✅ Динамичный монтаж и субтитры ✅ Ролики для TikTok, Shorts и Reels ✅ Индивидуальный подход к каждому заказу\n💰 Доступные цены на первые заказы!\n📩 Хотите интересный ролик, который привлечёт внимание аудитории? Пишите мне в личные сообщения — обсудим вашу идею и стоимость!\n🚀 Есть идея для видео? Давайте воплотим её в жизнь!",
+      "date": "2026-10-29T17:28:55.767Z",
+      "dateFormatted": "Сьогодні, 19:28",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1793293437693-491",
       "category": "marketing",
       "categoryName": "Маркетинг",
