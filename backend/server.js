@@ -9,6 +9,7 @@ import { ingestMessage, loadSources, saveSourcesToFile, scanPublicChannels, star
 import { sendScanReport } from './bot.js';
 import './bot.js';
 import { startScrape, listJobs, getJob, deleteJob, buildCsv, csvFileName, sendCsvToTelegram, scraperMode, setApifyToken, getApifyToken, getSeenData, registerSeenBusinesses } from './scraper/scraper.js';
+import { scrapeLocalGmaps } from './scraper/localGmapsScraper.js';
 
 dotenv.config();
 
@@ -501,6 +502,19 @@ app.post('/api/scrapes/token', (req, res) => {
     const masked = saved ? saved.slice(0, 8) + '...' + saved.slice(-4) : '';
     res.json({ success: true, hasToken: !!saved, masked, mode: scraperMode() });
   } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// 100% Free Local Google Maps Scraper (Puppeteer + Local Chrome)
+app.post('/api/scraper/live-nfc', async (req, res) => {
+  try {
+    const { niche, city, cluster, limit, maxReviews } = req.body || {};
+    console.log(`[POST /api/scraper/live-nfc] Searching for: ${niche} | ${city} | ${cluster} | limit: ${limit} | maxReviews: ${maxReviews}`);
+    const venues = await scrapeLocalGmaps({ niche, city, cluster, limit, maxReviews });
+    res.json({ success: true, count: venues.length, items: venues });
+  } catch (err) {
+    console.error('[API /api/scraper/live-nfc] Error:', err);
     res.status(500).json({ success: false, error: err.message });
   }
 });

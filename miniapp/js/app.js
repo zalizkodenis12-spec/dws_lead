@@ -11479,6 +11479,58 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
     const isSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).some(k => runSeenKeys.has(k));
     const markSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).forEach(k => runSeenKeys.add(k));
 
+    // ------------------------------------------------------------
+    // 1. FREE LOCAL GOOGLE MAPS ENGINE (Puppeteer + Chrome, No Apify)
+    // ------------------------------------------------------------
+    const customEndpoint = (localStorage.getItem('dws_scraper_url') || '').trim();
+    const localEndpoint = customEndpoint ? `${customEndpoint.replace(/\/+$/, '')}/api/scraper/live-nfc` : '/api/scraper/live-nfc';
+
+    try {
+      job.progressText = `Локальний збір Google Maps (0/${targetCount})…`;
+      renderNfcRadar();
+
+      const localRes = await fetch(localEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          niche: job.niche,
+          city,
+          cluster,
+          limit: targetCount,
+          maxReviews: targetReviews
+        })
+      }).catch(() => null);
+
+      if (localRes && localRes.ok) {
+        const payload = await localRes.json();
+        if (payload.success && Array.isArray(payload.items) && payload.items.length > 0) {
+          const freshItems = payload.items.filter(v => !reg.isBizSeen(v, city) && !isSeenInThisRun(v));
+          freshItems.forEach(v => markSeenInThisRun(v));
+
+          const finalVenues = freshItems.slice(0, targetCount);
+          if (finalVenues.length > 0) {
+            await saveGlobalSeenRegistry(finalVenues, waveKey, currentWave, city);
+            job.status = 'done';
+            job.progressText = '';
+            job.items = finalVenues;
+            job.total = finalVenues.length;
+            saveLocalNfcJobs(nfcRadarState.jobs);
+            renderNfcRadar();
+
+            const locLabel = job.cluster ? `${job.cluster}, ${job.city}` : job.city;
+            try { showToast(`✅ Знайдено ${finalVenues.length} закладів локально (${locLabel})!`); } catch (_) {}
+            haptic('success');
+            return;
+          }
+        }
+      }
+    } catch (localErr) {
+      console.warn('[LocalEngine] Falling back to Apify:', localErr.message);
+    }
+
+    // ------------------------------------------------------------
+    // 2. CLOUD ENGINE (Apify multi-wave fallback)
+    // ------------------------------------------------------------
     const strictMatched = [];
     const overflowUnseenPool = [];
     const maxWaves = 3;
@@ -11507,7 +11559,7 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
         maxCrawledPlacesPerSearch: perSearchLimit,
         language: 'uk',
         skipClosedPlaces: true,
-        includeWebResults: true
+        includeWebResults: false
       };
 
       const rawItems = await runSingleApifyActorClient(actorId, input, token);
