@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1793282286446-672",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "GDPR",
+      "authorUsername": "@GDPR",
+      "title": "👨‍🎓 Маркетолог-помічник (Junior+) | Amazonikk | віддалена робота",
+      "text": "👨‍🎓 Маркетолог-помічник (Junior+) | Amazonikk | віддалена робота\n\nШукаємо маркетолога до команди Amazonikk для роботи з рекламою, сайтами та маркетинговими процесами.\n\nОбов’язки:\nЗапуск і ведення реклами в Meta Ads та Google Ads.\nПідготовка email-розсилок та аналіз статистики.\nРобота із сайтами на WordPress і Tilda.\nПеревірка аналітики, пікселів, форм та індексації.\nРобота з даними в Excel і Google Sheets.\nПідготовка даних для CRM та пошук постачальників.\n\nВимоги:￼\nПрактичний досвід запуску реклами в Meta Ads Manager.\nБазове розуміння Google Ads.\nДосвід роботи з email-розсилками.\nВпевнене володіння Excel і Google Sheets.\nСамостійність, уважність та вміння доводити завдання до кінця.\nГотовність швидко навчатися та працювати з інструментами ШІ.\n\nБуде перевагою: знання HTML/CSS, Git, CRM, SEO, WhatsApp/Telegram та GDPR.\n\nМи пропонуємо:\nВіддалений формат\nГрафік роботи з 10:00 до 19:00\nФіксовану ставку + бонуси.￼\n\nДля звʼязку\n@amazonikk_vacancy ✉️\n\n#маркетинг #помічник #вакансія",
+      "date": "2026-10-29T13:58:06.445Z",
+      "dateFormatted": "Сьогодні, 15:58",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1793281287981-9269",
       "category": "development",
       "categoryName": "Веброзробка",
