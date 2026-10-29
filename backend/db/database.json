@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1793282355964-509",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "𝓡𝓲𝓽𝓪🤍",
+      "authorUsername": "@tg_id_6464919402",
+      "title": "✨ Шукаєш людину, яка допоможе зробити твій TikTok, Instagram цікавішим?...",
+      "text": "✨ Шукаєш людину, яка допоможе зробити твій TikTok, Instagram цікавішим?\n\nЯ створюю:\n• Стильні Stories для Instagram\n• Reels та монтаж відео\n• Естетичні каруселі\n• Рекламні та інформаційні макети\n\nЗараз активно розвиваюся у сфері створення контенту, тому шукаю нові проєкти та клієнтів за приємними цінами 🤍\nПрацюю відповідально, враховую побажання та стараюся зробити кожну роботу якісною.\n📩 За деталями та прикладами робіт — пишіть у приватні повідомлення!",
+      "date": "2026-10-29T13:59:15.964Z",
+      "dateFormatted": "Сьогодні, 15:59",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1793282286446-672",
       "category": "development",
       "categoryName": "Веброзробка",
