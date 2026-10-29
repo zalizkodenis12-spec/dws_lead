@@ -298,6 +298,16 @@
             <textarea id="profileTemplate" class="form-textarea" rows="5" maxlength="2000" placeholder="Вітаю, {NAME}! Побачив замовлення {TASK}..."></textarea>
           </div>
 
+          <!-- "ШАБЛОН РОЗСИЛКИ (NFC КАРТКИ)" Block -->
+          <div class="form-group">
+            <div class="label-row">
+              <label class="form-label" for="profileNfcTemplate">ШАБЛОН ВІДГУКУ (NFC КАРТКИ БІЗНЕСАМ):</label>
+              <span class="char-counter" id="nfcTemplateCounter">0/2000</span>
+            </div>
+            <p class="form-hint">Шаблон повідомлення для швидкої розсилки закладам в Instagram Direct по NFC-картках (копіюється в 1 клік і відкриває чат).</p>
+            <textarea id="profileNfcTemplate" class="form-textarea" rows="4" maxlength="2000" placeholder="Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?"></textarea>
+          </div>
+
           <!-- THEME SELECTION -->
           <div class="form-group">
             <label class="form-label" data-i18n="profile.theme">ТЕМА:</label>
@@ -1995,6 +2005,6 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.6.5"></script>
+  <script src="js/app.js?v=4.6.6"></script>
 </body>
 </html>

@@ -3713,7 +3713,8 @@ const DEFAULT_DATA = {
     ownerName: tg?.initDataUnsafe?.user?.first_name ? (tg.initDataUnsafe.user.first_name + ' ' + (tg.initDataUnsafe.user.last_name || '')).trim() : "Денис Залізко",
     theme: "light",
     about: "DenisWeb Studio — діджитал-агентство сучасної веброзробки та результативного маркетингу. Створюємо висококонверсійні лендінги, інтернет-магазини, 3D-сайти, каталоги та Telegram-боти. Наші стандарти: чистий код, PageSpeed 90+, адаптив під усі гаджети, інтеграція ШІ у процеси та безкоштовне інтерактивне демо до внесення авансу. Оплата 40% аванс / 60% після запуску.",
-    responseTemplate: "Вітаю, {NAME}! Побачив ваше замовлення щодо {TASK}. У DenisWeb Studio ми реалізуємо подібні проєкти під ключ за 2-4 дні з гарантією швидкості та чистого коду.\n\nГотові безкоштовно розробити концепт та інтерактивне демо головного блоку ще до початку оплати, щоб ви наочно побачили результат.\n\nНаш сайт та кейси: https://denis-webstudio.site\nКоли вам зручно коротко обговорити деталі?"
+    responseTemplate: "Вітаю, {NAME}! Побачив ваше замовлення щодо {TASK}. У DenisWeb Studio ми реалізуємо подібні проєкти під ключ за 2-4 дні з гарантією швидкості та чистого коду.\n\nГотові безкоштовно розробити концепт та інтерактивне демо головного блоку ще до початку оплати, щоб ви наочно побачили результат.\n\nНаш сайт та кейси: https://denis-webstudio.site\nКоли вам зручно коротко обговорити деталі?",
+    nfcTemplate: "Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?"
   }
 };
 
@@ -3863,7 +3864,7 @@ const state = {
   expensesFilterPeriod: 'all',
   expensesDateRange: null,
   expensesActiveChartMonthIdx: null,
-  profile: JSON.parse(localStorage.getItem('dws_profile') || 'null') || { ...DEFAULT_DATA.profile },
+  profile: { ...DEFAULT_DATA.profile, ...(JSON.parse(localStorage.getItem('dws_profile') || 'null') || {}) },
   sources: normalizedSources,
   activeCrmLead: null,
   activeLeadForAi: null,
@@ -6007,6 +6008,7 @@ async function fetchProfile() {
 
   const aboutEl = document.getElementById('profileAbout');
   const tmplEl = document.getElementById('profileTemplate');
+  const nfcTmplEl = document.getElementById('profileNfcTemplate');
 
   if (aboutEl) {
     aboutEl.value = state.profile.about || DEFAULT_DATA.profile.about;
@@ -6015,6 +6017,10 @@ async function fetchProfile() {
   if (tmplEl) {
     tmplEl.value = state.profile.responseTemplate || DEFAULT_DATA.profile.responseTemplate;
     updateCharCount(tmplEl, 'templateCounter');
+  }
+  if (nfcTmplEl) {
+    nfcTmplEl.value = state.profile.nfcTemplate || DEFAULT_DATA.profile.nfcTemplate;
+    updateCharCount(nfcTmplEl, 'nfcTemplateCounter');
   }
   if (state.profile.theme) {
     applyTheme(state.profile.theme);
@@ -6212,9 +6218,11 @@ function setupEventListeners() {
       haptic('medium');
       const about = document.getElementById('profileAbout')?.value || '';
       const template = document.getElementById('profileTemplate')?.value || '';
+      const nfcTemplate = document.getElementById('profileNfcTemplate')?.value || DEFAULT_DATA.profile.nfcTemplate;
 
       state.profile.about = about;
       state.profile.responseTemplate = template;
+      state.profile.nfcTemplate = nfcTemplate;
       state.profile.theme = state.theme;
       state.profile.lang = state.lang;
       localStorage.setItem('dws_profile', JSON.stringify(state.profile));
@@ -6225,7 +6233,7 @@ function setupEventListeners() {
         await fetch('/api/profile', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ about, responseTemplate: template, theme: state.theme, lang: state.lang })
+          body: JSON.stringify({ about, responseTemplate: template, nfcTemplate, theme: state.theme, lang: state.lang })
         });
       } catch (err) {}
 
@@ -8691,7 +8699,9 @@ function buildAccountSnapshot(nowTs = Date.now()) {
     income: state.income || { records: [], currency: '₴' },
     expenses: { ...(state.expenses || {}), records: cleanExpenses, currency: state.expenses?.currency || '₴' },
     profile: {
+      ...DEFAULT_DATA.profile,
       ...(state.profile || {}),
+      nfcTemplate: state.profile?.nfcTemplate || DEFAULT_DATA.profile.nfcTemplate,
       theme: state.theme || 'light',
       lang: state.lang || 'ua',
       requisites: state.requisites || state.profile?.requisites || {}
@@ -8775,13 +8785,17 @@ function applyAccountSnapshot(d, mergeWithLocal = false, preferLocalOnMerge = fa
   // 6. Profile & Requisites
   if (d.profile && typeof d.profile === 'object') {
     const nextProfile = preferLocalOnMerge
-      ? { ...d.profile, ...state.profile }
-      : { ...state.profile, ...d.profile };
+      ? { ...DEFAULT_DATA.profile, ...d.profile, ...state.profile }
+      : { ...DEFAULT_DATA.profile, ...state.profile, ...d.profile };
+    if (!nextProfile.nfcTemplate) {
+      nextProfile.nfcTemplate = DEFAULT_DATA.profile.nfcTemplate;
+    }
     if (JSON.stringify(nextProfile) !== JSON.stringify(state.profile)) {
       state.profile = nextProfile;
       localStorage.setItem('dws_profile', JSON.stringify(state.profile));
       const aboutEl = document.getElementById('profileAbout');
       const tmplEl = document.getElementById('profileTemplate');
+      const nfcTmplEl = document.getElementById('profileNfcTemplate');
       if (aboutEl && document.activeElement !== aboutEl && state.profile.about) {
         aboutEl.value = state.profile.about;
         updateCharCount(aboutEl, 'aboutCounter');
@@ -8789,6 +8803,10 @@ function applyAccountSnapshot(d, mergeWithLocal = false, preferLocalOnMerge = fa
       if (tmplEl && document.activeElement !== tmplEl && state.profile.responseTemplate) {
         tmplEl.value = state.profile.responseTemplate;
         updateCharCount(tmplEl, 'templateCounter');
+      }
+      if (nfcTmplEl && document.activeElement !== nfcTmplEl && state.profile.nfcTemplate) {
+        nfcTmplEl.value = state.profile.nfcTemplate;
+        updateCharCount(nfcTmplEl, 'nfcTemplateCounter');
       }
       hasChanges = true;
     }
@@ -9237,12 +9255,16 @@ function closeModal(modalId) {
 function setupProfileCounters() {
   const about = document.getElementById('profileAbout');
   const tmpl = document.getElementById('profileTemplate');
+  const nfcTmpl = document.getElementById('profileNfcTemplate');
 
   if (about) {
     about.addEventListener('input', () => updateCharCount(about, 'aboutCounter'));
   }
   if (tmpl) {
     tmpl.addEventListener('input', () => updateCharCount(tmpl, 'templateCounter'));
+  }
+  if (nfcTmpl) {
+    nfcTmpl.addEventListener('input', () => updateCharCount(nfcTmpl, 'nfcTemplateCounter'));
   }
 }
 
@@ -9388,21 +9410,25 @@ function extractInstagramFromApifyItem(it) {
   // 3. Web Results from Google Maps ("Результати веб-пошуку")
   if (Array.isArray(it.webResults) && it.webResults.length > 0) {
     for (const res of it.webResults) {
-      const u = res?.url || res?.link || '';
+      const u = res?.url || res?.link || res?.displayedUrl || '';
       if (typeof u === 'string' && /instagram\.com/i.test(u)) {
         const clean = cleanInstagramHandle(u);
         if (clean) return clean;
       }
-      const title = res?.title || '';
-      if (typeof title === 'string' && /instagram\.com/i.test(title)) {
-        const clean = cleanInstagramHandle(title);
+      const textFields = [res?.title, res?.description, res?.snippet].filter(Boolean).join(' ');
+      if (textFields && /instagram\.com/i.test(textFields)) {
+        const clean = cleanInstagramHandle(textFields);
         if (clean) return clean;
       }
     }
   }
 
-  // 4. Metadata search: additionalInfo, description, placesTags
+  // 4. Metadata search: menu, reserveTableUrl, bookingLinks, orderBy, additionalInfo, description, placesTags
   const metaDump = [
+    it.menu,
+    it.reserveTableUrl,
+    typeof it.bookingLinks === 'object' ? JSON.stringify(it.bookingLinks) : it.bookingLinks,
+    typeof it.orderBy === 'object' ? JSON.stringify(it.orderBy) : it.orderBy,
     it.description,
     typeof it.additionalInfo === 'object' ? JSON.stringify(it.additionalInfo) : it.additionalInfo,
     Array.isArray(it.placesTags) ? it.placesTags.join(' ') : ''
@@ -10969,20 +10995,60 @@ function getJobFlatItems(job) {
 }
 
 function generateNfcPitch(venue, job) {
-  const name = venue.name || 'Заклад';
-  const ratingText = venue.rating ? (Number(venue.rating).toFixed(1) + '★') : 'репутацію';
-  const reviewsCount = venue.reviews ? (venue.reviews + ' відгуків') : 'кілька відгуків';
-  const location = venue.address || job?.cluster || job?.city || 'вашому районі';
+  const name = venue?.name || 'Заклад';
+  const city = venue?.city || job?.city || '';
+  const rawTemplate = (state.profile?.nfcTemplate || DEFAULT_DATA.profile.nfcTemplate || '').trim();
+  const baseText = rawTemplate || "Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?";
+  return baseText
+    .replace(/\{NAME\}/gi, name)
+    .replace(/\{CITY\}/gi, city);
+}
 
-  if (!venue.rating || Number(venue.rating) <= 4.3) {
-    return 'Доброго дня! Звернув увагу на ваш заклад «' + name + '» (' + location + ').\n\nЗараз у вас ' + ratingText + ' та ' + reviewsCount + ' у Google Maps. Заклад чудовий, але задоволені гості зазвичай просто йдуть, а 1–2 випадкові негативні оцінки тягнуть середній бал униз і відлякують нових клієнтів з локального пошуку.\n\nМи в DenisWeb Studio виготовляємо індивідуальні брендовані NFC-підставки на столики та стійки з акрилу / ПВХ (з вашим лого, фірмовими кольорами та чіпом NTAG213/215 + QR).\n\nГість просто підносить смартфон — і за 1 секунду у нього відкривається сторінка відгуку Google вашого закладу! Це дає +30–50 нових оцінок «5 зірок» щомісяця на повному автопілоті та піднімає заклад у ТОП-1 району.\n\nРобимо від 1 тестової шт до партії на всі столики. Надіслати фото зразків та безкоштовну візуалізацію з вашим логотипом?';
+function sendInstantVenueNfcPitch(venue, job, btnEl) {
+  const pitch = generateNfcPitch(venue, job);
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(pitch).catch(() => {
+      fallbackCopy(pitch, venue.name);
+    });
+  } else {
+    fallbackCopy(pitch, venue.name);
   }
 
-  if (Number(venue.reviews) < 50) {
-    return 'Вітаю! Помітив «' + name + '» (' + location + ').\n\nЗаклад класний та сучасний, але зараз у вас лише ' + reviewsCount + ' (' + ratingText + ') у Google Maps. На старті кожен відгук критично важливий, адже гості підсвідомо обирають місця, де 100+ оцінок.\n\nМи виготовляємо дизайнерські NFC-стійки на столики з прозорого чи матового акрилу під ваше лого. Гість торкається телефоном — і миттєво залишає 5★ або підписується на ваш Instagram!\n\nЦе дозволяє за перший же місяць зібрати 40–60 нових живих відгуків і вийти в рекомендації карт.\n\nПартія від 2 до 10 шт виготовляється за 2 дні. Куди зручніше надіслати короткий прайс та макет?';
+  haptic('success');
+
+  if (btnEl) {
+    const spanEl = btnEl.querySelector('span');
+    const origText = spanEl ? spanEl.textContent : btnEl.textContent;
+    if (spanEl) spanEl.textContent = 'СКОПІЙОВАНО ✓';
+    else btnEl.textContent = 'СКОПІЙОВАНО ✓';
+    setTimeout(() => {
+      if (spanEl) spanEl.textContent = origText;
+      else btnEl.textContent = origText;
+    }, 2000);
   }
 
-  return 'Вітаю! Звернув увагу на «' + name + '» (' + location + ').\n\nУ вас уже чудовий результат: ' + reviewsCount + ' (' + ratingText + ') у Google Maps! Але до абсолютного лідерства в ТОП-1 вашого району залишився один крок.\n\nМи DenisWeb Studio робимо преміальні акрилові стійки-тейблтенти з NFC-чіпом та QR для столиків. Дотик смартфоном — і задоволений гість за 2 секунди ставить 5★ або підписується на соцмережі.\n\nПідйом рейтингу до 4.9★ за статистикою Google дає +18% органічних гостей з карт.\n\nВиготовляємо під ключ з вашим фірмовим стилем. Надіслати комерційну пропозицію та варіанти дизайну?';
+  const cleanInsta = (venue.instagram || '')
+    .replace(/^https?:\/\/(www\.)?instagram\.com\//i, '')
+    .replace(/^@+/, '')
+    .replace(/[\/?#].*$/, '')
+    .trim();
+  const cleanPhone = (venue.phone || '').replace(/[^\d]/g, '');
+  const isMobile = isUkrainianMobilePhone(cleanPhone);
+  const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
+
+  if (cleanInsta) {
+    const igDirectUrl = `https://ig.me/m/${cleanInsta}?text=${encodeURIComponent(pitch)}`;
+    showToast(`Скопійовано! Відкриваю чат Instagram @${cleanInsta}...`);
+    window.open(igDirectUrl, '_blank');
+  } else if (isMobile && viberUrl) {
+    showToast(`Скопійовано! Відкриваю чат у Viber (${venue.name})...`);
+    window.open(viberUrl, '_blank');
+  } else {
+    const searchUrl = `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((venue.name || '') + ' ' + (job?.city || ''))}`;
+    showToast(`Скопійовано! Шукаю Instagram «${venue.name}»...`);
+    window.open(searchUrl, '_blank');
+  }
 }
 
 function copyVenueNfcPitch(venue, job) {
@@ -11291,8 +11357,8 @@ function renderNfcVenuesList(job, items) {
           </td>
           <td class="col-pain">${painBadge}</td>
           <td class="col-actions">
-            <button type="button" class="btn btn--fill btn--xs" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}" title="Скопіювати офер">
-              Офер
+            <button type="button" class="btn btn--fill btn--xs" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}" title="Скопіювати шаблон і відкрити Instagram Direct">
+              AI-Відгук
             </button>
             <button type="button" class="btn btn--out btn--xs" data-nfc-act="crm" data-job="${job.id}" data-venue="${v.id}" title="Додати в CRM">
               + CRM
@@ -11377,7 +11443,7 @@ function renderNfcVenuesList(job, items) {
 
             <div class="nfc-venue-actions-row">
               <button type="button" class="btn btn--fill btn--sm nfc-pitch-btn" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}">
-                <span>Готовий офер</span>
+                <span>AI-Відгук</span>
               </button>
               <a href="${navUrl}" target="_blank" rel="noopener" class="btn btn--out btn--sm nfc-route-btn" title="Прокласти маршрут пішки до закладу">
                 <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
@@ -11522,7 +11588,7 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
         if (reg.isBizSeen(venueObj, city) || isSeenInThisRun(venueObj)) return;
         markSeenInThisRun(venueObj);
 
-        if (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews) {
+        if (insta && (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews)) {
           strictMatched.push(venueObj);
         } else {
           overflowUnseenPool.push(venueObj);
@@ -12252,7 +12318,7 @@ function setupNfcRadarTab() {
       const job = nfcRadarState.jobs.find(j => j.id === pitchBtn.dataset.job);
       const items = job ? getJobFlatItems(job) : [];
       const venue = items.find(v => (v.id === pitchBtn.dataset.venue || v.name === pitchBtn.dataset.venue));
-      if (venue) copyVenueNfcPitch(venue, job);
+      if (venue) sendInstantVenueNfcPitch(venue, job, pitchBtn);
       return;
     }
 
@@ -12444,7 +12510,7 @@ function showMapVenueCard(v, job, idx) {
   const cleanPhone = (v.phone || '').replace(/[^\d]/g, '');
   const tgUrl = v.telegram ? (v.telegram.startsWith('http') ? v.telegram : 'https://t.me/' + v.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
   const cleanInsta = (v.instagram || '').replace(/^@+/, '');
-  const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
+  const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.google.com/search?q=${encodeURIComponent('site:instagram.com "' + (v.name || '') + '" ' + (job?.city || ''))}`;
 
   card.innerHTML = `
     <div class="nfc-map-sheet-header">
@@ -12466,7 +12532,7 @@ function showMapVenueCard(v, job, idx) {
 
     <div class="form-row gap-2" style="margin-top: 6px;">
       <button type="button" class="btn btn--fill btn--sm flex-1 nfc-pitch-btn" data-nfc-act="pitch" data-job="${job?.id}" data-venue="${v.id}">
-        <span>Готовий офер</span>
+        <span>AI-Відгук</span>
       </button>
       <button type="button" class="btn btn--fill btn--sm flex-1 nfc-crm-btn" data-nfc-act="crm" data-job="${job?.id}" data-venue="${v.id}">
         <span>CRM</span>
@@ -12485,6 +12551,15 @@ function showMapVenueCard(v, job, idx) {
   `;
 
   card.style.display = 'block';
+
+  const mapPitchBtn = card.querySelector('[data-nfc-act="pitch"]');
+  if (mapPitchBtn) {
+    mapPitchBtn.addEventListener('click', () => sendInstantVenueNfcPitch(v, job, mapPitchBtn));
+  }
+  const mapCrmBtn = card.querySelector('[data-nfc-act="crm"]');
+  if (mapCrmBtn) {
+    mapCrmBtn.addEventListener('click', () => addBizToCrm(v, job?.cluster || job?.city));
+  }
 
   // Walk status click handler
   card.querySelectorAll('.nfc-walk-pill').forEach(btn => {

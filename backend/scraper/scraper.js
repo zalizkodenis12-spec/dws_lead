@@ -333,9 +333,19 @@ export function extractInstagramFromGmapsItem(item) {
     }
   }
 
-  if (typeof item.website === 'string' && /instagram\.com/i.test(item.website)) {
-    const clean = cleanInstagramHandle(item.website);
-    if (clean) return clean;
+  const candidateUrls = [
+    item.website,
+    item.menu,
+    item.reserveTableUrl,
+    ...(Array.isArray(item.bookingLinks) ? item.bookingLinks.map(b => typeof b === 'string' ? b : (b?.url || b?.link || '')) : []),
+    ...(Array.isArray(item.orderBy) ? item.orderBy.map(o => typeof o === 'string' ? o : (o?.orderUrl || o?.url || '')) : [])
+  ].filter(Boolean);
+
+  for (const u of candidateUrls) {
+    if (typeof u === 'string' && /instagram\.com/i.test(u)) {
+      const clean = cleanInstagramHandle(u);
+      if (clean) return clean;
+    }
   }
 
   if (Array.isArray(item.webResults) && item.webResults.length > 0) {
@@ -345,9 +355,9 @@ export function extractInstagramFromGmapsItem(item) {
         const clean = cleanInstagramHandle(u);
         if (clean) return clean;
       }
-      const title = res?.title || '';
-      if (typeof title === 'string' && /instagram\.com/i.test(title)) {
-        const clean = cleanInstagramHandle(title);
+      const textBlob = [res?.title, res?.description, res?.snippet].filter(Boolean).join(' ');
+      if (textBlob && /instagram\.com/i.test(textBlob)) {
+        const clean = cleanInstagramHandle(textBlob);
         if (clean) return clean;
       }
     }
