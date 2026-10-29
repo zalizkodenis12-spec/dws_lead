@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1793287854838-234",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Маргарита",
+      "authorUsername": "@marharyta_truev",
+      "title": "Шукаємо Sales Manager в команду (Meta / Google / TikTok Ads)",
+      "text": "Шукаємо Sales Manager в команду (Meta / Google / TikTok Ads)\n\nTrue Vision Agency: трафік-команда, 3 роки на ринку, 119+ проєктів (USA, CA, EU, UAE, ISR). Нас 10, активно ростемо й шукаємо сейла, який хоче рости разом із нами.\n\nЩо робитимеш:\n• обробляти ліди, вести CRM\n• дзвінки, переговори, комерційні пропозиції\n• вести клієнта до оплати й договору\n\nКого шукаємо:\n• ОБОВʼЯЗКОВО досвід продажів маркетингових послуг (агенція, performance, SEO, SMM, студія)\n• досвід роботи з CRM\n• англійська буде плюсом\n\nУмови:\n💰 35 000–60 000 ₴: ставка + % від продажів + бонус за план\n🏠 повністю віддалено\n📈 стелі доходу немає, можна вирости до тімліда\n\nПиши в Telegram @marharyta_truev",
+      "date": "2026-10-29T15:30:54.836Z",
+      "dateFormatted": "Сьогодні, 17:30",
+      "budget": 60000,
+      "currency": "₴",
+      "country": "США",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 87,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 60000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1793286646499-783",
       "category": "marketing",
       "categoryName": "Маркетинг",
