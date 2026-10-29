@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1793300016498-443",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "youtube",
+      "subcategoryName": "YouTube монтаж",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Victoria",
+      "authorUsername": "@victoriiia000",
+      "title": "🎬 Video Editor | Remote | Full-time",
+      "text": "🎬 Video Editor | Remote | Full-time\nПродукти True Sea Moss продаються у великих мережах США, на Amazon та на нашому сайті.\n\nЗараз шукаємо Video Editor для створення реклами для Meta, TikTok та YouTube.\n\nНедостатньо просто змонтувати красивий ролик — він має продавати. Тому ми створюємо багато креативів, тестуємо їх і доопрацьовуємо ті, що показують найкращі результати.\n\nЧим ви займатиметеся:\n— монтувати direct-response рекламу з UGC та продакшн-матеріалів;\n— тестувати хуки, темп, структуру та CTA;\n— разом із креативними стратегами доопрацьовувати креативи-переможці на основі показників.\n\nКого ми шукаємо:\n— досвід монтажу від 3 років, бажано у performance, DTC/eCommerce або social;\n— впевнене володіння Premiere Pro;\n— розуміння принципів роботи хуків та утримання уваги, а також спокійне ставлення до фідбеку на основі метрик;\n— портфоліо з short-form рекламою.\n\nБуде плюсом:\nAfter Effects, досвід роботи з DAM та медіатеками, AI-інструментами, ClickUp.\n\nЯкщо впізнали себе — надсилайте портфоліо в @victoriiia000",
+      "date": "2026-10-29T18:53:36.496Z",
+      "dateFormatted": "Сьогодні, 20:53",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 56,
+      "aiSummary": "Замовлення: youtube монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1793299411690-249",
       "category": "montage",
       "categoryName": "Монтаж",
