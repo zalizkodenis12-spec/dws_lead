@@ -19,7 +19,7 @@
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.7.4">
+  <link rel="stylesheet" href="css/app.css?v=4.8.0">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -129,6 +129,22 @@
 
         <!-- Active Filter Chips (if any selected) -->
         <div id="activeFiltersContainer" class="active-chips-row" style="display:none;"></div>
+
+        <!-- Auto-Outreach & Blue-Border Selection Bar -->
+        <div id="outreachSelectionBar" class="outreach-bar-wrap">
+          <div class="outreach-bar-left">
+            <div class="outreach-bar-title">
+              <span>Авто-розсилка</span>
+              <span id="outreachSelectedCountBadge" style="background:#0066FF; color:#ffffff; font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:999px;">Обрано: 0</span>
+            </div>
+            <div class="outreach-bar-sub" id="outreachBarSubText">Натисніть на вакансію в списку для виділення синьою обводкою</div>
+          </div>
+          <div class="outreach-bar-actions">
+            <button type="button" id="outreachQuickSelect15Btn" class="btn btn--out btn--xs" style="padding:7px 10px; font-weight:700;">Топ-15</button>
+            <button type="button" id="outreachQuickClearBtn" class="btn btn--out btn--xs" style="padding:7px 10px; font-weight:700; display:none;">Скинути</button>
+            <button type="button" id="openAutoOutreachBtn" class="btn btn--fill btn--sm" style="padding:8px 13px; font-weight:800;">ВІДКРИТИ</button>
+          </div>
+        </div>
 
         <!-- Leads Cards Feed -->
         <div id="leadsList" class="cards-feed">
@@ -2067,8 +2083,213 @@
     </div>
   </div>
 
+  <!-- MODAL: АВТО-РОЗСИЛКА ПО ВАКАНСІЯХ (МУЛЬТИ-АКАУНТ ТА СИНЯ ОБВОДКА) -->
+  <div id="modalAutoOutreach" class="modal-overlay">
+    <div class="modal-sheet" style="max-height: 92vh; display: flex; flex-direction: column; position: relative;">
+      <div class="modal-header" style="position: relative; padding: 16px 50px 10px 16px;">
+        <div>
+          <h3 class="modal-title" style="font-size: 1.1rem; font-weight: 800; color: var(--black);">Авто-розсилка по вакансіях</h3>
+          <div style="font-size: 0.74rem; color: var(--muted); margin-top: 2px;">Вибір вакансій синьою обводкою та черга відправки по всіх платформах</div>
+        </div>
+        <button type="button" class="modal-close modal-close-round-blue" data-close="modalAutoOutreach" title="Закрити" aria-label="Закрити" style="position: absolute; top: 12px; right: 12px; margin: 0;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 10px 16px 18px 16px;">
+        <!-- Oval Segmented Mode Switcher (Blue active / White inactive) -->
+        <div class="outreach-oval-switch">
+          <button type="button" id="outreachTabSelectBtn" class="outreach-oval-btn active" data-outreach-tab="select">
+            Список вакансій (<span id="outreachTabSelectCount">0</span>)
+          </button>
+          <button type="button" id="outreachTabQueueBtn" class="outreach-oval-btn" data-outreach-tab="queue">
+            Черга та Акаунти (<span id="outreachTabQueueCount">0</span>)
+          </button>
+        </div>
+
+        <!-- PANEL 1: INTERACTIVE VACANCY SELECTION WITH BLUE BORDER -->
+        <div id="outreachPanelSelect">
+          <div class="outreach-platform-pills" id="outreachPlatformPills">
+            <button type="button" class="outreach-plat-pill active" data-plat="all">Всі платформи</button>
+            <button type="button" class="outreach-plat-pill" data-plat="telegram">Telegram</button>
+            <button type="button" class="outreach-plat-pill" data-plat="reddit">Reddit</button>
+            <button type="button" class="outreach-plat-pill" data-plat="discord">Discord</button>
+            <button type="button" class="outreach-plat-pill" data-plat="exchange">Біржі та Сайти</button>
+          </div>
+
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 10px; flex-wrap: wrap;">
+            <span style="font-size: 0.74rem; color: var(--muted); font-weight: 600;">Натисніть на картку вакансії, щоб з'явилася синя обводка:</span>
+            <div style="display: flex; gap: 6px;">
+              <button type="button" id="outreachModalPick15Btn" class="btn btn--out btn--xs" style="font-weight: 700;">Обрати 15</button>
+              <button type="button" id="outreachModalPickAllBtn" class="btn btn--out btn--xs" style="font-weight: 700;">Обрати всі</button>
+              <button type="button" id="outreachModalClearBtn" class="btn btn--out btn--xs" style="font-weight: 700;">Зняти обводку</button>
+            </div>
+          </div>
+
+          <div id="outreachModalLeadsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 48vh; overflow-y: auto; padding: 2px;"></div>
+
+          <div style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px;">
+            <button type="button" id="outreachGoToQueueBtn" class="btn btn--fill btn--block" style="padding: 13px; font-weight: 800;">
+              СФОРМУВАТИ ЧЕРГУ ВІДПРАВКИ (<span id="outreachGoToQueueCount">0</span>)
+            </button>
+          </div>
+        </div>
+
+        <!-- PANEL 2: QUEUE RUNNER, INTERVALS & MULTI-ACCOUNT CONFIG -->
+        <div id="outreachPanelQueue" style="display: none;">
+          <!-- Live Dispatch Queue Runner -->
+          <div id="outreachQueueStatusBox" class="outreach-queue-box">
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px;">
+              <div>
+                <div style="font-size: 0.72rem; font-weight: 800; color: var(--muted); text-transform: uppercase;">СТАТУС АВТО-РОЗСИЛКИ</div>
+                <div id="outreachQueueStateBadge" style="font-family: var(--ffh); font-size: 0.95rem; font-weight: 800; color: var(--black);">Готова до запуску</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-size: 0.72rem; font-weight: 700; color: var(--muted);">ВІДПРАВЛЕНО</div>
+                <div id="outreachQueueProgressText" style="font-family: var(--ffh); font-size: 1.05rem; font-weight: 900; color: #0066FF;">0 / 0</div>
+              </div>
+            </div>
+
+            <div id="outreachCountdownWrap" style="display: none; background: var(--card-bg); border: 1px solid #0066FF; border-radius: var(--r); padding: 10px 12px; margin-bottom: 10px; text-align: center;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--muted); text-transform: uppercase; margin-bottom: 2px;">Наступний авто-відгук через</div>
+              <div id="outreachCountdownTimer" class="outreach-timer-big">20:00</div>
+              <div id="outreachCountdownSub" style="font-size: 0.72rem; color: var(--muted); margin-top: 2px;">Антибан-пауза активна (безпечний інтервал)</div>
+            </div>
+
+            <div id="outreachNextTargetBox" style="background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 12px; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 4px;">
+                <span id="outreachNextTargetTitle" style="font-weight: 800; font-size: 0.85rem; color: var(--black);">Оберіть вакансії у списку</span>
+                <span id="outreachNextTargetAccBadge" style="font-size: 0.68rem; font-weight: 800; color: #0066FF; background: rgba(0,102,255,0.1); padding: 2px 7px; border-radius: 6px;">—</span>
+              </div>
+              <div id="outreachNextTargetMeta" style="font-size: 0.75rem; color: var(--muted); margin-bottom: 8px;">Контакт та платформа з'являться після вибору</div>
+              <label class="form-sublabel" style="display: block; margin-bottom: 4px;">ТЕКСТ ВІДГУКУ ДЛЯ ЦІЄЇ ВАКАНСІЇ (МОЖНА РЕДАГУВАТИ):</label>
+              <textarea id="outreachCurrentPitchInput" class="form-textarea" rows="4" style="font-size: 0.78rem; padding: 8px 10px;" placeholder="Персоналізований текст відгуку..."></textarea>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <button type="button" id="outreachStartToggleBtn" class="btn btn--fill btn--block" style="padding: 12px; font-weight: 800;">
+                ЗАПУСТИТИ АВТО-РОЗСИЛКУ З ПАУЗАМИ
+              </button>
+              <button type="button" id="outreachSendNextNowBtn" class="btn btn--out btn--block" style="padding: 11px; font-weight: 800; border-color: #0066FF; color: #0066FF;">
+                ВІДПРАВИТИ ПОТОЧНИЙ ВІДГУК ЗАРАЗ (БЕЗ ОЧІКУВАННЯ)
+              </button>
+              <div style="display: flex; gap: 8px;">
+                <button type="button" id="outreachSkipCurrentBtn" class="btn btn--out btn--sm" style="flex: 1; font-weight: 700;">Пропустити</button>
+                <button type="button" id="outreachResetQueueBtn" class="btn btn--out btn--sm" style="flex: 1; font-weight: 700;">Очистити чергу</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pause Interval & Per-Account Limit -->
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label">ПАУЗА МІЖ ВІДГУКАМИ (АНТИБАН ІНТЕРВАЛ):</label>
+            <div class="scrape-seg" id="outreachIntervalSeg">
+              <button type="button" class="scrape-seg-btn" data-interval="10">10 хв</button>
+              <button type="button" class="scrape-seg-btn" data-interval="15">15 хв</button>
+              <button type="button" class="scrape-seg-btn active" data-interval="20">20 хв</button>
+              <button type="button" class="scrape-seg-btn" data-interval="30">30 хв</button>
+            </div>
+            <div class="form-hint" style="margin-top: 4px;">До кожної паузи автоматично додається випадкове відхилення +-3 хв для захисту акаунтів.</div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 12px;">
+            <label class="form-label">ЛІМІТ ВІДПРАВОК НА 1 АКАУНТ ЗА ЗАПУСК:</label>
+            <div class="scrape-seg" id="outreachLimitSeg">
+              <button type="button" class="scrape-seg-btn" data-acc-limit="10">По 10</button>
+              <button type="button" class="scrape-seg-btn active" data-acc-limit="15">По 15</button>
+              <button type="button" class="scrape-seg-btn" data-acc-limit="20">По 20</button>
+              <button type="button" class="scrape-seg-btn" data-acc-limit="30">По 30</button>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="check-item" style="font-weight: 600; font-size: 0.8rem;">
+              <input type="checkbox" id="outreachAntibanSpintaxCheck" checked>
+              <span>Автоматично унікалізувати текст під стек, ім'я та платформу (Spintax захист)</span>
+            </label>
+          </div>
+
+          <!-- Multi-Account Configuration Hub -->
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label class="form-label">МОЇ РОБОЧІ АКАУНТИ ПО ПЛАТФОРМАХ:</label>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+              <!-- TG Account 1 -->
+              <div class="outreach-acc-card">
+                <div class="outreach-acc-head">
+                  <label class="check-item" style="margin: 0;">
+                    <input type="checkbox" id="outreachEnTg1" checked>
+                    <span class="outreach-acc-name">Telegram Акаунт #1 (Основний)</span>
+                  </label>
+                  <span style="font-size: 0.72rem; font-weight: 700; color: #0066FF;">До 15 / день</span>
+                </div>
+                <input type="text" id="outreachAccTg1" class="form-input" style="padding: 8px 10px; font-size: 0.8rem;" placeholder="@username або номер першого ТГ акаунта">
+              </div>
+
+              <!-- TG Account 2 -->
+              <div class="outreach-acc-card">
+                <div class="outreach-acc-head">
+                  <label class="check-item" style="margin: 0;">
+                    <input type="checkbox" id="outreachEnTg2" checked>
+                    <span class="outreach-acc-name">Telegram Акаунт #2 (Другий робочий)</span>
+                  </label>
+                  <span style="font-size: 0.72rem; font-weight: 700; color: #0066FF;">До 15 / день</span>
+                </div>
+                <input type="text" id="outreachAccTg2" class="form-input" style="padding: 8px 10px; font-size: 0.8rem;" placeholder="@username або номер другого ТГ акаунта">
+              </div>
+
+              <!-- Reddit Account -->
+              <div class="outreach-acc-card">
+                <div class="outreach-acc-head">
+                  <label class="check-item" style="margin: 0;">
+                    <input type="checkbox" id="outreachEnReddit" checked>
+                    <span class="outreach-acc-name">Reddit Акаунт (r/forhire, r/hireaprogrammer)</span>
+                  </label>
+                  <span style="font-size: 0.72rem; font-weight: 700; color: #0066FF;">До 10 / день</span>
+                </div>
+                <input type="text" id="outreachAccReddit" class="form-input" style="padding: 8px 10px; font-size: 0.8rem;" placeholder="u/ваш_нік_на_реддіт">
+              </div>
+
+              <!-- Discord Account -->
+              <div class="outreach-acc-card">
+                <div class="outreach-acc-head">
+                  <label class="check-item" style="margin: 0;">
+                    <input type="checkbox" id="outreachEnDiscord" checked>
+                    <span class="outreach-acc-name">Discord Акаунт (Dev-сервери та DM)</span>
+                  </label>
+                  <span style="font-size: 0.72rem; font-weight: 700; color: #0066FF;">До 10 / день</span>
+                </div>
+                <input type="text" id="outreachAccDiscord" class="form-input" style="padding: 8px 10px; font-size: 0.8rem;" placeholder="Discord нік або Webhook URL для авто-відправки">
+              </div>
+
+              <!-- Exchanges Account -->
+              <div class="outreach-acc-card">
+                <div class="outreach-acc-head">
+                  <label class="check-item" style="margin: 0;">
+                    <input type="checkbox" id="outreachEnExchange" checked>
+                    <span class="outreach-acc-name">Біржі та Сайти (Djinni, Freelancehunt, Upwork)</span>
+                  </label>
+                  <span style="font-size: 0.72rem; font-weight: 700; color: #0066FF;">До 15 / день</span>
+                </div>
+                <input type="text" id="outreachAccExchange" class="form-input" style="padding: 8px 10px; font-size: 0.8rem;" placeholder="Робоча пошта або профіль для прямих відгуків">
+              </div>
+            </div>
+            <button type="button" id="outreachSaveAccountsBtn" class="btn btn--out btn--block btn--sm" style="margin-top: 8px; font-weight: 700;">
+              ЗБЕРЕГТИ АКАУНТИ ТА НАЛАШТУВАННЯ
+            </button>
+          </div>
+
+          <!-- Active Queue Items List -->
+          <div class="form-group">
+            <label class="form-label">СПИСОК ВАКАНСІЙ У ЧЕРЗІ (<span id="outreachQueueItemsCount">0</span>):</label>
+            <div id="outreachActiveQueueItemsList" style="display: flex; flex-direction: column; gap: 8px; margin-top: 6px; max-height: 36vh; overflow-y: auto;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.7.4"></script>
+  <script src="js/app.js?v=4.8.0"></script>
 </body>
 </html>

@@ -3915,10 +3915,24 @@ function resolveDirectContact(lead) {
 
   const text = lead.text || '';
   const srcUser = (lead.sourceUsername || '').replace(/^@/, '').toLowerCase().trim();
+  const blockedHandles = new Set(['joinchat', 'admin', 'channel', 'support', 'freelancehunt', 'djinni', 'freelance_ua', 'kabanchik', 'upwork_remote', 'weworkremotely', 'telegram', 'share', 'addstickers', 'iv', 'proxy']);
 
-  // 1. If lead is from Reddit
+  // 1. Explicit recruiter / client Telegram contact in text (highest priority if a real person's TG is written in the vacancy!)
+  if (text) {
+    const contactRegex = /(?:контакт[иа]?|пиш[іі]ть|пишите|писати|писать|зв['’]?язок|відгук(?:нутися)?|отклик(?:нуться)?|резюме|відправляйте|надсилайте|присылайте|звертайтесь|обращайтесь|hr|recruiter|pm|лічка|лс|пп|в лс|в пп|в особисті|в личку|tg|telegram|телеграм)[\s:—–\-\+a-zA-Zа-яА-ЯіїєґІЇЄҐ]{0,40}(?:https?:\/\/t\.me\/|@\s*)([a-zA-Z0-9_]{4,32})\b/i;
+    const m = text.match(contactRegex);
+    if (m) {
+      const clean = m[1].trim();
+      const cLower = clean.toLowerCase();
+      if (cLower !== srcUser && !cLower.endsWith('bot') && !blockedHandles.has(cLower)) {
+        return { type: 'telegram', handle: '@' + clean, url: 'https://t.me/' + clean };
+      }
+    }
+  }
+
+  // 2. If lead is from Reddit
   if (lead.sourceType === 'reddit' || (lead.authorUsername && typeof lead.authorUsername === 'string' && lead.authorUsername.startsWith('u/'))) {
-    const rawUser = lead.authorUsername.replace(/^u\//i, '').trim();
+    const rawUser = (lead.authorUsername || '').replace(/^u\//i, '').trim();
     return {
       type: 'reddit',
       handle: 'u/' + rawUser,
@@ -3928,17 +3942,17 @@ function resolveDirectContact(lead) {
     };
   }
 
-  // 2. Explicit recruiter / client contact in text (e.g. "Пишіть @...", "Контакти: @...", "HR: @...")
-  if (text) {
-    const contactRegex = /(?:контакт[иа]?|пиш[іі]ть|пишите|писати|писать|зв['’]?язок|відгук(?:нутися)?|отклик(?:нуться)?|резюме|відправляйте|надсилайте|присылайте|звертайтесь|обращайтесь|hr|recruiter|pm|лічка|лс|пп|в лс|в пп|в особисті|в личку|tg|telegram|телеграм)[\s:—–\-\+a-zA-Zа-яА-ЯіїєґІЇЄҐ]*(?:https?:\/\/t\.me\/|@)?([a-zA-Z0-9_]{4,32})\b/i;
-    const m = text.match(contactRegex);
-    if (m) {
-      const clean = m[1].trim();
-      const cLower = clean.toLowerCase();
-      if (cLower !== srcUser && !cLower.endsWith('bot') && !['joinchat', 'admin', 'channel', 'support'].includes(cLower)) {
-        return { type: 'telegram', handle: '@' + clean, url: 'https://t.me/' + clean };
-      }
-    }
+  // 2b. If lead is from Discord or has explicit Discord contact in text
+  if (lead.sourceType === 'discord' || /discord\.gg\/|discord\.com\/users\/|discord\s*[:—\-]\s*[a-zA-Z0-9_.#]{3,32}/i.test(text)) {
+    const dcLink = text.match(/https?:\/\/(?:discord\.gg|discord\.com\/users)\/[a-zA-Z0-9_\-]+/i);
+    const dcUser = text.match(/discord\s*[:—\-]\s*([a-zA-Z0-9_.#]{3,32})/i);
+    const handle = dcUser ? dcUser[1] : (lead.authorUsername || 'Discord');
+    const url = dcLink ? dcLink[0] : (lead.url || 'https://discord.com/app');
+    return {
+      type: 'discord',
+      handle: handle,
+      url: url
+    };
   }
 
   // 3. Author username if a real person handle or numeric ID
@@ -3998,11 +4012,28 @@ function openTelegramContact(lead, prefilledText = '') {
   const contact = resolveDirectContact(lead);
 
   if (contact.type === 'reddit') {
-    if (prefilledText && navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(prefilledText).catch(() => {});
+    if (prefilledText) copyTextToClipboardSync(prefilledText);
+    let redditTarget = contact.chatUrl || contact.url;
+    if (prefilledText && redditTarget.includes('message/compose')) {
+      const subj = encodeURIComponent('Re: ' + (lead.title || lead.subcategoryName || 'Project inquiry'));
+      const msg = encodeURIComponent(prefilledText);
+      redditTarget += (redditTarget.includes('?') ? '&' : '?') + `subject=${subj}&message=${msg}`;
     }
-    const redditTarget = contact.chatUrl || contact.url;
-    window.open(redditTarget, '_blank');
+    if (Boolean(window.Telegram?.WebApp?.initData) && window.Telegram?.WebApp?.openLink) {
+      window.Telegram.WebApp.openLink(redditTarget);
+    } else {
+      window.open(redditTarget, '_blank');
+    }
+    return;
+  }
+
+  if (contact.type === 'discord') {
+    if (prefilledText) copyTextToClipboardSync(prefilledText);
+    if (Boolean(window.Telegram?.WebApp?.initData) && window.Telegram?.WebApp?.openLink) {
+      window.Telegram.WebApp.openLink(contact.url);
+    } else {
+      window.open(contact.url, '_blank');
+    }
     return;
   }
 
@@ -4786,8 +4817,11 @@ function renderLeads() {
     const cleanedText = cleanVacancyText(lead.text);
     const displayText = state.isExpandedAll ? cleanedText : getFirstSentence(cleanedText);
 
+    const isSel = typeof isOutreachLeadSelected === 'function' && isOutreachLeadSelected(lead.id);
+    const platInfo = typeof getLeadOutreachPlatformMeta === 'function' ? getLeadOutreachPlatformMeta(lead) : null;
+
     return `
-      <div class="lead-card" data-id="${lead.id}">
+      <div class="lead-card ${isSel ? 'lead-card--selected' : ''}" data-id="${lead.id}">
         <div class="lead-card-header">
           <!-- Left author avatar -->
           <div class="lead-author-avatar">${escapeHtml(authorInitial)}</div>
@@ -4807,10 +4841,12 @@ function renderLeads() {
         <!-- Vacancy text with preserved paragraphs and whitespace -->
         <div class="lead-text">${escapeHtml(displayText)}</div>
 
-        <!-- Badges: Budget and Country/Market (Без прапорця, тільки назва країни) -->
+        <!-- Badges: Budget, Country/Market, Platform Contact & Selection status -->
         <div class="lead-tags-row">
           <span class="lead-tag budget">Бюджет: ${budgetTxt}</span>
           <span class="lead-tag country">${escapeHtml(getExactCountry(lead))}</span>
+          ${platInfo ? `<span class="lead-tag" style="color:#0066FF; border-color:rgba(0,102,255,0.28); background:rgba(0,102,255,0.06); font-weight:700;">${escapeHtml(platInfo.shortBadge)}</span>` : ''}
+          <span class="lead-selected-badge">ОБРАНО</span>
         </div>
 
         <!-- Action button -->
@@ -4822,6 +4858,7 @@ function renderLeads() {
       </div>
     `;
   }).join('');
+  if (typeof updateOutreachSelectionUI === 'function') updateOutreachSelectionUI();
 }
 
 // Modal: Take to CRM lead modal
@@ -4860,11 +4897,11 @@ function openTakeCrmModal(lead, btn) {
     }
     if (genAiBtn) {
       genAiBtn.style.display = 'inline-flex';
-      genAiBtn.textContent = '✨ Згенерувати короткий опис від AI';
+      genAiBtn.textContent = 'Згенерувати короткий опис від AI';
       genAiBtn.disabled = false;
       genAiBtn.onclick = async () => {
         haptic('light');
-        genAiBtn.textContent = '✨ Генеруємо...';
+        genAiBtn.textContent = 'Генеруємо...';
         genAiBtn.disabled = true;
         try {
           const res = await fetch('/api/leads/' + lead.id + '/ai-score', { method: 'POST' });
@@ -6198,9 +6235,18 @@ function setupEventListeners() {
         return;
       }
 
-      // 2. Click on card or "Взяти в роботу" button -> opens modal WITHOUT marking taken
-      const takeBtn = card.querySelector('[data-action="take-crm"]');
-      openTakeCrmModal(lead, takeBtn);
+      // 2. Click on "ВЗЯТИ В РОБОТУ" button -> opens detail/take modal
+      const clickedTakeBtn = e.target.closest('[data-action="take-crm"]');
+      if (clickedTakeBtn) {
+        e.stopPropagation();
+        openTakeCrmModal(lead, clickedTakeBtn);
+        return;
+      }
+
+      // 3. Click anywhere else on the vacancy card -> toggles blue outline selection for Auto-Outreach!
+      if (typeof toggleOutreachSelectLead === 'function') {
+        toggleOutreachSelectLead(lead.id, card);
+      }
     });
   }
 
@@ -8725,6 +8771,7 @@ function buildAccountSnapshot(nowTs = Date.now()) {
     scrapes: localScrapes,
     nfcJobs: localNfc,
     d2dJobs: localD2d,
+    outreachState: typeof outreachState !== 'undefined' ? outreachState : null,
     seenPlaces: seenPlaces.slice(-15000),
     searchWaveOffsets
   };
@@ -11746,7 +11793,11 @@ function sendInstantVenueNfcPitch(venue, job, btnEl) {
 
   const cleanTg = (venue.telegram || '').replace(/^https?:\/\/(www\.)?t\.me\//i, '').replace(/^@+/, '').replace(/[\/?#].*$/, '').trim();
 
-  if (cleanInsta) {
+  if (cleanTg && !cleanTg.startsWith('+')) {
+    showToast(`Офер скопійовано. Відкриваємо Telegram @${cleanTg}`);
+    const tgUrl = `https://t.me/${cleanTg}?text=${encodeURIComponent(pitch)}`;
+    openTelegramSmartUrl(tgUrl);
+  } else if (cleanInsta) {
     showToast('Офер скопійовано. Вставте в Instagram Direct');
     const igDirectUrl = `https://ig.me/m/${cleanInsta}`;
     if (Boolean(window.Telegram?.WebApp?.initData) && window.Telegram?.WebApp?.openLink) {
@@ -11754,10 +11805,6 @@ function sendInstantVenueNfcPitch(venue, job, btnEl) {
     } else {
       window.open(igDirectUrl, '_blank');
     }
-  } else if (cleanTg && !cleanTg.startsWith('+')) {
-    showToast(`Офер скопійовано. Відкриваємо Telegram @${cleanTg}`);
-    const tgUrl = `https://t.me/${cleanTg}`;
-    openTelegramSmartUrl(tgUrl);
   } else if (isMobile) {
     showToast('Офер скопійовано. Відкриваємо Viber');
     launchViberForPhone(clean380);
@@ -14523,3 +14570,949 @@ function saveCustomRequisites() {
 }
 
 
+
+
+// ============================================================================
+// AUTO-OUTREACH & BLUE-BORDER VACANCY SELECTION ENGINE (v4.8.0)
+// ============================================================================
+const DEFAULT_OUTREACH_STATE = {
+  selectedIds: [],
+  activeTab: 'select',
+  platformFilter: 'all',
+  intervalMinutes: 20,
+  limitPerAccount: 15,
+  spintaxEnabled: true,
+  isRunning: false,
+  nextSendAt: null,
+  accounts: {
+    tg1: { enabled: true, handle: 'Основний ТГ #1', limit: 15, label: 'ТГ Акаунт #1' },
+    tg2: { enabled: true, handle: 'Робочий ТГ #2', limit: 15, label: 'ТГ Акаунт #2' },
+    reddit: { enabled: true, handle: 'Reddit Profile', limit: 10, label: 'Reddit' },
+    discord: { enabled: true, handle: 'Discord Profile', limit: 10, label: 'Discord' },
+    exchange: { enabled: true, handle: 'Профіль біржі', limit: 15, label: 'Біржа / Сайт' }
+  },
+  queue: []
+};
+
+function loadOutreachState() {
+  try {
+    const raw = localStorage.getItem('dws_outreach_state');
+    if (!raw) return JSON.parse(JSON.stringify(DEFAULT_OUTREACH_STATE));
+    const parsed = JSON.parse(raw);
+    return {
+      ...JSON.parse(JSON.stringify(DEFAULT_OUTREACH_STATE)),
+      ...parsed,
+      accounts: {
+        ...JSON.parse(JSON.stringify(DEFAULT_OUTREACH_STATE.accounts)),
+        ...(parsed.accounts || {})
+      },
+      selectedIds: Array.isArray(parsed.selectedIds) ? parsed.selectedIds : [],
+      queue: Array.isArray(parsed.queue) ? parsed.queue : []
+    };
+  } catch (e) {
+    return JSON.parse(JSON.stringify(DEFAULT_OUTREACH_STATE));
+  }
+}
+
+const outreachState = loadOutreachState();
+const outreachSelectedSet = new Set(outreachState.selectedIds);
+let outreachTimerInterval = null;
+
+function saveOutreachState() {
+  outreachState.selectedIds = [...outreachSelectedSet];
+  try {
+    localStorage.setItem('dws_outreach_state', JSON.stringify(outreachState));
+  } catch (e) {}
+}
+
+function isOutreachLeadSelected(leadId) {
+  return outreachSelectedSet.has(leadId);
+}
+
+function getLeadOutreachPlatformMeta(lead) {
+  if (!lead) return { platform: 'exchange', shortBadge: 'Сайт', targetLabel: '', contact: { type: 'none', handle: '', url: '' } };
+  const contact = resolveDirectContact(lead);
+  const sType = String(lead.sourceType || '').toLowerCase();
+
+  if (contact.type === 'reddit' || sType === 'reddit') {
+    return {
+      platform: 'reddit',
+      shortBadge: 'Reddit: ' + (contact.handle || lead.authorUsername || 'PM'),
+      targetLabel: contact.handle || lead.authorUsername || 'Reddit PM',
+      contact
+    };
+  }
+  if (contact.type === 'discord' || sType === 'discord') {
+    return {
+      platform: 'discord',
+      shortBadge: 'Discord: ' + (contact.handle || 'DM'),
+      targetLabel: contact.handle || 'Discord',
+      contact
+    };
+  }
+  if (contact.type === 'telegram' || contact.type === 'telegram_id') {
+    return {
+      platform: 'telegram',
+      shortBadge: 'ТГ: ' + (contact.handle || 'Особисті'),
+      targetLabel: contact.handle || 'Telegram контакт',
+      contact
+    };
+  }
+  if (contact.type === 'source' || sType === 'chat' || sType === 'channel') {
+    return {
+      platform: 'telegram',
+      shortBadge: 'ТГ: ' + (contact.handle || lead.sourceUsername || 'Канал'),
+      targetLabel: contact.handle || lead.sourceUsername || 'Telegram',
+      contact
+    };
+  }
+  const exName = lead.sourceName || (sType === 'djinni' ? 'Djinni' : sType === 'freelancehunt' ? 'Freelancehunt' : sType === 'upwork' ? 'Upwork' : 'Біржа');
+  return {
+    platform: 'exchange',
+    shortBadge: exName,
+    targetLabel: exName,
+    contact
+  };
+}
+
+function toggleOutreachSelectLead(leadId, cardEl = null) {
+  if (!leadId) return;
+  if (outreachSelectedSet.has(leadId)) {
+    outreachSelectedSet.delete(leadId);
+  } else {
+    outreachSelectedSet.add(leadId);
+  }
+  saveOutreachState();
+  haptic('light');
+
+  const isSel = outreachSelectedSet.has(leadId);
+  if (cardEl) {
+    cardEl.classList.toggle('lead-card--selected', isSel);
+  }
+  document.querySelectorAll(`[data-id="${leadId}"], [data-outreach-lead="${leadId}"]`).forEach(el => {
+    el.classList.toggle('lead-card--selected', isSel);
+  });
+
+  updateOutreachSelectionUI();
+}
+
+function updateOutreachSelectionUI() {
+  const count = outreachSelectedSet.size;
+  const bar = document.getElementById('outreachSelectionBar');
+  const badge = document.getElementById('outreachSelectedCountBadge');
+  const subText = document.getElementById('outreachBarSubText');
+  const clearBtn = document.getElementById('outreachQuickClearBtn');
+
+  if (bar) bar.classList.toggle('has-selection', count > 0);
+  if (badge) badge.textContent = `Обрано: ${count}`;
+  if (subText) {
+    if (outreachState.isRunning) {
+      const sentCnt = outreachState.queue.filter(q => q.status === 'sent').length;
+      subText.textContent = `Авто-розсилка активна: відправлено ${sentCnt} з ${outreachState.queue.length}`;
+    } else if (count > 0) {
+      subText.textContent = `Виділено ${count} вакансій синьою обводкою. Натисніть ВІДКРИТИ для запуску`;
+    } else {
+      subText.textContent = 'Натисніть на вакансію в списку для виділення синьою обводкою';
+    }
+  }
+  if (clearBtn) clearBtn.style.display = count > 0 ? 'inline-flex' : 'none';
+
+  const tabSelCnt = document.getElementById('outreachTabSelectCount');
+  const tabQueueCnt = document.getElementById('outreachTabQueueCount');
+  const goQueueCnt = document.getElementById('outreachGoToQueueCount');
+  if (tabSelCnt) tabSelCnt.textContent = count;
+  if (tabQueueCnt) tabQueueCnt.textContent = outreachState.queue.length;
+  if (goQueueCnt) goQueueCnt.textContent = count;
+}
+
+function getOutreachModalFilteredLeads() {
+  const baseList = (Array.isArray(state.leads) && state.leads.length > 0) ? state.leads : (state.allLeads || []);
+  const pFilter = outreachState.platformFilter || 'all';
+  if (pFilter === 'all') return baseList;
+  return baseList.filter(lead => {
+    const meta = getLeadOutreachPlatformMeta(lead);
+    return meta.platform === pFilter;
+  });
+}
+
+function renderOutreachModalSelectList() {
+  const container = document.getElementById('outreachModalLeadsList');
+  if (!container) return;
+
+  const list = getOutreachModalFilteredLeads();
+  if (!list.length) {
+    container.innerHTML = `
+      <div style="text-align:center; padding:26px 14px; color:var(--muted); font-size:0.84rem;">
+        За обраним фільтром платформи вакансій не знайдено. Оберіть «Всі платформи».
+      </div>
+    `;
+    return;
+  }
+
+  let tgToggleCounter = 0;
+  container.innerHTML = list.map((lead) => {
+    const isSel = outreachSelectedSet.has(lead.id);
+    const meta = getLeadOutreachPlatformMeta(lead);
+    const title = lead.title || lead.subcategoryName || lead.categoryName || 'Вакансія';
+    const budgetTxt = lead.budget ? (lead.budget.toLocaleString('uk-UA') + ' грн') : 'Договірний';
+    const snippet = getFirstSentence(cleanVacancyText(lead.text || '')).slice(0, 140);
+
+    let accPreview = meta.shortBadge;
+    if (meta.platform === 'telegram') {
+      const tg1On = outreachState.accounts.tg1?.enabled !== false;
+      const tg2On = outreachState.accounts.tg2?.enabled !== false;
+      if (tg1On && tg2On) {
+        accPreview += (tgToggleCounter++ % 2 === 0) ? ' -> ТГ Акаунт #1' : ' -> ТГ Акаунт #2';
+      } else if (tg2On) {
+        accPreview += ' -> ТГ Акаунт #2';
+      } else {
+        accPreview += ' -> ТГ Акаунт #1';
+      }
+    }
+
+    return `
+      <div class="outreach-select-card ${isSel ? 'lead-card--selected' : ''}" data-outreach-lead="${lead.id}">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:5px;">
+          <div style="font-family:var(--ffh); font-size:0.88rem; font-weight:800; color:var(--black); line-height:1.25;">
+            ${escapeHtml(title)}
+          </div>
+          <span class="lead-selected-badge" style="flex-shrink:0;">ОБРАНО</span>
+        </div>
+        <div style="font-size:0.76rem; color:var(--muted); line-height:1.35; margin-bottom:8px;">
+          ${escapeHtml(snippet)}
+        </div>
+        <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px;">
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            <span style="font-size:0.7rem; font-weight:800; color:#0066FF; background:rgba(0,102,255,0.08); padding:2px 8px; border-radius:6px;">
+              ${escapeHtml(accPreview)}
+            </span>
+            <span style="font-size:0.7rem; font-weight:700; color:var(--text); background:var(--card-sub); padding:2px 7px; border-radius:6px;">
+              Бюджет: ${escapeHtml(budgetTxt)}
+            </span>
+          </div>
+          <span style="font-size:0.7rem; color:var(--muted); font-weight:600;">
+            ${escapeHtml(lead.dateFormatted || 'Сьогодні')}
+          </span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function generateOutreachPitchForLead(lead, idx = 0) {
+  if (!lead) return '';
+  const meta = getLeadOutreachPlatformMeta(lead);
+  const rawAuthor = lead.authorName || (lead.authorUsername ? lead.authorUsername.replace(/^[@u\/]+/, '') : '');
+  const cleanName = (!rawAuthor || /замовник|клієнт|рекрутер|client|telegram/i.test(rawAuthor)) ? '' : rawAuthor;
+  const taskName = lead.title || lead.subcategoryName || lead.categoryName || 'розробки проєкту';
+  const spintax = outreachState.spintaxEnabled !== false;
+
+  // English / Reddit automatic adaptation
+  const isEnglish = meta.platform === 'reddit' || /[a-zA-Z]{15,}/.test(lead.title || '') && !/[а-яА-ЯіїєґІЇЄҐ]/.test(lead.title || '');
+  if (isEnglish) {
+    const greetingsEn = ['Hi', 'Hello', 'Hey there', 'Greetings'];
+    const hooksEn = [
+      `I saw your post regarding "${taskName}" and would love to help you build and ship this cleanly.`,
+      `Just reviewed your task "${taskName}". At DenisWeb Studio we deliver fast, production-ready web & software solutions within 2-4 days.`,
+      `Reaching out regarding "${taskName}". We specialize in full-cycle development with clean architecture and rapid turnaround.`
+    ];
+    const closingsEn = [
+      'We can prepare a free interactive demo of the main block before any payment so you can evaluate the quality right away. Portfolio: https://denis-webstudio.site — let me know if you are open to a quick chat.',
+      'Happy to put together a quick prototype of the core screen first so you can see our speed and code quality. Our work: https://denis-webstudio.site — when is a good time to discuss details?',
+      'You can check our live cases at https://denis-webstudio.site. We are ready to start today and show an initial working concept first. Let me know what you think.'
+    ];
+    const g = greetingsEn[idx % greetingsEn.length] + (cleanName ? ` ${cleanName},` : ',');
+    const h = hooksEn[idx % hooksEn.length];
+    const c = closingsEn[idx % closingsEn.length];
+    return `${g}\n\n${h}\n\n${c}`;
+  }
+
+  // User's custom template from Profile
+  const baseTemplate = (state.profile && state.profile.responseTemplate)
+    ? state.profile.responseTemplate
+    : DEFAULT_DATA.profile.responseTemplate;
+
+  if (!spintax) {
+    return baseTemplate
+      .replace(/{NAME}/g, cleanName || 'колего')
+      .replace(/{TASK}/g, taskName)
+      .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '')
+      .trim();
+  }
+
+  // Spintax variations in Ukrainian (Zero emojis)
+  const greetingsUa = [
+    cleanName ? `Вітаю, ${cleanName}.` : 'Вітаю.',
+    cleanName ? `Доброго дня, ${cleanName}.` : 'Доброго дня.',
+    cleanName ? `Привіт, ${cleanName}.` : 'Вітаю, звертаюсь щодо вашої вакансії.'
+  ];
+  const hooksUa = [
+    `Побачив ваше оголошення щодо «${taskName}». У DenisWeb Studio ми реалізуємо подібні задачі під ключ за 2-4 дні з фокусом на швидкість та чисту архітектуру.`,
+    `Ознайомився із задачею «${taskName}». Маємо релевантний досвід у цій ніші та готові закрити розробку без затягувань по термінах.`,
+    `Пишу щодо вашого запиту «${taskName}». Наша команда спеціалізується на швидкій розробці під ключ із гарантією результату.`
+  ];
+  const offersUa = [
+    'Готові безкоштовно зібрати концепт та інтерактивне демо головного блоку ще до передоплати, щоб ви одразу оцінили рівень виконання.',
+    'Можемо перед стартом безкоштовно показати тестовий прототип основного екрану під вашу задачу, щоб ви бачили підхід на практиці.',
+    'До початку фінансових зобов\'язань можемо підготувати наочне демо першого блоку під ваш проєкт.'
+  ];
+  const ctasUa = [
+    'Наш сайт та кейси: https://denis-webstudio.site\nПідкажіть, чи актуальна ще задача для короткого обговорення?',
+    'Приклади наших робіт: https://denis-webstudio.site\nНапишіть, будь ласка, коли зручно узгодити деталі.',
+    'Портфоліо та живі проєкти: https://denis-webstudio.site\nЯкщо актуально — радо обговорю ТЗ у зручний для вас час.'
+  ];
+
+  const g = greetingsUa[idx % greetingsUa.length];
+  const h = hooksUa[idx % hooksUa.length];
+  const o = offersUa[(idx + 1) % offersUa.length];
+  const cta = ctasUa[(idx + 2) % ctasUa.length];
+
+  return `${g}\n\n${h}\n\n${o}\n\n${cta}`;
+}
+
+function buildOutreachQueueFromSelected() {
+  const selectedIds = [...outreachSelectedSet];
+  const pool = state.allLeads || [];
+  const selectedLeads = selectedIds
+    .map(id => pool.find(l => l.id === id))
+    .filter(Boolean);
+
+  if (!selectedLeads.length) {
+    showToast('Спочатку виділіть хоча б одну вакансію синьою обводкою');
+    return false;
+  }
+
+  const maxPerAcc = Number(outreachState.limitPerAccount) || 15;
+  const accCounts = { tg1: 0, tg2: 0, reddit: 0, discord: 0, exchange: 0 };
+  let tgRoundRobin = 0;
+
+  const newQueue = [];
+  selectedLeads.forEach((lead, idx) => {
+    const meta = getLeadOutreachPlatformMeta(lead);
+    let accountKey = 'exchange';
+    let accountLabel = 'Біржа / Сайт';
+
+    if (meta.platform === 'telegram') {
+      const tg1On = outreachState.accounts.tg1?.enabled !== false;
+      const tg2On = outreachState.accounts.tg2?.enabled !== false;
+      if (tg1On && tg2On) {
+        const pickFirst = (tgRoundRobin % 2 === 0);
+        tgRoundRobin++;
+        if (pickFirst && accCounts.tg1 < maxPerAcc) {
+          accountKey = 'tg1';
+          accountLabel = outreachState.accounts.tg1.handle || 'ТГ Акаунт #1';
+        } else if (accCounts.tg2 < maxPerAcc) {
+          accountKey = 'tg2';
+          accountLabel = outreachState.accounts.tg2.handle || 'ТГ Акаунт #2';
+        } else if (accCounts.tg1 < maxPerAcc) {
+          accountKey = 'tg1';
+          accountLabel = outreachState.accounts.tg1.handle || 'ТГ Акаунт #1';
+        } else {
+          return;
+        }
+      } else if (tg1On && accCounts.tg1 < maxPerAcc) {
+        accountKey = 'tg1';
+        accountLabel = outreachState.accounts.tg1.handle || 'ТГ Акаунт #1';
+      } else if (tg2On && accCounts.tg2 < maxPerAcc) {
+        accountKey = 'tg2';
+        accountLabel = outreachState.accounts.tg2.handle || 'ТГ Акаунт #2';
+      } else {
+        return;
+      }
+      accCounts[accountKey]++;
+    } else if (meta.platform === 'reddit') {
+      if (outreachState.accounts.reddit?.enabled === false || accCounts.reddit >= maxPerAcc) return;
+      accountKey = 'reddit';
+      accountLabel = outreachState.accounts.reddit.handle || 'Reddit Акаунт';
+      accCounts.reddit++;
+    } else if (meta.platform === 'discord') {
+      if (outreachState.accounts.discord?.enabled === false || accCounts.discord >= maxPerAcc) return;
+      accountKey = 'discord';
+      accountLabel = outreachState.accounts.discord.handle || 'Discord Акаунт';
+      accCounts.discord++;
+    } else {
+      if (outreachState.accounts.exchange?.enabled === false || accCounts.exchange >= maxPerAcc) return;
+      accountKey = 'exchange';
+      accountLabel = outreachState.accounts.exchange.handle || meta.shortBadge || 'Біржа';
+      accCounts.exchange++;
+    }
+
+    newQueue.push({
+      id: 'oq_' + Date.now() + '_' + idx,
+      leadId: lead.id,
+      title: lead.title || lead.subcategoryName || lead.categoryName || 'Вакансія',
+      authorName: lead.authorName || lead.authorUsername || '',
+      platform: meta.platform,
+      shortBadge: meta.shortBadge,
+      contactType: meta.contact.type,
+      contactHandle: meta.contact.handle || '',
+      contactUrl: meta.contact.url || lead.url || '',
+      accountKey,
+      accountLabel,
+      pitch: generateOutreachPitchForLead(lead, idx),
+      status: 'pending',
+      sentAt: null
+    });
+  });
+
+  if (!newQueue.length) {
+    showToast('Перевірте увімкнені акаунти або ліміти у вкладці Черга та Акаунти');
+    return false;
+  }
+
+  outreachState.queue = newQueue;
+  outreachState.isRunning = false;
+  outreachState.nextSendAt = null;
+  saveOutreachState();
+
+  // Sync queue to backend /api/outreach/queue
+  fetch('/api/outreach/queue', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      queue: outreachState.queue,
+      intervalMinutes: outreachState.intervalMinutes,
+      accounts: outreachState.accounts
+    })
+  }).catch(() => {});
+
+  return true;
+}
+
+function getNextPendingOutreachItem() {
+  return (outreachState.queue || []).find(item => item.status === 'pending') || null;
+}
+
+function renderOutreachQueuePanel() {
+  const total = outreachState.queue.length;
+  const sent = outreachState.queue.filter(q => q.status === 'sent').length;
+  const pending = getNextPendingOutreachItem();
+
+  const stateBadge = document.getElementById('outreachQueueStateBadge');
+  const progressText = document.getElementById('outreachQueueProgressText');
+  const statusBox = document.getElementById('outreachQueueStatusBox');
+  const countdownWrap = document.getElementById('outreachCountdownWrap');
+  const startBtn = document.getElementById('outreachStartToggleBtn');
+  const sendNowBtn = document.getElementById('outreachSendNextNowBtn');
+  const nextTitle = document.getElementById('outreachNextTargetTitle');
+  const nextAcc = document.getElementById('outreachNextTargetAccBadge');
+  const nextMeta = document.getElementById('outreachNextTargetMeta');
+  const pitchInput = document.getElementById('outreachCurrentPitchInput');
+  const queueCountSpan = document.getElementById('outreachQueueItemsCount');
+  const tabQueueCnt = document.getElementById('outreachTabQueueCount');
+  const itemsListEl = document.getElementById('outreachActiveQueueItemsList');
+
+  if (progressText) progressText.textContent = `${sent} / ${total}`;
+  if (queueCountSpan) queueCountSpan.textContent = total;
+  if (tabQueueCnt) tabQueueCnt.textContent = total;
+  if (statusBox) statusBox.classList.toggle('is-running', Boolean(outreachState.isRunning));
+
+  if (!total) {
+    if (stateBadge) stateBadge.textContent = 'Черга порожня — оберіть вакансії';
+    if (countdownWrap) countdownWrap.style.display = 'none';
+    if (startBtn) startBtn.textContent = 'ЗАПУСТИТИ АВТО-РОЗСИЛКУ З ПАУЗАМИ';
+    if (nextTitle) nextTitle.textContent = 'Немає вибраних вакансій у черзі';
+    if (nextAcc) nextAcc.textContent = '—';
+    if (nextMeta) nextMeta.textContent = 'Перейдіть у «Список вакансій», виділіть картки синьою обводкою та натисніть «Сформувати чергу»';
+    if (pitchInput) pitchInput.value = '';
+    if (itemsListEl) {
+      itemsListEl.innerHTML = `<div style="text-align:center; padding:18px; color:var(--muted); font-size:0.8rem;">Черга порожня</div>`;
+    }
+    return;
+  }
+
+  if (!pending) {
+    outreachState.isRunning = false;
+    outreachState.nextSendAt = null;
+    saveOutreachState();
+    if (stateBadge) stateBadge.textContent = 'Усі відгуки з черги надіслано';
+    if (countdownWrap) countdownWrap.style.display = 'none';
+    if (startBtn) startBtn.textContent = 'РОЗСИЛКУ ЗАВЕРШЕНО';
+    if (nextTitle) nextTitle.textContent = `Успішно опрацьовано ${sent} вакансій`;
+    if (nextAcc) nextAcc.textContent = 'Виконано';
+    if (nextMeta) nextMeta.textContent = 'Усі контакти автоматично збережені у вашу CRM зі статусом «В процесі»';
+    if (pitchInput) pitchInput.value = '';
+  } else {
+    if (stateBadge) {
+      stateBadge.textContent = outreachState.isRunning
+        ? `Активна розсилка (пауза ~${outreachState.intervalMinutes} хв)`
+        : 'Готова до відправки (на паузі)';
+    }
+    if (countdownWrap) {
+      countdownWrap.style.display = outreachState.isRunning ? 'block' : 'none';
+    }
+    if (startBtn) {
+      startBtn.textContent = outreachState.isRunning
+        ? 'ПОСТАВИТИ АВТО-РОЗСИЛКУ НА ПАУЗУ'
+        : `ЗАПУСТИТИ АВТО-РОЗСИЛКУ (ПАУЗА ${outreachState.intervalMinutes} ХВ)`;
+    }
+    if (nextTitle) nextTitle.textContent = pending.title;
+    if (nextAcc) nextAcc.textContent = pending.accountLabel;
+    if (nextMeta) {
+      nextMeta.textContent = `Канал: ${pending.shortBadge} | Контакт: ${pending.contactHandle || pending.contactUrl || 'Прямий перехід'}`;
+    }
+    if (pitchInput && document.activeElement !== pitchInput) {
+      pitchInput.value = pending.pitch || '';
+      pitchInput.dataset.itemId = pending.id;
+    }
+  }
+
+  if (itemsListEl) {
+    itemsListEl.innerHTML = outreachState.queue.map((item, idx) => {
+      const isDone = item.status === 'sent';
+      const isSkip = item.status === 'skipped';
+      const isCur = pending && pending.id === item.id;
+      const statusTxt = isDone ? 'Відправлено' : (isSkip ? 'Пропущено' : (isCur ? 'Наступний у черзі' : 'В черзі'));
+      const borderCol = isCur ? '#0066FF' : 'var(--border)';
+
+      return `
+        <div style="background:var(--card-bg); border:1.5px solid ${borderCol}; border-radius:var(--r); padding:9px 11px; display:flex; align-items:center; justify-content:space-between; gap:8px; opacity:${(isDone || isSkip) ? '0.62' : '1'};">
+          <div style="min-width:0; flex:1;">
+            <div style="font-size:0.8rem; font-weight:800; color:var(--black); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+              #${idx + 1} ${escapeHtml(item.title)}
+            </div>
+            <div style="font-size:0.72rem; color:var(--muted); display:flex; flex-wrap:wrap; gap:6px; margin-top:2px;">
+              <span style="color:#0066FF; font-weight:700;">${escapeHtml(item.accountLabel)}</span>
+              <span>&bull;</span>
+              <span>${escapeHtml(item.shortBadge)}</span>
+              <span>&bull;</span>
+              <span style="font-weight:700;">${statusTxt}</span>
+            </div>
+          </div>
+          ${(!isDone && !isSkip) ? `
+            <button type="button" class="btn btn--out btn--xs" data-outreach-fire="${item.id}" style="flex-shrink:0; border-color:#0066FF; color:#0066FF; font-weight:800;">
+              Відправити
+            </button>
+          ` : ''}
+        </div>
+      `;
+    }).join('');
+  }
+}
+
+async function dispatchOutreachItem(item, isManualTrigger = false) {
+  if (!item || item.status === 'sent') return;
+  const lead = (state.allLeads || []).find(l => l.id === item.leadId);
+  const pitchInput = document.getElementById('outreachCurrentPitchInput');
+  if (pitchInput && pitchInput.dataset.itemId === item.id && pitchInput.value.trim()) {
+    item.pitch = pitchInput.value.trim();
+  }
+
+  const finalPitch = item.pitch || (lead ? generateOutreachPitchForLead(lead, 0) : '');
+  copyTextToClipboardSync(finalPitch);
+  haptic('success');
+
+  // If Discord account has a webhook URL configured, also fire webhook directly
+  const dcAccVal = (outreachState.accounts.discord?.handle || '').trim();
+  if (item.platform === 'discord' && /^https:\/\/discord(?:app)?\.com\/api\/webhooks\//i.test(dcAccVal)) {
+    fetch(dcAccVal, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content: finalPitch })
+    }).catch(() => {});
+  }
+
+  // Notify backend /api/outreach/dispatch
+  fetch('/api/outreach/dispatch', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      itemId: item.id,
+      leadId: item.leadId,
+      platform: item.platform,
+      accountKey: item.accountKey,
+      accountLabel: item.accountLabel,
+      contactHandle: item.contactHandle,
+      contactUrl: item.contactUrl,
+      pitch: finalPitch
+    })
+  }).catch(() => {});
+
+  // Open target platform with pre-filled message / copied pitch
+  if (lead) {
+    markLeadTakenToCrm(lead, null);
+    // Attach account tag to CRM entry
+    const crmEntry = (state.crm || []).find(c => c.leadId === lead.id);
+    if (crmEntry) {
+      crmEntry.sourceLabel = `${item.shortBadge} (${item.accountLabel})`;
+      localStorage.setItem('dws_crm', JSON.stringify(state.crm));
+    }
+    openTelegramContact(lead, finalPitch);
+  } else if (item.contactUrl) {
+    window.open(item.contactUrl, '_blank');
+  }
+
+  item.status = 'sent';
+  item.sentAt = new Date().toISOString();
+  outreachSelectedSet.delete(item.leadId);
+
+  const nextPending = getNextPendingOutreachItem();
+  if (outreachState.isRunning && nextPending) {
+    const baseMs = (Number(outreachState.intervalMinutes) || 20) * 60 * 1000;
+    const jitterMs = outreachState.spintaxEnabled !== false
+      ? Math.floor((Math.random() * 6 - 3) * 60 * 1000)
+      : 0;
+    outreachState.nextSendAt = Date.now() + Math.max(60 * 1000, baseMs + jitterMs);
+  } else if (!nextPending) {
+    outreachState.isRunning = false;
+    outreachState.nextSendAt = null;
+  }
+
+  saveOutreachState();
+  showToast(`Відгук скопійовано та відкрито (${item.accountLabel})`);
+  renderOutreachQueuePanel();
+  renderOutreachModalSelectList();
+  renderLeads();
+}
+
+function startOutreachTimerEngine() {
+  if (outreachTimerInterval) clearInterval(outreachTimerInterval);
+  outreachTimerInterval = setInterval(() => {
+    if (!outreachState.isRunning) return;
+    const pending = getNextPendingOutreachItem();
+    if (!pending) {
+      outreachState.isRunning = false;
+      outreachState.nextSendAt = null;
+      saveOutreachState();
+      renderOutreachQueuePanel();
+      return;
+    }
+
+    if (!outreachState.nextSendAt) {
+      const baseMs = (Number(outreachState.intervalMinutes) || 20) * 60 * 1000;
+      outreachState.nextSendAt = Date.now() + baseMs;
+      saveOutreachState();
+    }
+
+    const diffMs = outreachState.nextSendAt - Date.now();
+    const timerEl = document.getElementById('outreachCountdownTimer');
+    if (diffMs <= 0) {
+      dispatchOutreachItem(pending, false);
+    } else if (timerEl) {
+      const totalSec = Math.ceil(diffMs / 1000);
+      const mins = Math.floor(totalSec / 60);
+      const secs = totalSec % 60;
+      timerEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+  }, 1000);
+}
+
+function switchOutreachModalTab(tabName) {
+  outreachState.activeTab = tabName === 'queue' ? 'queue' : 'select';
+  saveOutreachState();
+
+  const btnSelect = document.getElementById('outreachTabSelectBtn');
+  const btnQueue = document.getElementById('outreachTabQueueBtn');
+  const panelSelect = document.getElementById('outreachPanelSelect');
+  const panelQueue = document.getElementById('outreachPanelQueue');
+
+  if (btnSelect) btnSelect.classList.toggle('active', outreachState.activeTab === 'select');
+  if (btnQueue) btnQueue.classList.toggle('active', outreachState.activeTab === 'queue');
+  if (panelSelect) panelSelect.style.display = outreachState.activeTab === 'select' ? 'block' : 'none';
+  if (panelQueue) panelQueue.style.display = outreachState.activeTab === 'queue' ? 'block' : 'none';
+
+  if (outreachState.activeTab === 'select') {
+    renderOutreachModalSelectList();
+  } else {
+    renderOutreachQueuePanel();
+  }
+  updateOutreachSelectionUI();
+}
+
+function syncOutreachAccountInputsFromState() {
+  const acc = outreachState.accounts || DEFAULT_OUTREACH_STATE.accounts;
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+  const setChk = (id, v) => { const el = document.getElementById(id); if (el) el.checked = v !== false; };
+
+  setVal('outreachAccTg1', acc.tg1?.handle);
+  setChk('outreachEnTg1', acc.tg1?.enabled);
+  setVal('outreachAccTg2', acc.tg2?.handle);
+  setChk('outreachEnTg2', acc.tg2?.enabled);
+  setVal('outreachAccReddit', acc.reddit?.handle);
+  setChk('outreachEnReddit', acc.reddit?.enabled);
+  setVal('outreachAccDiscord', acc.discord?.handle);
+  setChk('outreachEnDiscord', acc.discord?.enabled);
+  setVal('outreachAccExchange', acc.exchange?.handle);
+  setChk('outreachEnExchange', acc.exchange?.enabled);
+  setChk('outreachAntibanSpintaxCheck', outreachState.spintaxEnabled);
+
+  document.querySelectorAll('#outreachIntervalSeg .scrape-seg-btn').forEach(btn => {
+    btn.classList.toggle('active', Number(btn.dataset.interval) === Number(outreachState.intervalMinutes));
+  });
+  document.querySelectorAll('#outreachLimitSeg .scrape-seg-btn').forEach(btn => {
+    btn.classList.toggle('active', Number(btn.dataset.accLimit) === Number(outreachState.limitPerAccount));
+  });
+}
+
+function saveOutreachAccountsFromInputs() {
+  const getVal = (id, def) => (document.getElementById(id)?.value || '').trim() || def;
+  const getChk = (id) => Boolean(document.getElementById(id)?.checked);
+
+  outreachState.accounts.tg1 = {
+    enabled: getChk('outreachEnTg1'),
+    handle: getVal('outreachAccTg1', 'ТГ Акаунт #1'),
+    limit: outreachState.limitPerAccount,
+    label: 'ТГ Акаунт #1'
+  };
+  outreachState.accounts.tg2 = {
+    enabled: getChk('outreachEnTg2'),
+    handle: getVal('outreachAccTg2', 'ТГ Акаунт #2'),
+    limit: outreachState.limitPerAccount,
+    label: 'ТГ Акаунт #2'
+  };
+  outreachState.accounts.reddit = {
+    enabled: getChk('outreachEnReddit'),
+    handle: getVal('outreachAccReddit', 'Reddit Акаунт'),
+    limit: outreachState.limitPerAccount,
+    label: 'Reddit'
+  };
+  outreachState.accounts.discord = {
+    enabled: getChk('outreachEnDiscord'),
+    handle: getVal('outreachAccDiscord', 'Discord Акаунт'),
+    limit: outreachState.limitPerAccount,
+    label: 'Discord'
+  };
+  outreachState.accounts.exchange = {
+    enabled: getChk('outreachEnExchange'),
+    handle: getVal('outreachAccExchange', 'Біржа / Сайт'),
+    limit: outreachState.limitPerAccount,
+    label: 'Біржа / Сайт'
+  };
+  outreachState.spintaxEnabled = getChk('outreachAntibanSpintaxCheck');
+  saveOutreachState();
+}
+
+function pickTopNOutreachLeads(maxCount = 15) {
+  const list = getOutreachModalFilteredLeads().filter(l => !l.inCrm && !(state.takenLeadIds && state.takenLeadIds.has(l.id)));
+  const pool = list.length > 0 ? list : getOutreachModalFilteredLeads();
+  pool.slice(0, maxCount).forEach(l => outreachSelectedSet.add(l.id));
+  saveOutreachState();
+  renderLeads();
+  renderOutreachModalSelectList();
+  updateOutreachSelectionUI();
+  haptic('success');
+  showToast(`Виділено синьою обводкою ${outreachSelectedSet.size} вакансій`);
+}
+
+function setupAutoOutreachModule() {
+  syncOutreachAccountInputsFromState();
+  updateOutreachSelectionUI();
+  startOutreachTimerEngine();
+
+  // Open modal button in main tab-leads bar
+  document.getElementById('openAutoOutreachBtn')?.addEventListener('click', () => {
+    haptic('medium');
+    syncOutreachAccountInputsFromState();
+    if (outreachSelectedSet.size > 0 && outreachState.queue.length === 0) {
+      switchOutreachModalTab('select');
+    } else {
+      switchOutreachModalTab(outreachState.activeTab || 'select');
+    }
+    openModal('modalAutoOutreach');
+  });
+
+  document.getElementById('outreachQuickSelect15Btn')?.addEventListener('click', () => {
+    pickTopNOutreachLeads(15);
+  });
+
+  document.getElementById('outreachQuickClearBtn')?.addEventListener('click', () => {
+    outreachSelectedSet.clear();
+    saveOutreachState();
+    renderLeads();
+    renderOutreachModalSelectList();
+    updateOutreachSelectionUI();
+    haptic('light');
+    showToast('Синій вибір скинуто');
+  });
+
+  // Oval tab switchers inside modal
+  document.getElementById('outreachTabSelectBtn')?.addEventListener('click', () => {
+    haptic('light');
+    switchOutreachModalTab('select');
+  });
+  document.getElementById('outreachTabQueueBtn')?.addEventListener('click', () => {
+    haptic('light');
+    if (outreachSelectedSet.size > 0 && outreachState.queue.length === 0) {
+      buildOutreachQueueFromSelected();
+    }
+    switchOutreachModalTab('queue');
+  });
+
+  // Platform filter pills
+  document.getElementById('outreachPlatformPills')?.addEventListener('click', (e) => {
+    const pill = e.target.closest('[data-plat]');
+    if (!pill) return;
+    haptic('light');
+    outreachState.platformFilter = pill.dataset.plat || 'all';
+    document.querySelectorAll('#outreachPlatformPills .outreach-plat-pill').forEach(p => {
+      p.classList.toggle('active', p.dataset.plat === outreachState.platformFilter);
+    });
+    renderOutreachModalSelectList();
+  });
+
+  // Card clicks inside modal select list -> toggle blue border
+  document.getElementById('outreachModalLeadsList')?.addEventListener('click', (e) => {
+    const card = e.target.closest('[data-outreach-lead]');
+    if (!card) return;
+    const leadId = card.dataset.outreachLead;
+    toggleOutreachSelectLead(leadId, card);
+  });
+
+  document.getElementById('outreachModalPick15Btn')?.addEventListener('click', () => {
+    pickTopNOutreachLeads(15);
+  });
+
+  document.getElementById('outreachModalPickAllBtn')?.addEventListener('click', () => {
+    const list = getOutreachModalFilteredLeads();
+    list.forEach(l => outreachSelectedSet.add(l.id));
+    saveOutreachState();
+    renderLeads();
+    renderOutreachModalSelectList();
+    updateOutreachSelectionUI();
+    haptic('success');
+    showToast(`Виділено всі ${outreachSelectedSet.size} вакансій`);
+  });
+
+  document.getElementById('outreachModalClearBtn')?.addEventListener('click', () => {
+    outreachSelectedSet.clear();
+    saveOutreachState();
+    renderLeads();
+    renderOutreachModalSelectList();
+    updateOutreachSelectionUI();
+    haptic('light');
+  });
+
+  document.getElementById('outreachGoToQueueBtn')?.addEventListener('click', () => {
+    saveOutreachAccountsFromInputs();
+    if (buildOutreachQueueFromSelected()) {
+      haptic('success');
+      switchOutreachModalTab('queue');
+      showToast(`Сформовано чергу з ${outreachState.queue.length} вакансій`);
+    }
+  });
+
+  // Interval & Limit segmented buttons
+  document.getElementById('outreachIntervalSeg')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-interval]');
+    if (!btn) return;
+    haptic('light');
+    outreachState.intervalMinutes = Number(btn.dataset.interval) || 20;
+    document.querySelectorAll('#outreachIntervalSeg .scrape-seg-btn').forEach(b => {
+      b.classList.toggle('active', b === btn);
+    });
+    saveOutreachState();
+    renderOutreachQueuePanel();
+  });
+
+  document.getElementById('outreachLimitSeg')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-acc-limit]');
+    if (!btn) return;
+    haptic('light');
+    outreachState.limitPerAccount = Number(btn.dataset.accLimit) || 15;
+    document.querySelectorAll('#outreachLimitSeg .scrape-seg-btn').forEach(b => {
+      b.classList.toggle('active', b === btn);
+    });
+    saveOutreachState();
+  });
+
+  document.getElementById('outreachSaveAccountsBtn')?.addEventListener('click', () => {
+    saveOutreachAccountsFromInputs();
+    if (outreachSelectedSet.size > 0) {
+      buildOutreachQueueFromSelected();
+    }
+    renderOutreachQueuePanel();
+    haptic('success');
+    showToast('Акаунти та налаштування розсилки збережено');
+  });
+
+  // Live edit of current pitch
+  document.getElementById('outreachCurrentPitchInput')?.addEventListener('input', (e) => {
+    const pending = getNextPendingOutreachItem();
+    if (pending) {
+      pending.pitch = e.target.value;
+      saveOutreachState();
+    }
+  });
+
+  // Queue controls: Start / Pause, Send Next Now, Skip, Reset
+  document.getElementById('outreachStartToggleBtn')?.addEventListener('click', () => {
+    saveOutreachAccountsFromInputs();
+    if (!outreachState.queue.length && outreachSelectedSet.size > 0) {
+      buildOutreachQueueFromSelected();
+    }
+    const pending = getNextPendingOutreachItem();
+    if (!pending) {
+      showToast('Спочатку оберіть вакансії у списку');
+      switchOutreachModalTab('select');
+      return;
+    }
+
+    if (outreachState.isRunning) {
+      outreachState.isRunning = false;
+      outreachState.nextSendAt = null;
+      saveOutreachState();
+      renderOutreachQueuePanel();
+      updateOutreachSelectionUI();
+      haptic('light');
+      showToast('Авто-розсилку поставлено на паузу');
+    } else {
+      // Immediately send the first pending item and start the 20-min countdown for the next one!
+      outreachState.isRunning = true;
+      const baseMs = (Number(outreachState.intervalMinutes) || 20) * 60 * 1000;
+      outreachState.nextSendAt = Date.now() + baseMs;
+      saveOutreachState();
+      dispatchOutreachItem(pending, true);
+      updateOutreachSelectionUI();
+    }
+  });
+
+  document.getElementById('outreachSendNextNowBtn')?.addEventListener('click', () => {
+    saveOutreachAccountsFromInputs();
+    if (!outreachState.queue.length && outreachSelectedSet.size > 0) {
+      buildOutreachQueueFromSelected();
+    }
+    const pending = getNextPendingOutreachItem();
+    if (!pending) {
+      showToast('У черзі немає активних вакансій');
+      return;
+    }
+    dispatchOutreachItem(pending, true);
+  });
+
+  document.getElementById('outreachSkipCurrentBtn')?.addEventListener('click', () => {
+    const pending = getNextPendingOutreachItem();
+    if (!pending) return;
+    pending.status = 'skipped';
+    outreachSelectedSet.delete(pending.leadId);
+    saveOutreachState();
+    renderOutreachQueuePanel();
+    renderLeads();
+    haptic('light');
+    showToast('Вакансію пропущено');
+  });
+
+  document.getElementById('outreachResetQueueBtn')?.addEventListener('click', () => {
+    outreachState.queue = [];
+    outreachState.isRunning = false;
+    outreachState.nextSendAt = null;
+    saveOutreachState();
+    renderOutreachQueuePanel();
+    updateOutreachSelectionUI();
+    haptic('light');
+    showToast('Чергу очищено');
+  });
+
+  document.getElementById('outreachActiveQueueItemsList')?.addEventListener('click', (e) => {
+    const fireBtn = e.target.closest('[data-outreach-fire]');
+    if (!fireBtn) return;
+    const itemId = fireBtn.dataset.outreachFire;
+    const item = outreachState.queue.find(q => q.id === itemId);
+    if (item) dispatchOutreachItem(item, true);
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupAutoOutreachModule);
+} else {
+  setTimeout(setupAutoOutreachModule, 50);
+}

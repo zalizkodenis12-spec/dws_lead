@@ -586,6 +586,56 @@ app.post('/api/scrapes/:id/send', async (req, res) => {
   }
 });
 
+// 8. AUTO-OUTREACH QUEUE & DISPATCH ENDPOINTS (v4.8.0)
+let serverOutreachState = {
+  queue: [],
+  history: [],
+  intervalMinutes: 20,
+  accounts: {}
+};
+
+app.get('/api/outreach/status', (req, res) => {
+  res.json({
+    success: true,
+    data: serverOutreachState
+  });
+});
+
+app.post('/api/outreach/queue', (req, res) => {
+  try {
+    const { queue, intervalMinutes, accounts } = req.body || {};
+    if (Array.isArray(queue)) serverOutreachState.queue = queue;
+    if (intervalMinutes) serverOutreachState.intervalMinutes = Number(intervalMinutes) || 20;
+    if (accounts && typeof accounts === 'object') serverOutreachState.accounts = accounts;
+    res.json({
+      success: true,
+      queuedCount: serverOutreachState.queue.length
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/outreach/dispatch', (req, res) => {
+  try {
+    const payload = req.body || {};
+    const entry = {
+      ...payload,
+      dispatchedAt: new Date().toISOString()
+    };
+    serverOutreachState.history.unshift(entry);
+    if (serverOutreachState.history.length > 500) {
+      serverOutreachState.history = serverOutreachState.history.slice(0, 500);
+    }
+    res.json({
+      success: true,
+      data: entry
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Fallback to index.html for SPA routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(MINIAPP_DIR, 'index.html'));
