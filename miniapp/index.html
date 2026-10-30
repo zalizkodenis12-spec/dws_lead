@@ -19,7 +19,7 @@
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.7.1">
+  <link rel="stylesheet" href="css/app.css?v=4.7.2">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -722,11 +722,10 @@
           <label class="form-label" id="nfcNicheLabel">КАТЕГОРІЯ / НІША: <span style="color:var(--accent);">*</span></label>
           <input type="text" id="nfcNicheInput" class="form-input" placeholder="Введіть нішу (наприклад: Кафе, Стоматологія, Салон...)" value="Кафе, бари, ресторани" required>
           <div class="d2d-preset-chips" id="d2dCategoryPresets" style="display: none;">
-            <button type="button" class="d2d-preset-chip active" data-d2d-cat="Всі D2D, Промо та Торгові команди">🔥 Всі D2D & Опт</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-cat="D2D офіси, промоутери, BTL та активні продажі">🚶‍♂️ D2D & Промоутери</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-cat="Торгові представники HoReCa (кава, стаканчики, опт)">☕ Торгові HoReCa</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-cat="Дистриб'ютори для салонів краси та СТО">💈 Салони & СТО (Опт)</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-cat="Рекламні агенції, поліграфія, меню та вивіски">🎯 B2B Реклама / Меню</button>
+            <button type="button" class="d2d-preset-chip active" data-d2d-cat="D2D офіси («ходоки»), прямі продажі, промоутери та польові торгові">🔥 Всі D2D-офіси («ходоки»)</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-cat="Офіси прямих продажів D2D (щоденна оплата, кур'єри-консультанти)">🚶‍♂️ Прямі продажі (щоденна оплата)</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-cat="Промоутери, BTL-команди та бренд-консультанти в полях">📢 Промоутери & BTL у полях</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-cat="Польові торгові представники та супервайзери обходу точок">💼 Польові торгові представники</button>
           </div>
         </div>
 
@@ -2070,6 +2069,6 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.7.1"></script>
+  <script src="js/app.js?v=4.7.2"></script>
 </body>
 </html>
