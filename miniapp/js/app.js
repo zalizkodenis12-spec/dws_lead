@@ -32,7 +32,8 @@ function showToast(message, duration = 2500) {
     const toast = document.createElement('div');
     toast.className = 'dws-toast-pill';
     toast.style.cssText = 'background:#111827;color:#ffffff;padding:10px 18px;border-radius:24px;font-size:0.82rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.28);border:1px solid rgba(255,255,255,0.14);text-align:center;pointer-events:auto;word-break:break-word;transition:all 0.25s cubic-bezier(0.16,1,0.3,1);';
-    toast.textContent = message;
+    const displayMsg = (typeof translateText === 'function' && state?.lang === 'en') ? translateText(message) : message;
+    toast.textContent = displayMsg;
     container.appendChild(toast);
 
     setTimeout(() => {
@@ -4316,131 +4317,854 @@ function toggleTheme() {
 }
 
 // ============================================================
-// INTERNATIONALIZATION (i18n: UA / EN)
+// COMPREHENSIVE INTERNATIONALIZATION (i18n: UA / EN)
+// Deep DOM Tree Universal Translation Engine
 // ============================================================
-const I18N_TRANSLATIONS = {
-  ua: {
-    // Navigation
-    'nav.leads': 'Заявки',
-    'nav.crm': 'CRM',
-    'nav.income': 'Дохід',
-    'nav.expenses': 'Витрати',
-    'nav.profile': 'Профіль',
-    'nav.scrape': 'Скрапінг',
-    'nav.nfc': 'NFC',
-    'nav.requisites': 'Реквізити',
-
-    // Profile
-    'profile.lang': 'МОВА:',
-    'profile.langUa': 'Українська',
-    'profile.langEn': 'English',
-    'profile.theme': 'ТЕМА:',
-    'profile.themeLight': 'Світла',
-    'profile.themeDark': 'Темна',
-    'profile.sourcesLabel': 'БАЗА ДЖЕРЕЛ ПОШУКУ:',
-    'profile.chatsTxt': 'Telegram чатів',
-    'profile.channelsTxt': 'Telegram каналів',
-    'profile.manageSources': 'Керувати списком чатів та каналів',
-    'profile.saveBtn': 'ЗБЕРЕГТИ НАЛАШТУВАННЯ',
-
-    // Leads Feed & Header
-    'leads.title': 'Заявки',
-    'leads.today': 'сьогодні',
-    'leads.categories': 'Категорії',
-    'leads.filters': 'Фільтри',
-    'leads.searchPlaceholder': 'Веброзробка сайтів, маркетинг...',
-    'leads.searchBtn': 'ПОШУК',
-    'leads.noLeads': 'Заявок за вашими критеріями не знайдено',
-    'leads.takeToWork': 'ВЗЯТИ В РОБОТУ',
-    'leads.inWork': 'В РОБОТІ ✓',
-    'leads.write': 'Написати',
-    'leads.aiResponse': 'AI-відгук',
-    'leads.copyText': 'Копіювати текст',
-
-    // CRM
-    'crm.title': 'CRM',
-    'crm.leadsLabel': 'лідів',
-    'crm.requisitesBtn': 'РЕКВІЗИТИ (IBAN)',
-    'crm.stageAll': 'Всі',
-    'crm.stageInProgress': 'В процесі',
-    'crm.stageOffer': 'Оффер',
-    'crm.stagePayment': 'Оплата',
-
-    // Income & Expenses
-    'income.title': 'Аналітика доходу',
-    'income.total': 'Загальний дохід',
-    'income.avgCheck': 'Середній чек',
-    'expenses.title': 'Облік витрат',
-
-    // Toasts
-    'toast.langChanged': 'Мову змінено на Українську',
-    'toast.saved': 'Збережено',
-    'toast.copied': 'Скопійовано в буфер!'
-  },
-  en: {
-    // Navigation
-    'nav.leads': 'Leads',
-    'nav.crm': 'CRM',
-    'nav.income': 'Income',
-    'nav.expenses': 'Expenses',
-    'nav.profile': 'Profile',
-    'nav.scrape': 'Scraping',
-    'nav.nfc': 'NFC',
-    'nav.requisites': 'Requisites',
-
-    // Profile
-    'profile.lang': 'LANGUAGE:',
-    'profile.langUa': 'Українська',
-    'profile.langEn': 'English',
-    'profile.theme': 'THEME:',
-    'profile.themeLight': 'Light',
-    'profile.themeDark': 'Dark',
-    'profile.sourcesLabel': 'SEARCH SOURCES DATABASE:',
-    'profile.chatsTxt': 'Telegram chats',
-    'profile.channelsTxt': 'Telegram channels',
-    'profile.manageSources': 'Manage chats & channels list',
-    'profile.saveBtn': 'SAVE SETTINGS',
-
-    // Leads Feed & Header
-    'leads.title': 'Leads',
-    'leads.today': 'today',
-    'leads.categories': 'Categories',
-    'leads.filters': 'Filters',
-    'leads.searchPlaceholder': 'Web development, marketing...',
-    'leads.searchBtn': 'SEARCH',
-    'leads.noLeads': 'No leads found matching your criteria',
-    'leads.takeToWork': 'TAKE TO WORK',
-    'leads.inWork': 'IN WORK ✓',
-    'leads.write': 'Write',
-    'leads.aiResponse': 'AI Response',
-    'leads.copyText': 'Copy text',
-
-    // CRM
-    'crm.title': 'CRM',
-    'crm.leadsLabel': 'leads',
-    'crm.requisitesBtn': 'REQUISITES (IBAN)',
-    'crm.stageAll': 'All',
-    'crm.stageInProgress': 'In Progress',
-    'crm.stageOffer': 'Offer',
-    'crm.stagePayment': 'Payment',
-
-    // Income & Expenses
-    'income.title': 'Income Analytics',
-    'income.total': 'Total Income',
-    'income.avgCheck': 'Average Check',
-    'expenses.title': 'Expense Tracking',
-
-    // Toasts
-    'toast.langChanged': 'Language switched to English',
-    'toast.saved': 'Saved',
-    'toast.copied': 'Copied to clipboard!'
-  }
+// Comprehensive UA -> EN Master Translation Table
+const DWS_I18N_DICTIONARY = {
+  "Заявки": "Leads",
+  "CRM": "CRM",
+  "Дохід": "Income",
+  "Витрати": "Expenses",
+  "Профіль": "Profile",
+  "Скрапінг": "Scraping",
+  "NFC": "NFC",
+  "Реквізити": "Requisites",
+  "Введіть секретний код": "Enter Secret Code",
+  "Введіть персональний ключ доступу для активації цього пристрою в системі DenisWeb Studio.": "Enter personal access key to activate this device in DenisWeb Studio.",
+  "Невірний секретний код доступу!": "Invalid access secret code!",
+  " Доступ підтверджено! Активація пристрою...": " Access confirmed! Activating device...",
+  "ПІДТВЕРДИТИ ВХІД ": "CONFIRM LOGIN ",
+  "Код вводиться лише 1 раз. Пристрій запам'ятовується автоматично.": "Code is entered once. Device is saved automatically.",
+  "Введіть ключ доступу...": "Enter access key...",
+  "Показати/приховати код": "Show/hide code",
+  "Змінити тему": "Change theme",
+  "Оновити дані": "Refresh data",
+  "Вхід у DWS Lead": "Login to DWS Lead",
+  "Вкажіть ваш особистий Telegram @username або ID для ізольованої синхронізації ваших заявок та CRM між пристроями:": "Specify your personal Telegram @username or ID for isolated sync of your leads and CRM across devices:",
+  "TELEGRAM @USERNAME АБО CHAT ID:": "TELEGRAM @USERNAME OR CHAT ID:",
+  "СИНХРОНІЗУВАТИ ДАНІ": "SYNC DATA",
+  "СИНХРОНІЗАЦІЯ АКАУНТУ": "ACCOUNT SYNC",
+  "сьогодні": "today",
+  "вчора": "yesterday",
+  "Категорії": "Categories",
+  "Фільтри": "Filters",
+  "ПОШУК": "SEARCH",
+  "Пошук": "Search",
+  "Авто розсилка": "Auto Outreach",
+  "Авто-розсилка": "Auto-Outreach",
+  "Обрано:": "Selected:",
+  "Обрано": "Selected",
+  "ОБРАНО": "SELECTED",
+  "ВІДКРИТИ": "OPEN",
+  "Відкрити": "Open",
+  "СКИНУТИ": "RESET",
+  "Скинути": "Reset",
+  "Топ-15": "Top 15",
+  "ВЗЯТИ В РОБОТУ": "TAKE TO WORK",
+  "В РОБОТІ ": "IN WORK ",
+  "В РОБОТІ": "IN WORK",
+  "AI оцінка": "AI Score",
+  "AI-ВІДГУК": "AI RESPONSE",
+  "AI-Відгук": "AI Response",
+  "Бюджет:": "Budget:",
+  "Бюджет": "Budget",
+  "Договірний": "Negotiable",
+  "За домовленістю": "Negotiable",
+  "Джерело:": "Source:",
+  "Країна:": "Country:",
+  "Сьогодні": "Today",
+  "Вчора": "Yesterday",
+  "Україна": "Ukraine",
+  "США": "USA",
+  "Європа": "Europe",
+  "Польща": "Poland",
+  "Німеччина": "Germany",
+  "Канада": "Canada",
+  "Велика Британія": "United Kingdom",
+  "Всі країни": "All Countries",
+  "Замовлення": "Order",
+  "Розробка": "Development",
+  "Маркетинг": "Marketing",
+  "Монтаж": "Video Editing",
+  "Веброзробка": "Web Development",
+  "Заявки за обраними фільтрами відсутні": "No leads found matching selected filters",
+  "Спробуйте змінити фільтри або обрати інші ніші": "Try changing filters or selecting other niches",
+  "Розгорнути/Згорнути текст вакансій": "Expand/Collapse vacancy text",
+  "Веброзробка сайтів, маркетинг...": "Web development, marketing...",
+  "КОРОТКО ВІД AI:": "SHORT SUMMARY BY AI:",
+  " Згенерувати короткий опис від AI": "Generate short AI summary",
+  "ТЕКСТ ВАКАНСІЇ:": "VACANCY TEXT:",
+  "НАПИСАТИ КЛІЄНТУ": "MESSAGE CLIENT",
+  "ВІДКРИТИ В ДЖЕРЕЛІ ↗": "OPEN IN SOURCE ↗",
+  "ВІДКРИТИ В ДЖЕРЕЛІ": "OPEN IN SOURCE",
+  "AI-Аналіз замовлення": "AI Lead Analysis",
+  "AI-Відгук на вакансію": "AI Response to Vacancy",
+  "Зрозуміло": "Got it",
+  "КОПІЮВАТИ ТЕКСТ": "COPY TEXT",
+  "НАПИСАТИ В TELEGRAM": "MESSAGE IN TELEGRAM",
+  "Написати": "Write",
+  "Копіювати текст": "Copy text",
+  "Мої ніші": "My Niches",
+  "Лендінги": "Landing Pages",
+  "Онлайн-магазини": "Online Stores",
+  "Сайти-каталоги": "Catalog Websites",
+  "3D сайти": "3D Websites",
+  "Багатосторінкові": "Multi-page Sites",
+  "Телеграм-боти": "Telegram Bots",
+  "Технічне обслуговування": "Maintenance",
+  "Таргетована реклама Meta": "Meta Target Ads",
+  "Google реклама": "Google Ads",
+  "TikTok реклама": "TikTok Ads",
+  "Telegram реклама": "Telegram Ads",
+  "SEO оптимізація": "SEO Optimization",
+  "YouTube монтаж": "YouTube Editing",
+  "Рекламні креативи": "Ad Creatives",
+  "Моушн-дизайн": "Motion Design",
+  "ЗБЕРЕГТИ": "SAVE",
+  "БЮДЖЕТ:": "BUDGET:",
+  "До 5 000 ₴": "Up to 5,000 ₴",
+  "ПОРТФОЛІО:": "PORTFOLIO:",
+  "З портфоліо": "With portfolio",
+  "Без портфоліо": "Without portfolio",
+  "ДОСВІД:": "EXPERIENCE:",
+  "З досвідом": "Experienced",
+  "Без досвіду": "No experience",
+  "ЗАСТОСУВАТИ": "APPLY",
+  "Односторінковий сайт": "One-page site",
+  "Авто-розсилка по вакансіях": "Vacancies Auto-Outreach",
+  "Вибір вакансій синьою обводкою та черга відправки по всіх платформах": "Select vacancies with blue outline and dispatch queue across all platforms",
+  "Список вакансій": "Vacancies List",
+  "Черга та Акаунти": "Queue & Accounts",
+  "Всі платформи": "All Platforms",
+  "Біржі та Сайти": "Exchanges & Sites",
+  "Натисніть на картку вакансії, щоб з'явилася синя обводка:": "Click on a vacancy card to select it with blue outline:",
+  "Обрати 15": "Select 15",
+  "Обрати всі": "Select All",
+  "Зняти обводку": "Clear Selection",
+  "СФОРМУВАТИ ЧЕРГУ ВІДПРАВКИ": "GENERATE OUTREACH QUEUE",
+  "СТАТУС АВТО-РОЗСИЛКИ": "OUTREACH STATUS",
+  "Готова до запуску": "Ready to start",
+  "Готова до відправки (на паузі)": "Ready to dispatch (paused)",
+  "ВІДПРАВЛЕНО": "SENT",
+  "Наступний авто-відгук через": "Next auto-response in",
+  "Антибан-пауза активна (безпечний інтервал)": "Antiban pause active (safe interval)",
+  "Оберіть вакансії у списку": "Select vacancies in the list",
+  "Контакт та платформа з'являться після вибору": "Contact and platform will appear after selection",
+  "ТЕКСТ ВІДГУКУ ДЛЯ ЦІЄЇ ВАКАНСІЇ (МОЖНА РЕДАГУВАТИ):": "RESPONSE PITCH FOR THIS VACANCY (EDITABLE):",
+  "Персоналізований текст відгуку...": "Personalized pitch message...",
+  "ЗАПУСТИТИ АВТО-РОЗСИЛКУ З ПАУЗАМИ": "START AUTO-OUTREACH WITH PAUSES",
+  "ПОСТАВИТИ АВТО-РОЗСИЛКУ НА ПАУЗУ": "PAUSE AUTO-OUTREACH",
+  "ВІДПРАВИТИ ПОТОЧНИЙ ВІДГУК ЗАРАЗ (БЕЗ ОЧІКУВАННЯ)": "SEND CURRENT RESPONSE NOW (NO WAIT)",
+  "Пропустити": "Skip",
+  "Очистити чергу": "Clear Queue",
+  "ПАУЗА МІЖ ВІДГУКАМИ (АНТИБАН ІНТЕРВАЛ):": "DELAY BETWEEN RESPONSES (ANTIBAN INTERVAL):",
+  "10 хв": "10 min",
+  "15 хв": "15 min",
+  "20 хв": "20 min",
+  "30 хв": "30 min",
+  "По 10": "10 each",
+  "По 15": "15 each",
+  "По 20": "20 each",
+  "По 30": "30 each",
+  "До кожної паузи автоматично додається випадкове відхилення +-3 хв для захисту акаунтів.": "A random +-3 min deviation is automatically added to each pause for account protection.",
+  "ЛІМІТ ВІДПРАВОК НА 1 АКАУНТ ЗА ЗАПУСК:": "DISPATCH LIMIT PER 1 ACCOUNT PER RUN:",
+  "Автоматично унікалізувати текст під стек, ім'я та платформу (Spintax захист)": "Automatically unique text for stack, name and platform (Spintax protection)",
+  "МОЇ РОБОЧІ АКАУНТИ ПО ПЛАТФОРМАХ:": "MY WORK ACCOUNTS BY PLATFORMS:",
+  "Telegram Акаунт #1 (Основний)": "Telegram Account #1 (Primary)",
+  "Telegram Акаунт #2 (Другий робочий)": "Telegram Account #2 (Secondary)",
+  "Reddit Акаунт (r/forhire, r/hireaprogrammer)": "Reddit Account (r/forhire, r/hireaprogrammer)",
+  "Discord Акаунт (Dev-сервери та DM)": "Discord Account (Dev servers & DM)",
+  "Біржі та Сайти (Djinni, Freelancehunt, Upwork)": "Exchanges & Sites (Djinni, Freelancehunt, Upwork)",
+  "До 15 / день": "Up to 15 / day",
+  "До 10 / день": "Up to 10 / day",
+  "@username або номер першого ТГ акаунта": "@username or phone of first TG account",
+  "@username або номер другого ТГ акаунта": "@username or phone of second TG account",
+  "u/ваш_нік_на_реддіт": "u/your_reddit_username",
+  "Discord нік або Webhook URL для авто-відправки": "Discord username or Webhook URL for auto-sending",
+  "Робоча пошта або профіль для прямих відгуків": "Work email or profile for direct responses",
+  "ЗБЕРЕГТИ АКАУНТИ ТА НАЛАШТУВАННЯ": "SAVE ACCOUNTS & SETTINGS",
+  "СПИСОК ВАКАНСІЙ У ЧЕРЗІ": "VACANCIES IN QUEUE",
+  "Відправити": "Send",
+  "Відправлено": "Sent",
+  "Пропущено": "Skipped",
+  "Наступний у черзі": "Next in queue",
+  "В черзі": "In queue",
+  "Черга порожня — оберіть вакансії": "Queue is empty — select vacancies",
+  "Усі відгуки з черги надіслано": "All responses from queue sent",
+  "РОЗСИЛКУ ЗАВЕРШЕНО": "OUTREACH COMPLETED",
+  "Черга порожня": "Queue is empty",
+  "Заклади": "Venues",
+  "закладів": "venues",
+  "D2D Ходоки": "D2D Walkers",
+  "D2D Агентства": "D2D Agencies",
+  "НОВИЙ ЗБІР": "NEW SCAN",
+  "КАЛЬКУЛЯТОР ВИГОДИ": "ROI CALCULATOR",
+  "КАЛЬКУЛЯТОР ВИГОДИ D2D": "D2D ROI CALCULATOR",
+  "КАЛЬКУЛЯТОР ВИГОДИ NFC ТА ВАРТОСТІ ПАРТІЙ": "NFC ROI & BATCH COST CALCULATOR",
+  "Радар закладів": "Venues Radar",
+  "Пошук закладів з відгуками до 300, скупчення в ТРЦ/районі та готові піші маршрути": "Search venues with reviews under 300, clusters in malls/districts and walking routes",
+  "ЗБОРИ ЗАКЛАДІВ & МАРШРУТИ": "VENUE SCANS & ROUTES",
+  "Картки": "Cards",
+  "Карта": "Map",
+  "0 закладів": "0 venues",
+  "Де я": "Where am I",
+  "Новий збір D2D-офісів («ходоків»)": "New D2D Offices Scan (Field Teams)",
+  "Новий збір закладів (NFC Радар)": "New Venues Scan (NFC Radar)",
+  "ДЖЕРЕЛО ПОШУКУ:": "SEARCH SOURCE:",
+  "Google Maps (Карти)": "Google Maps",
+  "Instagram": "Instagram",
+  "ТИП D2D-ОФІСІВ / ПОЛЬОВИХ КОМАНД:": "TYPE OF D2D OFFICES / FIELD TEAMS:",
+  "ТИП ОФІСІВ:": "OFFICE TYPE:",
+  "КАТЕГОРІЯ / НІША:": "CATEGORY / NICHE:",
+  "Оберіть категорію D2D-офісів...": "Choose D2D office category...",
+  "Всі D2D-офіси (ходоки)": "All D2D Offices (Walkers)",
+  "Прямі продажі (щоденна оплата)": "Direct Sales (Daily Payout)",
+  "Промоутери та BTL у полях": "Promoters & Field BTL",
+  "Польові торгові представники": "Field Sales Representatives",
+  "Всі D2D-офіси («ходоки»), прямі продажі, промоутери та польові торгові": "All D2D Offices (Walkers), direct sales, promoters and field reps",
+  "Офіси прямих продажів D2D (щоденна оплата, кур'єри-консультанти)": "Direct Sales Offices D2D (daily payout, courier consultants)",
+  "Промоутери, BTL-команди та бренд-консультанти в полях": "Promoters, BTL teams and brand consultants in field",
+  "Польові торгові представники та супервайзери обходу точок": "Field sales representatives and route supervisors",
+  "Введіть нішу (наприклад: Кафе, Стоматологія, Салон...)": "Enter niche (e.g.: Cafe, Dentistry, Beauty Salon...)",
+  "Кафе, бари, ресторани": "Cafes, bars, restaurants",
+  "МІСТО / РЕГІОН:": "CITY / REGION:",
+  "Введіть місто (наприклад: Вінниця, Київ, Одеса...)": "Enter city (e.g.: Vinnytsia, Kyiv, Odesa...)",
+  "РАЙОН / ТРЦ / ЛОКАЦІЯ": "DISTRICT / MALL / LOCATION",
+  "Необов'язково (наприклад: Вишенька, Поділ, ТРЦ...). Якщо не вказано — шукає по всьому місту": "Optional (e.g.: City Center, Mall...). If empty — searches whole city",
+  "(необов'язково)": "(optional)",
+  "Необов'язково": "Optional",
+  "ФІЛЬТР ЗА КІЛЬКІСТЮ ВІДГУКІВ:": "FILTER BY REVIEWS COUNT:",
+  "До 300 (Топ)": "Up to 300 (Top)",
+  "До 50 (Нові)": "Up to 50 (New)",
+  "До 150": "Up to 150",
+  "КІЛЬКІСТЬ ЗАКЛАДІВ:": "NUMBER OF VENUES:",
+  "КІЛЬКІСТЬ D2D-КОМАНД:": "NUMBER OF D2D TEAMS:",
+  "ЗАПУСТИТИ РАДАР": "START RADAR",
+  "ЗАПУСТИТИ D2D РАДАР": "START D2D RADAR",
+  "Показати на мапі": "Show on map",
+  "Списком": "List view",
+  "Шлях": "Route",
+  "Опт Офер": "Wholesale Offer",
+  "Точка в Google Maps": "Point on Google Maps",
+  "Знайти в Instagram": "Find on Instagram",
+  "Написати у Viber": "Message in Viber",
+  "Зв'язок": "Contact",
+  "ПОДЗВОНИТИ ЗАРАЗ": "CALL NOW",
+  "НАПИСАТИ У VIBER": "MESSAGE IN VIBER",
+  "СКОПІЮВАТИ НОМЕР ТЕЛЕФОНУ": "COPY PHONE NUMBER",
+  "СКАСУВАТИ": "CANCEL",
+  "Скасувати": "Cancel",
+  "Розрахунок КП для закладу": "Commercial Proposal Calculation",
+  "Фінансовий прогноз та окупність безконтактних карток": "Financial forecast and payback of NFC cards",
+  "Скопіювати КП": "Copy Proposal",
+  "В Telegram": "To Telegram",
+  "В Telegram клієнту": "To Telegram client",
+  "В INSTAGRAM": "TO INSTAGRAM",
+  "В VIBER": "TO VIBER",
+  "ПОДІЛИТИСЯ ТЕКСТОМ В TELEGRAM": "SHARE TEXT IN TELEGRAM",
+  "Готовий офер для закладу": "Ready offer for venue",
+  "ГОТОВИЙ ТЕКСТ ПОВІДОМЛЕННЯ (ДЛЯ ВІДПРАВКИ ЧИ СПІЛКУВАННЯ):": "READY MESSAGE TEXT (FOR OUTREACH OR CHAT):",
+  "СКОПІЮВАТИ ТЕКСТ ОФЕРУ": "COPY OFFER TEXT",
+  "Калькулятор вигоди NFC": "NFC ROI Calculator",
+  "ТИП КАРТОК / МАТЕРІАЛ:": "CARD TYPE / MATERIAL:",
+  "З асортименту": "Standard Assortment",
+  "Кольоровий акрил": "Colored Acrylic",
+  "Своя партія": "Custom Batch",
+  "Свій варіант ціни": "Custom Price Option",
+  "ДО 10 ШТ (₴/ШТ):": "UP TO 10 PCS (₴/PC):",
+  "ВІД 10 ШТ (₴/ШТ):": "FROM 10 PCS (₴/PC):",
+  "ЗАСТОСУВАТИ СВІЙ ТАРИФ": "APPLY CUSTOM TARIFF",
+  "КІЛЬКІСТЬ КАРТОК:": "CARD QUANTITY:",
+  "10 шт": "10 pcs",
+  "ЦІНА ЗА 1 ШТ:": "PRICE PER 1 PC:",
+  "300 ₴ / шт": "300 ₴ / pc",
+  "СУМА ПАРТІЇ:": "BATCH TOTAL:",
+  "Оптова ціна застосована (партія від 10 шт)": "Wholesale price applied (batch of 10+ pcs)",
+  "ПАРАМЕТРИ ЗАКЛАДУ КЛІЄНТА:": "CLIENT VENUE PARAMETERS:",
+  "ПОТОЧНИЙ РЕЙТИНГ У MAPS:": "CURRENT MAPS RATING:",
+  "КІЛЬКІСТЬ ВІДГУКІВ У MAPS:": "MAPS REVIEWS COUNT:",
+  "45 відгуків": "45 reviews",
+  "ГОСТЕЙ НА ДЕНЬ:": "GUESTS PER DAY:",
+  "60 гостей / день": "60 guests / day",
+  "СЕРЕДНІЙ ЧЕК ЗАКЛАДУ:": "AVERAGE CHECK:",
+  "ПРИРІСТ ВІДГУКІВ": "REVIEWS GROWTH",
+  "+54 відг / міс": "+54 rev / mo",
+  "Живі оцінки 5 від реальних гостей закладу": "Real 5 ratings from actual guests",
+  "НОВИЙ РЕЙТИНГ GOOGLE": "NEW GOOGLE RATING",
+  "4.9  (ТОП-1)": "4.9  (TOP-1)",
+  "+18% органічних клієнтів з локального пошуку": "+18% organic customers from local search",
+  "ДОДАТКОВИЙ ПРИБУТОК ЗАКЛАДУ": "VENUE EXTRA PROFIT",
+  "+81 000 ₴ / міс": "+81,000 ₴ / mo",
+  "Окупність партії карток (3 000 ₴) — всього за 1–2 дні!": "Card batch ROI (3,000 ₴) — in just 1–2 days!",
+  "СКОПІЮВАТИ РОЗРАХУНОК ТА КП ДЛЯ КЛІЄНТА": "COPY ESTIMATE & PROPOSAL FOR CLIENT",
+  "РЕКВІЗИТИ (IBAN)": "REQUISITES (IBAN)",
+  "ДОДАТИ ЛІД": "ADD LEAD",
+  "Додати лід": "Add Lead",
+  "Пошук по CRM...": "Search CRM...",
+  "Всі стадії": "All Stages",
+  "Всі послуги": "All Services",
+  "В процесі": "In Progress",
+  "Оффер": "Offer",
+  "Оплата": "Payment",
+  "Відмова": "Declined",
+  "Угода": "Deal",
+  "Новий": "New",
+  "Всі": "All",
+  "Деталі ліда в CRM": "Lead Details in CRM",
+  "ІМ'Я КЛІЄНТА / НАЗВА:": "CLIENT NAME / TITLE:",
+  "ІМ'Я КЛІЄНТА:": "CLIENT NAME:",
+  "ІМ'Я:": "NAME:",
+  "ТЕЛЕГРАМ (@):": "TELEGRAM (@):",
+  "TELEGRAM (@ЮЗЕРНЕЙМ):": "TELEGRAM (@USERNAME):",
+  "КОНТАКТ (TELEGRAM / ТЕЛЕФОН / ПОСИЛАННЯ):": "CONTACT (TELEGRAM / PHONE / LINK):",
+  "ПОСЛУГА (НАПРЯМОК):": "SERVICE (DIRECTION):",
+  "ПОСЛУГА:": "SERVICE:",
+  "НІША / ОПИС ЗАМОВЛЕННЯ:": "NICHE / ORDER DESCRIPTION:",
+  "НІША / ПРОЄКТ:": "NICHE / PROJECT:",
+  "НІША:": "NICHE:",
+  "БЮДЖЕТ (₴):": "BUDGET (₴):",
+  "СТАТУС УГОДИ:": "DEAL STATUS:",
+  "СТАТУС:": "STATUS:",
+  "НОТАТКИ ТА ДЕТАЛІ СПІВПРАЦІ:": "NOTES & COLLABORATION DETAILS:",
+  "ЗАМІТКИ:": "NOTES:",
+  "ЗБЕРЕГТИ ЗМІНИ": "SAVE CHANGES",
+  "Зберегти зміни": "Save changes",
+  "ВИДАЛИТИ ЛІД": "DELETE LEAD",
+  "Видалити ліда з CRM": "Delete lead from CRM",
+  "ФІЛЬТРИ CRM": "CRM FILTERS",
+  "БЮДЖЕТ (ВІД ЯКОЇ СУМИ, ₴):": "BUDGET (MINIMUM AMOUNT, ₴):",
+  "ЗАСТОСУВАТИ ФІЛЬТРИ": "APPLY FILTERS",
+  "ЕТАП ВОРОНКИ:": "FUNNEL STAGE:",
+  "ЕТАПИ РОБОТИ (ОБЕРІТЬ 4 ДЛЯ ПАНЕЛІ):": "STAGES (CHOOSE 4 FOR BAR):",
+  "Всі (Всі клієнти)": "All (All clients)",
+  "Працюєм": "Working",
+  "Закритий": "Closed",
+  "Закриті": "Closed",
+  "Обговорити пізніше": "Discuss later",
+  "Ігнорує": "Ignored",
+  "Більше не співпрацюєм": "Discontinued",
+  "ДОДАТКОВІ КОНТАКТИ ТА ПОСИЛАННЯ:": "ADDITIONAL CONTACTS & LINKS:",
+  "Розробка сайтів та ботів": "Websites & Bots Development",
+  "Реклама та маркетинг": "Advertising & Marketing",
+  "Відеомонтаж та контент": "Video Editing & Content",
+  "ЗАМОВЛЕННЯ:": "ORDERS:",
+  "+ Додати замовлення": "+ Add order",
+  "Додати замовлення": "Add order",
+  "НАЗВА ПОСЛУГИ:": "SERVICE NAME:",
+  "ПОЧАТОК:": "START:",
+  "Оберіть дату": "Select date",
+  "КІНЕЦЬ (ДЕДЛАЙН):": "DEADLINE:",
+  "Оберіть дедлайн": "Select deadline",
+  "СТАТУС ОПЛАТИ ЗАМОВЛЕННЯ:": "ORDER PAYMENT STATUS:",
+  "СТАТУС ОПЛАТИ:": "PAYMENT STATUS:",
+  "Не оплачено": "Unpaid",
+  "Частково": "Partial",
+  "Оплачено": "Paid",
+  "СУМА ЗАМОВЛЕННЯ (₴):": "ORDER AMOUNT (₴):",
+  "НАЗВА ЗАМОВЛЕННЯ:": "ORDER NAME:",
+  "Оплачено (У дохід)": "Paid (To Income)",
+  "Очікувано (В процесі)": "Pending (In Progress)",
+  "ДАТА ЗАМОВЛЕННЯ:": "ORDER DATE:",
+  "Відхилити": "Decline",
+  "ДОДАТИ": "ADD",
+  "Редагувати замовлення": "Edit order",
+  "ВИДАЛИТИ ЗАМОВЛЕННЯ": "DELETE ORDER",
+  "ЗВІДКИ ПРИЙШОВ:": "LEAD SOURCE:",
+  "DWS Lead (Чати/Канали)": "DWS Lead (Chats/Channels)",
+  "Партнери": "Partners",
+  "Сайт агенства": "Agency Website",
+  "Холодні розсилки": "Cold Outreach",
+  "Реклама": "Advertising",
+  "ОПИС ЗАМОВЛЕННЯ:": "ORDER DESCRIPTION:",
+  "ДОДАТИ КЛІЄНТА": "ADD CLIENT",
+  "Додати клієнта": "Add Client",
+  "замовлень": "orders",
+  "ЗАРОБЛЕНО": "EARNED",
+  "За весь час": "All Time",
+  "ОЧІКУВАНО": "PENDING",
+  "В процесі роботи": "In progress",
+  "Динаміка оплат": "Payment Dynamics",
+  "Динаміка витрат": "Expense Dynamics",
+  "Фільтр часу": "Time Filter",
+  "По даті": "By Date",
+  "Місяць": "Month",
+  "Квартал": "Quarter",
+  "Рік": "Year",
+  "ДОДАТИ ДОХІД": "ADD INCOME",
+  "Додати дохід": "Add Income",
+  "Запис про оплату від клієнта": "Client payment record",
+  "ДАТА ОПЛАТИ:": "PAYMENT DATE:",
+  "СУМА (₴):": "AMOUNT (₴):",
+  "ПОВ'ЯЗАНИЙ ЛІД З CRM:": "LINKED CRM LEAD:",
+  "Оберіть ліда з CRM (необов'язково)": "Select CRM lead (optional)",
+  "КАТЕГОРІЯ ДОХОДУ:": "INCOME CATEGORY:",
+  "СПОСІБ ОПЛАТИ:": "PAYMENT METHOD:",
+  "КОМЕНТАР:": "COMMENT:",
+  "ЗБЕРЕГТИ ДОХІД": "SAVE INCOME",
+  "витрат": "expenses",
+  "ВИТРАЧЕНО": "SPENT",
+  "ЗА ОБРАНИЙ МІСЯЦЬ": "FOR SELECTED MONTH",
+  "Поточний місяць": "Current month",
+  "НАЙБІЛЬША КАТЕГОРІЯ": "TOP CATEGORY:",
+  "ДОДАТИ ВИТРАТУ": "ADD EXPENSE",
+  "Додати витрату": "Add Expense",
+  "Фіксація витрат студії": "Studio expense record",
+  "ДАТА ВИТРАТИ:": "EXPENSE DATE:",
+  "КАТЕГОРІЯ ВИТРАТИ:": "EXPENSE CATEGORY:",
+  "КУДИ ВИТРАЧЕНО (ОПИС):": "EXPENSE DETAILS (DESC):",
+  "КАТЕГОРІЯ / КОМУ:": "CATEGORY / TO WHOM:",
+  "Оплачено (У витрати)": "Paid (To Expenses)",
+  "В планах (Очікувано)": "Planned (Pending)",
+  "Редагувати витрату": "Edit expense",
+  "ВИДАЛИТИ ВИТРАТУ": "DELETE EXPENSE",
+  "ЗБЕРЕГТИ ВИТРАТУ": "SAVE EXPENSE",
+  "За останній рік": "Last year",
+  "За останні 6 міс": "Last 6 mo",
+  "За останні 3 міс": "Last 3 mo",
+  "За останній міс": "Last month",
+  "За останній тиж": "Last week",
+  "За останній день": "Last day",
+  "ГОТОВО": "DONE",
+  "Вибір періоду дат": "Date Period Selection",
+  "ОБРАНИЙ ПЕРІОД:": "SELECTED PERIOD:",
+  "Оберіть початкову дату": "Select start date",
+  "Вибір дати замовлення": "Select order date",
+  "ОБРАНІ ДАТИ:": "SELECTED DATES:",
+  "Оберіть дату на календарі": "Select date on calendar",
+  "Очистити": "Clear",
+  "ЗАСТОСУВАТИ ДАТИ": "APPLY DATES",
+  "Попередній місяць": "Previous month",
+  "Наступний місяць": "Next month",
+  "Січень": "January",
+  "Лютий": "February",
+  "Березень": "March",
+  "Квітень": "April",
+  "Травень": "May",
+  "Червень": "June",
+  "Липень": "July",
+  "Серпень": "August",
+  "Вересень": "September",
+  "Жовтень:": "October:",
+  "Жовтень": "October",
+  "Листопад": "November",
+  "Грудень": "December",
+  "Пн": "Mo",
+  "Вт": "Tu",
+  "Ср": "We",
+  "Чт": "Th",
+  "Пт": "Fr",
+  "Сб": "Sa",
+  "Нд": "Su",
+  "Власник": "Owner",
+  "Спеціаліст": "Specialist",
+  "Редагувати профіль": "Edit Profile",
+  "МОВА:": "LANGUAGE:",
+  "ТЕМА:": "THEME:",
+  "Світла": "Light",
+  "Темна": "Dark",
+  "БАЗА ДЖЕРЕЛ ПОШУКУ:": "SEARCH SOURCES DATABASE:",
+  "Telegram чатів": "Telegram chats",
+  "Telegram каналів": "Telegram channels",
+  "Керувати списком чатів та каналів": "Manage chats & channels list",
+  "ПРО СЕБЕ:": "ABOUT ME:",
+  "Досвід, навички, стек та особливості підходу. Використовується AI для генерації персоналізованого відгуку.": "Experience, skills, tech stack and workflow. Used by AI to generate customized proposals.",
+  "ШАБЛОН ВІДГУКУ:": "RESPONSE TEMPLATE:",
+  "Фірмовий шаблон, за яким надсилається відгук клієнту. AI адаптує його під кожне замовлення.": "Signature template used to respond to clients. AI adapts it to each order.",
+  "ШАБЛОН ВІДГУКУ (NFC КАРТКИ БІЗНЕСАМ):": "OFFER TEMPLATE (NFC CARDS FOR BUSINESSES):",
+  "Шаблон повідомлення для швидкої розсилки закладам в Instagram Direct по NFC-картках (копіюється в 1 клік і відкриває чат).": "Message template for fast Instagram Direct outreach to local venues for NFC cards (1-click copy & open chat).",
+  "ШАБЛОН ПРОПОЗИЦІЇ (D2D ОФІСИ / ОПТ):": "PROPOSAL TEMPLATE (D2D OFFICES / WHOLESALE):",
+  "Шаблон для обходу HR та виходу напряму на керівника D2D-офісу (опт 300 грн, роздріб 600 грн = +300 грн чистої маржі з точки, 20 карток у кишеню куртки = +6 000 грн/день).": "Template to bypass HR and reach the head of D2D office directly (wholesale 300 UAH, retail 600 UAH = +300 UAH net margin per venue, 20 cards in pocket = +6,000 UAH/day).",
+  "ЗБЕРЕГТИ НАЛАШТУВАННЯ": "SAVE SETTINGS",
+  "Автоматична синхронізація між телефоном і ноутбуком працює в реальному часі. Також ви можете примусово вивантажити дані з телефону або завантажити їх на ноутбук в 1 клік:": "Automatic sync between phone and laptop works in real time. You can also force-export data from your phone or download to your laptop in 1 click:",
+  "ВІДПРАВИТИ ДАНІ В ХМАРУ (З ТЕЛЕФОНУ)": "SEND DATA TO CLOUD (FROM PHONE)",
+  "ОТРИМАТИ ДАНІ З ХМАРИ (НА НОУТБУК)": "PULL DATA FROM CLOUD (TO LAPTOP)",
+  "ЗАВАНТАЖИТИ ФАЙЛ БЕКАПУ (.JSON)": "DOWNLOAD BACKUP FILE (.JSON)",
+  "ВІДНОВИТИ ДАНІ З ФАЙЛУ АБО КОДУ": "RESTORE DATA FROM FILE OR CODE",
+  "Завантажити фото": "Upload photo",
+  "Видалити": "Delete",
+  "Підтримуються JPG, PNG, WEBP будь-якого розміру": "JPG, PNG, WEBP of any size supported",
+  "ІМ'Я ТА ПРІЗВИЩЕ:": "NAME & SURNAME:",
+  "ПОСАДА / СТАТУС:": "POSITION / STATUS:",
+  "Джерела пошуку": "Search Sources",
+  "Активна база:": "Active database:",
+  "джерел (": "sources (",
+  "чатів,": "chats,",
+  "каналів)": "channels)",
+  "Вставте нові юзернейми або посилання на Telegram канали/чати (по одному на рядок):": "Paste new usernames or links to Telegram channels/chats (one per line):",
+  "ДОДАТИ НОВІ ДЖЕРЕЛА:": "ADD NEW SOURCES:",
+  "ДОДАТИ ДЖЕРЕЛА": "ADD SOURCES",
+  "Відновлення даних на ноутбуці": "Data Restoration on Laptop",
+  "Оберіть зручний спосіб перенесення даних на ноутбук:": "Choose convenient method to transfer data to laptop:",
+  "ЗАВАНТАЖИТИ З ХМАРИ TELEGRAM": "DOWNLOAD FROM TELEGRAM CLOUD",
+  "ОБРАТИ ФАЙЛ БЕКАПУ (.JSON)": "SELECT BACKUP FILE (.JSON)",
+  "АБО ВСТАВТЕ ТЕКСТ БЕКАПУ ВРУЧНУ:": "OR PASTE BACKUP TEXT MANUALLY:",
+  "ЗАСТОСУВАТИ ДАНІ": "APPLY DATA",
+  "Натисніть щоб змінити фото": "Click to change photo",
+  "Опишіть ваш досвід, стек та особливості підходу...": "Describe your experience, stack and workflow...",
+  "ОФІЦІЙНІ РЕКВІЗИТИ ДЛЯ ОПЛАТИ (IBAN)": "OFFICIAL PAYMENT REQUISITES (IBAN)",
+  "РЕКВІЗИТИ ДЛЯ ОПЛАТИ (IBAN)": "PAYMENT REQUISITES (IBAN)",
+  "Офіційні B2B реквізити (IBAN) для оплати клієнтами": "Official B2B requisites (IBAN) for client payments",
+  "Скопіювати реквізити": "Copy requisites",
+  "ОТРИМУВАЧ (ПІБ):": "RECIPIENT (FULL NAME):",
+  "Отримувач:": "Recipient:",
+  "IBAN РАХУНОК:": "IBAN ACCOUNT:",
+  "IBAN рахунок:": "IBAN account:",
+  "РНОКПП (ІПН) / ЄДРПОУ:": "TAX ID / COMPANY CODE:",
+  "НАЗВА БАНКУ:": "BANK NAME:",
+  "Банк:": "Bank:",
+  "ПРИЗНАЧЕННЯ ПЛАТЕЖУ ЗА ЗАМОВЧУВАННЯМ:": "DEFAULT PAYMENT PURPOSE:",
+  "Призначення платежу:": "Payment purpose:",
+  "СКОПІЮВАТИ РЕКВІЗИТИ": "COPY REQUISITES",
+  "НАДІСЛАТИ В TELEGRAM": "SEND TO TELEGRAM",
+  "РЕДАГУВАТИ РЕКВІЗИТИ": "EDIT REQUISITES",
+  "ЗБЕРЕГТИ РЕКВІЗИТИ": "SAVE REQUISITES",
+  "бізнесів": "businesses",
+  "НОВИЙ СКРАПІНГ": "NEW SCRAPE",
+  "Бізнеси з карт": "Businesses from Maps",
+  "Бізнес-профілі": "Business Profiles",
+  "МОЇ ПОШУКИ": "MY SEARCHES",
+  "СТАТУС СКРАПІНГУ": "SCRAPING STATUS",
+  "Експорт CSV": "Export CSV",
+  "Надіслати в Telegram": "Send to Telegram",
+  "Усі контакти": "All Contacts",
+  "Телефони": "Phones",
+  "Мобільні (Viber/TG)": "Mobile (Viber/TG)",
+  "Email пошта": "Email",
+  "Instagram профілі": "Instagram profiles",
+  "Новий скрапінг бізнесів": "New Businesses Scrape",
+  "Новий пошук": "New Search",
+  "Глибокий збір контактів з Google Maps та Instagram": "Deep contact scraping from Google Maps and Instagram",
+  "ДЖЕРЕЛО ДАНИХ:": "DATA SOURCE:",
+  "ДЖЕРЕЛО:": "SOURCE:",
+  "НІША БІЗНЕСУ:": "BUSINESS NICHE:",
+  "КІЛЬКІСТЬ БІЗНЕСІВ:": "NUMBER OF BUSINESSES:",
+  "ЗАПУСТИТИ ЗБІР": "START SCRAPE",
+  "ЗАПУСТИТИ ПОШУК": "START SEARCH",
+  "CSV Таблиця": "CSV Table",
+  "Скопіювати все": "Copy All",
+  "Завантажити .csv": "Download .csv",
+  "Підключення Apify API": "Connect Apify API",
+  "Вставте свій": "Paste your",
+  "з консолі Apify, щоб Google Maps Scraper та Instagram Scraper працювали на повну потужність наживо.": "from Apify console so Google Maps Scraper and Instagram Scraper work at full power live.",
+  "Відкрити Apify Console  Скопіювати токен": "Open Apify Console  Copy token",
+  "ЗБЕРЕГТИ ТОКЕН": "SAVE TOKEN",
+  "Налаштування Apify API": "Apify API Settings",
+  "Режим NFC Радару": "NFC Radar Mode",
+  "Моє розташування": "My Location",
+  "Закрити та повернутися": "Close and return",
+  "Закрити": "Close",
+  "Зберегти": "Save",
+  "Відмінити": "Cancel",
+  "Скопійовано!": "Copied!",
+  "Скопійовано": "Copied",
+  "Помилка": "Error",
+  "Успішно": "Success",
+  "Збережено": "Saved",
+  "В буфері": "In clipboard",
+  "Деталі": "Details",
+  "Назад": "Back",
+  "Вперед": "Forward",
+  "Завантаження...": "Loading...",
+  "Зачекайте...": "Please wait...",
+  "Очікування": "Pending",
+  "Активно": "Active",
+  "Неактивно": "Inactive",
+  "Увімкнено": "Enabled",
+  "Вимкнено": "Disabled",
+  "Так": "Yes",
+  "Ні": "No",
+  "Редагувати": "Edit",
+  "Оновити": "Refresh",
+  "Підкатегорії": "Subcategories",
+  "Редагувати ім'я": "Edit name",
+  "Ім'я": "Name",
+  "Кав'ярня": "Coffee shop",
+  "Вітаю, {NAME}! Побачив замовлення {TASK}...": "Hello, {NAME}! I saw your order {TASK}...",
+  "Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?": "Good day! I am writing with an offer that helps increase Google Maps reviews without ads and attract more clients. I have prepared a presentation for you, would you be interested to take a look?",
+  "Доброго дня! Пишу НЕ щодо вакансії — передайте, будь ласка, це повідомлення особисто керівнику офісу / директору філії у м. {CITY} (питання постачання високомаржинального товару для вашої команди з маржею 100%+)...": "Good day! I am NOT writing regarding the vacancy — please forward this message personally to the office manager / branch director in {CITY} (high-margin wholesale product for your team with 100%+ margin)...",
+  "Залізко Сергій Олександрович": "Zalizko Serhii Oleksandrovych",
+  "Оплата за інформаційно-рекламні послуги згідно домовленості": "Payment for information and advertising services as agreed",
+  "Олексій": "Oleksii",
+  "Олександр": "Oleksandr",
+  "Вітя": "Viktor",
+  "Наприклад: Автосервіс, Стоматологія, Салон краси...": "E.g.: Auto repair, Dentistry, Beauty Salon...",
+  "Наприклад: Київ, Львів, Одеса, Варшава...": "E.g.: Kyiv, Lviv, Odesa, Warsaw...",
+  "Номер телефону (+380...)": "Phone number (+380...)",
+  "Instagram (@ або посилання)": "Instagram (@ or link)",
+  "TikTok (@ або посилання)": "TikTok (@ or link)",
+  "Telegram-канал (ТГК)": "Telegram channel",
+  "Вебсайт (https://...)": "Website (https://...)",
+  "Деталі переговорів, побажання клієнта...": "Negotiation details, client wishes...",
+  "Створення сайту": "Website development",
+  "Розробка лендінгу під ключ": "Turnkey landing page development",
+  "Instagram (@ або лінк)": "Instagram (@ or link)",
+  "TikTok (@ або лінк)": "TikTok (@ or link)",
+  "Сайт для кафе": "Website for cafe",
+  "Назва проєкту": "Project name",
+  "Клієнт": "Client",
+  "Реклама в Instagram": "Instagram advertising",
+  "Опис витрати": "Expense description",
+  "Категорія": "Category",
+  "Вставте сюди скопійований текст...": "Paste copied text here...",
+  "Наприклад: Денис Залізко": "E.g.: Denys Zalizko",
+  "Власник / Спеціаліст": "Owner / Specialist",
+  "@username або 5278970111": "@username or 5278970111",
+  "Введіть секретний ключ доступу!": "Enter secret access key!",
+  "ПЕРЕВІРКА...": "VERIFYING...",
+  "ДОСТУП ДОЗВОЛЕНО ": "ACCESS GRANTED ",
+  "СКОПІЙОВАНО ": "COPIED ",
+  "ЗБЕРІГАЄМО...": "SAVING...",
+  "ЗБЕРЕЖЕНО ": "SAVED ",
+  "ДОДАЄМО...": "ADDING...",
+  "ДОДАНО ": "ADDED ",
+  "ПОМИЛКА": "ERROR",
+  "Вибір дати початку": "Select Start Date",
+  "Вибір дати дедлайну": "Select Deadline Date",
+  "Початок:": "Start:",
+  "Дедлайн:": "Deadline:",
+  "дн.": "days",
+  "Будь ласка, введіть ім'я": "Please enter name",
+  "Введіть назву замовлення та суму": "Enter order title and amount",
+  "Будь ласка, введіть назву замовлення та суму": "Please enter order title and amount",
+  "Введіть опис витрати та суму": "Enter expense description and amount",
+  "(оберіть кінцеву дату)": "(select end date)",
+  "Всі категорії": "All categories",
+  "Будь ласка, оберіть файл зображення (JPG, PNG)": "Please select an image file (JPG, PNG)",
+  "Профіль успішно оновлено та синхронізовано!": "Profile updated and synchronized successfully!",
+  "Введіть коректний username": "Enter a valid username",
+  "Акаунт": "Account",
+  "ВІДПРАВКА В ХМАРУ...": "SENDING TO CLOUD...",
+  "ВІДПРАВЛЕНО В ХМАРУ ": "SENT TO CLOUD ",
+  "Всі дані з цього пристрою вивантажено в хмару (@absolutikdenchik)!": "All data from this device uploaded to cloud (@absolutikdenchik)!",
+  "ЗАВАНТАЖЕННЯ З ХМАРИ...": "DOWNLOADING FROM CLOUD...",
+  "ДАНІ ЗАВАНТАЖЕНО ": "DATA DOWNLOADED ",
+  "Всі дані акаунту @absolutikdenchik перенесено на цей пристрій!": "All data for account @absolutikdenchik transferred to this device!",
+  "ОНОВЛЕНО ": "UPDATED ",
+  "ФАЙЛ ЗАВАНТАЖЕНО ": "FILE LOADED ",
+  "Дані акаунту @absolutikdenchik успішно оновлено з хмари!": "Account data @absolutikdenchik successfully updated from cloud!",
+  "Файл бекапу застосовано та синхронізовано з хмарою!": "Backup file applied and synced with cloud!",
+  "Помилка читання файлу. Переконайтеся, що ви обрали файл бекапу у форматі .json.": "File read error. Make sure you selected a backup file in .json format.",
+  "Дані застосовано та синхронізовано!": "Data applied and synchronized!",
+  "Помилка обробки тексту. Перевірте правильність введених даних.": "Text processing error. Check the validity of the entered data.",
+  "Підключити API": "Connect API",
+  "Відкрити картку закладу в Google Maps": "Open venue card in Google Maps",
+  "Додати заклад у CRM": "Add venue to CRM",
+  "Вкажіть нішу бізнесу": "Specify business niche",
+  "ЗАПУСКАЮ…": "STARTING…",
+  "Файл": "File",
+  "Помилка вивантаження файлу": "File download error",
+  "Всі дані скопійовано в буфер обміну": "All data copied to clipboard",
+  "Надсилаю…": "Sending…",
+  "Будь ласка, вставте токен Apify (починається на apify_api_...)": "Please paste Apify token (starts with apify_api_...)",
+  "ЗБЕРІГАЮ…": "SAVING…",
+  "Apify API токен успішно підключено! Тепер Google Maps та Instagram скрапери працюють наживо.": "Apify API token successfully connected! Google Maps and Instagram scrapers now work live.",
+  "Шаблон скопійовано. Відкриваємо Viber": "Template copied. Opening Viber",
+  "Офер скопійовано. Вставте в Instagram Direct": "Offer copied. Paste into Instagram Direct",
+  "Офер скопійовано. Відкриваємо Viber": "Offer copied. Opening Viber",
+  "Офер для керівника скопійовано. Відкриваємо оголошення": "Manager offer copied. Opening vacancy post",
+  "Офер скопійовано. Оберіть спосіб зв'язку": "Offer copied. Choose contact method",
+  "Готовий офер для": "Ready offer for",
+  "Офер:": "Offer:",
+  "Текст оферу скопійовано!": "Offer text copied!",
+  "Текст скопійовано! Відкриваю Instagram...": "Text copied! Opening Instagram...",
+  "Текст оферу скопійовано. Відкриваю Viber": "Offer text copied. Opening Viber",
+  "Видалити цей пошук": "Delete this search",
+  "Відкрити точку в Google Maps": "Open point in Google Maps",
+  "Скопіювати шаблон і відкрити Instagram Direct": "Copy template and open Instagram Direct",
+  "Додати в CRM": "Add to CRM",
+  "Відкрити точку закладу в Google Maps": "Open venue location in Google Maps",
+  "Прокласти маршрут пішки до закладу": "Get walking route to venue",
+  "Нових закладів за цим запитом не знайдено. Спробуйте іншу нішу або місто.": "No new venues found for this query. Try another niche or city.",
+  "Вкажіть категорію або тип команд": "Specify category or team type",
+  "Вкажіть місто для пошуку": "Specify city to search",
+  "СКАНУЮ ЛОКАЦІЮ…": "SCANNING LOCATION…",
+  "Немає закладів для вивантаження": "No venues to export",
+  "Немає закладів для відправки": "No venues to send",
+  "Надіслано в Telegram": "Sent to Telegram",
+  "Звіт скопійовано для Telegram": "Report copied for Telegram",
+  "Пошук видалено": "Search deleted",
+  "КП скопійовано в буфер обміну!": "Commercial proposal copied to clipboard!",
+  "Геолокація недоступна": "Geolocation unavailable",
+  "Вашу позицію знайдено!": "Your location found!",
+  "Не вдалося визначити координати": "Failed to determine coordinates",
+  "Офер скопійовано! Відкриваємо Viber": "Offer copied! Opening Viber",
+  "IBAN рахунок скопійовано!": "IBAN account copied!",
+  "Реквізити скопійовано в буфер!": "Requisites copied to clipboard!",
+  "Реквізити успішно збережено!": "Requisites saved successfully!",
+  "Спочатку виділіть хоча б одну вакансію синьою обводкою": "Select at least one vacancy with blue outline first",
+  "Перевірте увімкнені акаунти або ліміти у вкладці Черга та Акаунти": "Check enabled accounts or limits in Queue & Accounts tab",
+  "Немає вибраних вакансій у черзі": "No selected vacancies in queue",
+  "Перейдіть у «Список вакансій», виділіть картки синьою обводкою та натисніть «Сформувати чергу»": "Go to Vacancies List, select cards with blue outline and click 'Generate Queue'",
+  "Виконано": "Completed",
+  "Усі контакти автоматично збережені у вашу CRM зі статусом «В процесі»": "All contacts automatically saved to your CRM with status 'In Progress'",
+  "Синій вибір скинуто": "Selection cleared",
+  "Акаунти та налаштування розсилки збережено": "Accounts and outreach settings saved",
+  "Спочатку оберіть вакансії у списку": "Select vacancies in the list first",
+  "Авто-розсилку поставлено на паузу": "Auto-outreach paused",
+  "У черзі немає активних вакансій": "No active vacancies in queue",
+  "Вакансію пропущено": "Vacancy skipped",
+  "Чергу очищено": "Queue cleared",
+  "лідів": "leads",
+  "ліди": "leads",
+  "лід": "lead",
+  "вакансій": "vacancies",
+  "вакансії": "vacancies",
+  "вакансія": "vacancy",
+  "замовлення": "order",
+  "витрати": "expenses",
+  "заклади": "venues",
+  "заклад": "venue",
+  "бізнеси": "businesses",
+  "бізнес": "business",
+  "пошуків": "searches",
+  "пошуки": "searches",
+  "пошук": "search",
+  "клієнтів": "clients",
+  "клієнти": "clients",
+  "клієнт": "client",
+  "чатів": "chats",
+  "чати": "chats",
+  "чат": "chat",
+  "каналів": "channels",
+  "канали": "channels",
+  "канал": "channel",
+  "джерел": "sources",
+  "джерела": "sources",
+  "джерело": "source",
+  "годин": "hours",
+  "хвилин": "minutes",
+  "хв": "min",
+  "хв.": "min",
+  "сек": "sec",
+  "сек.": "sec",
+  "днів": "days",
+  "день": "day",
+  "місяць": "month",
+  "місяців": "months",
+  "років": "years",
+  "рік": "year",
+  "відгуків": "reviews",
+  "відгуки": "reviews",
+  "відгук": "review",
+  "відг": "rev",
+  "відг.": "rev",
+  "грн": "UAH",
+  "грн.": "UAH",
+  "тис.": "k",
+  "шт": "pcs",
+  "шт.": "pcs",
+  "ДЗ": "DZ",
+  "Українська": "Ukrainian",
+  "Ім'я клієнта": "Client name",
+  "Кав'ярня, нерухомість, одяг, салон...": "Coffee shop, real estate, clothing, salon...",
+  "Кав'ярня, нерухомість...": "Coffee shop, real estate...",
+  "Редагувати ім'я та юзернейм": "Edit name and username",
+  "Редагування профілю": "Edit Profile",
+  "Введіть ім'я клієнта": "Enter client name",
+  "Ви впевнені, що хочете видалити цей лід?": "Are you sure you want to delete this lead?",
+  "Ви впевнені, що хочете видалити це замовлення?": "Are you sure you want to delete this order?",
+  "Ви впевнені, що хочете видалити цю витрату?": "Are you sure you want to delete this expense?",
+  "Помилка мережі": "Network error",
+  "Завантаження даних...": "Loading data...",
+  "Підключення...": "Connecting...",
+  "Немає даних": "No data",
 };
+
+const DWS_SORTED_I18N_ENTRIES = Object.entries(DWS_I18N_DICTIONARY).sort((a, b) => b[0].length - a[0].length);
+
+
+function translateText(text) {
+  if (!text || typeof text !== 'string' || !/[а-яіїєґА-ЯІЇЄҐ]/.test(text)) return text;
+  const trimmed = text.trim();
+  if (DWS_I18N_DICTIONARY[trimmed]) {
+    return text.replace(trimmed, DWS_I18N_DICTIONARY[trimmed]);
+  }
+  let res = text;
+  for (const [ua, en] of DWS_SORTED_I18N_ENTRIES) {
+    if (res.includes(ua)) {
+      res = res.split(ua).join(en);
+      if (!/[а-яіїєґА-ЯІЇЄҐ]/.test(res)) break;
+    }
+  }
+  return res;
+}
+
+function translateDomNode(node, lang) {
+  if (!node) return;
+  
+  if (node.nodeType === 3) { // TEXT_NODE
+    if (node.__origUaText === undefined) {
+      node.__origUaText = node.nodeValue;
+    }
+    if (lang === 'en') {
+      node.nodeValue = translateText(node.__origUaText);
+    } else {
+      if (node.__origUaText !== undefined) {
+        node.nodeValue = node.__origUaText;
+      }
+    }
+    return;
+  }
+  
+  if (node.nodeType === 1) { // ELEMENT_NODE
+    const tag = (node.tagName || '').toLowerCase();
+    if (tag === 'script' || tag === 'style' || tag === 'svg') return;
+    if (node.classList && node.classList.contains('lang-choice-pill')) return;
+    
+    const attrs = ['placeholder', 'title', 'aria-label'];
+    for (const attr of attrs) {
+      if (node.hasAttribute && node.hasAttribute(attr)) {
+        const prop = '__origUa_' + attr;
+        if (node[prop] === undefined) {
+          node[prop] = node.getAttribute(attr);
+        }
+        if (lang === 'en') {
+          node.setAttribute(attr, translateText(node[prop]));
+        } else {
+          node.setAttribute(attr, node[prop]);
+        }
+      }
+    }
+    
+    for (let child = node.firstChild; child; child = child.nextSibling) {
+      translateDomNode(child, lang);
+    }
+  }
+}
+
+function translateDomTree(root, lang) {
+  const target = root || document.body;
+  if (!target) return;
+  translateDomNode(target, lang);
+}
+
+let i18nMutationObserver = null;
+function setupI18nObserver() {
+  if (i18nMutationObserver || typeof MutationObserver === 'undefined') return;
+  i18nMutationObserver = new MutationObserver((mutations) => {
+    if (state.lang !== 'en') return;
+    for (const m of mutations) {
+      if (m.type === 'childList') {
+        m.addedNodes.forEach(node => {
+          if (node.nodeType === 1 || node.nodeType === 3) {
+            translateDomNode(node, 'en');
+          }
+        });
+      }
+    }
+  });
+  if (document.body) {
+    i18nMutationObserver.observe(document.body, { childList: true, subtree: true });
+  }
+}
 
 function t(key, fallback = '') {
   const currentLang = state.lang || 'ua';
-  const dict = I18N_TRANSLATIONS[currentLang] || I18N_TRANSLATIONS.ua;
-  return dict[key] ?? fallback ?? key;
+  if (currentLang === 'ua') {
+    return fallback || key;
+  }
+  return translateText(key) || fallback || key;
 }
 
 function applyLanguage(lang, triggerToast = false) {
@@ -4455,23 +5179,9 @@ function applyLanguage(lang, triggerToast = false) {
     btn.classList.toggle('active', btn.dataset.lang === normalizedLang);
   });
 
-  // Translate all [data-i18n] text elements
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    const val = t(key);
-    if (val) {
-      el.textContent = val;
-    }
-  });
-
-  // Translate all [data-i18n-ph] input placeholders
-  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-    const key = el.getAttribute('data-i18n-ph');
-    const val = t(key);
-    if (val) {
-      el.setAttribute('placeholder', val);
-    }
-  });
+  // Reversible deep DOM tree translation
+  translateDomTree(document.body, normalizedLang);
+  setupI18nObserver();
 
   // Re-render current tab if initialized
   if (typeof renderCurrentTab === 'function') {
@@ -4479,6 +5189,11 @@ function applyLanguage(lang, triggerToast = false) {
       renderCurrentTab();
     } catch (e) {}
   }
+
+  // If any modal is currently open, translate it as well
+  document.querySelectorAll('.modal.open').forEach(modal => {
+    translateDomTree(modal, normalizedLang);
+  });
 
   // Sync to backend profile
   fetch('/api/profile', {
@@ -4489,7 +5204,8 @@ function applyLanguage(lang, triggerToast = false) {
 
   if (triggerToast) {
     haptic('medium');
-    showToast(t('toast.langChanged'));
+    const msg = (normalizedLang === 'en') ? 'Language switched to English' : 'Мову змінено на Українську';
+    showToast(msg);
     if (typeof syncAccountToServer === 'function') syncAccountToServer();
   }
 }
@@ -9245,6 +9961,11 @@ function renderCurrentTab() {
   else if (state.currentTab === 'tab-scrape' && typeof renderScrapes === 'function') renderScrapes();
   else if (state.currentTab === 'tab-nfc-radar' && typeof renderNfcRadar === 'function') renderNfcRadar();
   else if (state.currentTab === 'tab-requisites') renderRequisitesTab();
+
+  if (typeof translateDomTree === 'function' && state?.lang === 'en') {
+    const tabEl = document.getElementById(state.currentTab) || document.body;
+    translateDomTree(tabEl, 'en');
+  }
 }
 
 async function pullLatestDataFromServer(force = false, forceApply = false) {
@@ -9317,7 +10038,12 @@ function setupModals() {
 function openModal(modalId) {
   haptic('light');
   const modal = document.getElementById(modalId);
-  if (modal) modal.classList.add('open');
+  if (modal) {
+    modal.classList.add('open');
+    if (typeof translateDomTree === 'function' && state?.lang === 'en') {
+      translateDomTree(modal, 'en');
+    }
+  }
 }
 
 function closeModal(modalId) {
