@@ -132,17 +132,13 @@
 
         <!-- Auto-Outreach & Blue-Border Selection Bar -->
         <div id="outreachSelectionBar" class="outreach-bar-wrap">
-          <div class="outreach-bar-left">
-            <div class="outreach-bar-title">
-              <span>Авто-розсилка</span>
-              <span id="outreachSelectedCountBadge" style="background:#0066FF; color:#ffffff; font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:999px;">Обрано: 0</span>
-            </div>
-            <div class="outreach-bar-sub" id="outreachBarSubText">Натисніть на вакансію в списку для виділення синьою обводкою</div>
+          <div class="outreach-bar-title-row">
+            <h2 class="outreach-bar-title-large">Авто розсилка</h2>
+            <span id="outreachSelectedCountBadge" class="outreach-bar-count-badge">Обрано: 0</span>
           </div>
-          <div class="outreach-bar-actions">
-            <button type="button" id="outreachQuickSelect15Btn" class="btn btn--out btn--xs" style="padding:7px 10px; font-weight:700;">Топ-15</button>
-            <button type="button" id="outreachQuickClearBtn" class="btn btn--out btn--xs" style="padding:7px 10px; font-weight:700; display:none;">Скинути</button>
-            <button type="button" id="openAutoOutreachBtn" class="btn btn--fill btn--sm" style="padding:8px 13px; font-weight:800;">ВІДКРИТИ</button>
+          <div class="outreach-bar-buttons-row">
+            <button type="button" id="openAutoOutreachBtn" class="btn btn--fill outreach-bar-half-btn">ВІДКРИТИ</button>
+            <button type="button" id="outreachQuickClearBtn" class="btn btn--out outreach-bar-half-btn">СКИНУТИ</button>
           </div>
         </div>
 
@@ -734,30 +730,25 @@
           </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="nfcNicheGroup">
           <label class="form-label" id="nfcNicheLabel">КАТЕГОРІЯ / НІША: <span style="color:var(--accent);">*</span></label>
-          <input type="text" id="nfcNicheInput" class="form-input" placeholder="Введіть нішу (наприклад: Кафе, Стоматологія, Салон...)" value="Кафе, бари, ресторани" required>
-          <div class="d2d-preset-chips" id="d2dCategoryPresets" style="display: none;">
-            <button type="button" class="d2d-preset-chip active" data-d2d-cat="D2D офіси (ходоки), прямі продажі, промоутери та польові торгові">Всі D2D-офіси (ходоки)</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-cat="Офіси прямих продажів D2D (щоденна оплата, кур'єри-консультанти)">Прямі продажі (щоденна оплата)</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-cat="Промоутери, BTL-команди та бренд-консультанти в полях">Промоутери та BTL у полях</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-cat="Польові торгові представники та супервайзери обходу точок">Польові торгові представники</button>
+          <div class="d2d-dropdown-wrap" id="d2dCategoryDropdownWrap">
+            <div class="d2d-select-input-box" id="d2dCategorySelectTrigger">
+              <input type="text" id="nfcNicheInput" class="form-input" placeholder="Введіть нішу (наприклад: Кафе, Стоматологія, Салон...)" value="Кафе, бари, ресторани" required>
+              <svg class="d2d-chevron" id="d2dCategoryChevron" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" style="display: none;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+            <div class="d2d-dropdown-menu" id="d2dCategoryDropdownMenu" style="display: none;">
+              <div class="d2d-dropdown-item active" data-d2d-val="D2D офіси (ходоки), прямі продажі, промоутери та польові торгові">Всі D2D-офіси (ходоки)</div>
+              <div class="d2d-dropdown-item" data-d2d-val="Офіси прямих продажів D2D (щоденна оплата, кур'єри-консультанти)">Прямі продажі (щоденна оплата)</div>
+              <div class="d2d-dropdown-item" data-d2d-val="Промоутери, BTL-команди та бренд-консультанти в полях">Промоутери та BTL у полях</div>
+              <div class="d2d-dropdown-item" data-d2d-val="Польові торгові представники та супервайзери обходу точок">Польові торгові представники</div>
+            </div>
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">МІСТО / РЕГІОН: <span style="color:var(--accent);">*</span></label>
-          <input type="text" id="nfcCityInput" class="form-input" placeholder="Введіть будь-яке місто чи населений пункт..." value="Київ" required>
-          <div class="d2d-preset-chips" id="d2dCityPresets">
-            <button type="button" class="d2d-preset-chip" data-d2d-city="Вінниця">Вінниця</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-city="Київ">Київ</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-city="Львів">Львів</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-city="Одеса">Одеса</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-city="Дніпро">Дніпро</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-city="Хмельницький">Хмельницький</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-city="Тернопіль">Тернопіль</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-city="Івано-Франківськ">Івано-Франківськ</button>
-          </div>
+          <input type="text" id="nfcCityInput" class="form-input" placeholder="Введіть місто (наприклад: Вінниця, Київ, Одеса...)" value="" required>
         </div>
 
         <div class="form-group" id="nfcClusterGroup">

@@ -4841,12 +4841,10 @@ function renderLeads() {
         <!-- Vacancy text with preserved paragraphs and whitespace -->
         <div class="lead-text">${escapeHtml(displayText)}</div>
 
-        <!-- Badges: Budget, Country/Market, Platform Contact & Selection status -->
+        <!-- Badges: Budget and Country/Market -->
         <div class="lead-tags-row">
           <span class="lead-tag budget">Бюджет: ${budgetTxt}</span>
           <span class="lead-tag country">${escapeHtml(getExactCountry(lead))}</span>
-          ${platInfo ? `<span class="lead-tag" style="color:#0066FF; border-color:rgba(0,102,255,0.28); background:rgba(0,102,255,0.06); font-weight:700;">${escapeHtml(platInfo.shortBadge)}</span>` : ''}
-          <span class="lead-selected-badge">ОБРАНО</span>
         </div>
 
         <!-- Action button -->
@@ -13369,7 +13367,8 @@ function configureNfcModalForCurrentMode() {
   const nicheLabel = document.getElementById('nfcNicheLabel');
   const nicheInput = document.getElementById('nfcNicheInput');
   const cityInput = document.getElementById('nfcCityInput');
-  const d2dCatPresets = document.getElementById('d2dCategoryPresets');
+  const chevron = document.getElementById('d2dCategoryChevron');
+  const dropMenu = document.getElementById('d2dCategoryDropdownMenu');
   const limitLabel = document.getElementById('nfcLimitLabel');
   const submitBtn = document.getElementById('submitNfcSearchBtn');
 
@@ -13378,23 +13377,39 @@ function configureNfcModalForCurrentMode() {
   }
   if (srcGroup) srcGroup.style.display = isD2d ? 'none' : 'block';
   if (revGroup) revGroup.style.display = isD2d ? 'none' : 'block';
-  if (d2dCatPresets) d2dCatPresets.style.display = isD2d ? 'flex' : 'none';
 
   if (nicheLabel) {
     nicheLabel.innerHTML = isD2d
       ? 'ТИП D2D-ОФІСІВ / ПОЛЬОВИХ КОМАНД: <span style="color:var(--accent);">*</span>'
       : 'КАТЕГОРІЯ / НІША: <span style="color:var(--accent);">*</span>';
   }
+
   if (nicheInput) {
-    if (isD2d && (nicheInput.value === 'Кафе, бари, ресторани' || nicheInput.value === 'Всі D2D, Промо та Торгові команди' || !nicheInput.value)) {
-      nicheInput.value = 'D2D офіси («ходоки»), прямі продажі, промоутери та польові торгові';
-    } else if (!isD2d && nicheInput.value.includes('D2D')) {
-      nicheInput.value = 'Кафе, бари, ресторани';
+    if (isD2d) {
+      nicheInput.readOnly = true;
+      nicheInput.style.cursor = 'pointer';
+      if (!nicheInput.value || nicheInput.value === 'Кафе, бари, ресторани') {
+        nicheInput.value = 'Всі D2D-офіси (ходоки)';
+        nicheInput.dataset.fullNiche = 'D2D офіси (ходоки), прямі продажі, промоутери та польові торгові';
+      }
+      if (chevron) chevron.style.display = 'block';
+    } else {
+      nicheInput.readOnly = false;
+      nicheInput.style.cursor = 'text';
+      if (!nicheInput.value || nicheInput.value.includes('D2D')) {
+        nicheInput.value = 'Кафе, бари, ресторани';
+        delete nicheInput.dataset.fullNiche;
+      }
+      if (chevron) chevron.style.display = 'none';
     }
   }
-  if (cityInput && isD2d && cityInput.value === 'Київ') {
-    cityInput.value = 'Вінниця';
+  if (dropMenu) dropMenu.style.display = 'none';
+
+  if (cityInput) {
+    cityInput.value = '';
+    cityInput.placeholder = 'Введіть місто (наприклад: Вінниця, Київ, Одеса...)';
   }
+
   if (limitLabel) {
     limitLabel.textContent = isD2d ? 'КІЛЬКІСТЬ D2D-КОМАНД:' : 'КІЛЬКІСТЬ ЗАКЛАДІВ:';
   }
@@ -13408,8 +13423,11 @@ async function submitNfcSearch() {
   const nicheInput = document.getElementById('nfcNicheInput');
   const cityInput = document.getElementById('nfcCityInput');
   const clusterInput = document.getElementById('nfcClusterInput');
-  const niche = (nicheInput?.value || '').trim();
-  const city = (cityInput?.value || '').trim();
+  let niche = (nicheInput?.dataset.fullNiche || nicheInput?.value || '').trim();
+  if (isD2d && (!niche || niche === 'Всі D2D-офіси (ходоки)')) {
+    niche = 'D2D офіси (ходоки), прямі продажі, промоутери та польові торгові';
+  }
+  const city = (cityInput?.value || '').trim() || (isD2d ? 'Вінниця' : 'Київ');
   const cluster = (clusterInput?.value || '').trim();
 
   if (!niche) {
@@ -13993,24 +14011,46 @@ function setupNfcRadarTab() {
     haptic('light');
   });
 
-  document.querySelectorAll('#d2dCategoryPresets .d2d-preset-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('#d2dCategoryPresets .d2d-preset-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      const inp = document.getElementById('nfcNicheInput');
-      if (inp) inp.value = chip.dataset.d2dCat || '';
+  // D2D Category Dropdown Selector (Tap input to reveal 4 categories)
+  const d2dTrigger = document.getElementById('d2dCategorySelectTrigger');
+  const d2dDropMenu = document.getElementById('d2dCategoryDropdownMenu');
+  const d2dNicheInput = document.getElementById('nfcNicheInput');
+
+  if (d2dTrigger) {
+    d2dTrigger.addEventListener('click', () => {
+      const isD2d = nfcRadarState.radarMode === 'd2d';
+      if (!isD2d) return;
+      if (d2dDropMenu) {
+        const isClosed = d2dDropMenu.style.display === 'none' || !d2dDropMenu.style.display;
+        d2dDropMenu.style.display = isClosed ? 'flex' : 'none';
+        d2dTrigger.classList.toggle('open', isClosed);
+        haptic('light');
+      }
+    });
+  }
+
+  document.querySelectorAll('#d2dCategoryDropdownMenu .d2d-dropdown-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('#d2dCategoryDropdownMenu .d2d-dropdown-item').forEach(it => it.classList.remove('active'));
+      item.classList.add('active');
+      if (d2dNicheInput) {
+        d2dNicheInput.value = item.textContent.trim();
+        d2dNicheInput.dataset.fullNiche = item.dataset.d2dVal || item.textContent.trim();
+      }
+      if (d2dDropMenu) {
+        d2dDropMenu.style.display = 'none';
+        d2dTrigger?.classList.remove('open');
+      }
       haptic('light');
     });
   });
 
-  document.querySelectorAll('#d2dCityPresets .d2d-preset-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('#d2dCityPresets .d2d-preset-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      const inp = document.getElementById('nfcCityInput');
-      if (inp) inp.value = chip.dataset.d2dCity || '';
-      haptic('light');
-    });
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('#d2dCategoryDropdownWrap') && d2dDropMenu) {
+      d2dDropMenu.style.display = 'none';
+      d2dTrigger?.classList.remove('open');
+    }
   });
 
   document.getElementById('openNewNfcSearchBtn')?.addEventListener('click', () => {
@@ -14700,22 +14740,9 @@ function updateOutreachSelectionUI() {
   const count = outreachSelectedSet.size;
   const bar = document.getElementById('outreachSelectionBar');
   const badge = document.getElementById('outreachSelectedCountBadge');
-  const subText = document.getElementById('outreachBarSubText');
-  const clearBtn = document.getElementById('outreachQuickClearBtn');
 
   if (bar) bar.classList.toggle('has-selection', count > 0);
   if (badge) badge.textContent = `Обрано: ${count}`;
-  if (subText) {
-    if (outreachState.isRunning) {
-      const sentCnt = outreachState.queue.filter(q => q.status === 'sent').length;
-      subText.textContent = `Авто-розсилка активна: відправлено ${sentCnt} з ${outreachState.queue.length}`;
-    } else if (count > 0) {
-      subText.textContent = `Виділено ${count} вакансій синьою обводкою. Натисніть ВІДКРИТИ для запуску`;
-    } else {
-      subText.textContent = 'Натисніть на вакансію в списку для виділення синьою обводкою';
-    }
-  }
-  if (clearBtn) clearBtn.style.display = count > 0 ? 'inline-flex' : 'none';
 
   const tabSelCnt = document.getElementById('outreachTabSelectCount');
   const tabQueueCnt = document.getElementById('outreachTabQueueCount');
