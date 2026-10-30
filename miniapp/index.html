@@ -19,7 +19,7 @@
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.7.3">
+  <link rel="stylesheet" href="css/app.css?v=4.7.4">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -314,7 +314,7 @@
               <label class="form-label" for="profileD2dTemplate">ШАБЛОН ПРОПОЗИЦІЇ (D2D ОФІСИ / ОПТ):</label>
               <span class="char-counter" id="d2dTemplateCounter">0/2000</span>
             </div>
-            <p class="form-hint">Шаблон «Троянський кінь» для обходу HR та виходу напряму на керівника D2D-офісу (опт 300 ₴ ➔ роздріб 600 ₴ = +300 ₴ чистої маржі з точки, 20 карток у кишеню куртки = +6 000 ₴/день).</p>
+            <p class="form-hint">Шаблон для обходу HR та виходу напряму на керівника D2D-офісу (опт 300 грн, роздріб 600 грн = +300 грн чистої маржі з точки, 20 карток у кишеню куртки = +6 000 грн/день).</p>
             <textarea id="profileD2dTemplate" class="form-textarea" rows="6" maxlength="2000" placeholder="Доброго дня! Пишу НЕ щодо вакансії — передайте, будь ласка, це повідомлення особисто керівнику офісу / директору філії у м. {CITY} (питання постачання високомаржинального товару для вашої команди з маржею 100%+)..."></textarea>
           </div>
 
@@ -722,10 +722,10 @@
           <label class="form-label" id="nfcNicheLabel">КАТЕГОРІЯ / НІША: <span style="color:var(--accent);">*</span></label>
           <input type="text" id="nfcNicheInput" class="form-input" placeholder="Введіть нішу (наприклад: Кафе, Стоматологія, Салон...)" value="Кафе, бари, ресторани" required>
           <div class="d2d-preset-chips" id="d2dCategoryPresets" style="display: none;">
-            <button type="button" class="d2d-preset-chip active" data-d2d-cat="D2D офіси («ходоки»), прямі продажі, промоутери та польові торгові">🔥 Всі D2D-офіси («ходоки»)</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-cat="Офіси прямих продажів D2D (щоденна оплата, кур'єри-консультанти)">🚶‍♂️ Прямі продажі (щоденна оплата)</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-cat="Промоутери, BTL-команди та бренд-консультанти в полях">📢 Промоутери & BTL у полях</button>
-            <button type="button" class="d2d-preset-chip" data-d2d-cat="Польові торгові представники та супервайзери обходу точок">💼 Польові торгові представники</button>
+            <button type="button" class="d2d-preset-chip active" data-d2d-cat="D2D офіси (ходоки), прямі продажі, промоутери та польові торгові">Всі D2D-офіси (ходоки)</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-cat="Офіси прямих продажів D2D (щоденна оплата, кур'єри-консультанти)">Прямі продажі (щоденна оплата)</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-cat="Промоутери, BTL-команди та бренд-консультанти в полях">Промоутери та BTL у полях</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-cat="Польові торгові представники та супервайзери обходу точок">Польові торгові представники</button>
           </div>
         </div>
 
@@ -2069,6 +2069,6 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.7.3"></script>
+  <script src="js/app.js?v=4.7.4"></script>
 </body>
 </html>
