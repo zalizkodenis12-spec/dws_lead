@@ -3715,7 +3715,7 @@ const DEFAULT_DATA = {
     about: "DenisWeb Studio — діджитал-агентство сучасної веброзробки та результативного маркетингу. Створюємо висококонверсійні лендінги, інтернет-магазини, 3D-сайти, каталоги та Telegram-боти. Наші стандарти: чистий код, PageSpeed 90+, адаптив під усі гаджети, інтеграція ШІ у процеси та безкоштовне інтерактивне демо до внесення авансу. Оплата 40% аванс / 60% після запуску.",
     responseTemplate: "Вітаю, {NAME}! Побачив ваше замовлення щодо {TASK}. У DenisWeb Studio ми реалізуємо подібні проєкти під ключ за 2-4 дні з гарантією швидкості та чистого коду.\n\nГотові безкоштовно розробити концепт та інтерактивне демо головного блоку ще до початку оплати, щоб ви наочно побачили результат.\n\nНаш сайт та кейси: https://denis-webstudio.site\nКоли вам зручно коротко обговорити деталі?",
     nfcTemplate: "Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?",
-    d2dTemplate: "Доброго дня! Пишу щодо співпраці з вашою командою у м. {CITY}. Ми виробники преміальних акрилових NFC-карток для збору відгуків у Google Maps для закладів (презентація займає 5 секунд дотиком телефону). Пропонуємо оптові партії під викуп або реалізацію вашими представниками з чистою маржею 200–300 грн на кожній картці. Підкажіть, з ким можна коротко обговорити умови?"
+    d2dTemplate: "Доброго дня! Пишу НЕ щодо вакансії — передайте, будь ласка, це повідомлення особисто керівнику офісу / директору філії у м. {CITY} (питання постачання високомаржинального товару для вашої команди з маржею 100%+).\n\nМи виробники преміальних акрилових NFC-карток для збору відгуків у Google Maps для бізнесу (кав'ярні, салони краси, СТО, магазини). Ваші хлопці все одно щодня заходять у кожен заклад міста.\n\nСуха математика для вашого офісу:\n• Ваш опт: 300 грн/шт ➔ роздріб для закладів: 600+ грн/шт (100% маржі = +300 грн чистого кешу з кожної точки).\n• 20 карток легко вміщаються у внутрішню кишеню куртки (не б'ється, не псується, нуль важких сумок = до +6 000 грн/день прибутку з одного агента).\n• Продається за 15 секунд: приклав телефон до картки на столі власника — відкрились Google-відгуки — забрав готівку на місці.\n\nГотовий сьогодні під'їхати до вас в офіс на 5 хвилин, показати живі зразки керівнику. Куди та о котрій зручно підійти?"
   }
 };
 
@@ -6025,6 +6025,7 @@ async function fetchProfile() {
   }
   const d2dTmplEl = document.getElementById('profileD2dTemplate');
   if (d2dTmplEl) {
+    if (!state.profile.d2dTemplate || state.profile.d2dTemplate.startsWith('Доброго дня! Пишу щодо співпраці з вашою командою')) state.profile.d2dTemplate = DEFAULT_DATA.profile.d2dTemplate;
     d2dTmplEl.value = state.profile.d2dTemplate || DEFAULT_DATA.profile.d2dTemplate;
     updateCharCount(d2dTmplEl, 'd2dTemplateCounter');
   }
@@ -11216,6 +11217,150 @@ const DEFAULT_D2D_RADAR_JOBS = [
         painLevel: 'urgent',
         painChipLabel: '🚶‍♂️ Рекрутинг польових продажників (95% Match)',
         painText: 'Формують команди активних продажів у Вінниці — напиши їм пропозицію оптового постачання NFC-карток у партнерські офіси прямих продажів!'
+      },
+      {
+        id: 'd2d-vn-undercover-13',
+        isD2d: true,
+        d2dType: 'd2d_direct',
+        d2dMatchScore: 99,
+        name: '🕵️ Зашифрований D2D-офіс: «Менеджер з продажу 1300 грн щодня (Вінниця)»',
+        address: 'Вінниця (Офіс прямих продажів на OLX — щоденні виплати 1300 грн/день)',
+        city: 'Вінниця',
+        phone: '',
+        isMobile: false,
+        viberUrl: '',
+        instagram: '',
+        telegram: '',
+        telegramPhone: '',
+        website: 'https://www.olx.ua/uk/obyavlenie/rabota/zaproshumo-menedzhera-z-prodazhu-1300scho-dnya-m-vnnitsya-ID10UABH.html',
+        rating: 5.0,
+        reviews: 22,
+        mapsUrl: 'https://www.olx.ua/uk/obyavlenie/rabota/zaproshumo-menedzhera-z-prodazhu-1300scho-dnya-m-vnnitsya-ID10UABH.html',
+        lat: 49.2338,
+        lng: 28.4695,
+        painLevel: 'urgent',
+        painChipLabel: '🕵️ Зашифрований D2D-офіс • 1300 ₴/день (99% Match)',
+        painText: 'Класичний закритий D2D-офіс («ходоки» з щоденною виплатою 1300 грн/день) — натисни «Опт Офер», скопіюється «Троянський кінь» для директора і відкриється чат OLX!'
+      },
+      {
+        id: 'd2d-vn-undercover-14',
+        isD2d: true,
+        d2dType: 'd2d_promo',
+        d2dMatchScore: 99,
+        name: '🕵️ Зашифрований D2D-офіс: «Промоутер — представник компанії (25 000 – 40 000 грн)»',
+        address: 'Вінниця (Офіс прямих польових презентацій на OLX, без досвіду, студенти)',
+        city: 'Вінниця',
+        phone: '',
+        isMobile: false,
+        viberUrl: '',
+        instagram: '',
+        telegram: '',
+        telegramPhone: '',
+        website: 'https://www.olx.ua/uk/obyavlenie/rabota/promouter-predstavnik-kompan-ID11nS20.html',
+        rating: 5.0,
+        reviews: 19,
+        mapsUrl: 'https://www.olx.ua/uk/obyavlenie/rabota/promouter-predstavnik-kompan-ID11nS20.html',
+        lat: 49.2312,
+        lng: 28.4741,
+        painLevel: 'urgent',
+        painChipLabel: '🕵️ Зашифрований D2D-офіс • Представники (99% Match)',
+        painText: 'Під вивіскою «Промоутер — представник компанії (до 40 000 грн без досвіду)» працює команда живих «ходоків» — закинь офер для керівника офісу прямо в чат OLX!'
+      },
+      {
+        id: 'd2d-vn-undercover-15',
+        isD2d: true,
+        d2dType: 'd2d_promo',
+        d2dMatchScore: 99,
+        name: '🕵️ Польова промо-команда ФОП Ваніловський: «Промоутери на вулиці, виплати щодня»',
+        address: 'Вінниця (Вуличні презентації товарів, щоденні виплати від 500 грн/вихід)',
+        city: 'Вінниця',
+        phone: '',
+        isMobile: false,
+        viberUrl: '',
+        instagram: '',
+        telegram: '',
+        telegramPhone: '',
+        website: 'https://www.olx.ua/uk/obyavlenie/rabota/promouter-robota-dlya-studentv-ID11yQ7L.html',
+        rating: 4.9,
+        reviews: 17,
+        mapsUrl: 'https://www.olx.ua/uk/obyavlenie/rabota/promouter-robota-dlya-studentv-ID11yQ7L.html',
+        lat: 49.2289,
+        lng: 28.4480,
+        painLevel: 'urgent',
+        painChipLabel: '🚶‍♂️ Вуличні презентації • Щоденна оплата (99% Match)',
+        painText: 'Польова команда студентів-промоутерів із щоденними виплатами за презентацію товарів на вулицях Вінниці — ідеальні «ходоки» під кишеньковий опт NFC-карток!'
+      },
+      {
+        id: 'd2d-vn-undercover-16',
+        isD2d: true,
+        d2dType: 'd2d_direct',
+        d2dMatchScore: 98,
+        name: '🕵️ Business Tuning Center (Вінниця): «Бренд-консультант / Промоутер (27 200 – 45 000 грн)»',
+        address: 'Вінниця (Активний набір бренд-консультантів та промоутерів на Work.ua)',
+        city: 'Вінниця',
+        phone: '',
+        isMobile: false,
+        viberUrl: '',
+        instagram: '',
+        telegram: '',
+        telegramPhone: '',
+        website: 'https://www.work.ua/jobs/8575297/',
+        rating: 4.9,
+        reviews: 21,
+        mapsUrl: 'https://www.work.ua/jobs/8575297/',
+        lat: 49.2361,
+        lng: 28.4615,
+        painLevel: 'urgent',
+        painChipLabel: '🕵️ Бренд-консультанти / D2D • до 45 000 ₴ (98% Match)',
+        painText: 'Набирають «бренд-консультантів / промоутерів» без досвіду на ставку + % до 45 000 грн — типовий D2D-офіс, який миттєво зацікавиться маржею 300 ₴ ➔ 600 ₴!'
+      },
+      {
+        id: 'd2d-vn-undercover-17',
+        isD2d: true,
+        d2dType: 'd2d_direct',
+        d2dMatchScore: 98,
+        name: '🕵️ Зашифрований D2D-офіс: «Робота у Вінниці! Від 1000 грн/день щодня! Без досвіду!»',
+        address: 'Вінниця (Офіс активних продажів із навчанням на OLX, виплати щодня)',
+        city: 'Вінниця',
+        phone: '',
+        isMobile: false,
+        viberUrl: '',
+        instagram: '',
+        telegram: '',
+        telegramPhone: '',
+        website: 'https://www.olx.ua/uk/obyavlenie/rabota/robota-u-vnnits-stablniy-dohd-vd-1000-grn-den-bez-dosvdu-IDXG0YC.html',
+        rating: 4.9,
+        reviews: 15,
+        mapsUrl: 'https://www.olx.ua/uk/obyavlenie/rabota/robota-u-vnnits-stablniy-dohd-vd-1000-grn-den-bez-dosvdu-IDXG0YC.html',
+        lat: 49.2344,
+        lng: 28.4582,
+        painLevel: 'urgent',
+        painChipLabel: '🕵️ Зашифрований D2D-офіс • від 1000 ₴/день (98% Match)',
+        painText: 'Оголошення без назви товару з «оплатою від 1000 грн/день щодня без досвіду» — 100% маркер закритого D2D-офісу у Вінниці. Натисни «Опт Офер» та пиши для директора!'
+      },
+      {
+        id: 'd2d-vn-undercover-18',
+        isD2d: true,
+        d2dType: 'field_reps',
+        d2dMatchScore: 98,
+        name: '🕵️ АТЛАНТ24 (Вінниця): «Менеджер з розвитку B2B-партнерств (виїзд по точках)»',
+        address: 'Вінниця (Польовий обхід СТО, автомийок та сервісів по місту, OLX)',
+        city: 'Вінниця',
+        phone: '',
+        isMobile: false,
+        viberUrl: '',
+        instagram: '',
+        telegram: '',
+        telegramPhone: '',
+        website: 'https://www.olx.ua/uk/obyavlenie/rabota/menedzher-z-rozvitku-b2b-partnerstv-ID11nQbY.html',
+        rating: 4.9,
+        reviews: 16,
+        mapsUrl: 'https://www.olx.ua/uk/obyavlenie/rabota/menedzher-z-rozvitku-b2b-partnerstv-ID11nQbY.html',
+        lat: 49.2385,
+        lng: 28.4512,
+        painLevel: 'urgent',
+        painChipLabel: '💼 Польовий B2B-обхід по точках (98% Match)',
+        painText: 'Їхні менеджери щодня живими ногами обходять СТО, автомийки та бізнеси Вінниці — дай їм NFC-картки як додатковий товар з маржею +300 грн з точки!'
       }
     ]
   }
@@ -11252,7 +11397,9 @@ function loadLocalD2dJobs() {
       return JSON.parse(JSON.stringify(DEFAULT_D2D_RADAR_JOBS));
     }
     // Auto-migrate away from old starter job that had HoReCa / printing shops
-    const hasOldStarter = parsed.some(j => j.id === 'd2d-job-vinnytsia-starter' || (Array.isArray(j.items) && j.items.some(it => it.d2dType === 'horeca_rep' || it.d2dType === 'b2b_pos' || it.d2dType === 'beauty_auto_rep')));
+    const hasOldStarter = parsed.some(j => j.id === 'd2d-job-vinnytsia-starter' || (j.id === 'd2d-job-vinnytsia-strict-d2d' && (!j.items || j.items.length < 18)) || (Array.isArray(j.items) && j.items.some(it => it.d2dType === 'horeca_rep' || it.d2dType === 'b2b_pos' || it.d2dType === 'beauty_auto_rep')));
+    if (hasOldStarter) {
+      parsed = parsed.filter(j => j.id !== 'd2d-job-vinnytsia-starter' && j.id !== 'd2d-job-vinnytsia-strict-d2d'); }
     if (hasOldStarter) {
       parsed = parsed.filter(j => j.id !== 'd2d-job-vinnytsia-starter').map(j => ({
         ...j,
@@ -11376,7 +11523,7 @@ function getVenueNavigationUrl(venue, job) {
 
 function getVenueMapsUrl(venue, job) {
   // Direct Google Maps or Telegram vacancy link
-  if (venue.mapsUrl && (venue.mapsUrl.includes('google.com/maps') || venue.mapsUrl.includes('maps.google.com') || venue.mapsUrl.includes('t.me/'))) {
+  if (venue.mapsUrl && (venue.mapsUrl.includes('google.com/maps') || venue.mapsUrl.includes('maps.google.com') || venue.mapsUrl.includes('t.me/') || venue.mapsUrl.includes('olx.ua') || venue.mapsUrl.includes('work.ua'))) {
     return venue.mapsUrl;
   }
   if (venue.url && (venue.url.includes('google.com/maps') || venue.url.includes('maps.google.com'))) {
@@ -11414,7 +11561,7 @@ function generateNfcPitch(venue, job) {
   const name = venue?.name || (isD2d ? 'Команда' : 'Заклад');
   const city = venue?.city || job?.city || 'Вінниця';
   if (isD2d) {
-    const rawD2d = (state.profile?.d2dTemplate || DEFAULT_DATA.profile.d2dTemplate || '').trim();
+    const rawD2d = (state.profile?.d2dTemplate && !state.profile.d2dTemplate.startsWith('Доброго дня! Пишу щодо співпраці з вашою командою') ? state.profile.d2dTemplate : DEFAULT_DATA.profile.d2dTemplate || '').trim();
     const baseD2d = rawD2d || "Доброго дня! Пишу щодо співпраці з вашою командою у м. {CITY}. Ми виробники преміальних акрилових NFC-карток для збору відгуків у Google Maps для закладів (презентація займає 5 секунд дотиком телефону). Пропонуємо оптові партії під викуп або реалізацію вашими представниками з чистою маржею 200–300 грн на кожній картці. Підкажіть, з ким можна коротко обговорити умови?";
     return baseD2d
       .replace(/\{NAME\}/gi, name)
@@ -11566,6 +11713,13 @@ function sendInstantVenueNfcPitch(venue, job, btnEl) {
       window.location.href = viberUrl;
     }
   } else {
+    if (!venue.phone && (venue.website || venue.mapsUrl)) {
+      const targetUrl = venue.website || venue.mapsUrl;
+      showToast(`📋 Офер для керівника скопійовано! Відкриваємо оголошення — вставте в чат роботодавця`);
+      if (window.Telegram?.WebApp?.openLink) window.Telegram.WebApp.openLink(targetUrl);
+      else window.open(targetUrl, '_blank');
+      return;
+    }
     showToast(`📋 Оффер скопійовано! Оберіть спосіб зв'язку`);
     openContactActionModal(venue, job);
   }
@@ -12016,6 +12170,12 @@ function renderNfcVenuesList(job, items) {
                   </button>
                 </div>
               ` : ''}
+              ${(!v.phone && v.website && /^https?:\/\//i.test(v.website)) ? `
+                <div class="nfc-meta-item">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#0066FF" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  <a href="${escapeHtml(v.website)}" target="_blank" rel="noopener" class="nfc-insta-link" style="color:#0066FF; font-weight:800; text-decoration:underline;">💬 Чат з офісом в оголошенні (${v.website.includes('olx.ua') ? 'OLX.ua' : (v.website.includes('work.ua') ? 'Work.ua' : 'Перейти')} ➔)</a>
+                </div>
+              ` : ''}
               ${(v.telegram && v.telegram.replace(/^@+/, '').trim()) ? `
                 <div class="nfc-meta-item">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#0066FF" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
@@ -12030,7 +12190,7 @@ function renderNfcVenuesList(job, items) {
 
             <div class="nfc-venue-actions-row">
               <button type="button" class="btn btn--fill btn--sm nfc-pitch-btn" data-nfc-act="pitch" data-job="${job.id}" data-venue="${v.id}">
-                <span>AI-Відгук</span>
+                <span>${(v.isD2d || job?.isD2d) ? 'Опт Офер' : 'AI-Відгук'}</span>
               </button>
               <a href="${navUrl}" target="_blank" rel="noopener" class="btn btn--out btn--sm nfc-route-btn" title="Прокласти маршрут пішки до закладу">
                 <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>
@@ -12848,7 +13008,113 @@ async function scanWorkUaFieldTeamsClient(city, key) {
     } catch (_) {}
   }));
 
+  // Also include undercover Work.ua D2D / Promo / Brand-Consultant offices that hide public phone numbers
+  discoveredCompanies.slice(0, 8).forEach((co, idx) => {
+    if (!verifiedFromWork.some(v => v.website === co.jobUrl) && /промоутер|бренд-консультант|торговий представник|супервайзер/i.test(co.jobTitle)) {
+      verifiedFromWork.push({
+        id: 'v-d2d-workua-uc-' + Date.now() + '-' + idx,
+        isD2d: true,
+        d2dType: 'd2d_direct',
+        d2dMatchScore: 98,
+        name: `🕵️ ${co.companyName}: «${co.jobTitle}»`,
+        address: `${city} (Активний набір у D2D / польову команду на Work.ua)`,
+        city,
+        phone: '',
+        isMobile: false,
+        viberUrl: '',
+        website: co.jobUrl,
+        instagram: '',
+        telegram: '',
+        telegramPhone: '',
+        rating: 4.9,
+        reviews: 16,
+        mapsUrl: co.jobUrl,
+        lat: null,
+        lng: null,
+        painLevel: 'urgent',
+        painChipLabel: `🕵️ Набір «ходоків» / промо на Work.ua (98% Match)`,
+        painText: `Прямо зараз шукають «${co.jobTitle}» у м. ${city} — натисни «Опт Офер», скопіюється повідомлення для керівника офісу і відкриється вакансія!`
+      });
+    }
+  });
   return verifiedFromWork;
+}
+
+// Live OLX.ua Undercover D2D Office Scanner via r.jina.ai (catches "1000-1300 грн/день щодня", "Промоутер представник компанії", "Без досвіду")
+async function scanOlxUndercoverD2dClient(city) {
+  const cLower = String(city || 'Вінниця').toLowerCase();
+  let citySlug = 'vinnitsa';
+  if (cLower.includes('київ')) citySlug = 'kiev';
+  else if (cLower.includes('львів')) citySlug = 'lvov';
+  else if (cLower.includes('одес')) citySlug = 'odessa';
+  else if (cLower.includes('дніпр')) citySlug = 'dnepr';
+  else if (cLower.includes('харків')) citySlug = 'kharkov';
+  else if (cLower.includes('хмельниц')) citySlug = 'khmelnitskiy';
+  else if (cLower.includes('терноп')) citySlug = 'ternopol';
+  else if (cLower.includes('франківськ')) citySlug = 'ivano-frankovsk';
+  else if (cLower.includes('чернівц')) citySlug = 'chernovtsy';
+  else if (cLower.includes('рівн')) citySlug = 'rovno';
+  else if (cLower.includes('луцьк')) citySlug = 'lutsk';
+  else if (cLower.includes('житомир')) citySlug = 'zhitomir';
+  else if (cLower.includes('полтав')) citySlug = 'poltava';
+  else if (cLower.includes('черкас')) citySlug = 'cherkassy';
+
+  const olxQueries = [
+    '%D0%BF%D1%80%D0%BE%D0%BC%D0%BE%D1%83%D1%82%D0%B5%D1%80',
+    '%D1%89%D0%BE%D0%B4%D0%B5%D0%BD%D0%BD%D0%B0-%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D0%B0',
+    '%D1%82%D0%BE%D1%80%D0%B3%D0%BE%D0%B2%D0%B8%D0%B9-%D0%BF%D1%80%D0%B5%D0%B4%D1%81%D1%82%D0%B0%D0%B2%D0%BD%D0%B8%D0%BA'
+  ];
+
+  const foundOlx = [];
+  const seenUrls = new Set();
+  const hardNoise = /(будівництв|стройк|підсобник|разнорабоч|різноробоч|заклад харчування|кухар|повар|шаурм|пекар|тістоміс|вантажник|грузчик|склад|комплектувальн|пакувальн|армосітк|автосервіс|автомийк|шиномонтаж|швачк|прибиральн|няня|доглядальн|охоронець|водій|таксі|продавець на 2 дні|копірайтер)/i;
+
+  await Promise.allSettled(olxQueries.map(async (qSlug, qIdx) => {
+    try {
+      const url = `https://r.jina.ai/https://www.olx.ua/uk/rabota/${citySlug}/q-${qSlug}/`;
+      const ctrl = new AbortController();
+      const tid = setTimeout(() => ctrl.abort(), 4800);
+      const res = await fetch(url, { signal: ctrl.signal });
+      clearTimeout(tid);
+      if (!res.ok) return;
+      const txt = await res.text();
+      const matches = [...txt.matchAll(/\[([^\]]{8,110})\]\((https:\/\/www\.olx\.ua\/uk\/obyavlenie\/rabota\/[^\)]+)\)/g)];
+      matches.forEach((m, idx) => {
+        const rawTitle = m[1].replace(/\s+/g, ' ').trim();
+        const adUrl = m[2].trim();
+        if (seenUrls.has(adUrl)) return;
+        if (hardNoise.test(rawTitle)) return;
+        seenUrls.add(adUrl);
+
+        foundOlx.push({
+          id: 'v-d2d-olx-' + Date.now() + '-' + qIdx + '-' + idx,
+          isD2d: true,
+          d2dType: /торгов|b2b/i.test(rawTitle) ? 'field_reps' : (/промоутер/i.test(rawTitle) ? 'd2d_promo' : 'd2d_direct'),
+          d2dMatchScore: 99,
+          name: `🕵️ Зашифрований D2D-офіс (OLX): «${rawTitle}»`,
+          address: `${city} (Жива вакансія D2D / щоденна оплата на OLX.ua)`,
+          city,
+          phone: '',
+          isMobile: false,
+          viberUrl: '',
+          website: adUrl,
+          instagram: '',
+          telegram: '',
+          telegramPhone: '',
+          rating: 5.0,
+          reviews: 19,
+          mapsUrl: adUrl,
+          lat: null,
+          lng: null,
+          painLevel: 'urgent',
+          painChipLabel: '🕵️ Зашифрований D2D-офіс на OLX (99% Match)',
+          painText: 'Оголошення з маркерами закритого D2D-офісу («ходоки», щоденні виплати, промоутери без досвіду) — натисни «Опт Офер», скопіюється «Троянський кінь» для директора і відкриється OLX!'
+        });
+      });
+    } catch (_) {}
+  }));
+
+  return foundOlx;
 }
 
 async function runLiveD2dRadar(job, limit) {
@@ -12870,15 +13136,16 @@ async function runLiveD2dRadar(job, limit) {
     const seenOverflowPool = [];
 
     // 1. Scan Telegram job channels + Work.ua live field-sales vacancies in parallel
-    job.progressText = `Сканую живі вакансії «ходоків» у Telegram & Work.ua (0/${targetCount})…`;
+    job.progressText = `Сканую зашифровані D2D-офіси на OLX, Work.ua та у Telegram (0/${targetCount})…`;
     renderNfcRadar();
 
-    const [tgItems, workUaItems] = await Promise.all([
+    const [tgItems, workUaItems, olxItems] = await Promise.all([
       scanTelegramD2dVacanciesClient(city),
-      scanWorkUaFieldTeamsClient(city, key)
+      scanWorkUaFieldTeamsClient(city, key),
+      scanOlxUndercoverD2dClient(city)
     ]);
 
-    for (const item of [...tgItems, ...workUaItems]) {
+    for (const item of [...tgItems, ...olxItems, ...workUaItems]) {
       if (!isSeenInThisRun(item)) {
         markSeenInThisRun(item);
         if (reg.isBizSeen(item, city)) {
