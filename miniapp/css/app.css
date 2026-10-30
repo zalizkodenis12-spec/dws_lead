@@ -3116,6 +3116,71 @@ body.dark-theme .order-leaf-badge.expected {
   border: 1px solid rgba(0, 102, 255, 0.25);
 }
 
+/* Full-width Oval Mode Switcher: Заклади | D2D */
+.nfc-mode-oval-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  background: #ffffff;
+  border: 1.5px solid #0066FF;
+  border-radius: 999px;
+  padding: 0;
+  overflow: hidden;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 10px rgba(0, 102, 255, 0.08);
+  box-sizing: border-box;
+}
+
+.nfc-mode-oval-btn {
+  appearance: none;
+  border: none;
+  background: #ffffff;
+  color: #0066FF;
+  font-family: var(--ffh);
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  padding: 12px 16px;
+  border-radius: 0;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.nfc-mode-oval-btn.active {
+  background: #0066FF;
+  color: #ffffff;
+}
+
+.d2d-preset-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.d2d-preset-chip {
+  appearance: none;
+  border: 1px solid rgba(0, 102, 255, 0.28);
+  background: rgba(0, 102, 255, 0.06);
+  color: #0066FF;
+  font-family: var(--ffh);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.d2d-preset-chip.active,
+.d2d-preset-chip:hover {
+  background: #0066FF;
+  color: #ffffff;
+  border-color: #0066FF;
+}
+
 .nfc-tools-row {
   display: flex;
   width: 100%;

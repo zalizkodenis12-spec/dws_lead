@@ -3714,7 +3714,8 @@ const DEFAULT_DATA = {
     theme: "light",
     about: "DenisWeb Studio — діджитал-агентство сучасної веброзробки та результативного маркетингу. Створюємо висококонверсійні лендінги, інтернет-магазини, 3D-сайти, каталоги та Telegram-боти. Наші стандарти: чистий код, PageSpeed 90+, адаптив під усі гаджети, інтеграція ШІ у процеси та безкоштовне інтерактивне демо до внесення авансу. Оплата 40% аванс / 60% після запуску.",
     responseTemplate: "Вітаю, {NAME}! Побачив ваше замовлення щодо {TASK}. У DenisWeb Studio ми реалізуємо подібні проєкти під ключ за 2-4 дні з гарантією швидкості та чистого коду.\n\nГотові безкоштовно розробити концепт та інтерактивне демо головного блоку ще до початку оплати, щоб ви наочно побачили результат.\n\nНаш сайт та кейси: https://denis-webstudio.site\nКоли вам зручно коротко обговорити деталі?",
-    nfcTemplate: "Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?"
+    nfcTemplate: "Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?",
+    d2dTemplate: "Доброго дня! Пишу щодо співпраці з вашою командою у м. {CITY}. Ми виробники преміальних акрилових NFC-карток для збору відгуків у Google Maps для закладів (презентація займає 5 секунд дотиком телефону). Пропонуємо оптові партії під викуп або реалізацію вашими представниками з чистою маржею 200–300 грн на кожній картці. Підкажіть, з ким можна коротко обговорити умови?"
   }
 };
 
@@ -6022,6 +6023,11 @@ async function fetchProfile() {
     nfcTmplEl.value = state.profile.nfcTemplate || DEFAULT_DATA.profile.nfcTemplate;
     updateCharCount(nfcTmplEl, 'nfcTemplateCounter');
   }
+  const d2dTmplEl = document.getElementById('profileD2dTemplate');
+  if (d2dTmplEl) {
+    d2dTmplEl.value = state.profile.d2dTemplate || DEFAULT_DATA.profile.d2dTemplate;
+    updateCharCount(d2dTmplEl, 'd2dTemplateCounter');
+  }
   if (state.profile.theme) {
     applyTheme(state.profile.theme);
   }
@@ -6219,10 +6225,12 @@ function setupEventListeners() {
       const about = document.getElementById('profileAbout')?.value || '';
       const template = document.getElementById('profileTemplate')?.value || '';
       const nfcTemplate = document.getElementById('profileNfcTemplate')?.value || DEFAULT_DATA.profile.nfcTemplate;
+      const d2dTemplate = document.getElementById('profileD2dTemplate')?.value || DEFAULT_DATA.profile.d2dTemplate;
 
       state.profile.about = about;
       state.profile.responseTemplate = template;
       state.profile.nfcTemplate = nfcTemplate;
+      state.profile.d2dTemplate = d2dTemplate;
       state.profile.theme = state.theme;
       state.profile.lang = state.lang;
       localStorage.setItem('dws_profile', JSON.stringify(state.profile));
@@ -6233,7 +6241,7 @@ function setupEventListeners() {
         await fetch('/api/profile', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ about, responseTemplate: template, nfcTemplate, theme: state.theme, lang: state.lang })
+          body: JSON.stringify({ about, responseTemplate: template, nfcTemplate, d2dTemplate, theme: state.theme, lang: state.lang })
         });
       } catch (err) {}
 
@@ -8666,6 +8674,9 @@ function buildAccountSnapshot(nowTs = Date.now()) {
   const localNfc = (typeof nfcRadarState !== 'undefined' && Array.isArray(nfcRadarState.jobs) && nfcRadarState.jobs.length > 0)
     ? nfcRadarState.jobs
     : (typeof loadLocalNfcJobs === 'function' ? loadLocalNfcJobs() : []);
+  const localD2d = (typeof nfcRadarState !== 'undefined' && Array.isArray(nfcRadarState.d2dJobs) && nfcRadarState.d2dJobs.length > 0)
+    ? nfcRadarState.d2dJobs
+    : (typeof loadLocalD2dJobs === 'function' ? loadLocalD2dJobs() : []);
 
   const cleanCrm = stripDemoItemsFromCrm(state.crm);
   const cleanExpenses = stripDemoItemsFromExpenses(state.expenses?.records);
@@ -8702,6 +8713,7 @@ function buildAccountSnapshot(nowTs = Date.now()) {
       ...DEFAULT_DATA.profile,
       ...(state.profile || {}),
       nfcTemplate: state.profile?.nfcTemplate || DEFAULT_DATA.profile.nfcTemplate,
+      d2dTemplate: state.profile?.d2dTemplate || DEFAULT_DATA.profile.d2dTemplate,
       theme: state.theme || 'light',
       lang: state.lang || 'ua',
       requisites: state.requisites || state.profile?.requisites || {}
@@ -8711,6 +8723,7 @@ function buildAccountSnapshot(nowTs = Date.now()) {
     takenLeadIds: [...(state.takenLeadIds || [])],
     scrapes: localScrapes,
     nfcJobs: localNfc,
+    d2dJobs: localD2d,
     seenPlaces: seenPlaces.slice(-15000),
     searchWaveOffsets
   };
@@ -8808,6 +8821,11 @@ function applyAccountSnapshot(d, mergeWithLocal = false, preferLocalOnMerge = fa
         nfcTmplEl.value = state.profile.nfcTemplate;
         updateCharCount(nfcTmplEl, 'nfcTemplateCounter');
       }
+      const d2dTmplEl = document.getElementById('profileD2dTemplate');
+      if (d2dTmplEl && document.activeElement !== d2dTmplEl && state.profile.d2dTemplate) {
+        d2dTmplEl.value = state.profile.d2dTemplate;
+        updateCharCount(d2dTmplEl, 'd2dTemplateCounter');
+      }
       hasChanges = true;
     }
   }
@@ -8868,6 +8886,19 @@ function applyAccountSnapshot(d, mergeWithLocal = false, preferLocalOnMerge = fa
     if (JSON.stringify(nextNfc) !== JSON.stringify(localNfc)) {
       localStorage.setItem('dws_nfc_radars', JSON.stringify(nextNfc));
       nfcRadarState.jobs = nextNfc;
+      hasChanges = true;
+    }
+  }
+
+  // 10a. D2D Radar Jobs
+  if (Array.isArray(d.d2dJobs) && typeof nfcRadarState !== 'undefined') {
+    const localD2d = nfcRadarState.d2dJobs || [];
+    const nextD2d = mergeWithLocal
+      ? (preferLocalOnMerge ? mergeArraysById(localD2d, d.d2dJobs) : mergeArraysById(d.d2dJobs, localD2d))
+      : d.d2dJobs;
+    if (JSON.stringify(nextD2d) !== JSON.stringify(localD2d)) {
+      localStorage.setItem('dws_nfc_d2d_radars', JSON.stringify(nextD2d));
+      nfcRadarState.d2dJobs = nextD2d;
       hasChanges = true;
     }
   }
@@ -9265,6 +9296,10 @@ function setupProfileCounters() {
   }
   if (nfcTmpl) {
     nfcTmpl.addEventListener('input', () => updateCharCount(nfcTmpl, 'nfcTemplateCounter'));
+  }
+  const d2dTmpl = document.getElementById('profileD2dTemplate');
+  if (d2dTmpl) {
+    d2dTmpl.addEventListener('input', () => updateCharCount(d2dTmpl, 'd2dTemplateCounter'));
   }
 }
 
@@ -10882,11 +10917,375 @@ const DEFAULT_NFC_RADAR_JOBS = [
   }
 ];
 
+const DEFAULT_D2D_RADAR_JOBS = [
+  {
+    id: 'd2d-job-vinnytsia-starter',
+    isD2d: true,
+    source: 'gmaps',
+    niche: 'Всі D2D, Промо та Торгові команди',
+    city: 'Вінниця',
+    cluster: 'Вінниця (Промо, D2D & Торгові HoReCa)',
+    status: 'done',
+    createdAt: new Date().toISOString(),
+    total: 15,
+    items: [
+      {
+        id: 'd2d-vn-1',
+        isD2d: true,
+        d2dType: 'd2d_promo',
+        d2dMatchScore: 99,
+        name: 'Промо агентство «PromoVa»',
+        address: 'вулиця Пирогова, 97а, Вінниця',
+        city: 'Вінниця',
+        phone: '+380973402939',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380973402939',
+        instagram: '',
+        telegram: '',
+        website: '',
+        rating: 5.0,
+        reviews: 12,
+        mapsUrl: 'https://maps.google.com/?cid=3565880350625543826',
+        lat: 49.2191,
+        lng: 28.4396,
+        painLevel: 'urgent',
+        painChipLabel: '🚶‍♂️ D2D / Промо-команда (99% Match)',
+        painText: 'Польові промоутери та презентатори по Вінниці — запропонуй опт 50–100 NFC-карт по 300 ₴ під перепродаж у заклади за 500 ₴ (+200 ₴ їхньої маржі з карти)'
+      },
+      {
+        id: 'd2d-vn-2',
+        isD2d: true,
+        d2dType: 'd2d_promo',
+        d2dMatchScore: 98,
+        name: 'TROIAN Advertising & Promo Agency',
+        address: 'Центр, Вінниця',
+        city: 'Вінниця',
+        phone: '+380731399500',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380731399500',
+        instagram: '@troian__advertising_agency',
+        telegram: '',
+        website: 'https://www.instagram.com/troian__advertising_agency',
+        rating: 5.0,
+        reviews: 18,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=TROIAN+Вінниця',
+        lat: 49.2328,
+        lng: 28.4685,
+        painLevel: 'urgent',
+        painChipLabel: '🚶‍♂️ Промо & Рекламна команда (98% Match)',
+        painText: 'Працюють із локальним бізнесом Вінниці напряму — ідеальний партнер для оптового викупу NFC-карток відгуків'
+      },
+      {
+        id: 'd2d-vn-3',
+        isD2d: true,
+        d2dType: 'd2d_promo',
+        d2dMatchScore: 97,
+        name: 'Rabbit Marketing — Маркетингова агенція',
+        address: 'вулиця Академіка Ющенка, 12, Вінниця',
+        city: 'Вінниця',
+        phone: '+380986664658',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380986664658',
+        instagram: '@rabbit_marketing_vn',
+        telegram: '',
+        website: 'https://rabbitmarketing.com.ua/',
+        rating: 5.0,
+        reviews: 14,
+        mapsUrl: 'https://maps.google.com/?cid=13284806605595236208',
+        lat: 49.2196,
+        lng: 28.4431,
+        painLevel: 'urgent',
+        painChipLabel: '🚶‍♂️ B2B Маркетинг & Промо (97% Match)',
+        painText: 'Ведуть десятки кав\'ярень та салонів у Вінниці — запропонуй партнерський опт NFC-карток для їхніх клієнтів'
+      },
+      {
+        id: 'd2d-vn-4',
+        isD2d: true,
+        d2dType: 'horeca_rep',
+        d2dMatchScore: 98,
+        name: 'Zharcoff — Постачальник кави HoReCa',
+        address: 'вулиця Грушевського, 52, Вінниця',
+        city: 'Вінниця',
+        phone: '+380677063359',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380677063359',
+        instagram: '@zharcoff_coffee',
+        telegram: '',
+        website: 'https://instagram.com/zharcoff_coffee',
+        rating: 4.7,
+        reviews: 156,
+        mapsUrl: 'https://maps.google.com/?cid=1702664247906668243',
+        lat: 49.2359,
+        lng: 28.4666,
+        painLevel: 'new',
+        painChipLabel: '☕ Торгові представники HoReCa (98% Match)',
+        painText: 'Їхні торгові представники щодня розвозять каву по кав\'ярнях Вінниці — дай їм партію NFC-карт під +200 ₴ з кожної точки!'
+      },
+      {
+        id: 'd2d-vn-5',
+        isD2d: true,
+        d2dType: 'horeca_rep',
+        d2dMatchScore: 97,
+        name: 'Sir Coffeeman — Дистриб\'ютор кави для кав\'ярень',
+        address: 'вулиця Максима Шимка, 48, Вінниця',
+        city: 'Вінниця',
+        phone: '+380675922046',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380675922046',
+        instagram: '',
+        telegram: '',
+        website: 'https://sircoffeeman.com.ua/',
+        rating: 5.0,
+        reviews: 36,
+        mapsUrl: 'https://maps.google.com/?cid=11852917160884238397',
+        lat: 49.2388,
+        lng: 28.5254,
+        painLevel: 'new',
+        painChipLabel: '☕ Торгові представники HoReCa (97% Match)',
+        painText: 'Власна мережа торгових агентів по кав\'ярнях Вінниці та області — запропонуй опт 30–50 NFC-карток'
+      },
+      {
+        id: 'd2d-vn-6',
+        isD2d: true,
+        d2dType: 'horeca_rep',
+        d2dMatchScore: 96,
+        name: 'HoReCa Вінниця — Комплексне постачання закладів',
+        address: 'Хмельницьке шосе, 82, Вінниця',
+        city: 'Вінниця',
+        phone: '+380975058050',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380975058050',
+        instagram: '',
+        telegram: '',
+        website: '',
+        rating: 4.8,
+        reviews: 15,
+        mapsUrl: 'https://maps.google.com/?cid=6371770043600945941',
+        lat: 49.2347,
+        lng: 28.4293,
+        painLevel: 'new',
+        painChipLabel: '☕ Дистриб\'ютор HoReCa (96% Match)',
+        painText: 'Постачають товари сотням ресторанів і кафе Вінниці — їхні експедитори та торгові можуть продавати до 20 NFC-карт на день'
+      },
+      {
+        id: 'd2d-vn-7',
+        isD2d: true,
+        d2dType: 'horeca_rep',
+        d2dMatchScore: 96,
+        name: 'Кавацентр — Опт кави та оренда кавомашин',
+        address: 'вулиця 600-річчя, 9-В, Вінниця',
+        city: 'Вінниця',
+        phone: '+380977649083',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380977649083',
+        instagram: '',
+        telegram: '',
+        website: 'https://prom.ua/c3732267-kavatsentr.html',
+        rating: 4.5,
+        reviews: 11,
+        mapsUrl: 'https://maps.google.com/?cid=13358502988189563100',
+        lat: 49.2318,
+        lng: 28.4255,
+        painLevel: 'new',
+        painChipLabel: '☕ Торгові представники HoReCa (96% Match)',
+        painText: 'Ставлять кавомашини в нові кав\'ярні та пекарні — кожній новій точці потрібна NFC-картка для старту відгуків у Google!'
+      },
+      {
+        id: 'd2d-vn-8',
+        isD2d: true,
+        d2dType: 'horeca_rep',
+        d2dMatchScore: 95,
+        name: 'АлексПак (Ліга-Пак) — Одноразовий посуд для кав\'ярень',
+        address: 'Вінниця',
+        city: 'Вінниця',
+        phone: '+380962363686',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380962363686',
+        instagram: '',
+        telegram: '',
+        website: 'https://liga-pak.com.ua/ua/',
+        rating: 4.8,
+        reviews: 19,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=АлексПак+Вінниця',
+        lat: 49.2365,
+        lng: 28.4780,
+        painLevel: 'new',
+        painChipLabel: '☕ Постачальник кав\'ярень (95% Match)',
+        painText: 'Кожна кав\'ярня міста купує у них стаканчики й кришки — ідеальний канал для оптового збуту NFC-підставок на барну стійку'
+      },
+      {
+        id: 'd2d-vn-9',
+        isD2d: true,
+        d2dType: 'horeca_rep',
+        d2dMatchScore: 95,
+        name: 'ПосудКо — Оптовий постачальник для кафе та ресторанів',
+        address: 'Вінниця',
+        city: 'Вінниця',
+        phone: '+380675011720',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380675011720',
+        instagram: '@posudko',
+        telegram: '',
+        website: 'https://posudko.com/',
+        rating: 4.7,
+        reviews: 42,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=ПосудКо+Вінниця',
+        lat: 49.2312,
+        lng: 28.4615,
+        painLevel: 'new',
+        painChipLabel: '☕ HoReCa Дистриб\'ютор (95% Match)',
+        painText: 'Комплектують кафе та ресторани посудом — запропонуй викуп партії 50–100 NFC-карт для їхнього шоуруму та торгових агентів'
+      },
+      {
+        id: 'd2d-vn-10',
+        isD2d: true,
+        d2dType: 'horeca_rep',
+        d2dMatchScore: 94,
+        name: 'Будинок Полімерів — Упаковка та посуд для HoReCa',
+        address: 'Вінниця',
+        city: 'Вінниця',
+        phone: '+380632007200',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380632007200',
+        instagram: '@budynok_polimeriv',
+        telegram: '',
+        website: 'https://budpolimer.com/',
+        rating: 4.6,
+        reviews: 28,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Будинок+Полімерів+Вінниця',
+        lat: 49.2405,
+        lng: 28.4910,
+        painLevel: 'new',
+        painChipLabel: '☕ Оптовий дистриб\'ютор (94% Match)',
+        painText: 'Постачають упаковку в сотні закладів і доставок їжі Вінниці — готові брати супутній B2B-товар під високу маржу'
+      },
+      {
+        id: 'd2d-vn-11',
+        isD2d: true,
+        d2dType: 'd2d_promo',
+        d2dMatchScore: 95,
+        name: '5PRODUCTION — Маркетингове та промо агентство',
+        address: 'вулиця 600-річчя, 1, Вінниця',
+        city: 'Вінниця',
+        phone: '+380971504337',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380971504337',
+        instagram: '@5_production_',
+        telegram: '',
+        website: 'https://5production.com.ua/',
+        rating: 5.0,
+        reviews: 10,
+        mapsUrl: 'https://maps.google.com/?cid=4741430342843552678',
+        lat: 49.2339,
+        lng: 28.4252,
+        painLevel: 'urgent',
+        painChipLabel: '🚶‍♂️ Промо & B2B Агенція (95% Match)',
+        painText: 'Просувають локальні заклади у Вінниці — запропонуй оптові партії NFC-карток під їхніх клієнтів'
+      },
+      {
+        id: 'd2d-vn-12',
+        isD2d: true,
+        d2dType: 'd2d_promo',
+        d2dMatchScore: 94,
+        name: 'Banada — Маркетингове & PR агентство',
+        address: 'вулиця Миколи Оводова, 51, Вінниця',
+        city: 'Вінниця',
+        phone: '+380689119933',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380689119933',
+        instagram: '@banada.top',
+        telegram: '',
+        website: 'https://www.banada.top/',
+        rating: 4.8,
+        reviews: 15,
+        mapsUrl: 'https://maps.google.com/?cid=5189882997302082233',
+        lat: 49.2335,
+        lng: 28.4706,
+        painLevel: 'urgent',
+        painChipLabel: '🚶‍♂️ PR & Промо-агенція (94% Match)',
+        painText: 'Працюють із репутацією закладів у центрі Вінниці — NFC-картки відгуків ідеально доповнюють їхні послуги'
+      },
+      {
+        id: 'd2d-vn-13',
+        isD2d: true,
+        d2dType: 'b2b_pos',
+        d2dMatchScore: 93,
+        name: 'Рекламакс — Виробництво реклами та POS-матеріалів',
+        address: 'Вінниця',
+        city: 'Вінниця',
+        phone: '+380971587186',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380971587186',
+        instagram: '@reklamaxua',
+        telegram: '',
+        website: 'http://www.reklamax.ua/',
+        rating: 4.7,
+        reviews: 24,
+        mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Рекламакс+Вінниця',
+        lat: 49.2342,
+        lng: 28.4621,
+        painLevel: 'boost',
+        painChipLabel: '🎯 B2B Комплектація закладів (93% Match)',
+        painText: 'Виготовляють вивіски та тейбл-тенти для нових кафе й салонів Вінниці — запропонуй оптові поставки NFC-карток'
+      },
+      {
+        id: 'd2d-vn-14',
+        isD2d: true,
+        d2dType: 'horeca_rep',
+        d2dMatchScore: 93,
+        name: 'KVITKA opt — Оптова база та дистриб\'юція',
+        address: 'Хмельницьке шосе, 112, Вінниця',
+        city: 'Вінниця',
+        phone: '+380980838129',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380980838129',
+        instagram: '',
+        telegram: '',
+        website: '',
+        rating: 4.5,
+        reviews: 33,
+        mapsUrl: 'https://maps.google.com/?cid=14612935614019990886',
+        lat: 49.2399,
+        lng: 28.4089,
+        painLevel: 'new',
+        painChipLabel: '☕ Оптовий дистриб\'ютор (93% Match)',
+        painText: 'Оптова робота з підприємцями Вінниці — запропонуй партію NFC-карток під реалізацію торговими представниками'
+      },
+      {
+        id: 'd2d-vn-15',
+        isD2d: true,
+        d2dType: 'horeca_rep',
+        d2dMatchScore: 92,
+        name: 'Майстерня кавомашин — Сервіс кав\'ярень Вінниці',
+        address: 'вулиця Академіка Янгеля, 52, Вінниця',
+        city: 'Вінниця',
+        phone: '+380937318502',
+        isMobile: true,
+        viberUrl: 'viber://chat?number=%2B380937318502',
+        instagram: '',
+        telegram: '',
+        website: '',
+        rating: 4.7,
+        reviews: 14,
+        mapsUrl: 'https://maps.google.com/?cid=4045786610438053513',
+        lat: 49.2435,
+        lng: 28.4819,
+        painLevel: 'new',
+        painChipLabel: '☕ Сервіс кав\'ярень (92% Match)',
+        painText: 'Їхні майстри щодня виїжджають у десятки кав\'ярень Вінниці — кожен майстер може продавати по 3–5 NFC-карток на день'
+      }
+    ]
+  }
+];
+
 const nfcRadarState = {
+  radarMode: localStorage.getItem('dws_nfc_radar_mode') || 'venues', // 'venues' | 'd2d'
   jobs: [],
+  d2dJobs: [],
   cityFilter: 'all',
   viewMode: 'cards', // 'cards' | 'table'
   openJobs: new Set(['nfc-job-kyiv-ocean']),
+  openD2dJobs: new Set(['d2d-job-vinnytsia-starter']),
   form: {
     source: 'gmaps',
     niche: 'Кафе, бари, ресторани',
@@ -10896,6 +11295,53 @@ const nfcRadarState = {
     limit: 30
   }
 };
+
+function loadLocalD2dJobs() {
+  try {
+    const raw = localStorage.getItem('dws_nfc_d2d_radars');
+    if (!raw) {
+      localStorage.setItem('dws_nfc_d2d_radars', JSON.stringify(DEFAULT_D2D_RADAR_JOBS));
+      return JSON.parse(JSON.stringify(DEFAULT_D2D_RADAR_JOBS));
+    }
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      localStorage.setItem('dws_nfc_d2d_radars', JSON.stringify(DEFAULT_D2D_RADAR_JOBS));
+      return JSON.parse(JSON.stringify(DEFAULT_D2D_RADAR_JOBS));
+    }
+    parsed.forEach(job => {
+      job.isD2d = true;
+      if (Array.isArray(job.items)) job.total = job.items.length;
+    });
+    return parsed;
+  } catch {
+    return JSON.parse(JSON.stringify(DEFAULT_D2D_RADAR_JOBS));
+  }
+}
+
+function saveLocalD2dJobs(jobs) {
+  localStorage.setItem('dws_nfc_d2d_radars', JSON.stringify(jobs));
+  if (typeof syncAccountToServer === 'function') syncAccountToServer();
+}
+
+function getActiveNfcModeJobs() {
+  return nfcRadarState.radarMode === 'd2d' ? nfcRadarState.d2dJobs : nfcRadarState.jobs;
+}
+
+function getActiveNfcOpenSet() {
+  return nfcRadarState.radarMode === 'd2d' ? nfcRadarState.openD2dJobs : nfcRadarState.openJobs;
+}
+
+function findAnyNfcJob(jobId) {
+  return (nfcRadarState.jobs || []).find(j => j.id === jobId) ||
+         (nfcRadarState.d2dJobs || []).find(j => j.id === jobId);
+}
+
+function pluralD2dTeams(n) {
+  const m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return 'D2D-контакт';
+  if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return 'D2D-контакти';
+  return 'D2D-контактів';
+}
 
 function loadLocalNfcJobs() {
   try {
@@ -10974,8 +11420,8 @@ function getVenueNavigationUrl(venue, job) {
 }
 
 function getVenueMapsUrl(venue, job) {
-  // Direct Google Maps place link
-  if (venue.mapsUrl && (venue.mapsUrl.includes('google.com/maps') || venue.mapsUrl.includes('maps.google.com'))) {
+  // Direct Google Maps or Telegram vacancy link
+  if (venue.mapsUrl && (venue.mapsUrl.includes('google.com/maps') || venue.mapsUrl.includes('maps.google.com') || venue.mapsUrl.includes('t.me/'))) {
     return venue.mapsUrl;
   }
   if (venue.url && (venue.url.includes('google.com/maps') || venue.url.includes('maps.google.com'))) {
@@ -11009,8 +11455,16 @@ function getJobFlatItems(job) {
 }
 
 function generateNfcPitch(venue, job) {
-  const name = venue?.name || 'Заклад';
-  const city = venue?.city || job?.city || '';
+  const isD2d = Boolean(job?.isD2d || venue?.isD2d || nfcRadarState.radarMode === 'd2d');
+  const name = venue?.name || (isD2d ? 'Команда' : 'Заклад');
+  const city = venue?.city || job?.city || 'Вінниця';
+  if (isD2d) {
+    const rawD2d = (state.profile?.d2dTemplate || DEFAULT_DATA.profile.d2dTemplate || '').trim();
+    const baseD2d = rawD2d || "Доброго дня! Пишу щодо співпраці з вашою командою у м. {CITY}. Ми виробники преміальних акрилових NFC-карток для збору відгуків у Google Maps для закладів (презентація займає 5 секунд дотиком телефону). Пропонуємо оптові партії під викуп або реалізацію вашими представниками з чистою маржею 200–300 грн на кожній картці. Підкажіть, з ким можна коротко обговорити умови?";
+    return baseD2d
+      .replace(/\{NAME\}/gi, name)
+      .replace(/\{CITY\}/gi, city);
+  }
   const rawTemplate = (state.profile?.nfcTemplate || DEFAULT_DATA.profile.nfcTemplate || '').trim();
   const baseText = rawTemplate || "Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?";
   return baseText
@@ -11130,6 +11584,8 @@ function sendInstantVenueNfcPitch(venue, job, btnEl) {
   const clean380 = cleanPhone.startsWith('380') ? cleanPhone : (cleanPhone.startsWith('0') ? ('38' + cleanPhone) : cleanPhone);
   const isMobile = venue.isMobile || (cleanPhone && isUkrainianMobilePhone(cleanPhone));
 
+  const cleanTg = (venue.telegram || '').replace(/^https?:\/\/(www\.)?t\.me\//i, '').replace(/^@+/, '').replace(/[\/?#].*$/, '').trim();
+
   if (cleanInsta) {
     showToast(`📋 Оффер скопійовано! Вставте в Instagram Direct (довге натискання -> «Вставити»)`);
     const igDirectUrl = `https://ig.me/m/${cleanInsta}`;
@@ -11137,6 +11593,14 @@ function sendInstantVenueNfcPitch(venue, job, btnEl) {
       window.Telegram.WebApp.openLink(igDirectUrl);
     } else {
       window.open(igDirectUrl, '_blank');
+    }
+  } else if (cleanTg && !cleanTg.startsWith('+')) {
+    showToast(`📋 Оффер скопійовано! Відкриваємо Telegram @${cleanTg}`);
+    const tgUrl = `https://t.me/${cleanTg}`;
+    if (window.Telegram?.WebApp?.openTelegramLink) {
+      window.Telegram.WebApp.openTelegramLink(tgUrl);
+    } else {
+      window.open(tgUrl, '_blank');
     }
   } else if (isMobile) {
     showToast(`📋 Оффер скопійовано! Відкриваємо Viber (довге натискання -> «Вставити»)`);
@@ -11287,34 +11751,42 @@ function fallbackCopy(text, name) {
 
 function addBizToCrm(biz, clusterName) {
   if (!Array.isArray(state.crm)) state.crm = [];
+  const isD2d = Boolean(biz.isD2d || nfcRadarState.radarMode === 'd2d');
   const existing = state.crm.find(c => c.name === biz.name || (biz.phone && c.phone === biz.phone));
   if (existing) {
-    showToast('Заклад «' + biz.name + '» вже є у вашій CRM');
+    showToast((isD2d ? 'D2D-партнер «' : 'Заклад «') + biz.name + '» вже є у вашій CRM');
     haptic('warning');
     return;
   }
 
-  const cleanInsta = biz.instagram ? biz.instagram.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/$/, '') : '';
+  const cleanInsta = biz.instagram ? biz.instagram.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/^@+/, '').replace(/\/$/, '') : '';
+  const cleanTg = biz.telegram ? biz.telegram.replace(/^https?:\/\/(www\.)?t\.me\//i, '').replace(/^@+/, '').replace(/\/$/, '') : '';
+  const defaultBudget = isD2d ? 15000 : 1500;
+  const orderTitle = isD2d ? 'Оптова партія NFC-карток (50 шт × 300 ₴)' : 'NFC стійки на столики (партія)';
+  const notesText = isD2d
+    ? `D2D Опт Радар: ${biz.name} (${biz.painChipLabel || 'D2D Команда'}). Адреса: ${biz.address || '—'}. Телефон: ${biz.phone || '—'}. ${biz.painText || 'Оптовий викуп / реалізація NFC-карток.'}`
+    : `NFC Радар: ${biz.name} (${biz.rating ? biz.rating + '★' : ''}, ${biz.reviews || 0} відгуків). Адреса: ${biz.address || '—'}. Телефон: ${biz.phone || '—'}. Запропоновано партію брендованих NFC-стійок для Google Maps відгуків.`;
+
   const newClient = {
     id: 'crm-' + Date.now(),
     name: biz.name,
-    username: cleanInsta ? ('@' + cleanInsta) : (biz.phone || '@client'),
+    username: cleanTg ? ('@' + cleanTg) : (cleanInsta ? ('@' + cleanInsta) : (biz.phone || '@client')),
     avatarLetter: (biz.name || 'N').charAt(0).toUpperCase(),
     service: 'nfc_cards',
-    serviceLabel: 'NFC Картки & Відгуки',
+    serviceLabel: isD2d ? 'NFC Опт / D2D Партнер' : 'NFC Картки & Відгуки',
     status: 'in_progress',
     statusLabel: 'Офер',
-    budget: 1500,
+    budget: defaultBudget,
     phone: biz.phone || '',
     website: biz.website || biz.mapsUrl || '',
     address: biz.address || '',
     rating: biz.rating || 0,
     reviews: biz.reviews || 0,
     cluster: clusterName || '',
-    notes: 'NFC Радар: ' + biz.name + ' (' + (biz.rating ? biz.rating + '★' : '') + ', ' + (biz.reviews || 0) + ' відгуків). Адреса: ' + (biz.address || '—') + '. Телефон: ' + (biz.phone || '—') + '. Запропоновано партію брендованих NFC-стійок для Google Maps відгуків.',
+    notes: notesText,
     createdAt: new Date().toISOString(),
     orders: [
-      { id: 'ord-' + Date.now(), title: 'NFC стійки на столики (партія)', amount: 1500, status: 'in_progress', date: new Date().toISOString() }
+      { id: 'ord-' + Date.now(), title: orderTitle, amount: defaultBudget, status: 'in_progress', date: new Date().toISOString() }
     ]
   };
 
@@ -11322,15 +11794,57 @@ function addBizToCrm(biz, clusterName) {
   localStorage.setItem('dws_crm', JSON.stringify(state.crm));
   syncAccountToServer();
   renderCrm();
-  showToast('Заклад «' + biz.name + '» додано в CRM!');
+  showToast((isD2d ? 'D2D-партнера «' : 'Заклад «') + biz.name + '» додано в CRM!');
   haptic('success');
 }
 
+function syncNfcModeHeaderUi() {
+  const isD2d = nfcRadarState.radarMode === 'd2d';
+  const vBtn = document.getElementById('nfcModeVenuesBtn');
+  const dBtn = document.getElementById('nfcModeD2dBtn');
+  if (vBtn) vBtn.classList.toggle('active', !isD2d);
+  if (dBtn) dBtn.classList.toggle('active', isD2d);
+
+  const launchTitle = document.getElementById('nfcLaunchCardTitle');
+  const launchSub = document.getElementById('nfcLaunchCardSub');
+  const secLabel = document.getElementById('nfcSectionListLabel');
+
+  if (launchTitle) {
+    launchTitle.textContent = isD2d ? 'Радар D2D-офісів та опту' : 'Радар закладів';
+  }
+  if (launchSub) {
+    launchSub.textContent = isD2d
+      ? 'Пошук D2D-команд («ходоків»), промо-агенцій, BTL та торгових представників HoReCa під опт NFC-карт'
+      : 'Пошук закладів з відгуками до 300, скупчення в ТРЦ/районі та готові піші маршрути';
+  }
+  if (secLabel) {
+    secLabel.textContent = isD2d ? 'ЗБОРИ D2D-КОМАНД & ОПТУ' : 'ЗБОРИ ЗАКЛАДІВ & МАРШРУТИ';
+  }
+}
+
+function setNfcRadarMode(mode) {
+  nfcRadarState.radarMode = (mode === 'd2d') ? 'd2d' : 'venues';
+  nfcRadarState.activeJobId = null;
+  localStorage.setItem('dws_nfc_radar_mode', nfcRadarState.radarMode);
+  const mapCard = document.getElementById('nfcMapVenueCard');
+  if (mapCard) mapCard.style.display = 'none';
+  syncNfcModeHeaderUi();
+  if (nfcRadarState.viewMode === 'map') {
+    renderNfcMap();
+  } else {
+    renderNfcRadar();
+  }
+}
+
 function renderNfcRadar() {
+  syncNfcModeHeaderUi();
   const list = document.getElementById('nfcRadarJobsList');
   if (!list) return;
 
-  let jobs = nfcRadarState.jobs;
+  const isD2d = nfcRadarState.radarMode === 'd2d';
+  let jobs = getActiveNfcModeJobs();
+  const openSet = getActiveNfcOpenSet();
+
   if (nfcRadarState.cityFilter && nfcRadarState.cityFilter !== 'all') {
     jobs = jobs.filter(j => j.city && j.city.toLowerCase().includes(nfcRadarState.cityFilter.toLowerCase()));
   }
@@ -11339,17 +11853,19 @@ function renderNfcRadar() {
   const numEl = document.getElementById('nfcRadarTotalNum');
   const lblEl = document.getElementById('nfcRadarTotalLabel');
   if (numEl) numEl.textContent = total;
-  if (lblEl) lblEl.textContent = pluralNfcVenues(total);
+  if (lblEl) lblEl.textContent = isD2d ? pluralD2dTeams(total) : pluralNfcVenues(total);
 
   if (!jobs.length) {
-    list.innerHTML = '<div class="scrape-empty">Натисніть <b>«НОВИЙ ЗБІР»</b> або оберіть інше місто, щоб знайти заклади під NFC-картки.</div>';
+    list.innerHTML = isD2d
+      ? '<div class="scrape-empty">Натисніть <b>«НОВИЙ ЗБІР»</b>, щоб знайти D2D-команди, промо-агенції та торгових представників HoReCa під опт NFC-карток.</div>'
+      : '<div class="scrape-empty">Натисніть <b>«НОВИЙ ЗБІР»</b> або оберіть інше місто, щоб знайти заклади під NFC-картки.</div>';
     return;
   }
 
   list.innerHTML = jobs.map(job => {
-    const isOpen = nfcRadarState.openJobs.has(job.id);
+    const isOpen = openSet.has(job.id);
     const date = new Date(job.createdAt).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
-    let pill = '<span class="scrape-status-pill demo">Локація</span>';
+    let pill = `<span class="scrape-status-pill demo">${job.isD2d ? 'D2D Опт' : 'Локація'}</span>`;
     if (job.status === 'running') pill = `<span class="scrape-status-pill running">${escapeHtml(job.progressText || 'Шукаю…')}</span>`;
 
     const items = getJobFlatItems(job);
@@ -11423,11 +11939,13 @@ function renderNfcRadar() {
 function renderNfcVenuesList(job, items) {
   if (nfcRadarState.viewMode === 'table') {
     const rows = items.map((v, idx) => {
-      const painBadge = v.painLevel === 'urgent'
-        ? '<span class="nfc-pain-chip urgent">Негатив: треба перекривати 5★</span>'
-        : (v.painLevel === 'new'
-          ? '<span class="nfc-pain-chip new">Новий заклад: мало відгуків</span>'
-          : '<span class="nfc-pain-chip boost">Буст до ТОП-1</span>');
+      const painBadge = v.painChipLabel
+        ? `<span class="nfc-pain-chip ${v.painLevel || 'urgent'}">${escapeHtml(v.painChipLabel)}</span>`
+        : (v.painLevel === 'urgent'
+          ? '<span class="nfc-pain-chip urgent">Негатив: треба перекривати 5★</span>'
+          : (v.painLevel === 'new'
+            ? '<span class="nfc-pain-chip new">Новий заклад: мало відгуків</span>'
+            : '<span class="nfc-pain-chip boost">Буст до ТОП-1</span>'));
 
       const mapUrl = getVenueMapsUrl(v, job);
       const cleanPhone = (v.phone || '').replace(/[^\d]/g, '');
@@ -11435,6 +11953,8 @@ function renderNfcVenuesList(job, items) {
       const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
       const cleanInsta = (v.instagram || '').replace(/^@+/, '');
       const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
+      const cleanTg = (v.telegram || '').replace(/^https?:\/\/(www\.)?t\.me\//i, '').replace(/^@+/, '').replace(/[\/?#].*$/, '').trim();
+      const tgHandleUrl = cleanTg ? `https://t.me/${cleanTg}` : '';
 
       return `
         <tr class="nfc-table-row">
@@ -11449,12 +11969,13 @@ function renderNfcVenuesList(job, items) {
             <div class="biz-addr">${escapeHtml(v.address || '—')}</div>
             <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:3px; font-size:0.75rem;">
               <a href="${instaUrl}" target="_blank" rel="noopener" style="color:${cleanInsta ? '#007aff' : 'var(--accent)'}; font-weight:700; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}</a>
+              ${cleanTg ? `<a href="${tgHandleUrl}" target="_blank" rel="noopener" style="color:#0066FF; font-weight:700; text-decoration:none;">✈️ @${escapeHtml(cleanTg)}</a>` : ''}
               ${v.phone ? `<button type="button" class="nfc-contact-btn" data-nfc-contact="${v.id}" data-job="${job.id}" style="background:none; border:none; padding:0; color:var(--accent); font-weight:700; cursor:pointer; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px; font-family:inherit;">📞 ${escapeHtml(v.phone)} ${isMobile ? '<span style="color:#0066FF; background:rgba(0,102,255,0.12); padding:1px 5px; border-radius:4px; font-weight:850;">Viber</span>' : ''}</button>` : ''}
             </div>
           </td>
           <td class="col-rating">
-            <span class="rating-star">★ ${v.rating ? Number(v.rating).toFixed(1) : '—'}</span>
-            <span class="reviews-cnt">(${v.reviews || 0})</span>
+            <span class="rating-star">★ ${v.rating ? Number(v.rating).toFixed(1) : '5.0'}</span>
+            <span class="reviews-cnt">(${v.d2dMatchScore ? v.d2dMatchScore + '% D2D' : (v.reviews || 0)})</span>
           </td>
           <td class="col-pain">${painBadge}</td>
           <td class="col-actions">
@@ -11490,11 +12011,13 @@ function renderNfcVenuesList(job, items) {
   return `
     <div class="nfc-venues-grid">
       ${items.map((v, idx) => {
-        const painBadge = v.painLevel === 'urgent'
-          ? '<span class="nfc-pain-chip urgent">Негатив: перекриття відгуками 5★</span>'
-          : (v.painLevel === 'new'
-            ? '<span class="nfc-pain-chip new">Новий заклад: мало відгуків</span>'
-            : '<span class="nfc-pain-chip boost">ТОП-потенціал: буст рейтингу</span>');
+        const painBadge = v.painChipLabel
+          ? `<span class="nfc-pain-chip ${v.painLevel || 'urgent'}">${escapeHtml(v.painChipLabel)}</span>`
+          : (v.painLevel === 'urgent'
+            ? '<span class="nfc-pain-chip urgent">Негатив: перекриття відгуками 5★</span>'
+            : (v.painLevel === 'new'
+              ? '<span class="nfc-pain-chip new">Новий заклад: мало відгуків</span>'
+              : '<span class="nfc-pain-chip boost">ТОП-потенціал: буст рейтингу</span>'));
 
         const navUrl = getVenueNavigationUrl(v, job);
         const mapUrl = getVenueMapsUrl(v, job);
@@ -11514,8 +12037,8 @@ function renderNfcVenuesList(job, items) {
                   <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="var(--accent)" stroke-width="2.5" style="margin-left:2px; vertical-align:middle;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 </a>
               </div>
-              <div class="nfc-venue-score-badge ${(v.rating && v.rating <= 4.3) ? 'warning' : 'good'}">
-                ★ ${v.rating ? Number(v.rating).toFixed(1) : '—'} <span class="revs">(${v.reviews || 0})</span>
+              <div class="nfc-venue-score-badge ${(v.rating && v.rating <= 4.3 && !v.isD2d) ? 'warning' : 'good'}">
+                ★ ${v.rating ? Number(v.rating).toFixed(1) : '5.0'} <span class="revs">(${v.d2dMatchScore ? v.d2dMatchScore + '% D2D' : (v.reviews || 0)})</span>
               </div>
             </div>
 
@@ -11536,6 +12059,12 @@ function renderNfcVenuesList(job, items) {
                     <span style="color:var(--accent); font-weight:700; text-decoration:underline;">${v.phone}</span>
                     ${isMobile ? `<span class="viber-badge-pill" style="font-size:0.7rem; font-weight:800; color:#0066FF; background:rgba(0,102,255,0.12); padding:2px 7px; border-radius:6px;">Viber</span>` : ''}
                   </button>
+                </div>
+              ` : ''}
+              ${(v.telegram && v.telegram.replace(/^@+/, '').trim()) ? `
+                <div class="nfc-meta-item">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#0066FF" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  <a href="https://t.me/${escapeHtml(v.telegram.replace(/^https?:\/\/(www\.)?t\.me\//i, '').replace(/^@+/, '').trim())}" target="_blank" rel="noopener" class="nfc-insta-link" style="color:#0066FF; font-weight:700; text-decoration:none;">Telegram: @${escapeHtml(v.telegram.replace(/^https?:\/\/(www\.)?t\.me\//i, '').replace(/^@+/, '').trim())}</a>
                 </div>
               ` : ''}
               <div class="nfc-meta-item">
@@ -12007,16 +12536,471 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
   }
 }
 
+// ============================================================
+// D2D & WHOLESALE PARTNER DISCOVERY + VERIFICATION ENGINE
+// ============================================================
+function buildSmartD2dQueriesClient(niche, city, cluster = '') {
+  const c = String(city || 'Вінниця').trim();
+  const cl = String(cluster || '').trim();
+  const loc = cl ? `${cl} ${c}` : c;
+  const nLower = String(niche || '').toLowerCase();
+
+  const promoQueries = [
+    { q: `промо агентство BTL промоутери ${loc}`, type: 'd2d_promo' },
+    { q: `рекламне агентство повного циклу ${loc}`, type: 'd2d_promo' },
+    { q: `маркетингова агенція просування бізнесу ${loc}`, type: 'd2d_promo' },
+    { q: `івент агентство організація промо акцій ${loc}`, type: 'd2d_promo' },
+    { q: `роздача листівок флаєрів промоутери кур'єрська доставка ${loc}`, type: 'd2d_promo' },
+    { q: `аутсорсинг відділу продажів телемаркетинг кол центр ${loc}`, type: 'd2d_promo' },
+    { q: `рекрутингове агентство підбір персоналу ${loc}`, type: 'd2d_promo' },
+    { q: `агентство мерчендайзингу торговий представник дистриб'ютор ${loc}`, type: 'd2d_promo' }
+  ];
+
+  const horecaQueries = [
+    { q: `постачальник кави HoReCa опт ${loc}`, type: 'horeca_rep' },
+    { q: `одноразовий посуд стаканчики упаковка для кав'ярень опт ${loc}`, type: 'horeca_rep' },
+    { q: `дистриб'ютор продуктів HoReCa для ресторанів кафе ${loc}`, type: 'horeca_rep' },
+    { q: `оренда ремонт кавомашин обслуговування кав'ярень ${loc}`, type: 'horeca_rep' },
+    { q: `сиропи топінги чай десерти для кав'ярень опт ${loc}`, type: 'horeca_rep' },
+    { q: `торгова компанія оптова база дистриб'ютор ${loc}`, type: 'horeca_rep' },
+    { q: `автоматизація ресторанів кав'ярень POS обладнання Poster ${loc}`, type: 'horeca_rep' },
+    { q: `постачальник води напоїв пива HoReCa для кафе ресторанів ${loc}`, type: 'horeca_rep' },
+    { q: `торгове обладнання для кафе ресторанів магазинів ${loc}`, type: 'horeca_rep' }
+  ];
+
+  const beautyAutoQueries = [
+    { q: `професійна косметика матеріали для салонів краси опт ${loc}`, type: 'beauty_auto_rep' },
+    { q: `обладнання для перукарень манікюру барбершопів опт ${loc}`, type: 'beauty_auto_rep' },
+    { q: `дезінфекція витратні матеріали для салонів стоматологій опт ${loc}`, type: 'beauty_auto_rep' },
+    { q: `автохімія детейлінг автотовари обладнання для СТО опт ${loc}`, type: 'beauty_auto_rep' }
+  ];
+
+  const b2bPosQueries = [
+    { q: `поліграфія друк меню тейбл тенти для ресторанів ${loc}`, type: 'b2b_pos' },
+    { q: `виготовлення вивісок рекламних конструкцій POS ${loc}`, type: 'b2b_pos' },
+    { q: `лазерна порізка гравіювання акрил сувенірна продукція ${loc}`, type: 'b2b_pos' },
+    { q: `зовнішня реклама брендування закладів ${loc}`, type: 'b2b_pos' }
+  ];
+
+  if (/horeca|кав|стакан|посуд|ресторан/i.test(nLower) && !/всі d2d/i.test(nLower)) {
+    return [...horecaQueries, ...promoQueries, ...b2bPosQueries];
+  }
+  if (/салон|сто|крас|барбер/i.test(nLower) && !/всі d2d/i.test(nLower)) {
+    return [...beautyAutoQueries, ...promoQueries, ...horecaQueries];
+  }
+  if (/меню|вивіск|поліграф|pos/i.test(nLower) && !/всі d2d/i.test(nLower)) {
+    return [...b2bPosQueries, ...promoQueries, ...horecaQueries];
+  }
+  if (/d2d|промо|btl|активн/i.test(nLower) && !/всі d2d/i.test(nLower)) {
+    return [...promoQueries, ...horecaQueries, ...b2bPosQueries];
+  }
+  return [...promoQueries, ...horecaQueries, ...beautyAutoQueries, ...b2bPosQueries];
+}
+
+const D2D_HARD_STOP_REGEX = /(нерухоміст|забудовник|концерн поділля|житловий комплекс|рієлтор|оцінка майна|ocenka|ligapro|армії|військов| територіальний центр|осбб|міська рада|державн|\.gov\.ua|разработка сайтов|створення сайтів|webhit|копірайтинг|seo-просування|нова пошта|укрпошта|meest|розетка|атб-маркет|сільпо|фора|аврора|аптека|приватбанк|ощадбанк|заваркін|нотаріус|адвокат|юридичн|аніматор|аниматор|дитяч)/i;
+
+function classifyAndVerifyD2dCandidate(p, defaultType, city, cluster, qIdx, idx) {
+  if (!p || p.businessStatus === 'CLOSED_TEMPORARILY' || p.businessStatus === 'CLOSED_PERMANENTLY') return null;
+
+  const name = (p.displayName?.text || '').trim();
+  if (!name || name.length < 2) return null;
+
+  const addr = (p.formattedAddress || cluster || city || '').trim();
+  const website = p.websiteUri || '';
+  const combinedText = `${name} ${addr} ${website}`;
+
+  // 1. Hard anti-noise filter & retail end-venue guard
+  if (D2D_HARD_STOP_REGEX.test(combinedText)) return null;
+  if (/^(кав'ярня|кофейня|кафе |ресторан |піцерія|суші-бар|салон краси|перукарня|барбершоп|студія манікюру|автомийка|шиномонтаж)\b/i.test(name) && !/(опт|гурт|постача|дистриб|horeca|хорека|обладнання|матеріали|професійн|b2b|склад|база|сервіс|ремонт|агентств|агенці)/i.test(combinedText)) {
+    return null;
+  }
+
+  // 2. Verify city match so other oblast centers don't leak in
+  const cleanCityRoot = String(city || '').toLowerCase().trim().slice(0, 5);
+  if (cleanCityRoot && addr.length > 8 && !addr.toLowerCase().includes(cleanCityRoot)) {
+    // Allow if address doesn't specify another major city
+    const otherCities = ['київ', 'львів', 'одес', 'дніпр', 'харків', 'рівне', 'полтав', 'черкас', 'житомир', 'луцьк', 'терноп', 'чернівц', 'ужгород', 'хмельницьк', 'вінниц'];
+    const hitsOtherCity = otherCities.some(oc => !oc.startsWith(cleanCityRoot) && addr.toLowerCase().includes(oc));
+    if (hitsOtherCity) return null;
+  }
+
+  // 3. Hard contactability gate: must have Ukrainian mobile phone (Viber/Telegram) or Instagram
+  const rawPhone = p.internationalPhoneNumber || p.nationalPhoneNumber || '';
+  const phone = normalizePhone(rawPhone);
+  const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
+  const isMobile = isUkrainianMobilePhone(cleanPhone);
+  const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
+  const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
+
+  let insta = '';
+  if (website && /instagram\.com/i.test(website)) {
+    insta = cleanInstagramHandle(website);
+  }
+
+  if (!isMobile && !insta) return null;
+
+  // 4. Determine exact D2D category, match confidence score, and wholesale strategy
+  let d2dType = defaultType || 'd2d_promo';
+  const lowerNameWeb = `${name} ${website}`.toLowerCase();
+
+  if (/(horeca|хорека|кава|каво|coffee|посуд|упаков|пакет|полімер|стакан|продукт|опт|дистриб)/i.test(lowerNameWeb)) {
+    d2dType = 'horeca_rep';
+  } else if (/(салон|косметик|перукар|манікюр|beauty|б'юті|автохім|сто )/i.test(lowerNameWeb)) {
+    d2dType = 'beauty_auto_rep';
+  } else if (/(поліграф|друк|print|вивіск|стенд|конструкц|таблич)/i.test(lowerNameWeb)) {
+    d2dType = 'b2b_pos';
+  } else if (/(промо|promo|btl|маркетинг|реклам|івент|event|продаж|рекрут|персонал|кур'єр|доставк)/i.test(lowerNameWeb)) {
+    d2dType = 'd2d_promo';
+  }
+
+  let painLevel = 'urgent';
+  let painChipLabel = '🚶‍♂️ D2D / Промо-команда (98% Match)';
+  let painText = 'Польова команда промоутерів та продажників — запропонуй опт 50–100 NFC-карт по 300 ₴ під перепродаж у заклади за 500 ₴ (+200 ₴ їхньої маржі з карти)';
+  let d2dMatchScore = isMobile && insta ? 99 : 96;
+
+  if (d2dType === 'horeca_rep') {
+    painLevel = 'new';
+    d2dMatchScore = isMobile && insta ? 98 : 95;
+    painChipLabel = `☕ Торгові представники HoReCa (${d2dMatchScore}% Match)`;
+    painText = 'Постачальник у кав\'ярні та ресторани: їхні торгові щодня обходять десятки закладів — запропонуй опт або +200 ₴ комісії з кожної NFC-карти';
+  } else if (d2dType === 'beauty_auto_rep') {
+    painLevel = 'new';
+    d2dMatchScore = isMobile && insta ? 96 : 93;
+    painChipLabel = `💈 Дистриб\'ютор Салонів / СТО (${d2dMatchScore}% Match)`;
+    painText = 'Їхні торгові представники щодня відвідують салони краси, барбершопи та СТО міста — ідеальний канал для оптового збуту NFC-карток';
+  } else if (d2dType === 'b2b_pos') {
+    painLevel = 'boost';
+    d2dMatchScore = isMobile && insta ? 95 : 92;
+    painChipLabel = `🎯 B2B Комплектація закладів (${d2dMatchScore}% Match)`;
+    painText = 'Комплектують нові заклади вивісками, меню та тейбл-тентами — запропонуй оптові поставки NFC-карток під їхніх клієнтів';
+  }
+
+  const mapsUrl = p.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + addr)}`;
+
+  return {
+    id: 'v-d2d-' + Date.now() + '-' + qIdx + '-' + idx,
+    isD2d: true,
+    d2dType,
+    d2dMatchScore,
+    name,
+    placeId: p.id || '',
+    address: addr,
+    city,
+    phone,
+    isMobile,
+    viberUrl,
+    website,
+    instagram: insta,
+    telegram: '',
+    telegramPhone,
+    rating: Number(p.rating || 4.8),
+    reviews: Number(p.userRatingCount || 12),
+    mapsUrl,
+    lat: p.location?.latitude || null,
+    lng: p.location?.longitude || null,
+    painLevel,
+    painChipLabel,
+    painText
+  };
+}
+
+async function enrichWebsiteSocialsBatchClient(items) {
+  const toEnrich = items.filter(it => it.website && !it.instagram && !/instagram\.com|facebook\.com|prom\.ua/i.test(it.website)).slice(0, 20);
+  if (!toEnrich.length) return;
+
+  await Promise.allSettled(toEnrich.map(async (it) => {
+    const proxies = [
+      'https://api.allorigins.win/raw?url=' + encodeURIComponent(it.website),
+      'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(it.website)
+    ];
+    for (const proxyUrl of proxies) {
+      try {
+        const ctrl = new AbortController();
+        const tid = setTimeout(() => ctrl.abort(), 2800);
+        const res = await fetch(proxyUrl, { signal: ctrl.signal });
+        clearTimeout(tid);
+        if (!res.ok) continue;
+        const html = await res.text();
+        const igMatch = html.match(/instagram\.com\/([a-zA-Z0-9._]{3,30})/i);
+        if (igMatch && igMatch[1] && !/^(p|reel|stories|explore|accounts|share)$/i.test(igMatch[1])) {
+          it.instagram = '@' + igMatch[1];
+        }
+        const tgMatch = html.match(/t\.me\/([a-zA-Z0-9_]{4,32})/i);
+        if (tgMatch && tgMatch[1] && !/^(share|joinchat|addstickers|s)$/i.test(tgMatch[1])) {
+          it.telegram = '@' + tgMatch[1];
+        }
+        if (!it.isMobile) {
+          const mobMatch = html.match(/(?:\+?38)?[\s\-()]*0(50|66|95|99|67|68|96|97|98|77|63|73|93)[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2}/);
+          if (mobMatch) {
+            const d = mobMatch[0].replace(/\D/g, '');
+            it.phone = '+380' + d.slice(-9);
+            it.isMobile = true;
+            it.viberUrl = getViberDirectUrl('380' + d.slice(-9));
+            it.telegramPhone = 'https://t.me/+380' + d.slice(-9);
+          }
+        }
+        if (it.instagram || it.telegram) break;
+      } catch (_) {}
+    }
+  }));
+}
+
+async function scanTelegramD2dVacanciesClient(city) {
+  const cLower = String(city || '').toLowerCase();
+  let channels = [];
+  if (cLower.includes('вінниц')) channels = ['vinnitsa_work', 'work_vinnytsia'];
+  else if (cLower.includes('київ')) channels = ['robota_kyiv_ua', 'work_kyiv'];
+  else if (cLower.includes('львів')) channels = ['robota_lviv', 'lviv_robota'];
+  else if (cLower.includes('одес')) channels = ['robota_odesa', 'odesa_work'];
+  else if (cLower.includes('дніпр')) channels = ['robota_dnipro', 'dnipro_work'];
+  else if (cLower.includes('харків')) channels = ['robota_kharkiv', 'kharkiv_work'];
+  else if (cLower.includes('хмельниц')) channels = ['robota_khmelnytskyi', 'work_khm'];
+  else if (cLower.includes('терноп')) channels = ['robota_ternopil', 'ternopil_work'];
+  else if (cLower.includes('франківськ')) channels = ['robota_if', 'if_work'];
+  else if (cLower.includes('чернівц')) channels = ['robota_chernivtsi', 'cv_work'];
+  else if (cLower.includes('рівн')) channels = ['robota_rivne', 'rivne_work'];
+  else if (cLower.includes('луцьк')) channels = ['robota_lutsk', 'lutsk_work'];
+  else if (cLower.includes('житомир')) channels = ['robota_zhytomyr', 'zt_work'];
+  else if (cLower.includes('полтав')) channels = ['robota_poltava', 'poltava_work'];
+  else if (cLower.includes('черкас')) channels = ['robota_cherkasy', 'ck_work'];
+  if (!channels.length) return [];
+
+  const found = [];
+  const d2dMarkers = /(активні продажі|торговий представник|промоутер|щоденна оплата|оплата щодня|виплати щодня|презентатор|робота в полі|мерчендайзер|супервайзер)/i;
+  const badMarkers = /(шлюбн|дейтинг|чатер|онліфанс|трафік|крипт|форекс|глово|glovo|bolt|таксі|вантажник|прибиральн|кухар|офіціант|бариста|касир)/i;
+
+  await Promise.allSettled(channels.map(async (ch) => {
+    try {
+      const url = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(`https://t.me/s/${ch}`);
+      const ctrl = new AbortController();
+      const tid = setTimeout(() => ctrl.abort(), 3500);
+      const res = await fetch(url, { signal: ctrl.signal });
+      clearTimeout(tid);
+      if (!res.ok) return;
+      const html = await res.text();
+      const blocks = html.split('tgme_widget_message_text');
+      for (let i = 1; i < blocks.length; i++) {
+        const rawBlock = blocks[i].slice(0, 1800);
+        const text = rawBlock.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+        if (!d2dMarkers.test(text) || badMarkers.test(text)) continue;
+
+        const phoneMatch = text.match(/(?:\+?38)?[\s\-()]*0(50|66|95|99|67|68|96|97|98|77|63|73|93)[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2}/);
+        const allUsers = [...text.matchAll(/@([a-zA-Z0-9_]{4,32})/g)].map(m => m[1]).filter(u => u.toLowerCase() !== ch.toLowerCase() && !/work|robota|bot$/i.test(u));
+        const userMatch = allUsers.length ? [null, allUsers[0]] : null;
+        if (!phoneMatch && !userMatch) continue;
+
+        const cleanDigits = phoneMatch ? phoneMatch[0].replace(/\D/g, '') : '';
+        const normPhone = cleanDigits ? ('+380' + cleanDigits.slice(-9)) : '';
+        const tgUser = userMatch ? ('@' + userMatch[1]) : '';
+        const titleSnippet = text.slice(0, 62).replace(/^[^а-яА-ЯіїєґІЇЄҐa-zA-Z]+/, '').trim() + '…';
+
+        found.push({
+          id: 'v-d2d-tg-' + Date.now() + '-' + i,
+          isD2d: true,
+          d2dType: 'd2d_promo',
+          d2dMatchScore: 99,
+          name: `Вакансія D2D: ${titleSnippet}`,
+          address: `${city} (Telegram-канал @${ch})`,
+          city,
+          phone: normPhone,
+          isMobile: Boolean(normPhone),
+          viberUrl: normPhone ? getViberDirectUrl(normPhone.replace(/\D/g, '')) : '',
+          website: `https://t.me/s/${ch}`,
+          instagram: '',
+          telegram: tgUser,
+          telegramPhone: normPhone ? `https://t.me/${normPhone}` : '',
+          rating: 5.0,
+          reviews: 1,
+          mapsUrl: `https://t.me/s/${ch}`,
+          lat: null,
+          lng: null,
+          painLevel: 'urgent',
+          painChipLabel: '📢 Активний набір «ходоків» у Telegram (99% Match)',
+          painText: 'Команда прямо зараз набирає польових продавців / промоутерів — напиши їм пропозицію оптового викупу NFC-карток!'
+        });
+      }
+    } catch (_) {}
+  }));
+
+  return found;
+}
+
+async function runLiveD2dRadar(job, limit) {
+  const key = getClientGoogleMapsKey();
+  const targetCount = Math.max(5, Number(limit || job.limit || 15));
+  const city = (job.city || 'Вінниця').trim();
+  const cluster = (job.cluster || '').trim();
+
+  try {
+    const reg = await loadGlobalSeenRegistry();
+    const waveKey = `d2d:${String(job.niche || '').toLowerCase().trim()}:${city.toLowerCase()}:${cluster.toLowerCase()}`;
+    const currentWave = Number(reg.waveOffsets[waveKey] || 0);
+
+    const runSeenKeys = new Set();
+    const isSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).some(k => runSeenKeys.has(k));
+    const markSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).forEach(k => runSeenKeys.add(k));
+
+    const freshCollected = [];
+    const seenOverflowPool = [];
+
+    // 1. Scan Telegram public job channels for live D2D vacancies in parallel
+    job.progressText = `Сканую D2D-канали та бази (0/${targetCount})…`;
+    renderNfcRadar();
+
+    const tgPromise = scanTelegramD2dVacanciesClient(city);
+
+    // 2. Scan Google Places API v1 across 4 D2D & B2B field categories with pagination
+    const queryObjects = buildSmartD2dQueriesClient(job.niche, city, cluster);
+
+    for (let qIdx = 0; qIdx < queryObjects.length; qIdx++) {
+      if (freshCollected.length >= targetCount * 1.35) break;
+
+      const { q, type } = queryObjects[qIdx];
+      job.progressText = `Пошук D2D & Опт (${Math.min(targetCount, freshCollected.length)}/${targetCount})…`;
+      renderNfcRadar();
+
+      let pageToken = '';
+      for (let page = 0; page < 2; page++) {
+        let data = null;
+        try {
+          data = await searchPlacesApiDirect(q, key, pageToken);
+        } catch (err) {
+          console.warn('[D2D Places] Error:', err.message);
+          break;
+        }
+        if (!data || !Array.isArray(data.places) || !data.places.length) break;
+
+        data.places.forEach((p, idx) => {
+          const candidate = classifyAndVerifyD2dCandidate(p, type, city, cluster, qIdx, idx);
+          if (!candidate || isSeenInThisRun(candidate)) return;
+          markSeenInThisRun(candidate);
+
+          if (reg.isBizSeen(candidate, city)) {
+            seenOverflowPool.push(candidate);
+          } else {
+            freshCollected.push(candidate);
+          }
+        });
+
+        if (!data.nextPageToken || freshCollected.length >= targetCount) break;
+        pageToken = data.nextPageToken;
+        await new Promise(r => setTimeout(r, 350));
+      }
+    }
+
+    const tgItems = await tgPromise;
+    for (const tgItem of tgItems) {
+      if (!isSeenInThisRun(tgItem)) {
+        markSeenInThisRun(tgItem);
+        freshCollected.unshift(tgItem);
+      }
+    }
+
+    // Guarantee exact targetCount using seenOverflowPool if needed
+    let combined = [...freshCollected];
+    if (combined.length < targetCount && seenOverflowPool.length > 0) {
+      combined.push(...seenOverflowPool.slice(0, targetCount - combined.length));
+    }
+
+    // Sort by D2D match score before enriching websites
+    combined.sort((a, b) => {
+      const aSocial = (a.instagram || a.telegram) ? 1 : 0;
+      const bSocial = (b.instagram || b.telegram) ? 1 : 0;
+      if (bSocial !== aSocial) return bSocial - aSocial;
+      return (Number(b.d2dMatchScore) || 0) - (Number(a.d2dMatchScore) || 0);
+    });
+
+    const finalItems = combined.slice(0, targetCount);
+
+    // 3. Fast website enrichment to pull @instagram and @telegram handles
+    job.progressText = `Перевірка Instagram & Viber контактів…`;
+    renderNfcRadar();
+    await enrichWebsiteSocialsBatchClient(finalItems);
+
+    // Re-sort so enriched Instagram/Telegram profiles float to the top
+    finalItems.sort((a, b) => {
+      const aSocial = (a.instagram || a.telegram) ? 1 : 0;
+      const bSocial = (b.instagram || b.telegram) ? 1 : 0;
+      if (bSocial !== aSocial) return bSocial - aSocial;
+      return (Number(b.d2dMatchScore) || 0) - (Number(a.d2dMatchScore) || 0);
+    });
+
+    await saveGlobalSeenRegistry(finalItems, waveKey, currentWave + 1, city);
+
+    job.status = 'done';
+    job.progressText = '';
+    job.items = finalItems;
+    job.total = finalItems.length;
+    saveLocalD2dJobs(nfcRadarState.d2dJobs);
+    renderNfcRadar();
+
+    const locLabel = cluster ? `${cluster}, ${city}` : city;
+    showToast(`✅ Знайдено ${finalItems.length} D2D-партнерів та команд (${locLabel})!`);
+    haptic('success');
+  } catch (err) {
+    console.error('[D2D Radar] Error:', err);
+    job.status = 'error';
+    job.progressText = '';
+    job.error = err.message || 'Помилка виконання D2D радару';
+    saveLocalD2dJobs(nfcRadarState.d2dJobs);
+    renderNfcRadar();
+    showToast(`Помилка D2D радару: ${err.message}`);
+  }
+}
+
+function configureNfcModalForCurrentMode() {
+  const isD2d = nfcRadarState.radarMode === 'd2d';
+  const titleEl = document.getElementById('nfcModalTitle');
+  const srcGroup = document.getElementById('nfcSourceGroup');
+  const revGroup = document.getElementById('nfcReviewsFilterGroup');
+  const nicheLabel = document.getElementById('nfcNicheLabel');
+  const nicheInput = document.getElementById('nfcNicheInput');
+  const cityInput = document.getElementById('nfcCityInput');
+  const d2dCatPresets = document.getElementById('d2dCategoryPresets');
+  const limitLabel = document.getElementById('nfcLimitLabel');
+  const submitBtn = document.getElementById('submitNfcSearchBtn');
+
+  if (titleEl) {
+    titleEl.textContent = isD2d ? 'Новий збір D2D-команд та опту' : 'Новий збір закладів (NFC Радар)';
+  }
+  if (srcGroup) srcGroup.style.display = isD2d ? 'none' : 'block';
+  if (revGroup) revGroup.style.display = isD2d ? 'none' : 'block';
+  if (d2dCatPresets) d2dCatPresets.style.display = isD2d ? 'flex' : 'none';
+
+  if (nicheLabel) {
+    nicheLabel.innerHTML = isD2d
+      ? 'ТИП D2D-КОМАНД / ПАРТНЕРІВ: <span style="color:var(--accent);">*</span>'
+      : 'КАТЕГОРІЯ / НІША: <span style="color:var(--accent);">*</span>';
+  }
+  if (nicheInput) {
+    if (isD2d && (nicheInput.value === 'Кафе, бари, ресторани' || !nicheInput.value)) {
+      nicheInput.value = 'Всі D2D, Промо та Торгові команди';
+    } else if (!isD2d && nicheInput.value.includes('D2D')) {
+      nicheInput.value = 'Кафе, бари, ресторани';
+    }
+  }
+  if (cityInput && isD2d && cityInput.value === 'Київ') {
+    cityInput.value = 'Вінниця';
+  }
+  if (limitLabel) {
+    limitLabel.textContent = isD2d ? 'КІЛЬКІСТЬ D2D-КОНТАКТІВ:' : 'КІЛЬКІСТЬ ЗАКЛАДІВ:';
+  }
+  if (submitBtn) {
+    submitBtn.textContent = isD2d ? 'ЗАПУСТИТИ D2D РАДАР' : 'ЗАПУСТИТИ РАДАР';
+  }
+}
+
 async function submitNfcSearch() {
+  const isD2d = nfcRadarState.radarMode === 'd2d';
   const nicheInput = document.getElementById('nfcNicheInput');
   const cityInput = document.getElementById('nfcCityInput');
   const clusterInput = document.getElementById('nfcClusterInput');
   const niche = (nicheInput?.value || '').trim();
   const city = (cityInput?.value || '').trim();
-  const cluster = (clusterInput?.value || '').trim(); // Необов'язково: якщо не вказано — пошук по всьому місту
+  const cluster = (clusterInput?.value || '').trim();
 
   if (!niche) {
-    showToast('Вкажіть категорію або нішу бізнесу');
+    showToast('Вкажіть категорію або тип команд');
     nicheInput?.focus();
     return;
   }
@@ -12027,13 +13011,41 @@ async function submitNfcSearch() {
   }
 
   const reviewsLimit = Number(document.querySelector('#nfcReviewsFilterSeg .scrape-seg-btn.active')?.dataset.value) || nfcRadarState.form.reviewsLimit || 300;
-  const limit = Number(document.querySelector('#nfcLimitSeg .scrape-seg-btn.active')?.dataset.value) || nfcRadarState.form.limit || 50;
+  const limit = Number(document.querySelector('#nfcLimitSeg .scrape-seg-btn.active')?.dataset.value) || nfcRadarState.form.limit || 30;
 
   const btn = document.getElementById('submitNfcSearchBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'СКАНУЮ ЛОКАЦІЮ…'; }
 
   closeModal('modalNfcSearch');
   haptic('success');
+
+  if (isD2d) {
+    const d2dJob = {
+      id: 'd2d-job-' + Date.now(),
+      isD2d: true,
+      source: 'gmaps',
+      niche: niche,
+      city: city,
+      cluster: cluster,
+      status: 'running',
+      progressText: `Шукаю D2D (0/${limit})…`,
+      local: true,
+      createdAt: new Date().toISOString(),
+      total: 0,
+      limit: limit,
+      items: []
+    };
+
+    nfcRadarState.d2dJobs.unshift(d2dJob);
+    saveLocalD2dJobs(nfcRadarState.d2dJobs);
+    nfcRadarState.openD2dJobs.add(d2dJob.id);
+    renderNfcRadar();
+
+    runLiveD2dRadar(d2dJob, limit).finally(() => {
+      if (btn) { btn.disabled = false; btn.textContent = 'ЗАПУСТИТИ D2D РАДАР'; }
+    });
+    return;
+  }
 
   const job = {
     id: 'nfc-job-' + Date.now(),
@@ -12123,18 +13135,25 @@ function sendNfcToTelegram(job, btn) {
 function deleteNfcJob(job) {
   if (!job) return;
   const doDelete = () => {
-    nfcRadarState.jobs = nfcRadarState.jobs.filter(j => j.id !== job.id);
-    saveLocalNfcJobs(nfcRadarState.jobs);
-    nfcRadarState.openJobs.delete(job.id);
+    if (job.isD2d) {
+      nfcRadarState.d2dJobs = nfcRadarState.d2dJobs.filter(j => j.id !== job.id);
+      saveLocalD2dJobs(nfcRadarState.d2dJobs);
+      nfcRadarState.openD2dJobs.delete(job.id);
+    } else {
+      nfcRadarState.jobs = nfcRadarState.jobs.filter(j => j.id !== job.id);
+      saveLocalNfcJobs(nfcRadarState.jobs);
+      nfcRadarState.openJobs.delete(job.id);
+    }
     renderNfcRadar();
     showToast('Пошук видалено');
     haptic('medium');
   };
 
   const count = (job.items ? job.items.length : 0) || job.total || 0;
+  const unitWord = (job.isD2d || nfcRadarState.radarMode === 'd2d') ? pluralD2dTeams(count) : pluralNfcVenues(count);
   const promptText = count === 0
     ? 'Видалити цей порожній пошук з радару?'
-    : `Видалити цей пошук (${count} закладів)?`;
+    : `Видалити цей пошук (${count} ${unitWord})?`;
 
   if (window.Telegram?.WebApp?.showConfirm) {
     window.Telegram.WebApp.showConfirm(promptText, (ok) => {
@@ -12550,8 +13569,39 @@ function initNfcCatalog() {
 
 function setupNfcRadarTab() {
   nfcRadarState.jobs = loadLocalNfcJobs();
+  nfcRadarState.d2dJobs = loadLocalD2dJobs();
+
+  document.getElementById('nfcModeVenuesBtn')?.addEventListener('click', () => {
+    setNfcRadarMode('venues');
+    haptic('light');
+  });
+  document.getElementById('nfcModeD2dBtn')?.addEventListener('click', () => {
+    setNfcRadarMode('d2d');
+    haptic('light');
+  });
+
+  document.querySelectorAll('#d2dCategoryPresets .d2d-preset-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#d2dCategoryPresets .d2d-preset-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const inp = document.getElementById('nfcNicheInput');
+      if (inp) inp.value = chip.dataset.d2dCat || '';
+      haptic('light');
+    });
+  });
+
+  document.querySelectorAll('#d2dCityPresets .d2d-preset-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#d2dCityPresets .d2d-preset-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const inp = document.getElementById('nfcCityInput');
+      if (inp) inp.value = chip.dataset.d2dCity || '';
+      haptic('light');
+    });
+  });
 
   document.getElementById('openNewNfcSearchBtn')?.addEventListener('click', () => {
+    configureNfcModalForCurrentMode();
     openModal('modalNfcSearch');
     haptic('light');
   });
@@ -12667,7 +13717,7 @@ function setupNfcRadarTab() {
     const contactBtn = e.target.closest('[data-nfc-contact]');
     if (contactBtn) {
       e.stopPropagation();
-      const job = nfcRadarState.jobs.find(j => j.id === contactBtn.dataset.job);
+      const job = findAnyNfcJob(contactBtn.dataset.job);
       const items = job ? getJobFlatItems(job) : [];
       const venue = items.find(v => (v.id === contactBtn.dataset.nfcContact || v.name === contactBtn.dataset.nfcContact));
       if (venue) openContactActionModal(venue, job);
@@ -12676,7 +13726,7 @@ function setupNfcRadarTab() {
 
     const pitchBtn = e.target.closest('[data-nfc-act="pitch"]');
     if (pitchBtn) {
-      const job = nfcRadarState.jobs.find(j => j.id === pitchBtn.dataset.job);
+      const job = findAnyNfcJob(pitchBtn.dataset.job);
       const items = job ? getJobFlatItems(job) : [];
       const venue = items.find(v => (v.id === pitchBtn.dataset.venue || v.name === pitchBtn.dataset.venue));
       if (venue) sendInstantVenueNfcPitch(venue, job, pitchBtn);
@@ -12685,7 +13735,7 @@ function setupNfcRadarTab() {
 
     const crmBtn = e.target.closest('[data-nfc-act="crm"]');
     if (crmBtn) {
-      const job = nfcRadarState.jobs.find(j => j.id === crmBtn.dataset.job);
+      const job = findAnyNfcJob(crmBtn.dataset.job);
       const items = job ? getJobFlatItems(job) : [];
       const venue = items.find(v => (v.id === crmBtn.dataset.venue || v.name === crmBtn.dataset.venue));
       if (venue) addBizToCrm(venue, job?.cluster || job?.city);
@@ -12695,7 +13745,7 @@ function setupNfcRadarTab() {
     const actBtn = e.target.closest('[data-nfc-act]');
     if (actBtn) {
       e.stopPropagation();
-      const job = nfcRadarState.jobs.find(j => j.id === actBtn.dataset.job);
+      const job = findAnyNfcJob(actBtn.dataset.job);
       if (!job) return;
       const act = actBtn.dataset.nfcAct;
       if (act === 'map') {
@@ -12722,9 +13772,10 @@ function setupNfcRadarTab() {
     const jobHead = e.target.closest('[data-nfc-toggle-job]');
     if (jobHead) {
       const id = jobHead.dataset.nfcToggleJob;
-      const job = nfcRadarState.jobs.find(j => j.id === id);
+      const job = findAnyNfcJob(id);
       if (!job || job.status === 'running') return;
-      nfcRadarState.openJobs.has(id) ? nfcRadarState.openJobs.delete(id) : nfcRadarState.openJobs.add(id);
+      const openSet = getActiveNfcOpenSet();
+      openSet.has(id) ? openSet.delete(id) : openSet.add(id);
       jobHead.parentElement.classList.toggle('open');
       haptic('light');
     }
@@ -12764,7 +13815,7 @@ function renderNfcMap() {
     return;
   }
 
-  let jobs = nfcRadarState.jobs;
+  let jobs = getActiveNfcModeJobs();
   if (nfcRadarState.cityFilter && nfcRadarState.cityFilter !== 'all') {
     jobs = jobs.filter(j => j.city && j.city.toLowerCase().includes(nfcRadarState.cityFilter.toLowerCase()));
   }
@@ -12775,7 +13826,7 @@ function renderNfcMap() {
   const items = activeJob ? getJobFlatItems(activeJob) : [];
 
   const countBadge = document.getElementById('nfcMapStatsCount');
-  if (countBadge) countBadge.textContent = `${items.length} ${pluralNfcVenues(items.length)}`;
+  if (countBadge) countBadge.textContent = `${items.length} ${nfcRadarState.radarMode === 'd2d' ? pluralD2dTeams(items.length) : pluralNfcVenues(items.length)}`;
 
   const clusterBadge = document.getElementById('nfcMapActiveClusterLabel');
   if (clusterBadge) {
@@ -12876,7 +13927,7 @@ function showMapVenueCard(v, job, idx) {
   card.innerHTML = `
     <div class="nfc-map-sheet-header">
       <div class="nfc-map-sheet-title">#${idx + 1} ${escapeHtml(v.name)}</div>
-      <div class="nfc-map-sheet-score">★ ${v.rating ? Number(v.rating).toFixed(1) : '—'} (${v.reviews || 0})</div>
+      <div class="nfc-map-sheet-score">★ ${v.rating ? Number(v.rating).toFixed(1) : '5.0'} (${v.d2dMatchScore ? v.d2dMatchScore + '% D2D' : (v.reviews || 0)})</div>
     </div>
     <div class="nfc-map-sheet-addr">${escapeHtml(v.address || job?.cluster || job?.city || '—')}</div>
 
@@ -12936,7 +13987,11 @@ function showMapVenueCard(v, job, idx) {
       if (pin) {
         pin.className = 'nfc-map-pin ' + (st === 'deal' ? 'walk-deal' : st === 'in_progress' ? 'walk-progress' : st === 'declined' ? 'walk-declined' : '');
       }
-      saveLocalNfcJobs(nfcRadarState.jobs);
+      if (job?.isD2d || v?.isD2d || nfcRadarState.radarMode === 'd2d') {
+        saveLocalD2dJobs(nfcRadarState.d2dJobs);
+      } else {
+        saveLocalNfcJobs(nfcRadarState.jobs);
+      }
       haptic('light');
     });
   });

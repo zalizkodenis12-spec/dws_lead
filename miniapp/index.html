@@ -19,7 +19,7 @@
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.5.0">
+  <link rel="stylesheet" href="css/app.css?v=4.7.1">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -308,6 +308,16 @@
             <textarea id="profileNfcTemplate" class="form-textarea" rows="4" maxlength="2000" placeholder="Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?"></textarea>
           </div>
 
+          <!-- "ШАБЛОН РОЗСИЛКИ (D2D ОФІСИ / ОПТ)" Block -->
+          <div class="form-group">
+            <div class="label-row">
+              <label class="form-label" for="profileD2dTemplate">ШАБЛОН ПРОПОЗИЦІЇ (D2D ОФІСИ / ОПТ):</label>
+              <span class="char-counter" id="d2dTemplateCounter">0/2000</span>
+            </div>
+            <p class="form-hint">Шаблон повідомлення для D2D-офісів, промо-команд та торгових представників (пропозиція оптового викупу або реалізації NFC-карток).</p>
+            <textarea id="profileD2dTemplate" class="form-textarea" rows="4" maxlength="2000" placeholder="Доброго дня! Пишу щодо співпраці з вашою командою у м. {CITY}. Ми виробники преміальних акрилових NFC-карток для збору відгуків у Google Maps (презентація закладу займає 5 секунд дотиком телефону). Пропонуємо оптові партії під викуп або реалізацію вашими представниками з чистою маржею 200–300 грн на кожній картці. Підкажіть, з ким можна обговорити деталі?"></textarea>
+          </div>
+
           <!-- THEME SELECTION -->
           <div class="form-group">
             <label class="form-label" data-i18n="profile.theme">ТЕМА:</label>
@@ -439,6 +449,12 @@
           </div>
         </div>
 
+        <!-- Full-width Oval Mode Switcher: Заклади | D2D -->
+        <div class="nfc-mode-oval-toggle" id="nfcModeSwitchSeg" role="tablist" aria-label="Режим NFC Радару">
+          <button type="button" class="nfc-mode-oval-btn active" id="nfcModeVenuesBtn" data-nfc-mode="venues">Заклади</button>
+          <button type="button" class="nfc-mode-oval-btn" id="nfcModeD2dBtn" data-nfc-mode="d2d">D2D</button>
+        </div>
+
         <!-- Super Sales & ROI Tools Bar -->
         <div class="nfc-tools-row" style="grid-template-columns: 1fr; width: 100%;">
           <button id="openNfcRoiCalcBtn" class="nfc-tool-pill primary" type="button" style="width: 100%; justify-content: center;">
@@ -448,15 +464,15 @@
 
         <!-- Quick Launch New Search Card -->
         <div class="nfc-launch-card">
-          <div class="nfc-launch-title">Радар закладів</div>
-          <div class="nfc-launch-sub">Пошук закладів з відгуками до 300, скупчення в ТРЦ/районі та готові піші маршрути</div>
+          <div class="nfc-launch-title" id="nfcLaunchCardTitle">Радар закладів</div>
+          <div class="nfc-launch-sub" id="nfcLaunchCardSub">Пошук закладів з відгуками до 300, скупчення в ТРЦ/районі та готові піші маршрути</div>
           <button id="openNewNfcSearchBtn" type="button" class="btn btn--fill btn--sm nfc-launch-action-btn">
-            <span>НОВИЙ ЗБІР</span>
+            <span id="openNewNfcSearchBtnTxt">НОВИЙ ЗБІР</span>
           </button>
         </div>
 
         <div class="scrape-section-label-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px;">
-          <span class="scrape-section-label" style="margin-bottom: 0;">ЗБОРИ ЗАКЛАДІВ & МАРШРУТИ</span>
+          <span class="scrape-section-label" id="nfcSectionListLabel" style="margin-bottom: 0;">ЗБОРИ ЗАКЛАДІВ & МАРШРУТИ</span>
           <div class="nfc-view-mode-seg" id="nfcViewModeSeg">
             <button type="button" class="nfc-view-btn active" id="nfcViewCardsBtn">Картки</button>
             <button type="button" class="nfc-view-btn" id="nfcViewMapBtn">Карта</button>
@@ -690,11 +706,11 @@
   <div id="modalNfcSearch" class="modal-overlay">
     <div class="modal-sheet">
       <div class="modal-header">
-        <h3 class="modal-title" style="flex: 1; text-align: center;">Новий збір закладів (NFC Радар)</h3>
+        <h3 class="modal-title" id="nfcModalTitle" style="flex: 1; text-align: center;">Новий збір закладів (NFC Радар)</h3>
         <button class="modal-close" data-close="modalNfcSearch">&times;</button>
       </div>
       <div class="modal-body">
-        <div class="form-group">
+        <div class="form-group" id="nfcSourceGroup">
           <label class="form-label">ДЖЕРЕЛО ПОШУКУ:</label>
           <div class="scrape-seg" id="nfcSourceSeg">
             <button type="button" class="scrape-seg-btn active" data-value="gmaps">Google Maps (Карти)</button>
@@ -703,21 +719,38 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">КАТЕГОРІЯ / НІША: <span style="color:var(--accent);">*</span></label>
+          <label class="form-label" id="nfcNicheLabel">КАТЕГОРІЯ / НІША: <span style="color:var(--accent);">*</span></label>
           <input type="text" id="nfcNicheInput" class="form-input" placeholder="Введіть нішу (наприклад: Кафе, Стоматологія, Салон...)" value="Кафе, бари, ресторани" required>
+          <div class="d2d-preset-chips" id="d2dCategoryPresets" style="display: none;">
+            <button type="button" class="d2d-preset-chip active" data-d2d-cat="Всі D2D, Промо та Торгові команди">🔥 Всі D2D & Опт</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-cat="D2D офіси, промоутери, BTL та активні продажі">🚶‍♂️ D2D & Промоутери</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-cat="Торгові представники HoReCa (кава, стаканчики, опт)">☕ Торгові HoReCa</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-cat="Дистриб'ютори для салонів краси та СТО">💈 Салони & СТО (Опт)</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-cat="Рекламні агенції, поліграфія, меню та вивіски">🎯 B2B Реклама / Меню</button>
+          </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">МІСТО / РЕГІОН: <span style="color:var(--accent);">*</span></label>
           <input type="text" id="nfcCityInput" class="form-input" placeholder="Введіть будь-яке місто чи населений пункт..." value="Київ" required>
+          <div class="d2d-preset-chips" id="d2dCityPresets">
+            <button type="button" class="d2d-preset-chip" data-d2d-city="Вінниця">Вінниця</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-city="Київ">Київ</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-city="Львів">Львів</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-city="Одеса">Одеса</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-city="Дніпро">Дніпро</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-city="Хмельницький">Хмельницький</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-city="Тернопіль">Тернопіль</button>
+            <button type="button" class="d2d-preset-chip" data-d2d-city="Івано-Франківськ">Івано-Франківськ</button>
+          </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="nfcClusterGroup">
           <label class="form-label">РАЙОН / ТРЦ / ЛОКАЦІЯ <span style="color:var(--muted); font-size:0.75rem; font-weight:normal; text-transform:none;">(необов'язково)</span>:</label>
           <input type="text" id="nfcClusterInput" class="form-input" placeholder="Необов'язково (наприклад: Вишенька, Поділ, ТРЦ...). Якщо не вказано — шукає по всьому місту">
         </div>
 
-        <div class="form-group">
+        <div class="form-group" id="nfcReviewsFilterGroup">
           <label class="form-label">ФІЛЬТР ЗА КІЛЬКІСТЮ ВІДГУКІВ:</label>
           <div class="scrape-seg" id="nfcReviewsFilterSeg">
             <button type="button" class="scrape-seg-btn active" data-value="300">До 300 (Топ)</button>
@@ -728,7 +761,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">КІЛЬКІСТЬ ЗАКЛАДІВ:</label>
+          <label class="form-label" id="nfcLimitLabel">КІЛЬКІСТЬ ЗАКЛАДІВ:</label>
           <div class="scrape-seg" id="nfcLimitSeg">
             <button type="button" class="scrape-seg-btn" data-value="15">15</button>
             <button type="button" class="scrape-seg-btn active" data-value="30">30</button>
@@ -2037,6 +2070,6 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.7.0"></script>
+  <script src="js/app.js?v=4.7.1"></script>
 </body>
 </html>
