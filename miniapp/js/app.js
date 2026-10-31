@@ -12683,33 +12683,14 @@ function renderNfcTemplatesModal() {
   const templates = getNfcTemplatesList();
   listEl.innerHTML = '';
 
-  let used = [];
-  try {
-    const raw = localStorage.getItem('dws_nfc_used_templates');
-    if (raw) used = JSON.parse(raw);
-    if (!Array.isArray(used)) used = [];
-  } catch (e) {
-    used = [];
-  }
-  used = used.filter(idx => typeof idx === 'number' && idx >= 0 && idx < templates.length);
-
-  const badgeEl = document.getElementById('nfcCycleUsedBadge');
-  if (badgeEl) {
-    badgeEl.textContent = `${used.length} з ${templates.length} використано`;
-  }
-
   templates.forEach((text, idx) => {
     const num = idx + 1;
-    const isUsedInCycle = used.includes(idx);
     const card = document.createElement('div');
     card.className = 'form-group';
     card.style.cssText = 'margin-bottom: 12px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px;';
     card.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <label class="form-label" style="font-weight: 700; font-size: 0.8rem; margin-bottom: 0; color: var(--accent);">ШАБЛОН ${num}:</label>
-          ${isUsedInCycle ? '<span style="font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 6px; background: rgba(0, 102, 255, 0.12); color: #0066ff;">ВІДПРАВЛЕНО В ЦИКЛІ</span>' : ''}
-        </div>
+        <label class="form-label" style="font-weight: 700; font-size: 0.8rem; margin-bottom: 0; color: var(--accent);">ШАБЛОН ${num}:</label>
         <span class="char-counter" id="nfcTmplModalCount_${num}">${(text || '').length}/2000</span>
       </div>
       <textarea id="nfcTmplModalInput_${num}" class="form-textarea" rows="3" maxlength="2000" style="font-size: 0.82rem; line-height: 1.45; resize: vertical; user-select: text; -webkit-user-select: text; width: 100%; box-sizing: border-box;"></textarea>
