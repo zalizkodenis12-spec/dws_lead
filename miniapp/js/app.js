@@ -15499,19 +15499,38 @@ function renderNfcMap() {
       attributionControl: false
     }).setView(baseCoords, 16);
 
-    const cartoLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      maxZoom: 19,
-      subdomains: 'abcd'
+    const googleLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&hl=uk&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
     });
-    cartoLayer.on('tileerror', () => {
+    googleLayer.on('tileerror', () => {
       if (!nfcLeafletMap._hasOsmFallback) {
         nfcLeafletMap._hasOsmFallback = true;
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(nfcLeafletMap);
       }
     });
-    cartoLayer.addTo(nfcLeafletMap);
+    googleLayer.addTo(nfcLeafletMap);
+    nfcLeafletMap._googleLayer = googleLayer;
 
     L.control.zoom({ position: 'topright' }).addTo(nfcLeafletMap);
+  } else if (!nfcLeafletMap._googleLayer) {
+    nfcLeafletMap.eachLayer(layer => {
+      if (layer instanceof L.TileLayer) {
+        nfcLeafletMap.removeLayer(layer);
+      }
+    });
+    const googleLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&hl=uk&x={x}&y={y}&z={z}', {
+      maxZoom: 20,
+      subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+    });
+    googleLayer.on('tileerror', () => {
+      if (!nfcLeafletMap._hasOsmFallback) {
+        nfcLeafletMap._hasOsmFallback = true;
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(nfcLeafletMap);
+      }
+    });
+    googleLayer.addTo(nfcLeafletMap);
+    nfcLeafletMap._googleLayer = googleLayer;
   }
 
   // Clear existing markers
