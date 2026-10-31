@@ -78,6 +78,10 @@
     <div class="sub">Текст пропозиції вже скопійовано у ваш буфер обміну. Натисніть кнопку нижче, якщо Viber не відкрився автоматично:</div>
     <a id="viberChatLink" href="#" class="btn">ВІДКРИТИ ЧАТ У VIBER</a>
     <a id="viberAddLink" href="#" class="btn-sec">ДОДАТИ КОНТАКТ У VIBER</a>
+    <button type="button" id="copyPhoneBtn" class="btn-sec" style="margin-top: 10px; cursor: pointer; width: 100%;">СКОПІЮВАТИ НОМЕР</button>
+    <div style="font-size: 0.78rem; color: #6b7280; margin-top: 16px; line-height: 1.4; border-top: 1px solid #f3f4f6; padding-top: 12px; text-align: left;">
+      Зверніть увагу: якщо Viber показує «Запитна сторінка недоступна» або «Запит недоступний» — цей номер закладу не зареєстрований у Viber або власник вимкнув вхідні повідомлення від невідомих контактів. Скопіюйте номер для дзвінка або зв'яжіться через Instagram Direct.
+    </div>
   </div>
   <script>
     (function() {
@@ -91,12 +95,34 @@
       if (phoneEl) phoneEl.textContent = '+' + raw;
 
       var chatUri = 'viber://chat?number=%2B' + raw;
-      var addUri = 'viber://add?number=' + raw;
+      var addUri = 'viber://add?number=%2B' + raw;
 
       var chatBtn = document.getElementById('viberChatLink');
       var addBtn = document.getElementById('viberAddLink');
+      var copyBtn = document.getElementById('copyPhoneBtn');
+
       if (chatBtn) chatBtn.href = chatUri;
       if (addBtn) addBtn.href = addUri;
+
+      if (copyBtn) {
+        copyBtn.addEventListener('click', function() {
+          var text = '+' + raw;
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text);
+          } else {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
+          copyBtn.textContent = 'СКОПІЙОВАНО ✓';
+          setTimeout(function() {
+            copyBtn.textContent = 'СКОПІЮВАТИ НОМЕР';
+          }, 2000);
+        });
+      }
 
       setTimeout(function() {
         window.location.href = chatUri;
