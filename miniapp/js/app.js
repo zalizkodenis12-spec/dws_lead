@@ -10763,32 +10763,205 @@ async function saveGlobalSeenRegistry(newBusinesses = [], waveKey = '', nextWave
   }
 }
 
+function getSmartNicheVariants(rawNiche) {
+  const clean = String(rawNiche || '').trim();
+  if (!clean) return ['заклади'];
+
+  const nLower = clean.toLowerCase();
+
+  // 1. Barbershops / Men's grooming (BEFORE any general hair/beauty or bar!)
+  if (/барбер|чоловіч.*перукар/i.test(nLower)) {
+    return ['барбершоп', 'барбершопи', 'чоловіча перукарня', 'barbershop'];
+  }
+
+  // 2. Beauty / Hair / Nails (ensure barbershop is NOT captured here!)
+  if (/манікюр|нігт/i.test(nLower)) {
+    return ['студія манікюру', 'манікюр', 'нігтьовий сервіс'];
+  }
+  if (/перукарн/i.test(nLower)) {
+    return ['перукарня', 'салон-перукарня'];
+  }
+  if (/салон.*крас|б'юті|beauty|косметолог/i.test(nLower)) {
+    return ['салон краси', 'б\'юті студія', 'косметологія', 'beauty salon'];
+  }
+
+  // 3. Dentistry / Medical / Veterinary
+  if (/стоматолог/i.test(nLower)) {
+    return ['стоматологія', 'стоматологічна клініка', 'зубний лікар'];
+  }
+  if (/клінік|медич|медицин/i.test(nLower)) {
+    return ['медичний центр', 'приватна клініка', 'медична клініка'];
+  }
+  if (/ветеринар|ветклінік/i.test(nLower)) {
+    return ['ветеринарна клініка', 'ветклініка', 'ветеринар'];
+  }
+
+  // 4. Travel agencies / Tourism
+  if (/тур|турагент|туристич/i.test(nLower)) {
+    return ['туристичне агентство', 'турагентство', 'тур агенція', 'гарячі тури'];
+  }
+
+  // 5. Food & Drink — STRICT word boundaries so "барбер" NEVER matches "бар"!
+  if (/кав'?ярн|кофейн/i.test(nLower)) {
+    return ['кав\'ярня', 'кава з собою', 'coffee'];
+  }
+  if (/ресторан|рестик/i.test(nLower)) {
+    return ['ресторан', 'ресторани', 'гастробар'];
+  }
+  if (/піцер/i.test(nLower)) {
+    return ['піцерія', 'pizza'];
+  }
+  if (/суші|суши/i.test(nLower)) {
+    return ['суші бар', 'доставка суші', 'sushi'];
+  }
+  if (/(?:^|\s)бар[иа]?\b|(?:^|\s)паб\b|pub/i.test(nLower)) {
+    return ['бар', 'паб'];
+  }
+  if (/кафе/i.test(nLower)) {
+    return ['кафе', 'бістро'];
+  }
+  if (/кондитер|пекарн/i.test(nLower)) {
+    return ['пекарня', 'кондитерська'];
+  }
+  if (/кальян/i.test(nLower)) {
+    return ['кальянна', 'hookah'];
+  }
+
+  // 6. Auto / Repair
+  if (/детейлінг/i.test(nLower)) {
+    return ['детейлінг', 'detailing'];
+  }
+  if (/автомийк|мийк/i.test(nLower)) {
+    return ['автомийка', 'мийка авто'];
+  }
+  if (/шиномонтаж/i.test(nLower)) {
+    return ['шиномонтаж'];
+  }
+  if (/сто\b|автосервіс|ремонт.*авто/i.test(nLower)) {
+    return ['автосервіс', 'СТО', 'ремонт авто'];
+  }
+
+  // 7. Sport / Fitness
+  if (/фітнес|спортзал|тренажер/i.test(nLower)) {
+    return ['фітнес клуб', 'спортзал', 'тренажерний зал'];
+  }
+  if (/йог|пілатес|стретчинг/i.test(nLower)) {
+    return ['студія йоги', 'пілатес', 'стретчинг'];
+  }
+
+  // 8. Flowers & Gifts
+  if (/квіт|флорист/i.test(nLower)) {
+    return ['квітковий магазин', 'квіти', 'флористика'];
+  }
+
+  // 9. Real estate / Notary / Legal / Auto school
+  if (/нотаріус/i.test(nLower)) {
+    return ['нотаріус', 'приватний нотаріус'];
+  }
+  if (/автошкол/i.test(nLower)) {
+    return ['автошкола'];
+  }
+  if (/готел|хостел|hotel/i.test(nLower)) {
+    return ['готель', 'хостел'];
+  }
+  if (/нерухоміст|рієлтор/i.test(nLower)) {
+    return ['агентство нерухомості', 'рієлтор'];
+  }
+  if (/фотостуд/i.test(nLower)) {
+    return ['фотостудія'];
+  }
+
+  // 10. Universal fallback: exact user words
+  const parts = clean.split(/[,;/]+/).map(s => s.trim()).filter(Boolean);
+  return parts.length ? parts : [clean];
+}
+
+function isVenueRelevantToNiche(place, targetNiche) {
+  if (!place || !targetNiche) return true;
+
+  const name = (place.displayName?.text || place.title || place.name || '').toLowerCase();
+  const address = (place.formattedAddress || place.address || place.street || '').toLowerCase();
+  const website = (place.websiteUri || place.website || '').toLowerCase();
+  const primaryType = (place.primaryType || place.categoryName || '').toLowerCase();
+  const types = Array.isArray(place.types) ? place.types.map(t => String(t).toLowerCase()) : [];
+  const allTypes = [primaryType, ...types];
+
+  const nicheClean = String(targetNiche).toLowerCase().trim();
+
+  // Category intent checks
+  const isTargetFood = /ресторан|рестик|кафе|кав'?ярн|кофейн|бар\b|паб|піц|суш|бургер|пекарн|їж|кухн|кондитер|столов/i.test(nicheClean);
+  const isTargetBarber = /барбер|чоловіч.*перукар/i.test(nicheClean);
+  const isTargetDental = /стоматолог|зуб/i.test(nicheClean);
+  const isTargetMedical = /клінік|медич|лікарн/i.test(nicheClean) && !isTargetDental;
+  const isTargetAuto = /авто|сто\b|шиномонтаж|детейлінг|мийк/i.test(nicheClean);
+  const isTargetTravel = /тур|турагент|туристич/i.test(nicheClean);
+
+  const placeIsFoodType = allTypes.some(t => ['restaurant', 'cafe', 'bakery', 'meal_takeaway', 'meal_delivery', 'bar', 'coffee_shop', 'pizza_restaurant', 'fast_food_restaurant', 'sushi_restaurant'].includes(t)) || /ресторан|кафе|їдальня|пекарня|піцерія|суші/i.test(primaryType);
+  const placeIsBarberType = allTypes.some(t => ['barber_shop'].includes(t)) || /барбершоп|перукарня/i.test(primaryType);
+  const placeIsDentalType = allTypes.some(t => ['dental_clinic', 'dentist'].includes(t)) || /стоматолог/i.test(primaryType);
+  const placeIsAutoType = allTypes.some(t => ['car_repair', 'car_wash', 'auto_repair'].includes(t)) || /автосервіс|автомийка/i.test(primaryType);
+  const placeIsTravelType = allTypes.some(t => ['travel_agency', 'tour_agency'].includes(t)) || /туристич|турагент/i.test(primaryType);
+
+  // If user is searching Barbershops:
+  if (isTargetBarber) {
+    if (placeIsFoodType || placeIsDentalType || placeIsAutoType || placeIsTravelType) {
+      if (!/барбер|barber|чоловіч.*перукар/i.test(name)) return false;
+    }
+    if (placeIsBarberType || /барбер|barber|чоловіч|перукар|бритв|fades/i.test(name)) return true;
+    if (allTypes.includes('hair_salon') || allTypes.includes('hair_care')) {
+      return !/жіноч|women|lady|манікюр/i.test(name);
+    }
+    return false;
+  }
+
+  // If user is searching Food/Restaurants:
+  if (isTargetFood) {
+    if (placeIsBarberType || placeIsDentalType || placeIsAutoType || placeIsTravelType) {
+      if (!/ресторан|кафе|кав'?ярн|бар|паб|піц|суш|кухн|бургер|пекар/i.test(name)) return false;
+    }
+    return true;
+  }
+
+  // If user is searching Dental:
+  if (isTargetDental) {
+    if (placeIsFoodType || placeIsBarberType || placeIsAutoType || placeIsTravelType) {
+      if (!/стоматолог|dental|дент|зуб/i.test(name)) return false;
+    }
+    return placeIsDentalType || /стоматолог|dental|дент|зуб/i.test(name);
+  }
+
+  // If user is searching Travel:
+  if (isTargetTravel) {
+    if (placeIsFoodType || placeIsBarberType || placeIsDentalType || placeIsAutoType) {
+      if (!/тур|tour|travel|путівк/i.test(name)) return false;
+    }
+    return placeIsTravelType || /тур|tour|travel|путівк/i.test(name);
+  }
+
+  // If user is searching Auto:
+  if (isTargetAuto) {
+    if (placeIsFoodType || placeIsBarberType || placeIsDentalType || placeIsTravelType) {
+      if (!/авто|сто|сервіс|tire|car|auto|шиномонтаж/i.test(name)) return false;
+    }
+    return placeIsAutoType || /авто|сто\b|сервіс|tire|car|auto|шиномонтаж/i.test(name);
+  }
+
+  // General mismatch check: if place is explicitly a restaurant/food and target is not food
+  if (placeIsFoodType && !/їж|харч|кухн|продукт/i.test(nicheClean)) {
+    const nicheStem = nicheClean.slice(0, 4);
+    if (!name.includes(nicheStem)) return false;
+  }
+
+  return true;
+}
+
 function buildSmartDistrictQueriesClient(niche, city, cluster = '', waveIndex = 0, batchSize = 10) {
   const cleanNiche = String(niche || '').trim();
   const cleanCity = String(city || '').trim();
   const cleanCluster = String(cluster || '').trim();
   const cityLower = cleanCity.toLowerCase();
 
-  let subNiches = cleanNiche.split(/[,;/]+/).map(s => s.trim()).filter(Boolean);
-  const nLower = cleanNiche.toLowerCase();
-  if (/кафе|ресторан|бар|кав/i.test(nLower) && subNiches.length <= 3) {
-    subNiches = Array.from(new Set([...subNiches, 'кав\'ярня', 'ресторан', 'кафе', 'піцерія', 'суші бар', 'кондитерська', 'паб', 'пекарня', 'бургерна', 'гастробар', 'бістро', 'кальянна']));
-  } else if (/салон|б'юті|косметолог|перукар|манікюр|нігт/i.test(nLower) && subNiches.length <= 3) {
-    subNiches = Array.from(new Set([...subNiches, 'салон краси', 'студія манікюру', 'косметологія', 'перукарня', 'бров бар', 'студія краси', 'лазерна епіляція', 'візаж']));
-  } else if (/стоматолог|клінік|медиц/i.test(nLower) && subNiches.length <= 3) {
-    subNiches = Array.from(new Set([...subNiches, 'стоматологія', 'стоматологічна клініка', 'медичний центр', 'приватна клініка', 'ортодонтія', 'лабораторія']));
-  } else if (/авто|сто|шиномонтаж|детейлінг|мийк/i.test(nLower) && subNiches.length <= 3) {
-    subNiches = Array.from(new Set([...subNiches, 'автосервіс', 'СТО', 'детейлінг', 'автомийка', 'шиномонтаж', 'діагностика авто', 'кузовний ремонт']));
-  } else if (/фітнес|спорт|зал|йог/i.test(nLower) && subNiches.length <= 3) {
-    subNiches = Array.from(new Set([...subNiches, 'фітнес клуб', 'тренажерний зал', 'спортзал', 'студія йоги', 'пілатес', 'стретчинг', 'кросфіт']));
-  } else if (/квіт|флорист|подарун/i.test(nLower) && subNiches.length <= 3) {
-    subNiches = Array.from(new Set([...subNiches, 'квітковий магазин', 'доставка квітів', 'флористика', 'студія квітів', 'подарунки']));
-  } else if (/барбер|чоловіч/i.test(nLower) && subNiches.length <= 3) {
-    subNiches = Array.from(new Set([...subNiches, 'барбершоп', 'чоловіча перукарня', 'barbershop', 'чоловічий салон']));
-  } else if (/масаж|спа|spa/i.test(nLower) && subNiches.length <= 3) {
-    subNiches = Array.from(new Set([...subNiches, 'масажний салон', 'студія масажу', 'СПА салон', 'корекція фігури', 'релакс студія']));
-  }
-  if (!subNiches.length) subNiches = [cleanNiche];
+  const subNiches = getSmartNicheVariants(cleanNiche);
 
   let districts = [];
   for (const [k, arr] of Object.entries(CLIENT_CITY_DISTRICTS)) {
@@ -10800,27 +10973,28 @@ function buildSmartDistrictQueriesClient(niche, city, cluster = '', waveIndex = 
   if (!districts.length) districts = CLIENT_UNIVERSAL_ZONES;
 
   const candidatePool = [];
+
+  // 1. Primary query with original user phrase
   if (cleanCluster) {
-    for (const sn of subNiches) {
-      if (cleanCity) candidatePool.push(`${sn} ${cleanCluster} ${cleanCity}`);
-      else candidatePool.push(`${sn} ${cleanCluster}`);
-    }
+    if (cleanCity) candidatePool.push(`${cleanNiche} ${cleanCluster} ${cleanCity}`);
+    else candidatePool.push(`${cleanNiche} ${cleanCluster}`);
   } else {
-    // If no cluster specified: search across the entire city first!
-    for (const sn of subNiches) {
-      if (cleanCity) candidatePool.push(`${sn} ${cleanCity}`);
-      else candidatePool.push(sn);
-    }
+    if (cleanCity) candidatePool.push(`${cleanNiche} ${cleanCity}`);
+    else candidatePool.push(cleanNiche);
   }
+
+  // 2. Add sub-niche variants across whole city
+  for (const sn of subNiches) {
+    if (cleanCity) candidatePool.push(`${sn} ${cleanCity}`);
+    else candidatePool.push(sn);
+  }
+
+  // 3. Add sub-niches per district
   for (const d of districts) {
     for (const sn of subNiches) {
       if (cleanCity) candidatePool.push(`${sn} ${d} ${cleanCity}`);
       else candidatePool.push(`${sn} ${d}`);
     }
-  }
-  for (const sn of subNiches) {
-    if (cleanCity) candidatePool.push(`${sn} ${cleanCity}`);
-    else candidatePool.push(sn);
   }
 
   const uniquePool = Array.from(new Set(candidatePool));
@@ -10980,6 +11154,7 @@ async function runLiveApifyJob(job) {
           const rawUsername = (it.username || it.ownerUsername || (it.inputUrl ? it.inputUrl.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/.*$/, '') : '') || '').replace(/^@+/, '');
           const name = (it.fullName || it.ownerFullName || it.title || (rawUsername ? '@' + rawUsername : '') || it.name || '').trim();
           if (!name && !rawUsername) continue;
+          if (!isVenueRelevantToNiche(it, job.niche)) continue;
 
           const directPhone = normalizePhone(it.businessPhoneNumber || it.contactPhoneNumber || it.publicPhoneNumber || it.phone || it.phoneUnformatted);
           const bioText = [it.biography, it.caption, it.text, it.externalUrl].filter(Boolean).join('\n');
@@ -11018,6 +11193,7 @@ async function runLiveApifyJob(job) {
           const textToCheck = `${name} ${it.openingHours || ''} ${it.additionalInfo ? JSON.stringify(it.additionalInfo) : ''} ${it.categoryName || ''}`;
           const isOpeningSoon = /(скоро відкри|opening soon|ще не відкри|незабаром відкри|coming soon)/i.test(textToCheck);
           if (isClosed || isOpeningSoon) continue;
+          if (!isVenueRelevantToNiche(it, job.niche)) continue;
 
           const placeId = it.placeId || it.id || '';
           const cid = it.cid || '';
@@ -13045,7 +13221,7 @@ async function searchPlacesApiDirect(query, key, pageToken = '') {
     headers: {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': key,
-      'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.googleMapsUri,places.location,places.businessStatus,nextPageToken'
+      'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.googleMapsUri,places.location,places.businessStatus,places.primaryType,places.types,nextPageToken'
     },
     body: JSON.stringify(bodyPayload)
   });
@@ -13102,6 +13278,9 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
         if (!name) return;
 
         if (p.businessStatus === 'CLOSED_TEMPORARILY' || p.businessStatus === 'CLOSED_PERMANENTLY') return;
+
+        // Strict Niche Relevance Filter (prevents food places from leaking into barbershops etc.)
+        if (!isVenueRelevantToNiche(p, job.niche)) return;
 
         const reviews = Number(p.userRatingCount || 0);
         if (reviews <= 0) return;
@@ -13345,6 +13524,9 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
         const textToCheck = `${name} ${it.openingHours || ''} ${it.additionalInfo ? JSON.stringify(it.additionalInfo) : ''} ${it.categoryName || ''}`;
         const isOpeningSoon = /(скоро відкри|opening soon|ще не відкри|незабаром відкри|coming soon)/i.test(textToCheck);
         if (isClosed || isOpeningSoon) return;
+
+        // Strict Niche Relevance Filter
+        if (!isVenueRelevantToNiche(it, job.niche)) return;
 
         const placeId = it.placeId || it.id || '';
         const cid = it.cid || '';
@@ -14122,10 +14304,11 @@ function configureNfcModalForCurrentMode() {
     } else {
       nicheInput.readOnly = false;
       nicheInput.style.cursor = 'text';
-      if (!nicheInput.value || nicheInput.value.includes('D2D')) {
-        nicheInput.value = 'Кафе, бари, ресторани';
-        delete nicheInput.dataset.fullNiche;
+      delete nicheInput.dataset.fullNiche;
+      if (nicheInput.value.includes('D2D')) {
+        nicheInput.value = '';
       }
+      nicheInput.placeholder = 'Введіть нішу (наприклад: Барбершопи, Ресторани, Стоматологія, Тур агенства...)';
       if (chevron) chevron.style.display = 'none';
     }
   }
@@ -14149,9 +14332,15 @@ async function submitNfcSearch() {
   const nicheInput = document.getElementById('nfcNicheInput');
   const cityInput = document.getElementById('nfcCityInput');
   const clusterInput = document.getElementById('nfcClusterInput');
-  let niche = (nicheInput?.dataset.fullNiche || nicheInput?.value || '').trim();
-  if (isD2d && (!niche || niche === 'Всі D2D-офіси (ходоки)')) {
-    niche = 'D2D офіси (ходоки), прямі продажі, промоутери та польові торгові';
+  let niche = '';
+  if (isD2d) {
+    niche = (nicheInput?.dataset.fullNiche || nicheInput?.value || '').trim();
+    if (!niche || niche === 'Всі D2D-офіси (ходоки)') {
+      niche = 'D2D офіси (ходоки), прямі продажі, промоутери та польові торгові';
+    }
+  } else {
+    delete nicheInput?.dataset.fullNiche;
+    niche = (nicheInput?.value || '').trim();
   }
   const city = (cityInput?.value || '').trim() || (isD2d ? 'Вінниця' : 'Київ');
   const cluster = (clusterInput?.value || '').trim();
@@ -14776,6 +14965,12 @@ function setupNfcRadarTab() {
     if (!e.target.closest('#d2dCategoryDropdownWrap') && d2dDropMenu) {
       d2dDropMenu.style.display = 'none';
       d2dTrigger?.classList.remove('open');
+    }
+  });
+
+  document.getElementById('nfcNicheInput')?.addEventListener('input', (e) => {
+    if (nfcRadarState.radarMode !== 'd2d') {
+      delete e.target.dataset.fullNiche;
     }
   });
 

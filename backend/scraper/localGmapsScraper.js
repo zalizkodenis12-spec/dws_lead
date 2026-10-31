@@ -135,9 +135,14 @@ export async function scrapeLocalGmaps(options = {}) {
     }
 
     // Extract basic feed info for candidate cards
-    const candidates = await page.evaluate((maxRev) => {
+    const candidates = await page.evaluate((maxRev, targetNiche) => {
       const cards = document.querySelectorAll('div.Nv2PK');
       const list = [];
+      const nLower = String(targetNiche || '').toLowerCase().trim();
+      const isTargetBarber = /барбер|чоловіч.*перукар/i.test(nLower);
+      const isTargetDental = /стоматолог|зуб/i.test(nLower);
+      const isTargetTravel = /тур|турагент|туристич/i.test(nLower);
+      const isTargetAuto = /авто|сто\b|шиномонтаж|детейлінг|мийк/i.test(nLower);
 
       cards.forEach(card => {
         const link = card.querySelector('a.hfpxzc');
@@ -152,6 +157,16 @@ export async function scrapeLocalGmaps(options = {}) {
         if (/(тимчасово закрито|зачинено назавжди|closed|скоро відкри|opening soon)/i.test(cardText)) {
           return;
         }
+
+        const nameLower = name.toLowerCase();
+        const snippetLower = cardText.toLowerCase();
+
+        // Niche relevance check
+        const textIsFood = /ресторан|кафе|кав'?ярн|пекарн|піцер|суші|бургер|кухня|їдальня/i.test(snippetLower);
+        if (isTargetBarber && textIsFood && !/барбер|barber/i.test(nameLower)) return;
+        if (isTargetDental && textIsFood && !/стоматолог|dental/i.test(nameLower)) return;
+        if (isTargetTravel && textIsFood && !/тур|travel/i.test(nameLower)) return;
+        if (isTargetAuto && textIsFood && !/авто|сто/i.test(nameLower)) return;
 
         let rating = null;
         let reviews = 0;
@@ -186,7 +201,7 @@ export async function scrapeLocalGmaps(options = {}) {
       });
 
       return list;
-    }, targetMaxReviews);
+    }, targetMaxReviews, niche);
 
     console.log(`[LocalScraper] Found ${candidates.length} candidate places matching <= ${targetMaxReviews} reviews.`);
 
