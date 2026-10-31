@@ -10289,6 +10289,34 @@ document.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
     openTelegramSmartUrl(tgAnchor.getAttribute('href'));
+    return;
+  }
+  const instaAnchor = e.target.closest('.nfc-insta-link, [data-nfc-insta]');
+  if (instaAnchor) {
+    e.preventDefault();
+    e.stopPropagation();
+    const jobId = instaAnchor.dataset.job;
+    const venueId = instaAnchor.dataset.venue;
+    const job = typeof findAnyNfcJob === 'function' ? findAnyNfcJob(jobId) : null;
+    const items = (job && typeof getJobFlatItems === 'function') ? getJobFlatItems(job) : [];
+    const venue = items.find(v => (v.id === venueId || v.name === venueId));
+    const targetUrl = instaAnchor.dataset.href || instaAnchor.getAttribute('href');
+
+    if (venue && typeof generateNfcPitch === 'function') {
+      const pitch = generateNfcPitch(venue, job);
+      copyTextToClipboardSync(pitch);
+      haptic('success');
+    }
+    showToast('Офер скопійовано! Вставте в Instagram Direct');
+
+    setTimeout(() => {
+      if (Boolean(window.Telegram?.WebApp?.initData) && window.Telegram?.WebApp?.openLink) {
+        window.Telegram.WebApp.openLink(targetUrl);
+      } else {
+        window.open(targetUrl, '_blank');
+      }
+    }, 120);
+    return;
   }
 }, true);
 function _noopViberEnd() {
@@ -12843,6 +12871,28 @@ function openContactActionModal(venue, job) {
     };
   }
 
+  // 5. Instagram Button
+  const igBtn = document.getElementById('contactIgBtn');
+  if (igBtn) {
+    const cleanInsta = (venue.instagram || '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/^@+/, '').replace(/[\/?#].*$/, '').trim();
+    const targetIg = cleanInsta ? `https://ig.me/m/${cleanInsta}` : `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((venue.name || '') + ' ' + (job?.city || ''))}`;
+    igBtn.onclick = () => {
+      haptic('light');
+      if (venue) {
+        const pitch = generateNfcPitch(venue, job);
+        copyTextToClipboardSync(pitch);
+      }
+      showToast('Офер скопійовано! Вставте в Instagram Direct');
+      setTimeout(() => {
+        if (Boolean(window.Telegram?.WebApp?.initData) && window.Telegram?.WebApp?.openLink) {
+          window.Telegram.WebApp.openLink(targetIg);
+        } else {
+          window.open(targetIg, '_blank');
+        }
+      }, 100);
+    };
+  }
+
   openModal('modalContactAction');
 }
 
@@ -12950,7 +13000,7 @@ function copyVenueNfcPitch(venue, job) {
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
           <span>Точка в Google Maps</span>
         </a>
-        <a href="${instaUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="display:inline-flex; align-items:center; gap:4px; color:#E1306C; border-color:#E1306C; font-weight:600;">
+        <a href="${instaUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs nfc-insta-link" data-nfc-insta="true" data-job="${job?.id}" data-venue="${venue.id}" data-href="${instaUrl}" style="display:inline-flex; align-items:center; gap:4px; color:#E1306C; border-color:#E1306C; font-weight:600;">
           <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
           <span>${cleanInsta ? '@' + cleanInsta : 'Знайти в Instagram'}</span>
         </a>
@@ -12989,11 +13039,17 @@ function copyVenueNfcPitch(venue, job) {
   if (directIgBtn) {
     directIgBtn.onclick = () => {
       const val = textEl ? textEl.value : pitch;
-      if (navigator.clipboard?.writeText) navigator.clipboard.writeText(val);
-      showToast('Текст скопійовано! Відкриваю Instagram...');
-      haptic('light');
+      copyTextToClipboardSync(val);
+      showToast('Офер скопійовано! Вставте в Instagram Direct');
+      haptic('success');
       const targetIg = igDirectUrl || instaUrl;
-      window.open(targetIg, '_blank');
+      setTimeout(() => {
+        if (Boolean(window.Telegram?.WebApp?.initData) && window.Telegram?.WebApp?.openLink) {
+          window.Telegram.WebApp.openLink(targetIg);
+        } else {
+          window.open(targetIg, '_blank');
+        }
+      }, 100);
     };
   }
 
@@ -13259,7 +13315,7 @@ function renderNfcVenuesList(job, items) {
             </div>
             <div class="biz-addr">${escapeHtml(v.address || '—')}</div>
             <div style="display:flex; flex-wrap:wrap; gap:8px; margin-top:3px; font-size:0.75rem;">
-              <a href="${instaUrl}" target="_blank" rel="noopener" style="color:${cleanInsta ? '#007aff' : 'var(--accent)'}; font-weight:700; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}</a>
+              <a href="${instaUrl}" target="_blank" rel="noopener" class="nfc-insta-link" data-nfc-insta="true" data-job="${job.id}" data-venue="${v.id}" data-href="${instaUrl}" style="color:${cleanInsta ? '#007aff' : 'var(--accent)'}; font-weight:700; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}</a>
               ${cleanTg ? `<a href="${tgHandleUrl}" target="_blank" rel="noopener" style="color:#0066FF; font-weight:700; text-decoration:none;">@${escapeHtml(cleanTg)}</a>` : ''}
               ${v.phone ? `<button type="button" class="nfc-contact-btn" data-nfc-contact="${v.id}" data-job="${job.id}" style="background:none; border:none; padding:0; color:var(--accent); font-weight:700; cursor:pointer; font-size:0.75rem; display:inline-flex; align-items:center; gap:4px; font-family:inherit;">${escapeHtml(v.phone)} ${isMobile ? '<span style="color:#0066FF; background:rgba(0,102,255,0.12); padding:1px 5px; border-radius:4px; font-weight:850;">Viber</span>' : ''}</button>` : ''}
             </div>
@@ -13366,7 +13422,7 @@ function renderNfcVenuesList(job, items) {
               ` : ''}
               <div class="nfc-meta-item">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="${cleanInsta ? '#E1306C' : 'currentColor'}" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
-                <a href="${instaUrl}" target="_blank" rel="noopener" class="nfc-insta-link" style="color:${cleanInsta ? '#E1306C' : 'var(--accent)'}; font-weight:700; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Знайти в Instagram'}</a>
+                <a href="${instaUrl}" target="_blank" rel="noopener" class="nfc-insta-link" data-nfc-insta="true" data-job="${job.id}" data-venue="${v.id}" data-href="${instaUrl}" style="color:${cleanInsta ? '#E1306C' : 'var(--accent)'}; font-weight:700; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Знайти в Instagram'}</a>
               </div>
             </div>
 
@@ -15501,7 +15557,7 @@ function showMapVenueCard(v, job, idx) {
         <span>Точка в Google Maps</span>
       </a>
       ${v.phone ? `<button type="button" class="btn btn--out btn--xs" data-map-contact="${v.id}" style="font-weight:700;">${v.phone}</button>` : ''}
-      <a href="${instaUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; border-color:${cleanInsta ? '#E1306C' : 'var(--border)'}; font-weight:600;">
+      <a href="${instaUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs nfc-insta-link" data-nfc-insta="true" data-job="${job?.id}" data-venue="${v.id}" data-href="${instaUrl}" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; border-color:${cleanInsta ? '#E1306C' : 'var(--border)'}; font-weight:600;">
         ${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}
       </a>
     </div>
