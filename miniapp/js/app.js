@@ -12558,7 +12558,30 @@ function loadLocalNfcJobs() {
       return !isSkyParkEmpty && !isKyivCafeEmpty;
     });
 
-    if (cleanJobs.length !== parsed.length) {
+    // Sanitize any mismatched items from older cached runs (e.g. food places under barbershops)
+    let hasSanitizedItems = false;
+    cleanJobs.forEach(job => {
+      if (Array.isArray(job.items) && job.niche && !job.isD2d) {
+        const origLen = job.items.length;
+        job.items = job.items.filter(item => {
+          const nLower = String(job.niche || '').toLowerCase();
+          const nameLower = (item.name || '').toLowerCase();
+          if (/барбер|чоловіч.*перукар/i.test(nLower)) {
+            if (/кухн|ресторан|кафе|кав'?ярн|пекарн|піц|суш|їж|бургер|столов/i.test(nameLower) && !/барбер|barber/i.test(nameLower)) return false;
+          }
+          if (/стоматолог/i.test(nLower)) {
+            if (/кухн|ресторан|кафе|перукар|барбер/i.test(nameLower) && !/стомат|dental|зуб/i.test(nameLower)) return false;
+          }
+          return true;
+        });
+        if (job.items.length !== origLen) {
+          hasSanitizedItems = true;
+          job.total = job.items.length;
+        }
+      }
+    });
+
+    if (cleanJobs.length !== parsed.length || hasSanitizedItems) {
       localStorage.setItem('dws_nfc_radars', JSON.stringify(cleanJobs));
     }
     return cleanJobs;
