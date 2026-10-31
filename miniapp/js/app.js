@@ -88,6 +88,19 @@ function getFirstSentence(text) {
   return candidate;
 }
 
+const DEFAULT_NFC_TEMPLATES = [
+  "Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?",
+  "Доброго дня! Пишу вам із пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Підготував для вас презентацію, чи було б цікаво поглянути?",
+  "Доброго дня! Пишу з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, цікаво було б глянути?",
+  "Добрий день! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво переглянути?",
+  "Доброго дня! Пишу вам з пропозицією, що допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Підготував для вас презентацію, чи цікаво було б глянути?",
+  "Доброго дня! Пишу з пропозицією, що допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво поглянути?",
+  "Добрий день! Пишу вам із пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Підготував для вас презентацію, чи було б цікаво глянути?",
+  "Доброго дня! Пишу вам з пропозицією, яка без реклами допоможе збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи цікаво глянути?",
+  "Вітаю! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?",
+  "Доброго дня! Звертаюсь до вас з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Підготував для вас презентацію, чи було б цікаво глянути?"
+];
+
 const DEFAULT_DATA = {
   leads: [
     {
@@ -3716,6 +3729,7 @@ const DEFAULT_DATA = {
     about: "DenisWeb Studio — діджитал-агентство сучасної веброзробки та результативного маркетингу. Створюємо висококонверсійні лендінги, інтернет-магазини, 3D-сайти, каталоги та Telegram-боти. Наші стандарти: чистий код, PageSpeed 90+, адаптив під усі гаджети, інтеграція ШІ у процеси та безкоштовне інтерактивне демо до внесення авансу. Оплата 40% аванс / 60% після запуску.",
     responseTemplate: "Вітаю, {NAME}! Побачив ваше замовлення щодо {TASK}. У DenisWeb Studio ми реалізуємо подібні проєкти під ключ за 2-4 дні з гарантією швидкості та чистого коду.\n\nГотові безкоштовно розробити концепт та інтерактивне демо головного блоку ще до початку оплати, щоб ви наочно побачили результат.\n\nНаш сайт та кейси: https://denis-webstudio.site\nКоли вам зручно коротко обговорити деталі?",
     nfcTemplate: "Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?",
+    nfcTemplates: [...DEFAULT_NFC_TEMPLATES],
     d2dTemplate: "Доброго дня! Пишу НЕ щодо вакансії — передайте, будь ласка, це повідомлення особисто керівнику офісу / директору філії у м. {CITY} (питання постачання високомаржинального товару для вашої команди з маржею 100%+).\n\nМи виробники преміальних акрилових NFC-карток для збору відгуків у Google Maps для бізнесу (кав'ярні, салони краси, СТО, магазини). Ваші хлопці все одно щодня заходять у кожен заклад міста.\n\nСуха математика для вашого офісу:\n- Ваш опт: 300 грн/шт, роздріб для закладів: 600+ грн/шт (100% маржі = +300 грн чистого кешу з кожної точки).\n- 20 карток легко вміщаються у внутрішню кишеню куртки (не б'ється, не псується, нуль важких сумок = до +6 000 грн/день прибутку з одного агента).\n- Продається за 15 секунд: приклав телефон до картки на столі власника — відкрились Google-відгуки — забрав готівку на місці.\n\nГотовий сьогодні під'їхати до вас в офіс на 5 хвилин, показати живі зразки керівнику. Куди та о котрій зручно підійти?"
   }
 };
@@ -4358,6 +4372,14 @@ const DWS_I18N_DICTIONARY = {
   "ОБРАНО": "SELECTED",
   "ВІДКРИТИ": "OPEN",
   "Відкрити": "Open",
+  "Всі шаблони": "All Templates",
+  "ВСІ ШАБЛОНИ": "ALL TEMPLATES",
+  "Всі 10 шаблонів збережено!": "All 10 templates saved!",
+  "10 варіацій з мінімальними відмінностями для захисту від блокування акаунтів. Система автоматично чергує їх без повторів, доки не будуть використані всі 10.": "10 slight variations to protect accounts from spam bans. The system automatically rotates through them without repeating until all 10 have been used.",
+  "Поточний цикл розсилки:": "Current outreach cycle:",
+  "використано": "used",
+  "ВІДПРАВЛЕНО В ЦИКЛІ": "SENT IN CYCLE",
+  "ШАБЛОН": "TEMPLATE",
   "СКИНУТИ": "RESET",
   "Скинути": "Reset",
   "Топ-15": "Top 15",
@@ -6991,6 +7013,9 @@ function setupEventListeners() {
       state.profile.about = about;
       state.profile.responseTemplate = template;
       state.profile.nfcTemplate = nfcTemplate;
+      const curTmplList = getNfcTemplatesList();
+      curTmplList[0] = nfcTemplate;
+      state.profile.nfcTemplates = curTmplList;
       state.profile.d2dTemplate = d2dTemplate;
       state.profile.theme = state.theme;
       state.profile.lang = state.lang;
@@ -7009,6 +7034,24 @@ function setupEventListeners() {
       haptic('success');
       saveProfileBtn.textContent = 'ЗБЕРЕЖЕНО ✓';
       setTimeout(() => { saveProfileBtn.textContent = t('profile.saveBtn', 'ЗБЕРЕГТИ НАЛАШТУВАННЯ'); }, 2000);
+    });
+  }
+
+  // Open All NFC Templates Modal Button
+  const openNfcTemplatesBtn = document.getElementById('openNfcTemplatesBtn');
+  if (openNfcTemplatesBtn) {
+    openNfcTemplatesBtn.addEventListener('click', () => {
+      haptic('light');
+      renderNfcTemplatesModal();
+      openModal('modalNfcTemplates');
+    });
+  }
+
+  // Save All NFC Templates Button in Modal
+  const saveNfcTemplatesModalBtn = document.getElementById('saveNfcTemplatesModalBtn');
+  if (saveNfcTemplatesModalBtn) {
+    saveNfcTemplatesModalBtn.addEventListener('click', () => {
+      saveNfcTemplatesFromModal();
     });
   }
 
@@ -9474,6 +9517,7 @@ function buildAccountSnapshot(nowTs = Date.now()) {
       ...DEFAULT_DATA.profile,
       ...(state.profile || {}),
       nfcTemplate: state.profile?.nfcTemplate || DEFAULT_DATA.profile.nfcTemplate,
+      nfcTemplates: (typeof getNfcTemplatesList === 'function' ? getNfcTemplatesList() : (state.profile?.nfcTemplates || DEFAULT_NFC_TEMPLATES)),
       d2dTemplate: state.profile?.d2dTemplate || DEFAULT_DATA.profile.d2dTemplate,
       theme: state.theme || 'light',
       lang: state.lang || 'ua',
@@ -9564,6 +9608,11 @@ function applyAccountSnapshot(d, mergeWithLocal = false, preferLocalOnMerge = fa
       : { ...DEFAULT_DATA.profile, ...state.profile, ...d.profile };
     if (!nextProfile.nfcTemplate) {
       nextProfile.nfcTemplate = DEFAULT_DATA.profile.nfcTemplate;
+    }
+    if (!Array.isArray(nextProfile.nfcTemplates) || nextProfile.nfcTemplates.length !== 10) {
+      nextProfile.nfcTemplates = Array.isArray(state.profile?.nfcTemplates) && state.profile.nfcTemplates.length === 10
+        ? state.profile.nfcTemplates
+        : [...DEFAULT_NFC_TEMPLATES];
     }
     if (JSON.stringify(nextProfile) !== JSON.stringify(state.profile)) {
       state.profile = nextProfile;
@@ -10067,7 +10116,12 @@ function setupProfileCounters() {
     tmpl.addEventListener('input', () => updateCharCount(tmpl, 'templateCounter'));
   }
   if (nfcTmpl) {
-    nfcTmpl.addEventListener('input', () => updateCharCount(nfcTmpl, 'nfcTemplateCounter'));
+    nfcTmpl.addEventListener('input', () => {
+      updateCharCount(nfcTmpl, 'nfcTemplateCounter');
+      const list = getNfcTemplatesList();
+      list[0] = nfcTmpl.value;
+      state.profile.nfcTemplates = list;
+    });
   }
   const d2dTmpl = document.getElementById('profileD2dTemplate');
   if (d2dTmpl) {
@@ -12561,6 +12615,153 @@ function getJobFlatItems(job) {
   return list;
 }
 
+function getNfcTemplatesList() {
+  if (!state.profile) state.profile = { ...DEFAULT_DATA.profile };
+  let list = state.profile.nfcTemplates;
+  if (!Array.isArray(list) || list.length !== 10) {
+    const next = Array.isArray(list) ? [...list] : [];
+    for (let i = 0; i < 10; i++) {
+      if (!next[i] || typeof next[i] !== 'string' || !next[i].trim()) {
+        next[i] = DEFAULT_NFC_TEMPLATES[i];
+      }
+    }
+    list = next.slice(0, 10);
+    state.profile.nfcTemplates = list;
+  }
+  if (state.profile.nfcTemplate && state.profile.nfcTemplate.trim() && list[0] !== state.profile.nfcTemplate.trim()) {
+    list[0] = state.profile.nfcTemplate.trim();
+  }
+  return list;
+}
+
+function getNextNfcTemplateText(venue, job) {
+  const templates = getNfcTemplatesList();
+  if (!templates || templates.length === 0) {
+    return DEFAULT_NFC_TEMPLATES[0];
+  }
+
+  if (venue && typeof venue._nfcTmplIdx === 'number' && templates[venue._nfcTmplIdx]) {
+    return templates[venue._nfcTmplIdx];
+  }
+
+  let used = [];
+  try {
+    const raw = localStorage.getItem('dws_nfc_used_templates');
+    if (raw) used = JSON.parse(raw);
+    if (!Array.isArray(used)) used = [];
+  } catch (e) {
+    used = [];
+  }
+
+  used = used.filter(idx => typeof idx === 'number' && idx >= 0 && idx < templates.length);
+
+  const allIndices = templates.map((_, i) => i);
+  let available = allIndices.filter(i => !used.includes(i));
+
+  if (available.length === 0) {
+    used = [];
+    available = [...allIndices];
+  }
+
+  const randomPick = available[Math.floor(Math.random() * available.length)];
+  used.push(randomPick);
+
+  try {
+    localStorage.setItem('dws_nfc_used_templates', JSON.stringify(used));
+  } catch (e) {}
+
+  if (venue) {
+    venue._nfcTmplIdx = randomPick;
+  }
+
+  return templates[randomPick] || templates[0];
+}
+
+function renderNfcTemplatesModal() {
+  const listEl = document.getElementById('nfcTemplatesList');
+  if (!listEl) return;
+  const templates = getNfcTemplatesList();
+  listEl.innerHTML = '';
+
+  let used = [];
+  try {
+    const raw = localStorage.getItem('dws_nfc_used_templates');
+    if (raw) used = JSON.parse(raw);
+    if (!Array.isArray(used)) used = [];
+  } catch (e) {
+    used = [];
+  }
+  used = used.filter(idx => typeof idx === 'number' && idx >= 0 && idx < templates.length);
+
+  const badgeEl = document.getElementById('nfcCycleUsedBadge');
+  if (badgeEl) {
+    badgeEl.textContent = `${used.length} з ${templates.length} використано`;
+  }
+
+  templates.forEach((text, idx) => {
+    const num = idx + 1;
+    const isUsedInCycle = used.includes(idx);
+    const card = document.createElement('div');
+    card.className = 'form-group';
+    card.style.cssText = 'margin-bottom: 12px; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px;';
+    card.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <label class="form-label" style="font-weight: 700; font-size: 0.8rem; margin-bottom: 0; color: var(--accent);">ШАБЛОН ${num}:</label>
+          ${isUsedInCycle ? '<span style="font-size: 0.68rem; font-weight: 700; padding: 2px 6px; border-radius: 6px; background: rgba(0, 102, 255, 0.12); color: #0066ff;">ВІДПРАВЛЕНО В ЦИКЛІ</span>' : ''}
+        </div>
+        <span class="char-counter" id="nfcTmplModalCount_${num}">${(text || '').length}/2000</span>
+      </div>
+      <textarea id="nfcTmplModalInput_${num}" class="form-textarea" rows="3" maxlength="2000" style="font-size: 0.82rem; line-height: 1.45; resize: vertical; user-select: text; -webkit-user-select: text; width: 100%; box-sizing: border-box;"></textarea>
+    `;
+    listEl.appendChild(card);
+
+    const input = card.querySelector(`#nfcTmplModalInput_${num}`);
+    const counter = card.querySelector(`#nfcTmplModalCount_${num}`);
+    if (input) {
+      input.value = text || '';
+      input.addEventListener('input', () => {
+        if (counter) counter.textContent = `${input.value.length}/2000`;
+      });
+    }
+  });
+}
+
+function saveNfcTemplatesFromModal() {
+  const saveBtn = document.getElementById('saveNfcTemplatesModalBtn');
+  const nextTemplates = [];
+  for (let i = 1; i <= 10; i++) {
+    const val = document.getElementById(`nfcTmplModalInput_${i}`)?.value || '';
+    nextTemplates.push(val.trim() || DEFAULT_NFC_TEMPLATES[i - 1]);
+  }
+
+  if (!state.profile) state.profile = { ...DEFAULT_DATA.profile };
+  state.profile.nfcTemplates = nextTemplates;
+  state.profile.nfcTemplate = nextTemplates[0];
+
+  const profileInput = document.getElementById('profileNfcTemplate');
+  if (profileInput) {
+    profileInput.value = nextTemplates[0];
+    updateCharCount(profileInput, 'nfcTemplateCounter');
+  }
+
+  localStorage.setItem('dws_profile', JSON.stringify(state.profile));
+  syncAccountToServer();
+
+  haptic('success');
+  if (saveBtn) {
+    const orig = saveBtn.textContent;
+    saveBtn.textContent = 'ЗБЕРЕЖЕНО ✓';
+    setTimeout(() => {
+      saveBtn.textContent = orig;
+      closeModal('modalNfcTemplates');
+    }, 500);
+  } else {
+    closeModal('modalNfcTemplates');
+  }
+  showToast('Всі 10 шаблонів збережено!');
+}
+
 function generateNfcPitch(venue, job) {
   const isD2d = Boolean(job?.isD2d || venue?.isD2d || nfcRadarState.radarMode === 'd2d');
   const name = venue?.name || (isD2d ? 'Команда' : 'Заклад');
@@ -12572,9 +12773,8 @@ function generateNfcPitch(venue, job) {
       .replace(/\{NAME\}/gi, name)
       .replace(/\{CITY\}/gi, city);
   }
-  const rawTemplate = (state.profile?.nfcTemplate || DEFAULT_DATA.profile.nfcTemplate || '').trim();
-  const baseText = rawTemplate || "Доброго дня! Пишу вам з пропозицією, яка допоможе без реклами збільшити кількість відгуків у Google Maps та залучити більше нових клієнтів. Я підготував для вас презентацію, чи було б цікаво глянути?";
-  return baseText
+  const baseText = getNextNfcTemplateText(venue, job);
+  return (baseText || DEFAULT_NFC_TEMPLATES[0])
     .replace(/\{NAME\}/gi, name)
     .replace(/\{CITY\}/gi, city);
 }
