@@ -3068,6 +3068,37 @@ body.dark-theme .order-leaf-badge.expected {
 
 .scrape-seg-btn.active { background: var(--accent); color: #fff; }
 
+#nfcScaleSeg {
+  display: flex;
+  width: 100%;
+  padding: 4px;
+  background: #eef2f8;
+  border-radius: 10px;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+#nfcScaleSeg .scrape-seg-btn {
+  flex: 1;
+  text-align: center;
+  border-radius: 8px;
+  font-weight: 700;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  background: #ffffff;
+  color: var(--text);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+#nfcScaleSeg .scrape-seg-btn.active {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  border-color: var(--accent) !important;
+  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.28);
+}
+
 .scrape-chips {
   display: flex;
   flex-wrap: wrap;

@@ -4562,6 +4562,12 @@ const DWS_I18N_DICTIONARY = {
   "До 150": "Up to 150",
   "КІЛЬКІСТЬ ЗАКЛАДІВ:": "NUMBER OF VENUES:",
   "КІЛЬКІСТЬ D2D-КОМАНД:": "NUMBER OF D2D TEAMS:",
+  "ТИП ЗАКЛАДІВ:": "VENUE TYPE:",
+  "Заклади": "Single Venues",
+  "Сітки": "Chains / Networks",
+  "Окремі заклади": "Single Venues",
+  "Мережі / Сітки": "Chains / Networks",
+  "Мережа": "Chain",
   "ЗАПУСТИТИ РАДАР": "START RADAR",
   "ЗАПУСТИТИ D2D РАДАР": "START D2D RADAR",
   "Показати на мапі": "Show on map",
@@ -11037,6 +11043,84 @@ function isVenueRelevantToNiche(place, targetNiche) {
   return true;
 }
 
+// ---- Chain & Network Detection Engine ----
+const brandChainDetectionCache = new Map();
+
+function extractBrandName(raw) {
+  if (!raw) return '';
+  let str = String(raw).trim();
+  str = str.split(/\s+[|—–-]\s+|\s*[\/|]\s*|:\s*/)[0].trim();
+  str = str.replace(/\s*\([^)]*\)/g, '').trim();
+  const prefixRegex = /^(?:барбершоп|перукарня|чоловіча перукарня|салон краси|студія краси|студія|кафе|ресторан|кав[''ʼʻ`]?ярня|кофейня|піцерія|траторія|резиденція|піца|суші|бургерна|пекарня|крафтова пекарня|гастробар|паб|бар|клініка|стоматологія|магазин|мережа|готель|квітковий салон|дитячий басейн)\s+/i;
+  str = str.replace(prefixRegex, '').trim();
+  const suffixRegex = /\s+(?:барбершоп|перукарня|салон краси|студія|кафе|ресторан|кав[''ʼʻ`]?ярня|кофейня|піцерія|піца|суші|гастробар|паб|бар|клініка|стоматологія|квіти|вінниця|київ|львів|одеса|дніпро|харків)$/i;
+  str = str.replace(suffixRegex, '').trim();
+  return str.length >= 2 ? str : raw.trim();
+}
+
+function normalizeStreetForChainCheck(addr) {
+  if (!addr) return '';
+  return addr.toLowerCase()
+    .replace(/(?:україна|вінницька область|київська область|львівська область|одеська область|харківська область|дніпропетровська область|вінниця|київ|львів|одеса|харків|дніпро|\d{5})/gi, '')
+    .replace(/[,\s]+/g, ' ')
+    .trim();
+}
+
+const KNOWN_CHAINS_REGEX = /(?:lviv croissants|львівські круасани|арома кава|aroma kava|frisor|badboy|bardash|макдональдз|mcdonald|kfc|döner маркет|галя балувана|сільпо|атб|франс\.уа|frans\.ua|veterano|черноморка|terramare|террамаре|рибафіш|ryba fish|сушія|sushiya|the grand barbershop|gc barbershop)/i;
+
+async function detectVenueChainStatus(name, city, poolBrandCounts = {}, key = '') {
+  const brand = extractBrandName(name);
+  const brandKey = brand.toLowerCase();
+  const cacheKey = `${brandKey}:${(city || '').toLowerCase()}`;
+
+  if (brandChainDetectionCache.has(cacheKey)) {
+    return brandChainDetectionCache.get(cacheKey);
+  }
+
+  // 1. Explicit keyword or known major chain
+  if (KNOWN_CHAINS_REGEX.test(name) || /(?:мережа|мережі|мережевий|франшиз|франчайз|філіал|філія|#\d+|№\d+)/i.test(name)) {
+    const res = { isChain: true, count: Math.max(2, poolBrandCounts[brandKey] || 2), brand };
+    brandChainDetectionCache.set(cacheKey, res);
+    return res;
+  }
+
+  // 2. Appeared multiple times in this scan pool across different queries/districts
+  if ((poolBrandCounts[brandKey] || 0) >= 2) {
+    const res = { isChain: true, count: poolBrandCounts[brandKey], brand };
+    brandChainDetectionCache.set(cacheKey, res);
+    return res;
+  }
+
+  // 3. Fast probe via Google Places Text Search (100% free with existing Maps key)
+  if (key && brand.length >= 3) {
+    try {
+      const probeRes = await searchPlacesApiDirect(`${brand} ${city}`, key);
+      if (probeRes && Array.isArray(probeRes.places) && probeRes.places.length >= 2) {
+        const distinctStreets = new Set();
+        probeRes.places.forEach(p => {
+          const pName = (p.displayName?.text || '').toLowerCase();
+          const pBrand = extractBrandName(pName).toLowerCase();
+          if (pName.includes(brandKey) || pBrand.includes(brandKey) || brandKey.includes(pBrand) || KNOWN_CHAINS_REGEX.test(pName)) {
+            const street = normalizeStreetForChainCheck(p.formattedAddress);
+            if (street) distinctStreets.add(street);
+          }
+        });
+        if (distinctStreets.size >= 2) {
+          const res = { isChain: true, count: distinctStreets.size, brand };
+          brandChainDetectionCache.set(cacheKey, res);
+          return res;
+        }
+      }
+    } catch (probeErr) {
+      // Fall through
+    }
+  }
+
+  const res = { isChain: false, count: 1, brand };
+  brandChainDetectionCache.set(cacheKey, res);
+  return res;
+}
+
 function buildSmartDistrictQueriesClient(niche, city, cluster = '', waveIndex = 0, batchSize = 10) {
   const cleanNiche = String(niche || '').trim();
   const cleanCity = String(city || '').trim();
@@ -12467,7 +12551,8 @@ const nfcRadarState = {
     city: 'Київ',
     cluster: '',
     reviewsLimit: 300,
-    limit: 30
+    limit: 30,
+    scale: 'single'
   }
 };
 
@@ -13294,7 +13379,7 @@ function renderNfcRadar() {
           </div>
           <div class="scrape-job-info">
             <div class="scrape-job-title">${job.cluster ? job.cluster : (job.niche || 'Заклади')}</div>
-            <div class="scrape-job-sub">${job.city}${job.cluster ? '' : ' (все місто)'} • ${date} ${pill}</div>
+            <div class="scrape-job-sub">${job.city}${job.cluster ? '' : ' (все місто)'}${job.isD2d ? '' : (job.scaleFilter === 'chain' ? ' • Мережі/Сітки' : ' • Окремі заклади')} • ${date} ${pill}</div>
           </div>
           <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
             <div class="scrape-job-count scrape-job-count-numonly">
@@ -13316,7 +13401,7 @@ function renderNfcVenuesList(job, items) {
   if (nfcRadarState.viewMode === 'table') {
     const rows = items.map((v, idx) => {
       const painBadge = v.painChipLabel
-        ? `<span class="nfc-pain-chip ${v.painLevel || 'urgent'}">${escapeHtml(v.painChipLabel)}</span>`
+        ? `<span class="nfc-pain-chip ${v.isChain ? 'chain' : (v.painLevel || 'urgent')}">${escapeHtml(v.painChipLabel)}</span>`
         : (v.painLevel === 'urgent'
           ? '<span class="nfc-pain-chip urgent">Негатив: треба перекривати 5★</span>'
           : (v.painLevel === 'new'
@@ -13388,7 +13473,7 @@ function renderNfcVenuesList(job, items) {
     <div class="nfc-venues-grid">
       ${items.map((v, idx) => {
         const painBadge = v.painChipLabel
-          ? `<span class="nfc-pain-chip ${v.painLevel || 'urgent'}">${escapeHtml(v.painChipLabel)}</span>`
+          ? `<span class="nfc-pain-chip ${v.isChain ? 'chain' : (v.painLevel || 'urgent')}">${escapeHtml(v.painChipLabel)}</span>`
           : (v.painLevel === 'urgent'
             ? '<span class="nfc-pain-chip urgent">Негатив: перекриття відгуками 5★</span>'
             : (v.painLevel === 'new'
@@ -13502,6 +13587,7 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
   const key = getClientGoogleMapsKey();
   if (!key) return null;
 
+  const scaleFilter = job.scaleFilter || 'single'; // 'single' | 'chain'
   const runSeenKeys = new Set();
   const isSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).some(k => runSeenKeys.has(k));
   const markSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).forEach(k => runSeenKeys.add(k));
@@ -13511,9 +13597,13 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
   const otherMatched = [];  // Has website/other AND reviews <= targetReviews
   const overflowPool = [];  // Has contact, but reviews > targetReviews (for fallback to guarantee count)
 
+  const poolBrandCounts = {};
+
   const baseQuery = [job.niche, cluster, city].filter(Boolean).join(' ');
   const districtQueries = buildSmartDistrictQueriesClient(job.niche, city, cluster, currentWave, 24);
-  const searchQueries = [baseQuery, ...districtQueries];
+  const searchQueries = (scaleFilter === 'chain')
+    ? [`мережа ${job.niche} ${city}`, `франшиза ${job.niche} ${city}`, baseQuery, ...districtQueries]
+    : [baseQuery, ...districtQueries];
 
   for (let qIdx = 0; qIdx < searchQueries.length; qIdx++) {
     const totalCollected = strictMatched.length + viberMatched.length + otherMatched.length;
@@ -13525,7 +13615,9 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
     }
 
     const q = searchQueries[qIdx];
-    job.progressText = `Google Places API (${Math.min(targetCount, totalCollected)}/${targetCount})…`;
+    job.progressText = scaleFilter === 'chain'
+      ? `Пошук мереж через Google Places (${Math.min(targetCount, totalCollected)}/${targetCount})…`
+      : `Google Places API (${Math.min(targetCount, totalCollected)}/${targetCount})…`;
     renderNfcRadar();
 
     let pageToken = '';
@@ -13539,17 +13631,36 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
       }
       if (!data || !Array.isArray(data.places) || data.places.length === 0) break;
 
-      data.places.forEach((p, idx) => {
-        const name = (p.displayName?.text || '').trim();
-        if (!name) return;
+      // Update brand frequency counts in current pool
+      data.places.forEach(p => {
+        const pName = (p.displayName?.text || '').trim();
+        if (pName) {
+          const b = extractBrandName(pName).toLowerCase();
+          poolBrandCounts[b] = (poolBrandCounts[b] || 0) + 1;
+        }
+      });
 
-        if (p.businessStatus === 'CLOSED_TEMPORARILY' || p.businessStatus === 'CLOSED_PERMANENTLY') return;
+      for (let idx = 0; idx < data.places.length; idx++) {
+        const p = data.places[idx];
+        const name = (p.displayName?.text || '').trim();
+        if (!name) continue;
+
+        if (p.businessStatus === 'CLOSED_TEMPORARILY' || p.businessStatus === 'CLOSED_PERMANENTLY') continue;
 
         // Strict Niche Relevance Filter (prevents food places from leaking into barbershops etc.)
-        if (!isVenueRelevantToNiche(p, job.niche)) return;
+        if (!isVenueRelevantToNiche(p, job.niche)) continue;
+
+        // Strict Scale / Chain Filter (checks single independent venue vs multi-location chain)
+        const chainInfo = await detectVenueChainStatus(name, city, poolBrandCounts, key);
+        if (scaleFilter === 'single' && chainInfo.isChain) {
+          continue; // Discard chain when single venues are requested
+        }
+        if (scaleFilter === 'chain' && !chainInfo.isChain) {
+          continue; // Discard single location when chains are requested
+        }
 
         const reviews = Number(p.userRatingCount || 0);
-        if (reviews <= 0) return;
+        if (reviews <= 0) continue;
 
         const rating = Number(p.rating || 0);
         const rawPhone = p.internationalPhoneNumber || p.nationalPhoneNumber || '';
@@ -13566,7 +13677,7 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
         }
 
         // Must have Instagram OR mobile phone (Viber) OR website
-        if (!insta && !isMobile && !website) return;
+        if (!insta && !isMobile && !website) continue;
 
         const addr = p.formattedAddress || cluster || city;
         const mapsUrl = p.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + addr)}`;
@@ -13589,11 +13700,19 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
           mapsUrl,
           lat: p.location?.latitude || null,
           lng: p.location?.longitude || null,
+          isChain: chainInfo.isChain,
+          chainLocationsCount: chainInfo.count,
+          brandName: chainInfo.brand,
           painLevel: (rating && rating <= 4.3) ? 'urgent' : (reviews < 50 ? 'new' : 'boost'),
-          painText: (rating && rating <= 4.3) ? 'Потрібно терміново перекривати негатив' : (reviews < 50 ? 'Новий заклад — гостра потреба у відгуках' : 'Буст до ТОП-1 в Google Maps')
+          painChipLabel: chainInfo.isChain
+            ? `Мережа (${chainInfo.count > 1 ? chainInfo.count + ' локації' : '2+ філії'})`
+            : null,
+          painText: chainInfo.isChain
+            ? 'Мережа закладів: оптова пропозиція карток під усі точки одразу'
+            : ((rating && rating <= 4.3) ? 'Потрібно терміново перекривати негатив' : (reviews < 50 ? 'Новий заклад — гостра потреба у відгуках' : 'Буст до ТОП-1 в Google Maps'))
         };
 
-        if (reg.isBizSeen(venueObj, city) || isSeenInThisRun(venueObj)) return;
+        if (reg.isBizSeen(venueObj, city) || isSeenInThisRun(venueObj)) continue;
         markSeenInThisRun(venueObj);
 
         const meetsReviews = (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews);
@@ -13609,7 +13728,7 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
         } else {
           overflowPool.push(venueObj);
         }
-      });
+      }
 
       if (!data.nextPageToken) break;
       pageToken = data.nextPageToken;
@@ -14551,6 +14670,8 @@ function configureNfcModalForCurrentMode() {
   }
   if (srcGroup) srcGroup.style.display = isD2d ? 'none' : 'block';
   if (revGroup) revGroup.style.display = isD2d ? 'none' : 'block';
+  const scaleGroup = document.getElementById('nfcScaleGroup');
+  if (scaleGroup) scaleGroup.style.display = isD2d ? 'none' : 'block';
 
   if (nicheLabel) {
     nicheLabel.innerHTML = isD2d
@@ -14659,14 +14780,17 @@ async function submitNfcSearch() {
     return;
   }
 
+  const scale = document.querySelector('#nfcScaleSeg .scrape-seg-btn.active')?.dataset.value || nfcRadarState.form.scale || 'single';
+
   const job = {
     id: 'nfc-job-' + Date.now(),
     source: nfcRadarState.form.source || 'gmaps',
     niche: niche,
     city: city,
     cluster: cluster,
+    scaleFilter: scale,
     status: 'running',
-    progressText: `Шукаю 0/${limit} нових…`,
+    progressText: scale === 'chain' ? `Шукаю мережі (0/${limit})…` : `Шукаю 0/${limit} нових…`,
     local: true,
     createdAt: new Date().toISOString(),
     total: 0,
@@ -15348,6 +15472,12 @@ function setupNfcRadarTab() {
     b.addEventListener('click', () => {
       nfcRadarState.form.limit = Number(b.dataset.value);
       document.querySelectorAll('#nfcLimitSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
+    });
+  });
+  document.querySelectorAll('#nfcScaleSeg .scrape-seg-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      nfcRadarState.form.scale = b.dataset.value;
+      document.querySelectorAll('#nfcScaleSeg .scrape-seg-btn').forEach(x => x.classList.toggle('active', x === b));
     });
   });
 

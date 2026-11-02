@@ -776,6 +776,14 @@
             <button type="button" class="scrape-seg-btn" data-value="100">100</button>
           </div>
         </div>
+
+        <div class="form-group" id="nfcScaleGroup">
+          <label class="form-label" id="nfcScaleLabel">ТИП ЗАКЛАДІВ:</label>
+          <div class="scrape-seg" id="nfcScaleSeg" style="display: flex; width: 100%;">
+            <button type="button" class="scrape-seg-btn active" data-value="single" style="flex: 1; text-align: center;">Заклади</button>
+            <button type="button" class="scrape-seg-btn" data-value="chain" style="flex: 1; text-align: center;">Сітки</button>
+          </div>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" id="submitNfcSearchBtn" class="btn btn--fill btn--block">ЗАПУСТИТИ РАДАР</button>
@@ -2308,6 +2316,6 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.8.10"></script>
+  <script src="js/app.js?v=4.8.11"></script>
 </body>
 </html>
