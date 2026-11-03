@@ -16,10 +16,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   
+  <!-- PWA & Mobile Web App Standalone Capabilities -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="DWSLead">
+  <link rel="apple-touch-icon" href="assets/logo-square.png">
+  
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.8.0">
+  <link rel="stylesheet" href="css/app.css?v=4.8.12">
   <link rel="icon" href="assets/favicon.ico">
 </head>
 <body class="light-theme">
@@ -2316,6 +2325,15 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.8.11"></script>
+  <script src="js/app.js?v=4.8.12"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch((err) => {
+          console.warn('PWA SW registration failed:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>

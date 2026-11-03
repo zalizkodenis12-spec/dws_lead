@@ -1,0 +1,25 @@
+{
+  "name": "DWSLead — Studio Platform",
+  "short_name": "DWSLead",
+  "description": "Автономна платформа збору лідів, NFC-радару закладів та роботи з відгуками DenisWeb Studio",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0f19",
+  "theme_color": "#0b0f19",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/logo-square.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
