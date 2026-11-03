@@ -4288,11 +4288,11 @@ function dismissSplashScreen() {
     if (splash.dataset.dismissed) return;
     splash.dataset.dismissed = 'true';
     splash.classList.add('fade-out');
-    setTimeout(() => { splash.style.display = 'none'; }, 300);
+    setTimeout(() => { splash.style.display = 'none'; }, 380);
   };
 
-  // 0.45s blue hold + 1.15s circle growth = 1.6s, then reveal the app
-  setTimeout(completeDismiss, 1700);
+  // Exactly 2.0s pure blue screen + 1.35s circle growth to all edges = 3.35s, then reveal app at 3.45s
+  setTimeout(completeDismiss, 3450);
   splash.addEventListener('click', completeDismiss, { once: true });
 }
 
