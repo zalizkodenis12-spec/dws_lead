@@ -4283,12 +4283,21 @@ document.addEventListener('DOMContentLoaded', () => {
 function dismissSplashScreen() {
   const splash = document.getElementById('appSplashScreen');
   if (!splash) return;
-  setTimeout(() => {
+
+  const completeDismiss = () => {
+    if (splash.dataset.dismissed) return;
+    splash.dataset.dismissed = 'true';
     splash.classList.add('fade-out');
     setTimeout(() => {
       splash.style.display = 'none';
     }, 450);
-  }, 950);
+  };
+
+  // Cinematic sequence: 0-0.65s circle enter, 0.45s text, 2s hold, 2.5s-3.25s expand to white, 3.35s fade
+  setTimeout(completeDismiss, 3350);
+
+  // Fast-skip if user taps screen
+  splash.addEventListener('click', completeDismiss, { once: true });
 }
 
 // ============================================================
@@ -6912,24 +6921,22 @@ function setupEventListeners() {
       refreshBtn.style.transition = 'transform 0.5s ease, background 0.4s ease, color 0.4s ease, border-color 0.4s ease';
       // Clear session taken IDs so all "В РОБОТІ ✓" leads disappear from the Заявки list
       state.justTakenSessionIds.clear();
-      filterAndRenderLeads();
 
       try {
-        const scanRes = await fetch('/api/leads/scan', { method: 'POST' });
-        const scanJson = await scanRes.json();
-        if (scanJson.success && Array.isArray(scanJson.data) && scanJson.data.length > 0) {
-          state.allLeads = scanJson.data;
-          filterAndRenderLeads();
+        const res = await fetch(`leads-data.json?t=${Date.now()}`);
+        if (res.ok) {
+          const freshData = await res.json();
+          if (freshData && Array.isArray(freshData.leads)) {
+            state.allLeads = freshData.leads;
+          }
         }
-      } catch (err) {
-        // Fallback smooth
-      }
+      } catch (err) {}
 
-      loadAllData().finally(() => {
-        setTimeout(() => {
-          refreshBtn.style.transform = '';
-        }, 500);
-      });
+      filterAndRenderLeads();
+      showToast(`Оновлено! Усього активних заявок: ${state.allLeads.length}`);
+      setTimeout(() => {
+        refreshBtn.style.transform = '';
+      }, 500);
     });
   }
 
@@ -6939,8 +6946,16 @@ function setupEventListeners() {
   if (searchBtn && searchInput) {
     const doSearch = () => {
       haptic('light');
-      state.filters.query = searchInput.value.trim();
+      const val = searchInput.value.trim();
+      state.filters.query = val;
       filterAndRenderLeads();
+      if (!val) {
+        showToast(`Показано всі ${state.allLeads.length} заявок`);
+      } else if (state.leads.length > 0) {
+        showToast(`Знайдено: ${state.leads.length} заявок за запитом "${val}"`);
+      } else {
+        showToast(`За запитом "${val}" нічого не знайдено`);
+      }
     };
     searchBtn.addEventListener('click', doSearch);
     searchInput.addEventListener('keydown', (e) => {
