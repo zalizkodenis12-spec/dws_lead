@@ -135,6 +135,22 @@ body {
   }
 }
 
+@media (min-width: 541px) {
+  body.app-ready {
+    background-color: var(--gray) !important;
+  }
+  .app-wrap {
+    box-shadow: 0 0 48px rgba(0, 0, 0, 0.08);
+  }
+  body.dark-theme .app-wrap {
+    box-shadow: 0 0 48px rgba(0, 0, 0, 0.5);
+  }
+  .app-nav {
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+}
+
 /* Smooth transition from white splash into app */
 body:not(.app-ready) .app-wrap {
   opacity: 0;
