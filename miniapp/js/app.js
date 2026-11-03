@@ -4298,11 +4298,11 @@ function dismissSplashScreen() {
       themeMeta.setAttribute('content', state?.theme === 'dark' ? '#0F0F0F' : '#FFFFFF');
     }
     splash.classList.add('fade-out');
-    setTimeout(() => { splash.style.display = 'none'; }, 420);
+    setTimeout(() => { splash.style.display = 'none'; }, 320);
   };
 
-  // Exactly 2.0s pure blue screen + 1.35s circle growth to all edges = 3.35s, then seamlessly bloom app out of white
-  setTimeout(completeDismiss, 3350);
+  // Exactly 2.0s pure blue screen + 1.15s circle growth = 3.15s, then immediately reveal app from white
+  setTimeout(completeDismiss, 3150);
   splash.addEventListener('click', completeDismiss, { once: true });
 }
 
