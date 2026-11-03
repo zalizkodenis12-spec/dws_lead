@@ -39,7 +39,7 @@
   --pill: 999px;
 
   --hh:    64px;
-  --nav-h: 52px;
+  --nav-h: 58px;
   --trans: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.08);
@@ -230,7 +230,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 16px;
-  padding-bottom: calc(var(--nav-h) + 16px);
+  padding-bottom: calc(var(--nav-h) + 20px);
   -webkit-overflow-scrolling: touch;
 }
 
@@ -1796,7 +1796,7 @@ body.dark-theme .crm-order-card-title {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0;
+  padding: 0 0 4px 0;
   box-sizing: border-box;
   z-index: 100;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
@@ -1811,16 +1811,16 @@ body.dark-theme .crm-order-card-title {
 @supports (-webkit-touch-callout: none) {
   @media (display-mode: standalone) {
     .app-nav {
-      height: var(--nav-h);
-      padding-bottom: 0;
+      height: 60px;
+      padding-bottom: 8px;
       bottom: 0;
     }
   }
 }
 
 .is-standalone-pwa .app-nav {
-  height: var(--nav-h);
-  padding-bottom: 0;
+  height: 60px;
+  padding-bottom: 8px;
   bottom: 0;
 }
 
@@ -1838,7 +1838,7 @@ body.dark-theme .crm-order-card-title {
   width: 25%;
   min-width: 25%;
   max-width: 25%;
-  padding: 2px 4px;
+  padding: 2px 4px 0 4px;
   box-sizing: border-box;
   white-space: nowrap;
   scroll-snap-align: start;
@@ -1851,15 +1851,15 @@ body.dark-theme .crm-order-card-title {
 }
 
 .nav-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
   flex-shrink: 0;
   transition: transform 0.2s ease, stroke 0.2s ease;
 }
 
 .nav-btn span {
   font-family: var(--ffh);
-  font-size: 0.65rem;
+  font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.2px;
   white-space: nowrap;
