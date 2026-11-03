@@ -4277,7 +4277,19 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
   loadAllData();
   startAutoSyncEngine();
+  dismissSplashScreen();
 });
+
+function dismissSplashScreen() {
+  const splash = document.getElementById('appSplashScreen');
+  if (!splash) return;
+  setTimeout(() => {
+    splash.classList.add('fade-out');
+    setTimeout(() => {
+      splash.style.display = 'none';
+    }, 450);
+  }, 950);
+}
 
 // ============================================================
 // THEME MANAGEMENT (Light / Dark)

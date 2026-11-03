@@ -23,21 +23,40 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DWSLead">
-  <link rel="apple-touch-icon" href="assets/logo-square.png">
+  <link rel="apple-touch-icon" href="assets/app-avatar.png">
   
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.8.12">
-  <link rel="icon" href="assets/favicon.ico">
+  <link rel="stylesheet" href="css/app.css?v=4.8.13">
+  <link rel="icon" type="image/png" href="assets/app-avatar.png">
 </head>
 <body class="light-theme">
   <!-- Signature DenisWeb Studio Grain Noise Overlay -->
   <div class="noise"></div>
 
+  <!-- APP SPLASH / OPENING SCREEN (ПОЧАТКОВИЙ ЕКРАН ВІДКРИТТЯ) -->
+  <div id="appSplashScreen" class="app-splash-screen">
+    <div class="splash-inner">
+      <div class="splash-avatar-wrap">
+        <img src="assets/app-avatar.png" alt="DWSLead Avatar" class="splash-avatar-img" />
+        <div class="splash-avatar-glow"></div>
+      </div>
+      <div class="splash-brand">
+        <span class="splash-brand-dws">DWS</span><span class="splash-brand-lead">Lead</span>
+      </div>
+      <div class="splash-loader-bar">
+        <div class="splash-loader-progress"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- MASTER ACCESS GATEKEEPER LOCK SCREEN (ОДНОРАЗОВИЙ ВХІД ЗА СЕКРЕТНИМ КОДОМ) -->
   <div id="masterGatekeeperScreen" class="master-gatekeeper-overlay" style="display: none;">
     <div class="master-gatekeeper-card">
+      <div class="gatekeeper-avatar-wrap">
+        <img src="assets/app-avatar.png" alt="DWSLead" class="gatekeeper-avatar-img" />
+      </div>
       <div class="gatekeeper-logo">
         <span class="logo-dws">DWS</span><span class="logo-lead">Lead</span>
       </div>
@@ -2325,7 +2344,7 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.8.12"></script>
+  <script src="js/app.js?v=4.8.13"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
