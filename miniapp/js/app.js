@@ -4287,6 +4287,12 @@ function dismissSplashScreen() {
   const completeDismiss = () => {
     if (splash.dataset.dismissed) return;
     splash.dataset.dismissed = 'true';
+    document.documentElement.classList.add('app-ready');
+    document.body.classList.add('app-ready');
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeMeta) {
+      themeMeta.setAttribute('content', state?.theme === 'dark' ? '#0F0F0F' : '#FFFFFF');
+    }
     splash.classList.add('fade-out');
     setTimeout(() => { splash.style.display = 'none'; }, 380);
   };
@@ -4314,13 +4320,25 @@ function applyTheme(theme) {
   const moonIcon = document.querySelector('.moon-icon');
 
   if (theme === 'dark') {
+    document.documentElement.classList.add('dark-theme');
+    document.documentElement.classList.remove('light-theme');
     document.body.classList.add('dark-theme');
     document.body.classList.remove('light-theme');
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeMeta && document.body.classList.contains('app-ready')) {
+      themeMeta.setAttribute('content', '#0F0F0F');
+    }
     if (sunIcon) sunIcon.style.display = 'none';
     if (moonIcon) moonIcon.style.display = 'block';
   } else {
+    document.documentElement.classList.remove('dark-theme');
+    document.documentElement.classList.add('light-theme');
     document.body.classList.remove('dark-theme');
     document.body.classList.add('light-theme');
+    const themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (themeMeta && document.body.classList.contains('app-ready')) {
+      themeMeta.setAttribute('content', '#FFFFFF');
+    }
     if (sunIcon) sunIcon.style.display = 'block';
     if (moonIcon) moonIcon.style.display = 'none';
   }

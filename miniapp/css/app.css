@@ -39,7 +39,7 @@
   --pill: 999px;
 
   --hh:    64px;
-  --nav-h: 70px;
+  --nav-h: 52px;
   --trans: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.08);
@@ -72,18 +72,23 @@ body.dark-theme {
 }
 
 html {
+  width: 100%;
   height: 100%;
-  height: -webkit-fill-available;
+  min-height: 100%;
+  min-height: 100dvh;
+  min-height: calc(100% + env(safe-area-inset-top, 0px));
   margin: 0;
   padding: 0;
   background-color: var(--white);
+  overscroll-behavior: none;
 }
 
 body {
   width: 100%;
   height: 100%;
-  height: 100dvh;
-  height: -webkit-fill-available;
+  min-height: 100%;
+  min-height: 100dvh;
+  min-height: calc(100% + env(safe-area-inset-top, 0px));
   margin: 0;
   padding: 0;
   overflow: hidden;
@@ -92,6 +97,7 @@ body {
   font-family: var(--ff);
   font-size: 15px;
   line-height: 1.5;
+  overscroll-behavior: none;
   transition: background-color var(--trans), color var(--trans);
 }
 
@@ -113,7 +119,7 @@ body {
   max-width: 540px;
   height: 100%;
   height: 100dvh;
-  height: -webkit-fill-available;
+  min-height: 100%;
   position: relative;
   margin: 0 auto;
   background: var(--white);
@@ -224,7 +230,7 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
   padding: 16px;
-  padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px) + 20px);
+  padding-bottom: calc(var(--nav-h) + 16px);
   -webkit-overflow-scrolling: touch;
 }
 
@@ -1784,16 +1790,16 @@ body.dark-theme .crm-order-card-title {
   transform: translateX(-50%);
   width: 100%;
   max-width: 540px;
-  height: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
+  height: var(--nav-h);
   background: var(--white);
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 0 env(safe-area-inset-bottom, 0px) 0;
+  padding: 0;
   box-sizing: border-box;
   z-index: 100;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
@@ -1805,10 +1811,17 @@ body.dark-theme .crm-order-card-title {
 @supports (-webkit-touch-callout: none) {
   @media (display-mode: standalone) {
     .app-nav {
-      height: calc(var(--nav-h) + max(env(safe-area-inset-bottom, 0px), 18px));
-      padding-bottom: max(env(safe-area-inset-bottom, 0px), 18px);
+      height: var(--nav-h);
+      padding-bottom: 0;
+      bottom: 0;
     }
   }
+}
+
+.is-standalone-pwa .app-nav {
+  height: var(--nav-h);
+  padding-bottom: 0;
+  bottom: 0;
 }
 
 .app-nav::-webkit-scrollbar {
@@ -1820,12 +1833,12 @@ body.dark-theme .crm-order-card-title {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   flex: 0 0 25%;
   width: 25%;
   min-width: 25%;
   max-width: 25%;
-  padding: 0 4px;
+  padding: 2px 4px;
   box-sizing: border-box;
   white-space: nowrap;
   scroll-snap-align: start;
@@ -1838,19 +1851,20 @@ body.dark-theme .crm-order-card-title {
 }
 
 .nav-btn svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   flex-shrink: 0;
   transition: transform 0.2s ease, stroke 0.2s ease;
 }
 
 .nav-btn span {
   font-family: var(--ffh);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 700;
   letter-spacing: 0.2px;
   white-space: nowrap;
   text-align: center;
+  line-height: 1.1;
 }
 
 .nav-btn.active {
@@ -1858,7 +1872,7 @@ body.dark-theme .crm-order-card-title {
 }
 
 .nav-btn.active svg {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   stroke: var(--accent);
   stroke-width: 2.2;
 }
@@ -5154,7 +5168,9 @@ body.dark-theme .doc-modal-sheet {
    ============================================================ */
 .app-splash-screen {
   position: fixed;
-  top: -100px; left: -100px; right: -100px; bottom: -100px;
+  inset: -150px;
+  width: auto;
+  height: auto;
   background-color: #0066FF;
   z-index: 999999;
   display: flex;
@@ -5171,8 +5187,8 @@ body.dark-theme .doc-modal-sheet {
 }
 .splash-white-circle {
   flex: none;
-  width: 170vmax;
-  height: 170vmax;
+  width: 260vmax;
+  height: 260vmax;
   border-radius: 50%;
   background: #ffffff;
   transform: scale(0);
