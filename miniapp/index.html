@@ -128,7 +128,7 @@
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.8.21">
+  <link rel="stylesheet" href="css/app.css?v=4.8.22">
   <link rel="icon" type="image/png" href="assets/app-avatar.png">
 </head>
 <body class="light-theme">
@@ -405,6 +405,29 @@
               </div>
             </div>
             <div id="profileRoleBadge" style="font-size: 0.74rem; font-weight: 700; padding: 5px 12px; border-radius: 20px; background: rgba(0,102,255,0.08); color: var(--brand); white-space: nowrap; border: 1px solid rgba(0,102,255,0.2);">Власник</div>
+          </div>
+
+          <!-- PWA INSTALL CARD (ВСТАНОВЛЕННЯ ПРОГРАМИ НА ТЕЛЕФОН ТА ПК) -->
+          <div class="pwa-install-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(0,102,255,0.1); color: #0066FF; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </div>
+                <div>
+                  <div style="font-family: var(--ffh); font-size: 0.96rem; font-weight: 800; color: var(--black); line-height: 1.2;">ДОДАТОК НА ТЕЛЕФОН ТА ПК</div>
+                  <div style="font-size: 0.73rem; color: var(--muted); margin-top: 2px;">Автономна PWA-програма без App Store</div>
+                </div>
+              </div>
+              <span id="pwaStatusBadge" style="font-size: 0.68rem; font-weight: 800; padding: 4px 10px; border-radius: 20px; background: rgba(0, 102, 255, 0.1); color: #0066FF; text-transform: uppercase; letter-spacing: 0.4px;">PWA App</span>
+            </div>
+            <p style="margin-bottom: 12px; font-size: 0.77rem; line-height: 1.45; color: var(--muted);">
+              Встановіть DWSLead як окрему програму з власною іконкою на робочий стіл телефона (iPhone / Android) або комп'ютера. Працює автономно, відкривається на весь екран.
+            </p>
+            <button type="button" id="openPwaInstallModalBtn" class="btn btn--fill btn--block" style="background: #0066FF; color: #FFFFFF; font-weight: 800; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: 12px; padding: 13px 16px; text-transform: uppercase; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              <span>СКАЧАТИ / ВСТАНОВИТИ ДОДАТОК</span>
+            </button>
           </div>
 
           <!-- "ПРО СЕБЕ" Block -->
@@ -2431,9 +2454,86 @@
     </div>
   </div>
 
+  <!-- MODAL: ВСТАНОВЛЕННЯ ДОДАТКА (PWA) НА ТЕЛЕФОН / ПК -->
+  <div id="modalInstallPwa" class="modal-overlay">
+    <div class="modal-sheet" style="max-height: 88vh; display: flex; flex-direction: column; position: relative;">
+      <div class="modal-header" style="position: relative; padding: 16px 50px 10px 16px;">
+        <h3 class="modal-title" style="font-size: 1.1rem; font-weight: 800; color: var(--black);">Встановлення DWSLead</h3>
+        <button type="button" class="modal-close modal-close-round-blue" data-close="modalInstallPwa" title="Закрити" aria-label="Закрити" style="position: absolute; top: 12px; right: 12px; margin: 0;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 14px 16px;">
+        <div style="display: flex; align-items: center; gap: 14px; padding: 12px; background: var(--card-sub); border: 1px solid var(--border); border-radius: var(--r); margin-bottom: 16px;">
+          <img src="assets/app-avatar.png" alt="DWSLead" style="width: 52px; height: 52px; border-radius: 14px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,102,255,0.25);">
+          <div>
+            <div style="font-size: 1.05rem; font-weight: 800; color: var(--black);">DWSLead Studio Platform</div>
+            <div style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Автономна PWA-програма без App Store</div>
+          </div>
+        </div>
+
+        <!-- Dynamic installation instructions based on device -->
+        <div id="pwaInstructionsContainer">
+          <!-- iOS instructions -->
+          <div id="pwaIosInstructions" style="display: none;">
+            <div style="font-weight: 800; font-size: 0.92rem; color: var(--black); margin-bottom: 10px;">Встановлення на iPhone / iPad:</div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div class="pwa-step-item">
+                <div class="pwa-step-num">1</div>
+                <div style="font-size: 0.82rem; color: var(--text); line-height: 1.4;">
+                  Відкрийте посилання у браузері <strong>Safari</strong> (якщо ви перебуваєте в Telegram — натисніть кнопку нижче для переходу в Safari).
+                </div>
+              </div>
+              <div class="pwa-step-item">
+                <div class="pwa-step-num">2</div>
+                <div style="font-size: 0.82rem; color: var(--text); line-height: 1.4;">
+                  У нижньому меню Safari натисніть кнопку <strong>«Поділитися»</strong> (квадрат зі стрілкою вгору).
+                </div>
+              </div>
+              <div class="pwa-step-item">
+                <div class="pwa-step-num">3</div>
+                <div style="font-size: 0.82rem; color: var(--text); line-height: 1.4;">
+                  Прокрутіть меню вниз і виберіть пункт <strong>«На початковий екран»</strong> (Add to Home Screen), після чого натисніть <strong>«Додати»</strong> вгорі праворуч.
+                </div>
+              </div>
+            </div>
+            <button type="button" id="openInSafariBtn" class="btn btn--fill btn--block" style="margin-top: 14px; padding: 14px; font-weight: 800; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: 12px; background: #0066FF; color: #FFFFFF; text-transform: uppercase;">
+              Відкрити посилання в Safari
+            </button>
+          </div>
+
+          <!-- Android instructions -->
+          <div id="pwaAndroidInstructions" style="display: none;">
+            <div style="font-weight: 800; font-size: 0.92rem; color: var(--black); margin-bottom: 10px;">Встановлення на Android:</div>
+            <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 12px;">Натисніть кнопку нижче або відкрийте меню Chrome (три крапки вгорі праворуч) і виберіть <strong>«Встановити додаток»</strong>.</p>
+            <button type="button" id="promptAndroidInstallBtn" class="btn btn--fill btn--block" style="padding: 14px; font-weight: 800; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: 12px; background: #0066FF; color: #FFFFFF; text-transform: uppercase;">
+              Встановити додаток зараз
+            </button>
+          </div>
+
+          <!-- Desktop instructions (PC / Mac) -->
+          <div id="pwaDesktopInstructions" style="display: none;">
+            <div style="font-weight: 800; font-size: 0.92rem; color: var(--black); margin-bottom: 10px;">Встановлення на Комп'ютер (Windows / Mac):</div>
+            <p style="font-size: 0.82rem; color: var(--muted); margin-bottom: 12px;">У браузері Chrome або Edge натисніть кнопку нижче або іконку зі стрілкою в правому краю адресного рядка браузера.</p>
+            <button type="button" id="promptDesktopInstallBtn" class="btn btn--fill btn--block" style="padding: 14px; font-weight: 800; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: 12px; background: #0066FF; color: #FFFFFF; text-transform: uppercase;">
+              Встановити на Комп'ютер
+            </button>
+          </div>
+
+          <!-- Already standalone -->
+          <div id="pwaInstalledInstructions" style="display: none; text-align: center; padding: 16px 8px;">
+            <div style="font-size: 1rem; font-weight: 800; color: #0066FF; margin-bottom: 6px;">Додаток вже встановлено</div>
+            <p style="font-size: 0.82rem; color: var(--muted); line-height: 1.4;">Ви вже використовуєте DWSLead як автономну програму на цьому пристрої. Оновлення та база лідів підтягуються автоматично.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.8.21"></script>
+  <script src="js/app.js?v=4.8.22"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

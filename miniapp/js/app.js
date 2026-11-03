@@ -4277,6 +4277,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupEventListeners();
   loadAllData();
   startAutoSyncEngine();
+  setupPwaInstallHandlers();
   dismissSplashScreen();
 });
 
@@ -4304,6 +4305,127 @@ function dismissSplashScreen() {
   // Exactly 2.0s pure blue screen + 1.15s circle growth = 3.15s, then immediately reveal app from white
   setTimeout(completeDismiss, 3150);
   splash.addEventListener('click', completeDismiss, { once: true });
+}
+
+// ============================================================
+// PWA INSTALLATION ENGINE (MULTI-DEVICE / TELEGRAM MINI APP)
+// ============================================================
+let deferredInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  window.deferredInstallPrompt = e;
+  updatePwaInstallUi();
+});
+
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  window.deferredInstallPrompt = null;
+  updatePwaInstallUi();
+  if (typeof showToast === 'function') {
+    showToast('Додаток DWSLead успішно встановлено на пристрій!');
+  }
+});
+
+function isStandaloneMode() {
+  return window.navigator.standalone === true ||
+         window.matchMedia('(display-mode: standalone)').matches ||
+         document.documentElement.classList.contains('is-standalone-pwa');
+}
+
+function updatePwaInstallUi() {
+  const statusBadge = document.getElementById('pwaStatusBadge');
+  const mainBtn = document.getElementById('openPwaInstallModalBtn');
+  if (!mainBtn) return;
+
+  if (isStandaloneMode()) {
+    if (statusBadge) {
+      statusBadge.textContent = 'Встановлено';
+      statusBadge.style.background = 'rgba(16, 185, 129, 0.12)';
+      statusBadge.style.color = '#10B981';
+    }
+    const btnSpan = mainBtn.querySelector('span');
+    if (btnSpan) btnSpan.textContent = 'ДОДАТОК ВЖЕ ВСТАНОВЛЕНО (PWA)';
+  }
+}
+
+function setupPwaInstallHandlers() {
+  const openModalBtn = document.getElementById('openPwaInstallModalBtn');
+  const modal = document.getElementById('modalInstallPwa');
+  const openSafariBtn = document.getElementById('openInSafariBtn');
+  const promptAndroidBtn = document.getElementById('promptAndroidInstallBtn');
+  const promptDesktopBtn = document.getElementById('promptDesktopInstallBtn');
+
+  const pwaUrl = 'https://dwslead-miniapp.vercel.app/';
+
+  const triggerNativePrompt = async () => {
+    if (deferredInstallPrompt) {
+      deferredInstallPrompt.prompt();
+      try {
+        const choiceResult = await deferredInstallPrompt.userChoice;
+        if (choiceResult && choiceResult.outcome === 'accepted') {
+          deferredInstallPrompt = null;
+          if (modal) modal.classList.remove('open');
+        }
+      } catch (err) {}
+    } else {
+      if (window.Telegram?.WebApp?.openLink) {
+        window.Telegram.WebApp.openLink(pwaUrl);
+      } else {
+        window.open(pwaUrl, '_blank');
+      }
+    }
+  };
+
+  if (promptAndroidBtn) promptAndroidBtn.addEventListener('click', triggerNativePrompt);
+  if (promptDesktopBtn) promptDesktopBtn.addEventListener('click', triggerNativePrompt);
+
+  if (openSafariBtn) {
+    openSafariBtn.addEventListener('click', () => {
+      if (window.Telegram?.WebApp?.openLink) {
+        window.Telegram.WebApp.openLink(pwaUrl);
+      } else {
+        window.open(pwaUrl, '_blank');
+      }
+    });
+  }
+
+  if (openModalBtn && modal) {
+    openModalBtn.addEventListener('click', () => {
+      haptic('light');
+      const isStandalone = isStandaloneMode();
+      const isIos = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isAndroid = /Android/i.test(navigator.userAgent);
+
+      const iosBox = document.getElementById('pwaIosInstructions');
+      const androidBox = document.getElementById('pwaAndroidInstructions');
+      const desktopBox = document.getElementById('pwaDesktopInstructions');
+      const installedBox = document.getElementById('pwaInstalledInstructions');
+
+      if (iosBox) iosBox.style.display = 'none';
+      if (androidBox) androidBox.style.display = 'none';
+      if (desktopBox) desktopBox.style.display = 'none';
+      if (installedBox) installedBox.style.display = 'none';
+
+      if (isStandalone) {
+        if (installedBox) installedBox.style.display = 'block';
+      } else if (deferredInstallPrompt && !isIos) {
+        triggerNativePrompt();
+        return;
+      } else if (isIos) {
+        if (iosBox) iosBox.style.display = 'block';
+      } else if (isAndroid) {
+        if (androidBox) androidBox.style.display = 'block';
+      } else {
+        if (desktopBox) desktopBox.style.display = 'block';
+      }
+
+      modal.classList.add('open');
+    });
+  }
+
+  updatePwaInstallUi();
 }
 
 // ============================================================

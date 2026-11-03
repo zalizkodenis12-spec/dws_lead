@@ -5251,6 +5251,54 @@ body.dark-theme .doc-modal-sheet {
   border: 1px solid rgba(0, 102, 255, 0.2);
 }
 
+/* ============================================================
+   PWA INSTALL CARD & MODAL INSTRUCTIONS
+   ============================================================ */
+.pwa-install-card {
+  margin-top: 14px;
+  margin-bottom: 18px;
+  padding: 16px;
+  background: var(--card-sub);
+  border: 1.5px solid rgba(0, 102, 255, 0.25);
+  border-radius: var(--r-lg);
+  box-shadow: 0 4px 20px rgba(0, 102, 255, 0.06);
+  transition: border-color var(--trans), box-shadow var(--trans);
+}
+
+body.dark-theme .pwa-install-card {
+  background: var(--card-bg);
+  border-color: rgba(0, 102, 255, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.pwa-install-card:hover {
+  border-color: #0066FF;
+}
+
+.pwa-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
+
+.pwa-step-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #0066FF;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
 
 
 
