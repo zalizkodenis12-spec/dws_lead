@@ -50,6 +50,25 @@
     body.app-ready.dark-theme {
       background-color: #0F0F0F !important;
     }
+    body:not(.app-ready) .app-wrap {
+      opacity: 0;
+      pointer-events: none;
+    }
+    body.app-ready .app-wrap {
+      animation: appContentFadeIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      pointer-events: auto;
+      will-change: opacity, transform;
+    }
+    @keyframes appContentFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.992);
+      }
+      100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
     .app-splash-screen {
       position: fixed;
       inset: -150px;
@@ -67,7 +86,7 @@
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
-      transition: opacity 0.35s ease, visibility 0.35s ease;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
     }
     .splash-white-circle {
       flex: none;
@@ -111,7 +130,7 @@
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.8.18">
+  <link rel="stylesheet" href="css/app.css?v=4.8.19">
   <link rel="icon" type="image/png" href="assets/app-avatar.png">
 </head>
 <body class="light-theme">
@@ -2416,7 +2435,7 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.8.18"></script>
+  <script src="js/app.js?v=4.8.19"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

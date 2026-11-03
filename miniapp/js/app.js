@@ -4282,7 +4282,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function dismissSplashScreen() {
   const splash = document.getElementById('appSplashScreen');
-  if (!splash) return;
+  if (!splash) {
+    document.documentElement.classList.add('app-ready');
+    document.body.classList.add('app-ready');
+    return;
+  }
 
   const completeDismiss = () => {
     if (splash.dataset.dismissed) return;
@@ -4294,11 +4298,11 @@ function dismissSplashScreen() {
       themeMeta.setAttribute('content', state?.theme === 'dark' ? '#0F0F0F' : '#FFFFFF');
     }
     splash.classList.add('fade-out');
-    setTimeout(() => { splash.style.display = 'none'; }, 380);
+    setTimeout(() => { splash.style.display = 'none'; }, 420);
   };
 
-  // Exactly 2.0s pure blue screen + 1.35s circle growth to all edges = 3.35s, then reveal app at 3.45s
-  setTimeout(completeDismiss, 3450);
+  // Exactly 2.0s pure blue screen + 1.35s circle growth to all edges = 3.35s, then seamlessly bloom app out of white
+  setTimeout(completeDismiss, 3350);
   splash.addEventListener('click', completeDismiss, { once: true });
 }
 
