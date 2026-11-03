@@ -4288,15 +4288,11 @@ function dismissSplashScreen() {
     if (splash.dataset.dismissed) return;
     splash.dataset.dismissed = 'true';
     splash.classList.add('fade-out');
-    setTimeout(() => {
-      splash.style.display = 'none';
-    }, 450);
+    setTimeout(() => { splash.style.display = 'none'; }, 300);
   };
 
-  // Cinematic sequence: 0-0.65s circle enter, 0.45s text, 2s hold, 2.5s-3.25s expand to white, 3.35s fade
-  setTimeout(completeDismiss, 3350);
-
-  // Fast-skip if user taps screen
+  // 0.45s blue hold + 1.15s circle growth = 1.6s, then reveal the app
+  setTimeout(completeDismiss, 1700);
   splash.addEventListener('click', completeDismiss, { once: true });
 }
 

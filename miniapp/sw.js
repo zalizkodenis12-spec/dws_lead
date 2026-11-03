@@ -1,5 +1,5 @@
-// DWSLead Service Worker v4.8.14
-const CACHE_NAME = 'dwslead-sw-v4.8.14';
+// DWSLead Service Worker v4.8.15
+const CACHE_NAME = 'dwslead-sw-v4.8.15';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

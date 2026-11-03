@@ -16,9 +16,26 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
   
+  <!-- Critical first-paint: blue from the very first frame, no black flash -->
+  <style>
+    html, body { background: #0066FF; margin: 0; }
+    .app-splash-screen { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: #0066FF; z-index: 999999; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .splash-white-circle { flex: none; width: 170vmax; height: 170vmax; border-radius: 50%; background: #fff; transform: scale(0); animation: splashCircleGrow 1.15s cubic-bezier(0.65, 0, 0.35, 1) 0.45s forwards; }
+    @keyframes splashCircleGrow { from { transform: scale(0); } to { transform: scale(1); } }
+  </style>
+  <link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/splash/splash-1179x2556.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/splash/splash-1290x2796.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/splash/splash-1170x2532.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/splash/splash-1284x2778.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/splash/splash-1125x2436.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/splash/splash-1206x2622.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/splash/splash-1320x2868.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="assets/splash/splash-750x1334.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="assets/splash/splash-828x1792.png">
+  <link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="assets/splash/splash-1242x2688.png">
   <!-- PWA & Mobile Web App Standalone Capabilities -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0b0f19">
+  <meta name="theme-color" content="#0066FF">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -28,26 +45,17 @@
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.8.14">
+  <link rel="stylesheet" href="css/app.css?v=4.8.15">
   <link rel="icon" type="image/png" href="assets/app-avatar.png">
 </head>
 <body class="light-theme">
   <!-- Signature DenisWeb Studio Grain Noise Overlay -->
   <div class="noise"></div>
 
-  <!-- CINEMATIC EXPANDING BLUE & WHITE SPLASH SCREEN -->
+  <!-- SPLASH: blue screen, white circle grows to fill screen -->
   <div id="appSplashScreen" class="app-splash-screen">
-    <!-- The White Circle in the Center -->
-    <div class="splash-white-circle">
-      <div class="splash-circle-inner">
-        <div class="splash-avatar-circle">
-          <img src="assets/app-avatar.png" alt="DWSLead Avatar" class="splash-avatar-round" />
-        </div>
-        <div class="splash-brand-text">
-          <span class="splash-brand-dws">DWS</span><span class="splash-brand-lead">Lead</span>
-        </div>
-      </div>
-    </div>
+    <div class="splash-white-circle"></div>
+  </div>
   </div>
 
   <!-- MASTER ACCESS GATEKEEPER LOCK SCREEN (ОДНОРАЗОВИЙ ВХІД ЗА СЕКРЕТНИМ КОДОМ) -->
@@ -2343,7 +2351,7 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.8.14"></script>
+  <script src="js/app.js?v=4.8.15"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
