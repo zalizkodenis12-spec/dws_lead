@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794241252675-480",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Mykyta Davidchyk | Таргетолог",
+      "authorUsername": "@tg_id_693978414",
+      "title": "#вакансія Media Buyer / Таргетолог (Meta Ads)",
+      "text": "#вакансія Media Buyer / Таргетолог (Meta Ads)\n\nLight Traffic — агенція, що веде EU / USA проєкти через Meta Ads + Growth Marketing.\n\nШукаємо таргетолога з досвідом від 6 міс і бюджетами $1k+/міс, який сам аналізує, оптимізує і відповідає за результат.\n\n✅ Фікс + система мотивації\n✅ Міжнародні клієнти\n✅ Ріст до Senior / Team Lead\n✅ Сильна команда і зрозумілі процеси\n\nКоротка анкета 👉 https://forms.gle/1YsZAAEQ4xHCNn376",
+      "date": "2026-11-09T16:20:52.675Z",
+      "dateFormatted": "Сьогодні, 18:20",
+      "budget": 0,
+      "currency": "₴",
+      "country": "США",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794240989066-331",
       "category": "marketing",
       "categoryName": "Маркетинг",
