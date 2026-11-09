@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794237533077-865",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Андрей",
+      "authorUsername": "@tg_id_8744503926",
+      "title": "Привіт! 👋",
+      "text": "Привіт! 👋\n\nЗаймаюся відеомонтажем та створенням цікавого й динамічного контенту. Працюю в Adobe Premiere Pro та After Effects, постійно вдосконалюю свої навички.\n\n🎥 Монтую:\n• TikTok / Reels / Shorts\n• YouTube-відео\n• Субтитри, переходи та ефекти\n• Динамічний монтаж під музику\n\nВраховую побажання замовника, готовий вносити правки та працювати над цікавими проєктами.\nЗа потреби можу виконати невелике тестове завдання, щоб ви могли оцінити мої навички.\n\nБуду радий співпраці! 🤝",
+      "date": "2026-11-09T15:18:53.076Z",
+      "dateFormatted": "Сьогодні, 17:18",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 55,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794237262091-621",
       "category": "marketing",
       "categoryName": "Маркетинг",
