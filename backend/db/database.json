@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794243298184-869",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Anton Tysiachnik",
+      "authorUsername": "@anton_tysiachnik",
+      "title": "Вакансія: таргетолог в агенцію InSync 🌀",
+      "text": "Вакансія: таргетолог в агенцію InSync 🌀\n\n 🔥$800–1 500 на місяць, фікс + KPI + бонуси\n\n90% рутини бере наша AI-платформа: збирає структуру кампаній, перевіряє кабінети, готує звіти. На тобі стратегія, цифри й клієнт.\n\n• проєкти з України, Європи, США та Казахстану\n• AI-монтаж роликів та 2 000+ розборів креативів\n• адаптація 2 тижні, віддалено, оцінюємо результат, а не години\n• досвід у Meta від пів року\n\nПиши мені в Telegram: @anton_tysiachnik\n\nЗнаєш сильного таргетолога? За рекомендацію 50$💵, якщо ми пропрацюємо з ним понад місяць.",
+      "date": "2026-11-09T16:54:58.184Z",
+      "dateFormatted": "Сьогодні, 18:54",
+      "budget": 33000,
+      "currency": "₴",
+      "country": "Казахстан",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 87,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 33000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794243228588-334",
       "category": "montage",
       "categoryName": "Монтаж",
