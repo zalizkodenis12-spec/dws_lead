@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794243228588-334",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Vitaliy",
+      "authorUsername": "@tg_id_1813121226",
+      "title": "Вітаю! Я Віталій, відеомонтажер 🎬",
+      "text": "Вітаю! Я Віталій, відеомонтажер 🎬\nПрацюю з короткими відео для TikTok, Instagram Reels та YouTube Shorts.\nМонтую в Premiere Pro та DaVinci Resolve, роблю динамічний і якісний контент, приділяю увагу деталям, ритму й утриманню глядача.\nВідкритий до нових проєктів і співпраці. Якщо шукаєте монтажера — пишіть, буду радий обговорити деталі!",
+      "date": "2026-11-09T16:53:48.588Z",
+      "dateFormatted": "Сьогодні, 18:53",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794243126100-774",
       "category": "marketing",
       "categoryName": "Маркетинг",
