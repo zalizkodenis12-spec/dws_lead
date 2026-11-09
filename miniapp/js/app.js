@@ -11805,47 +11805,39 @@ function setupScrapeTab() {
 
 
 
-  // Apify Token settings modal
-  document.getElementById('openApifyTokenBtn')?.addEventListener('click', async () => {
+  // Google Cloud Places API Key settings modal
+  document.getElementById('openApifyTokenBtn')?.addEventListener('click', () => {
     const input = document.getElementById('apifyTokenInput');
-    const localToken = getClientApifyToken();
-    if (input && localToken) {
-      input.placeholder = localToken.slice(0, 8) + '...' + localToken.slice(-4);
+    const localKey = getClientGoogleMapsKey();
+    if (input && localKey) {
+      input.placeholder = localKey.slice(0, 8) + '...' + localKey.slice(-4);
+      input.value = localStorage.getItem('dws_google_maps_key') || '';
     }
-    try {
-      const res = await fetch('/api/scrapes/token');
-      const json = await res.json();
-      if (input && json.masked) {
-        input.placeholder = json.masked;
-      }
-    } catch {}
     openModal('modalApifyToken');
   });
 
-  document.getElementById('saveApifyTokenBtn')?.addEventListener('click', async () => {
+  document.getElementById('saveApifyTokenBtn')?.addEventListener('click', () => {
     const input = document.getElementById('apifyTokenInput');
-    const token = (input?.value || '').trim();
-    if (!token) {
-      alert('Будь ласка, вставте токен Apify (починається на apify_api_...)');
+    const key = (input?.value || '').trim();
+    if (!key) {
+      showToast('Вставте ключ Google API (починається на AIzaSy...)');
       return;
     }
-    const btn = document.getElementById('saveApifyTokenBtn');
-    if (btn) { btn.disabled = true; btn.textContent = 'ЗБЕРІГАЮ…'; }
-    setClientApifyToken(token);
-    try {
-      await fetch('/api/scrapes/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token })
-      });
-    } catch {}
+    localStorage.setItem('dws_google_maps_key', key);
     haptic('success');
-    scrapeState.mode = 'live';
     closeModal('modalApifyToken');
-    if (input) input.value = '';
-    fetchScrapes();
-    alert('✅ Apify API токен успішно підключено! Тепер Google Maps та Instagram скрапери працюють наживо.');
-    if (btn) { btn.disabled = false; btn.textContent = 'ЗБЕРЕГТИ ТОКЕН'; }
+    showToast('Ключ Google Cloud API збережено успішно');
+  });
+
+  document.getElementById('resetGoogleApiKeyBtn')?.addEventListener('click', () => {
+    localStorage.removeItem('dws_google_maps_key');
+    const input = document.getElementById('apifyTokenInput');
+    if (input) {
+      input.value = '';
+      input.placeholder = GOOGLE_MAPS_DEFAULT_KEY.slice(0, 8) + '...' + GOOGLE_MAPS_DEFAULT_KEY.slice(-4);
+    }
+    haptic('light');
+    showToast('Скинуто до стандартного ключа DWS');
   });
 
   document.getElementById('submitScrapeBtn')?.addEventListener('click', submitScrape);

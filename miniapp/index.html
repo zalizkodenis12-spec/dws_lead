@@ -923,32 +923,38 @@
     </div>
   </div>
 
-  <!-- MODAL: НАЛАШТУВАННЯ APIFY API -->
+  <!-- MODAL: НАЛАШТУВАННЯ GOOGLE PLACES API -->
   <div id="modalApifyToken" class="modal-overlay">
     <div class="modal-sheet">
       <div class="modal-header">
-        <h3 class="modal-title" style="flex: 1; text-align: center;">Підключення Apify API</h3>
+        <h3 class="modal-title" style="flex: 1; text-align: center;">Google Places API (Карти)</h3>
         <button class="modal-close" data-close="modalApifyToken">&times;</button>
       </div>
       <div class="modal-body">
-        <p class="form-hint" style="margin-bottom: 14px; font-size: 0.82rem; line-height: 1.45;">
-          Вставте свій <strong>Personal API token</strong> з консолі Apify, щоб Google Maps Scraper та Instagram Scraper працювали на повну потужність наживо.
+        <p class="form-hint" style="margin-bottom: 12px; font-size: 0.82rem; line-height: 1.45;">
+          Для пошуку закладів і номерів телефонів використовується прямий <strong>Google Places API</strong>. Google надає <strong>$200 безкоштовного кредиту щомісяця</strong> на кожен акаунт (це ~6 000 - 10 000 пошуків).
+        </p>
+        <p class="form-hint" style="margin-bottom: 14px; font-size: 0.80rem; color: var(--muted); line-height: 1.4;">
+          Якщо ліміт вичерпано, достатньо вказати ключ від будь-якої іншої Gmail-пошти або скинути до системного ключа за замовчуванням.
         </p>
 
         <div class="form-group">
-          <label class="form-label">APIFY PERSONAL API TOKEN:</label>
-          <input type="password" id="apifyTokenInput" class="form-input" placeholder="apify_api_..." autocomplete="off">
+          <label class="form-label">GOOGLE CLOUD API KEY:</label>
+          <input type="text" id="apifyTokenInput" class="form-input" placeholder="AIzaSy..." autocomplete="off">
         </div>
 
-        <div style="margin-top: 14px;">
-          <a href="https://console.apify.com/account/integrations" target="_blank" rel="noopener" class="btn btn--out btn--sm btn--block" style="display:flex; justify-content:center; align-items:center; gap:6px; text-decoration:none;">
-            <span>Відкрити Apify Console ➔ Скопіювати токен</span>
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
+          <button type="button" id="resetGoogleApiKeyBtn" class="btn btn--out btn--sm btn--block">
+            Скинути до стандартного ключа DWS
+          </button>
+          <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener" class="btn btn--out btn--sm btn--block" style="display:flex; justify-content:center; align-items:center; gap:6px; text-decoration:none;">
+            <span>Відкрити Google Cloud Console</span>
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
           </a>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" id="saveApifyTokenBtn" class="btn btn--fill btn--block">ЗБЕРЕГТИ ТОКЕН</button>
+        <button type="button" id="saveApifyTokenBtn" class="btn btn--fill btn--block">ЗБЕРЕГТИ КЛЮЧ</button>
       </div>
     </div>
   </div>

@@ -1,5 +1,6 @@
 @echo off
-cd /d "d:\Мої сайти\My_own_site\dws-lead"
+chcp 65001 >nul
+cd /d "%~dp0"
 :loop
 node backend/server.js
 timeout /t 5 /nobreak >nul
