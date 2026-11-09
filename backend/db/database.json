@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794237010804-650",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "mobile",
+      "subcategoryName": "Мобільні додатки",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@udio",
+      "title": "Level Designer (PC/Console, UE5) / Nekki ⚡️",
+      "text": "Level Designer (PC/Console, UE5) / Nekki ⚡️\nRemote\n\nNekki is a game development studio, the creator of Shadow Fight Arena, Shadow Fight 3, Shadow Fight 2, 11×11, and Vector.\n\nThe total number of registered users for our games exceeds 1 billion worldwide. We develop and release games for PC, consoles, and mobile platforms.\n\n\nTLDR: Join Nekki as a Level Designer for SPINE, a cinematic gun-fu game in Unreal Engine 5, focusing on immersive level creation and collaboration.\n\nТребования к кандидату:\n- 3+ years of experience in level design\n- Proficiency in Unreal Engine 5\n- Strong understanding of level design principles\n- Portfolio showcasing level design work\n- Fluent communication in Russian\n\nЧитать подробнее:\n→ Откликнуться тут\n\nДругие вакансии:\n• Narrative Designer (PC/Console, UE5)\n• Middle Technical Level Designer (UE)\n• Middle UI Designer (LiveOps) ⚡️ +",
+      "date": "2026-11-09T15:10:10.801Z",
+      "dateFormatted": "Сьогодні, 17:10",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: мобільні додатки.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794236405811-65",
       "category": "marketing",
       "categoryName": "Маркетинг",
