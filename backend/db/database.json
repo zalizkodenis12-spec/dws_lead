@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794236093554-459",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "WordPress Russian Community",
+      "sourceUsername": "@wordpress_ru",
+      "authorName": "Магомед",
+      "authorUsername": "@mydjalilov",
+      "title": "Оно и к лучшему, нам, разработчикам останутся сложные проекты с хорошим чек...",
+      "text": "Оно и к лучшему, нам, разработчикам останутся сложные проекты с хорошим чеком",
+      "date": "2026-11-09T14:54:53.551Z",
+      "dateFormatted": "Сьогодні, 16:54",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794234544358-231",
       "category": "marketing",
       "categoryName": "Маркетинг",
