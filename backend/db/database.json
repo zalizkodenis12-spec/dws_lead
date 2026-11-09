@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794254370095-819",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Олексій",
+      "authorUsername": "@tg_id_8954634477",
+      "title": "Шукаю монтажера весільних відео з прикладами",
+      "text": "Шукаю монтажера весільних відео з прикладами",
+      "date": "2026-11-09T19:59:30.095Z",
+      "dateFormatted": "Сьогодні, 21:59",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794254149636-997",
       "category": "marketing",
       "categoryName": "Маркетинг",
