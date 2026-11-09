@@ -18,8 +18,17 @@
     }
   ],
   "rewrites": [
+    { "source": "/api/leads/scan", "destination": "/api/scan.js" },
+    { "source": "/api/cron-scan", "destination": "/api/scan.js?report=1" },
+    { "source": "/api/proxy", "destination": "/api/proxy.js" },
     { "source": "/api/leads(.*)", "destination": "/miniapp/leads-data.json" },
     { "source": "/leads-data.json", "destination": "/miniapp/leads-data.json" },
     { "source": "/(.*)", "destination": "/miniapp/$1" }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron-scan",
+      "schedule": "0 21 * * *"
+    }
   ]
 }

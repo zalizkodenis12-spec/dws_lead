@@ -47,14 +47,43 @@ app.get('/api/leads', (req, res) => {
   }
 });
 
+// Universal CORS Web Proxy for Telegram public channels, Work.ua, OLX, and business websites
+app.get('/api/proxy', async (req, res) => {
+  const targetUrl = String(req.query?.url || '').trim();
+  if (!targetUrl || !/^https?:\/\//i.test(targetUrl)) {
+    return res.status(400).json({ error: 'Invalid or missing url parameter' });
+  }
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 7000);
+    const response = await fetch(targetUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,application/json,*/*;q=0.8',
+        'Accept-Language': 'uk-UA,uk;q=0.9,en-US;q=0.8,en;q=0.7'
+      },
+      redirect: 'follow',
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+    const text = await response.text();
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.status(response.ok ? 200 : response.status).send(text);
+  } catch (err) {
+    res.status(502).json({ error: err.message || 'Proxy fetch failed' });
+  }
+});
+
 // Trigger live channel scan on-demand
-app.post('/api/leads/scan', async (req, res) => {
+app.all('/api/leads/scan', async (req, res) => {
   try {
     const result = await scanPublicChannels();
-    try {
-      await sendScanReport(result);
-    } catch (reportErr) {
-      console.error('[Server] sendScanReport error:', reportErr.message);
+    if (req.body?.sendReport !== false) {
+      try {
+        await sendScanReport(result);
+      } catch (reportErr) {
+        console.error('[Server] sendScanReport error:', reportErr.message);
+      }
     }
     const leads = db.getLeads();
     res.json({ success: true, scanResult: result, count: leads.length, data: leads });

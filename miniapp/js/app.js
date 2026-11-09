@@ -4335,16 +4335,10 @@ function isStandaloneMode() {
 }
 
 function updatePwaInstallUi() {
-  const statusBadge = document.getElementById('pwaStatusBadge');
   const mainBtn = document.getElementById('openPwaInstallModalBtn');
   if (!mainBtn) return;
 
   if (isStandaloneMode()) {
-    if (statusBadge) {
-      statusBadge.textContent = 'Встановлено';
-      statusBadge.style.background = 'rgba(16, 185, 129, 0.12)';
-      statusBadge.style.color = '#10B981';
-    }
     const btnSpan = mainBtn.querySelector('span');
     if (btnSpan) btnSpan.textContent = 'ДОДАТОК ВЖЕ ВСТАНОВЛЕНО (PWA)';
   }
@@ -5525,7 +5519,67 @@ function isCandidateResumeOrSelfPromo(text, title = '') {
 }
 
 // ---- 1. LEADS FEED ----
+function mergeAndDedupeLeadsList(primaryList = [], secondaryList = []) {
+  const seenKeys = new Set();
+  const result = [];
+  for (const item of [...primaryList, ...secondaryList]) {
+    if (!item || (!item.text && !item.title)) continue;
+    if (isCandidateResumeOrSelfPromo(item.text, item.title)) continue;
+    const key = (item.id ? String(item.id) : '') + '|' + String(item.text || item.title || '').trim().slice(0, 90).toLowerCase();
+    const textKey = String(item.text || item.title || '').trim().slice(0, 90).toLowerCase();
+    if (seenKeys.has(key) || (textKey.length > 20 && seenKeys.has(textKey))) continue;
+    seenKeys.add(key);
+    if (textKey.length > 20) seenKeys.add(textKey);
+    result.push(item);
+  }
+  return result;
+}
+
+let isScanningLiveVacancies = false;
+async function triggerLiveVacanciesScan({ silent = true, sendReport = false } = {}) {
+  if (isScanningLiveVacancies) return { newLeads: 0 };
+  isScanningLiveVacancies = true;
+  try {
+    const res = await fetch('/api/leads/scan' + (sendReport ? '?report=1' : ''), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sendReport })
+    }).catch(() => null);
+
+    if (res && res.ok) {
+      const json = await res.json().catch(() => null);
+      if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
+        const prevCount = (state.allLeads || []).length;
+        state.allLeads = mergeAndDedupeLeadsList(json.data, state.allLeads || []);
+        try {
+          localStorage.setItem('dws_live_scanned_leads', JSON.stringify(state.allLeads.slice(0, 150)));
+        } catch (_) {}
+        filterAndRenderLeads();
+        const added = Math.max(Number(json.scanResult?.newLeads) || 0, Math.max(0, state.allLeads.length - prevCount));
+        if (!silent && added > 0) {
+          showToast(`Знайдено ${added} нових вакансій! Усього активних: ${state.allLeads.length}`);
+        }
+        return { newLeads: added, total: state.allLeads.length };
+      }
+    }
+  } catch (err) {
+    console.warn('[LiveScan] Warning:', err.message);
+  } finally {
+    isScanningLiveVacancies = false;
+  }
+  return { newLeads: 0, total: (state.allLeads || []).length };
+}
+
+let liveVacanciesIntervalStarted = false;
 async function fetchLeads() {
+  let cachedScanned = [];
+  try {
+    cachedScanned = JSON.parse(localStorage.getItem('dws_live_scanned_leads') || '[]');
+    if (!Array.isArray(cachedScanned)) cachedScanned = [];
+  } catch (_) {
+    cachedScanned = [];
+  }
+
   try {
     const params = new URLSearchParams();
     if (state.filters.category && state.filters.category !== 'all') params.set('category', state.filters.category);
@@ -5542,9 +5596,17 @@ async function fetchLeads() {
     }
     if (res && res.ok) {
       const json = await res.json();
-      if (json.success && Array.isArray(json.data) && json.data.length > 0) {
-        state.allLeads = json.data.filter(l => !isCandidateResumeOrSelfPromo(l.text, l.title));
+      const rawArr = Array.isArray(json.data) ? json.data : (Array.isArray(json.leads) ? json.leads : []);
+      if (rawArr.length > 0) {
+        state.allLeads = mergeAndDedupeLeadsList(cachedScanned, rawArr);
         filterAndRenderLeads();
+        triggerLiveVacanciesScan({ silent: true, sendReport: false });
+        if (!liveVacanciesIntervalStarted) {
+          liveVacanciesIntervalStarted = true;
+          setInterval(() => {
+            triggerLiveVacanciesScan({ silent: true, sendReport: false });
+          }, 15 * 60 * 1000);
+        }
         return;
       }
     }
@@ -5553,9 +5615,10 @@ async function fetchLeads() {
   }
 
   if (!state.allLeads || state.allLeads.length === 0) {
-    state.allLeads = [...DEFAULT_DATA.leads];
+    state.allLeads = mergeAndDedupeLeadsList(cachedScanned, [...DEFAULT_DATA.leads]);
   }
   filterAndRenderLeads();
+  triggerLiveVacanciesScan({ silent: true, sendReport: false });
 }
 
 function getExactCountry(lead) {
@@ -7061,19 +7124,26 @@ function setupEventListeners() {
       refreshBtn.style.transition = 'transform 0.5s ease, background 0.4s ease, color 0.4s ease, border-color 0.4s ease';
       // Clear session taken IDs so all "В РОБОТІ ✓" leads disappear from the Заявки list
       state.justTakenSessionIds.clear();
+      showToast('Сканую нові вакансії у Telegram та на біржах…');
 
       try {
         const res = await fetch(`leads-data.json?t=${Date.now()}`);
         if (res.ok) {
           const freshData = await res.json();
-          if (freshData && Array.isArray(freshData.leads)) {
-            state.allLeads = freshData.leads;
+          const rawArr = Array.isArray(freshData?.data) ? freshData.data : (Array.isArray(freshData?.leads) ? freshData.leads : []);
+          if (rawArr.length > 0) {
+            state.allLeads = mergeAndDedupeLeadsList(rawArr, state.allLeads || []);
           }
         }
       } catch (err) {}
 
+      const scanRes = await triggerLiveVacanciesScan({ silent: true, sendReport: true });
       filterAndRenderLeads();
-      showToast(`Оновлено! Усього активних заявок: ${state.allLeads.length}`);
+      if (scanRes.newLeads > 0) {
+        showToast(`Оновлено! Нових заявок: +${scanRes.newLeads} (усього: ${state.allLeads.length})`);
+      } else {
+        showToast(`Оновлено! Усього активних заявок: ${state.allLeads.length}`);
+      }
       setTimeout(() => {
         refreshBtn.style.transform = '';
       }, 500);
@@ -9610,10 +9680,7 @@ function getCleanAccountKey() {
 }
 
 function getCloudKvRecordUrl(accountKey) {
-  const token = (typeof getClientApifyToken === 'function' ? getClientApifyToken() : '') ||
-    (() => { try { return atob('YXBpZnlfYXBpX1gzM1I4NEsyWDJia2ZNZjdYQWZrQ1R5RU1rblNiSTR4dXVmWA=='); } catch { return ''; } })();
-  const safeKey = String(accountKey || 'absolutikdenchik').trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '_');
-  return `https://api.apify.com/v2/key-value-stores/${DWS_CLOUD_KV_STORE_ID}/records/account_${safeKey}?token=${encodeURIComponent(token)}`;
+  return '';
 }
 
 function mergeArraysById(primaryArr, secondaryArr) {
@@ -10653,13 +10720,8 @@ function renderScrapes() {
   const dot = document.getElementById('scrapeApiDot');
   const lbl = document.getElementById('scrapeApiLabel');
   if (dot && lbl) {
-    if (scrapeState.mode === 'live') {
-      dot.classList.add('active');
-      lbl.textContent = 'Apify Live';
-    } else {
-      dot.classList.remove('active');
-      lbl.textContent = 'Підключити API';
-    }
+    dot.classList.add('active');
+    lbl.textContent = 'Google Maps Live';
   }
 
   if (!scrapeState.jobs.length) {
@@ -10674,7 +10736,7 @@ function renderScrapes() {
     if (job.status === 'running') pill = `<span class="scrape-status-pill running">${escapeHtml(job.progressText || 'Шукаю…')}</span>`;
     else if (job.status === 'error') pill = '<span class="scrape-status-pill error">Помилка</span>';
     else if (job.demo) pill = '<span class="scrape-status-pill demo">Демо</span>';
-    else pill = '<span class="scrape-status-pill live">Apify Live</span>';
+    else pill = '<span class="scrape-status-pill live">Live</span>';
 
     const right = job.status === 'running'
       ? '<div class="scrape-spinner"></div>'
@@ -10896,10 +10958,7 @@ async function loadGlobalSeenRegistry() {
     });
   } catch (e) {}
 
-  // 3. Merge with Backend /api/scrapes/seen AND Apify Cloud KV Store (seen_places_absolutikdenchik)
-  const token = getClientApifyToken();
-  const kvUrl = token ? `https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/seen_places_absolutikdenchik?token=${encodeURIComponent(token)}&_t=${Date.now()}` : '';
-
+  // 3. Merge with Backend /api/scrapes/seen
   const syncPromises = [
     fetch('/api/scrapes/seen', { cache: 'no-store' })
       .then(r => r.ok ? r.json() : null)
@@ -10915,24 +10974,6 @@ async function loadGlobalSeenRegistry() {
       })
       .catch(() => null)
   ];
-
-  if (kvUrl) {
-    syncPromises.push(
-      fetch(kvUrl, { cache: 'no-store' })
-        .then(r => r.ok ? r.json() : null)
-        .then(kv => {
-          if (kv && typeof kv === 'object') {
-            if (Array.isArray(kv.keys)) kv.keys.forEach(k => seenSet.add(k));
-            if (kv.waveOffsets && typeof kv.waveOffsets === 'object') {
-              for (const [wk, wv] of Object.entries(kv.waveOffsets)) {
-                waveOffsets[wk] = Math.max(Number(waveOffsets[wk] || 0), Number(wv || 0));
-              }
-            }
-          }
-        })
-        .catch(() => null)
-    );
-  }
 
   await Promise.all(syncPromises);
 
@@ -10977,14 +11018,6 @@ async function saveGlobalSeenRegistry(newBusinesses = [], waveKey = '', nextWave
     localStorage.setItem('dws_seen_places', JSON.stringify(finalKeys));
     localStorage.setItem('dws_search_wave_offsets', JSON.stringify(waveOffsets));
 
-    const token = getClientApifyToken();
-    const kvUrl = token ? `https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/seen_places_absolutikdenchik?token=${encodeURIComponent(token)}` : '';
-    const payload = {
-      updatedAt: Date.now(),
-      keys: finalKeys,
-      waveOffsets
-    };
-
     const savePromises = [
       fetch('/api/scrapes/seen', {
         method: 'POST',
@@ -10997,16 +11030,6 @@ async function saveGlobalSeenRegistry(newBusinesses = [], waveKey = '', nextWave
         })
       }).catch(() => null)
     ];
-
-    if (kvUrl) {
-      savePromises.push(
-        fetch(kvUrl, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }).catch(() => null)
-      );
-    }
 
     await Promise.all(savePromises);
 
@@ -11135,19 +11158,16 @@ function isVenueRelevantToNiche(place, targetNiche) {
   if (!place || !targetNiche) return true;
 
   const name = (place.displayName?.text || place.title || place.name || '').toLowerCase();
-  const address = (place.formattedAddress || place.address || place.street || '').toLowerCase();
-  const website = (place.websiteUri || place.website || '').toLowerCase();
   const primaryType = (place.primaryType || place.categoryName || '').toLowerCase();
   const types = Array.isArray(place.types) ? place.types.map(t => String(t).toLowerCase()) : [];
   const allTypes = [primaryType, ...types];
 
-  const nicheClean = String(targetNiche).toLowerCase().trim();
+  const nicheClean = String(targetNiche).toLowerCase().replace(/['’ʼʻ`]/g, "'").trim();
 
   // Category intent checks
-  const isTargetFood = /ресторан|рестик|кафе|кав'?ярн|кофейн|бар\b|паб|піц|суш|бургер|пекарн|їж|кухн|кондитер|столов/i.test(nicheClean);
+  const isTargetFood = /ресторан|рестик|кафе|кав'?ярн|кофейн|бар\b|паб|піц|суш|бургер|пекарн|їж|кухн|кондитер|столов|шаурм|кебаб|донер|кальян|лаунж|lounge/i.test(nicheClean);
   const isTargetBarber = /барбер|чоловіч.*перукар/i.test(nicheClean);
   const isTargetDental = /стоматолог|зуб/i.test(nicheClean);
-  const isTargetMedical = /клінік|медич|лікарн/i.test(nicheClean) && !isTargetDental;
   const isTargetAuto = /авто|сто\b|шиномонтаж|детейлінг|мийк/i.test(nicheClean);
   const isTargetTravel = /тур|турагент|туристич/i.test(nicheClean);
 
@@ -11157,7 +11177,6 @@ function isVenueRelevantToNiche(place, targetNiche) {
   const placeIsAutoType = allTypes.some(t => ['car_repair', 'car_wash', 'auto_repair'].includes(t)) || /автосервіс|автомийка/i.test(primaryType);
   const placeIsTravelType = allTypes.some(t => ['travel_agency', 'tour_agency'].includes(t)) || /туристич|турагент/i.test(primaryType);
 
-  // If user is searching Barbershops:
   if (isTargetBarber) {
     if (placeIsFoodType || placeIsDentalType || placeIsAutoType || placeIsTravelType) {
       if (!/барбер|barber|чоловіч.*перукар/i.test(name)) return false;
@@ -11166,45 +11185,35 @@ function isVenueRelevantToNiche(place, targetNiche) {
     if (allTypes.includes('hair_salon') || allTypes.includes('hair_care')) {
       return !/жіноч|women|lady|манікюр/i.test(name);
     }
-    return false;
+    return true;
   }
 
-  // If user is searching Food/Restaurants:
   if (isTargetFood) {
     if (placeIsBarberType || placeIsDentalType || placeIsAutoType || placeIsTravelType) {
-      if (!/ресторан|кафе|кав'?ярн|бар|паб|піц|суш|кухн|бургер|пекар/i.test(name)) return false;
+      if (!/ресторан|кафе|кав['’ʼʻ`]?ярн|бар|паб|піц|суш|кухн|бургер|пекар|coffee/i.test(name)) return false;
     }
     return true;
   }
 
-  // If user is searching Dental:
   if (isTargetDental) {
     if (placeIsFoodType || placeIsBarberType || placeIsAutoType || placeIsTravelType) {
       if (!/стоматолог|dental|дент|зуб/i.test(name)) return false;
     }
-    return placeIsDentalType || /стоматолог|dental|дент|зуб/i.test(name);
+    return true;
   }
 
-  // If user is searching Travel:
   if (isTargetTravel) {
     if (placeIsFoodType || placeIsBarberType || placeIsDentalType || placeIsAutoType) {
       if (!/тур|tour|travel|путівк/i.test(name)) return false;
     }
-    return placeIsTravelType || /тур|tour|travel|путівк/i.test(name);
+    return true;
   }
 
-  // If user is searching Auto:
   if (isTargetAuto) {
     if (placeIsFoodType || placeIsBarberType || placeIsDentalType || placeIsTravelType) {
       if (!/авто|сто|сервіс|tire|car|auto|шиномонтаж/i.test(name)) return false;
     }
-    return placeIsAutoType || /авто|сто\b|сервіс|tire|car|auto|шиномонтаж/i.test(name);
-  }
-
-  // General mismatch check: if place is explicitly a restaurant/food and target is not food
-  if (placeIsFoodType && !/їж|харч|кухн|продукт/i.test(nicheClean)) {
-    const nicheStem = nicheClean.slice(0, 4);
-    if (!name.includes(nicheStem)) return false;
+    return true;
   }
 
   return true;
@@ -11233,9 +11242,9 @@ function normalizeStreetForChainCheck(addr) {
     .trim();
 }
 
-const KNOWN_CHAINS_REGEX = /(?:lviv croissants|львівські круасани|арома кава|aroma kava|frisor|badboy|bardash|макдональдз|mcdonald|kfc|döner маркет|галя балувана|сільпо|атб|франс\.уа|frans\.ua|veterano|черноморка|terramare|террамаре|рибафіш|ryba fish|сушія|sushiya|the grand barbershop|gc barbershop)/i;
+const KNOWN_CHAINS_REGEX = /(?:lviv croissants|львівські круасани|арома кава|aroma kava|frisor|badboy|bardash|макдональдз|mcdonald|kfc|döner маркет|галя балувана|сільпо|атб|франс\.уа|frans\.ua|veterano|черноморка|terramare|террамаре|рибафіш|ryba fish|сушія|sushiya|the grand barbershop|gc barbershop|coffee 13|kris kiss|чорна кішка|білий налив|п'яна вишня|пузата хата|мафія|mafia|японахата|dominos|domino's|челентано|celentano|сімейна пекарня|вацак|vatsak|булочна|хлібний|аврора|ева|eva|prostor|простор|подорожник|анц|копійка|таврія|рукавичка|близенько|файно маркет)/i;
 
-async function detectVenueChainStatus(name, city, poolBrandCounts = {}, key = '') {
+async function detectVenueChainStatus(name, city, poolBrandCounts = {}, key = '', allowNetworkProbe = false) {
   const brand = extractBrandName(name);
   const brandKey = brand.toLowerCase();
   const cacheKey = `${brandKey}:${(city || '').toLowerCase()}`;
@@ -11258,8 +11267,8 @@ async function detectVenueChainStatus(name, city, poolBrandCounts = {}, key = ''
     return res;
   }
 
-  // 3. Fast probe via Google Places Text Search (100% free with existing Maps key)
-  if (key && brand.length >= 3) {
+  // 3. Optional probe only when explicitly requested
+  if (allowNetworkProbe && key && brand.length >= 3) {
     try {
       const probeRes = await searchPlacesApiDirect(`${brand} ${city}`, key);
       if (probeRes && Array.isArray(probeRes.places) && probeRes.places.length >= 2) {
@@ -11278,9 +11287,7 @@ async function detectVenueChainStatus(name, city, poolBrandCounts = {}, key = ''
           return res;
         }
       }
-    } catch (probeErr) {
-      // Fall through
-    }
+    } catch (_) {}
   }
 
   const res = { isChain: false, count: 1, brand };
@@ -11307,7 +11314,6 @@ function buildSmartDistrictQueriesClient(niche, city, cluster = '', waveIndex = 
 
   const candidatePool = [];
 
-  // 1. Primary query with original user phrase
   if (cleanCluster) {
     if (cleanCity) candidatePool.push(`${cleanNiche} ${cleanCluster} ${cleanCity}`);
     else candidatePool.push(`${cleanNiche} ${cleanCluster}`);
@@ -11316,13 +11322,11 @@ function buildSmartDistrictQueriesClient(niche, city, cluster = '', waveIndex = 
     else candidatePool.push(cleanNiche);
   }
 
-  // 2. Add sub-niche variants across whole city
   for (const sn of subNiches) {
     if (cleanCity) candidatePool.push(`${sn} ${cleanCity}`);
     else candidatePool.push(sn);
   }
 
-  // 3. Add sub-niches per district
   for (const d of districts) {
     for (const sn of subNiches) {
       if (cleanCity) candidatePool.push(`${sn} ${d} ${cleanCity}`);
@@ -11339,9 +11343,9 @@ function buildSmartDistrictQueriesClient(niche, city, cluster = '', waveIndex = 
   return selected;
 }
 
-// ---- Live Apify B2B Scraper Engine ----
+// ---- Live Direct Google Maps B2B Scraper Engine (Zero Apify) ----
 const SOCIAL_SITE_RE = /(instagram\.com|facebook\.com|fb\.com|linktr\.ee|taplink|t\.me|tiktok\.com|wa\.me|viber|google\.com\/maps|business\.site)/i;
-const BOOKING_NICHE_RE = /(стомат|dental|салон|beauty|краси|барбер|barber|клінік|clinic|медич|автосерв|сто\b|шиномонт|фітнес|fitness|спорт|йог|масаж|spa|спа|ресторан|кафе|кав'ярн|піца|суші|доставк|готел|hotel|хостел|ветерин|косметолог|манікюр|nail|тату|школ|курси|репетит)/i;
+const BOOKING_NICHE_RE = /(стомат|dental|салон|beauty|краси|барбер|barber|клінік|clinic|медич|автосерв|сто\b|шиномонт|фітнес|fitness|спорт|йог|масаж|spa|спа|ресторан|кафе|кав['’ʼʻ`]?ярн|піца|суші|доставк|готел|hotel|хостел|ветерин|косметолог|манікюр|nail|тату|школ|курси|репетит)/i;
 
 function classifyBizLocal(b) {
   const site = (b.website || '').trim();
@@ -11372,256 +11376,160 @@ function classifyBizLocal(b) {
   return { category: 'auto', reason: 'Сайт є, трафік є — автоматизація заявок' };
 }
 
-async function runSingleApifyActorClient(actorId, input, token) {
-  const startRes = await fetch(`https://api.apify.com/v2/acts/${actorId}/runs?token=${token}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(input)
-  });
-  if (!startRes.ok) {
-    const errTxt = await startRes.text();
-    let msg = `Apify помилка (${startRes.status})`;
-    try { msg = JSON.parse(errTxt).error?.message || msg; } catch {}
-    throw new Error(msg);
-  }
-  const startData = await startRes.json();
-  const runId = startData.data?.id;
-  const datasetId = startData.data?.defaultDatasetId;
-  if (!runId || !datasetId) throw new Error('Не отримано ID запуску Apify');
-
-  const startTime = Date.now();
-  const maxTimeout = 5 * 60 * 1000;
-  while (Date.now() - startTime < maxTimeout) {
-    await new Promise(r => setTimeout(r, 3200));
-    const sRes = await fetch(`https://api.apify.com/v2/actor-runs/${runId}?token=${token}`);
-    if (!sRes.ok) continue;
-    const sData = await sRes.json();
-    const st = sData.data?.status;
-    if (st === 'SUCCEEDED') break;
-    if (st === 'FAILED' || st === 'TIMED-OUT' || st === 'ABORTED') {
-      throw new Error(`Парсер завершився зі статусом: ${st}`);
-    }
-  }
-
-  const itemsRes = await fetch(`https://api.apify.com/v2/datasets/${datasetId}/items?token=${token}&clean=true&format=json`);
-  if (!itemsRes.ok) throw new Error(`Не вдалося завантажити результати (${itemsRes.status})`);
-  return await itemsRes.json();
-}
-
 async function runLiveApifyJob(job) {
-  const token = getClientApifyToken();
-  if (!token) {
-    job.status = 'error';
-    job.error = 'Apify токен не знайдено. Введіть токен у налаштуваннях.';
-    saveScrapeJob(job);
-    renderScrapes();
-    return;
-  }
-
+  const key = getClientGoogleMapsKey();
   const targetLimit = Math.max(5, Math.min(Number(job.limit) || 100, 500));
-  const baseQuery = [job.niche, job.city].filter(Boolean).join(' ');
-  const actorId = job.source === 'instagram' ? 'apify~instagram-scraper' : 'compass~crawler-google-places';
+  const city = (job.city || 'Вінниця').trim();
+  const niche = (job.niche || 'кавʼярні').trim();
 
   try {
     const reg = await loadGlobalSeenRegistry();
-    const waveKey = `scrape:${job.source || 'gmaps'}:${String(job.niche || '').toLowerCase().trim()}:${String(job.city || '').toLowerCase().trim()}`;
+    const waveKey = `scrape:${job.source || 'gmaps'}:${niche.toLowerCase()}:${city.toLowerCase()}`;
     let currentWave = Number(reg.waveOffsets[waveKey] || 0);
 
-    const allItems = [];
+    const runSeenKeys = new Set();
+    const isSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).some(k => runSeenKeys.has(k));
+    const markSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).forEach(k => runSeenKeys.add(k));
+
+    const freshItems = [];
+    const seenOverflowPool = [];
     let skippedNoPhone = 0;
-    const maxWaves = 3;
 
-    for (let wave = 0; wave < maxWaves; wave++) {
-      if (allItems.length >= targetLimit) break;
-      const needed = targetLimit - allItems.length;
+    const queries = buildSmartDistrictQueriesClient(niche, city, '', currentWave, 20);
+    currentWave++;
 
-      job.progressText = wave === 0
-        ? `Шукаю 0/${targetLimit} нових…`
-        : `Хвиля ${wave + 1}: знайдено ${allItems.length}/${targetLimit} нових…`;
+    for (let qIdx = 0; qIdx < queries.length; qIdx++) {
+      if (freshItems.length >= targetLimit) break;
+      const q = queries[qIdx];
+
+      job.progressText = `Пошук бізнесів з номерами (${Math.min(targetLimit, freshItems.length)}/${targetLimit})…`;
       renderScrapes();
 
-      let input;
-      if (job.source === 'instagram') {
-        const igQueries = buildSmartDistrictQueriesClient(job.niche, job.city, '', currentWave, 4);
-        currentWave++;
-        const searchStr = igQueries.slice(0, 2).join(', ') || baseQuery;
-        const searchLim = Math.min(250, Math.max(targetLimit * 3, 60));
-        input = {
-          search: searchStr,
-          searchType: 'user',
-          searchLimit: searchLim,
-          resultsType: 'details',
-          resultsLimit: searchLim
-        };
-      } else {
-        const batchSize = Math.min(14, Math.max(6, Math.ceil(needed / 12) + 4));
-        const gmapsQueries = buildSmartDistrictQueriesClient(job.niche, job.city, '', currentWave, batchSize);
-        currentWave++;
-        const perSearchLimit = Math.max(30, Math.ceil((needed * 1.8) / gmapsQueries.length));
-        const locationQuery = job.city ? `${job.city}, Україна` : '';
-        input = {
-          searchStringsArray: gmapsQueries,
-          locationQuery: locationQuery,
-          maxCrawledPlacesPerSearch: Math.min(perSearchLimit, 100),
-          language: 'uk',
-          skipClosedPlaces: true,
-          includeWebResults: true
-        };
-      }
-
-      let rawItems = [];
-      try {
-        rawItems = await runSingleApifyActorClient(actorId, input, token);
-      } catch (apifyErr) {
-        if (/Monthly usage hard limit exceeded|credit|quota/i.test(apifyErr.message)) {
-          console.warn('[Apify] Limit exceeded, ending waves:', apifyErr.message);
+      let pageToken = '';
+      for (let page = 0; page < 2; page++) {
+        if (freshItems.length >= targetLimit) break;
+        let data = null;
+        try {
+          data = await searchPlacesApiDirect(q, key, pageToken);
+        } catch (err) {
+          console.warn('[Scrape Places] Error:', err.message);
           break;
         }
-        throw apifyErr;
-      }
+        if (!data || !Array.isArray(data.places) || !data.places.length) break;
 
-      for (const it of rawItems) {
-        if (allItems.length >= targetLimit) break;
-        let b;
-        if (job.source === 'instagram') {
-          const rawUsername = (it.username || it.ownerUsername || (it.inputUrl ? it.inputUrl.replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/.*$/, '') : '') || '').replace(/^@+/, '');
-          const name = (it.fullName || it.ownerFullName || it.title || (rawUsername ? '@' + rawUsername : '') || it.name || '').trim();
-          if (!name && !rawUsername) continue;
-          if (!isVenueRelevantToNiche(it, job.niche)) continue;
-
-          const directPhone = normalizePhone(it.businessPhoneNumber || it.contactPhoneNumber || it.publicPhoneNumber || it.phone || it.phoneUnformatted);
-          const bioText = [it.biography, it.caption, it.text, it.externalUrl].filter(Boolean).join('\n');
-          const bioPhone = extractPhoneFromText(bioText);
-          const phone = directPhone || bioPhone;
-          const website = it.externalUrl || it.website || '';
-          const followers = Number(it.followersCount || it.followers || 0);
-
-          b = {
-            id: 'biz-' + (rawUsername || it.id || Math.random().toString(36).slice(2)),
-            name: name || (rawUsername ? '@' + rawUsername : 'Instagram бізнес'),
-            phone,
-            website,
-            address: it.businessAddress?.street_address || it.locationName || it.address || '',
-            city: it.businessAddress?.city_name || (it.locationName ? it.locationName.split(',')[0].trim() : '') || job.city || '',
-            category: it.businessCategoryName || job.niche || '',
-            followers,
-            posts: Number(it.postsCount || it.posts || 0),
-            username: rawUsername ? '@' + rawUsername : '',
-            instagram: rawUsername ? '@' + rawUsername : '',
-            link: (rawUsername ? `https://instagram.com/${rawUsername}` : '') || it.url || it.inputUrl || '',
-            biography: it.biography || it.caption || '',
-            niche: job.niche,
-            source: 'instagram'
-          };
-        } else {
-          const name = (it.title || it.name || '').trim();
+        for (let idx = 0; idx < data.places.length; idx++) {
+          const p = data.places[idx];
+          const name = (p.displayName?.text || '').trim();
           if (!name) continue;
+          if (p.businessStatus === 'CLOSED_TEMPORARILY' || p.businessStatus === 'CLOSED_PERMANENTLY') continue;
+          if (!isVenueRelevantToNiche(p, niche)) continue;
 
-          // Filter out places with 0 reviews
-          const reviews = Number(it.reviewsCount || 0);
-          if (reviews <= 0) continue;
-
-          // Filter out closed or not yet opened places
-          const isClosed = Boolean(it.isClosed || it.temporarilyClosed || it.permanentlyClosed);
-          const textToCheck = `${name} ${it.openingHours || ''} ${it.additionalInfo ? JSON.stringify(it.additionalInfo) : ''} ${it.categoryName || ''}`;
-          const isOpeningSoon = /(скоро відкри|opening soon|ще не відкри|незабаром відкри|coming soon)/i.test(textToCheck);
-          if (isClosed || isOpeningSoon) continue;
-          if (!isVenueRelevantToNiche(it, job.niche)) continue;
-
-          const placeId = it.placeId || it.id || '';
-          const cid = it.cid || '';
-          const addr = it.address || it.street || '';
-          const phone = normalizePhone(it.phoneUnformatted || it.phone);
-          const website = it.website || '';
-
-          // Deep extraction of Instagram from web results, website, instagrams array, etc.
-          const instagram = extractInstagramFromApifyItem(it);
-
-          let telegram = (it.telegrams || [])[0] || '';
-          if (!telegram && website && /t\.me/i.test(website)) {
-            const m = website.match(/t\.me\/([a-zA-Z0-9_+]+)/i);
-            if (m && m[1]) telegram = '@' + m[1];
-          }
+          const reviews = Number(p.userRatingCount || 0);
+          const rating = Number(p.rating || 0);
+          const rawPhone = p.internationalPhoneNumber || p.nationalPhoneNumber || '';
+          const phone = normalizePhone(rawPhone);
           const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
           const isMobile = isUkrainianMobilePhone(cleanPhone);
           const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
           const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
 
-          // STRICT OUTREACH FILTER:
-          // Skip places where user cannot reach out (no Instagram, no mobile phone for Viber/Telegram, no website)
-          if (!instagram && !isMobile && !website) continue;
-
-          let link = it.url || '';
-          if (!link || !link.includes('google.com/maps')) {
-            if (placeId) {
-              link = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
-            } else if (cid) {
-              link = `https://maps.google.com/?cid=${encodeURIComponent(cid)}`;
-            } else {
-              link = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((name + ' ' + (addr || job.city || '')).trim())}`;
-            }
+          const website = p.websiteUri || '';
+          let instagram = '';
+          if (website && /instagram\.com/i.test(website)) {
+            instagram = cleanInstagramHandle(website);
+          }
+          let telegram = '';
+          if (website && /t\.me/i.test(website)) {
+            const m = website.match(/t\.me\/([a-zA-Z0-9_+]+)/i);
+            if (m && m[1]) telegram = '@' + m[1];
           }
 
-          b = {
-            id: 'biz-' + (placeId || Math.random().toString(36).slice(2)),
+          if (!phone) {
+            skippedNoPhone++;
+            if (!instagram && !website) continue;
+          }
+
+          const addr = p.formattedAddress || city;
+          const placeId = p.id || '';
+          const link = p.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + addr)}`;
+
+          const b = {
+            id: 'biz-' + (placeId || (Date.now() + '-' + qIdx + '-' + idx)),
             name,
             placeId,
-            cid,
+            cid: '',
             phone,
             isMobile,
             viberUrl,
             website,
             address: addr,
-            city: it.city || job.city || '',
-            category: it.categoryName || (it.categories || [])[0] || job.niche || '',
-            rating: it.totalScore || 0,
-            reviews: it.reviewsCount || 0,
+            city,
+            category: p.primaryType || niche,
+            rating,
+            reviews,
             instagram,
+            username: instagram,
             telegram,
             telegramPhone,
             link,
             mapsUrl: link,
-            niche: job.niche,
-            source: 'gmaps'
+            niche,
+            source: job.source || 'gmaps'
           };
+
+          const { category, reason } = classifyBizLocal(b);
+          b.category = category;
+          b.reason = reason;
+          b.service = SCRAPE_SERVICE[category];
+
+          if (isSeenInThisRun(b)) continue;
+          markSeenInThisRun(b);
+
+          if (reg.isBizSeen(b, city)) {
+            seenOverflowPool.push(b);
+          } else {
+            reg.markBizSeen(b, city);
+            freshItems.push(b);
+          }
         }
 
-        if (!b.name) continue;
+        job.total = freshItems.length;
+        job.progressText = `Знайдено ${Math.min(targetLimit, freshItems.length)}/${targetLimit} нових…`;
+        renderScrapes();
 
-        // Global + current-run deduplication: skip any business already seen in past or current searches!
-        if (reg.isBizSeen(b, job.city)) continue;
-        reg.markBizSeen(b, job.city);
-
-        if (!b.phone) skippedNoPhone++;
-
-        const { category, reason } = classifyBizLocal(b);
-        b.category = category;
-        b.reason = reason;
-        b.service = SCRAPE_SERVICE[category];
-
-        allItems.push(b);
+        if (!data.nextPageToken || freshItems.length >= targetLimit) break;
+        pageToken = data.nextPageToken;
+        await new Promise(r => setTimeout(r, 300));
       }
-
-      job.total = allItems.length;
-      job.progressText = `Знайдено ${allItems.length}/${targetLimit} нових…`;
-      renderScrapes();
     }
 
-    // Priority sorting: venues with direct Instagram FIRST!
-    allItems.sort((a, b) => {
+    let combined = [...freshItems];
+    if (combined.length < targetLimit && seenOverflowPool.length > 0) {
+      combined.push(...seenOverflowPool.slice(0, targetLimit - combined.length));
+    }
+
+    // Enrich websites in parallel to pull Instagram/Telegram & mobile numbers
+    job.progressText = `Перевірка контактів та соцмереж (${combined.length})…`;
+    renderScrapes();
+    await enrichWebsiteSocialsBatchClient(combined.slice(0, 30));
+
+    // Sort: businesses with verified phone & Instagram first
+    combined.sort((a, b) => {
+      const aPhone = a.phone ? 1 : 0;
+      const bPhone = b.phone ? 1 : 0;
+      if (bPhone !== aPhone) return bPhone - aPhone;
       const aHasIg = (a.instagram || a.username) ? 1 : 0;
       const bHasIg = (b.instagram || b.username) ? 1 : 0;
       return bHasIg - aHasIg;
     });
 
-    const limitedItems = allItems.slice(0, targetLimit);
+    const limitedItems = combined.slice(0, targetLimit);
     const finalGroups = { site: [], ads: [], auto: [], apps: [] };
     limitedItems.forEach(b => {
       (finalGroups[b.category] || finalGroups.ads).push(b);
     });
 
-    // Save newly found businesses to Global Seen Registry (localStorage + Backend + Cloud KV)
-    await saveGlobalSeenRegistry(limitedItems, waveKey, currentWave, job.city);
+    await saveGlobalSeenRegistry(limitedItems, waveKey, currentWave, city);
 
     job.status = 'done';
     job.demo = false;
@@ -11633,17 +11541,17 @@ async function runLiveApifyJob(job) {
     job.items = limitedItems;
     saveScrapeJob(job);
     renderScrapes();
-    try { showToast(`Знайдено ${limitedItems.length} НОВИХ закладів у ${job.city || job.niche}!`); } catch (_) {}
+    try { showToast(`Знайдено ${limitedItems.length} бізнесів з контактами у ${city}!`); } catch (_) {}
     haptic('success');
   } catch (err) {
-    console.error('[LiveApify] Error:', err);
+    console.error('[LiveScrape] Error:', err);
     job.status = 'error';
     job.progressText = '';
-    job.error = err.message || 'Помилка виконання парсера';
+    job.error = err.message || 'Помилка виконання пошуку';
     job.finishedAt = new Date().toISOString();
     saveScrapeJob(job);
     renderScrapes();
-    try { showToast(`Помилка скрапінгу: ${err.message}`); } catch (_) {}
+    try { showToast(`Помилка пошуку: ${err.message}`); } catch (_) {}
   }
 }
 
@@ -13761,23 +13669,25 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
 
   const strictMatched = []; // Has Instagram AND reviews <= targetReviews
   const viberMatched = [];  // Has Viber/mobile phone AND reviews <= targetReviews
-  const otherMatched = [];  // Has website/other AND reviews <= targetReviews
-  const overflowPool = [];  // Has contact, but reviews > targetReviews (for fallback to guarantee count)
+  const otherMatched = [];  // Has website/phone AND reviews <= targetReviews
+  const overflowPool = [];  // Unseen, reviews > targetReviews
+  const seenFallbackPool = []; // Already seen in past runs (used if unseen pool < targetCount)
+  const scaleFallbackPool = []; // Fallback if chain filter is too strict for a small city
 
   const poolBrandCounts = {};
 
   const baseQuery = [job.niche, cluster, city].filter(Boolean).join(' ');
-  const districtQueries = buildSmartDistrictQueriesClient(job.niche, city, cluster, currentWave, 24);
+  const districtQueries = buildSmartDistrictQueriesClient(job.niche, city, cluster, currentWave, 18);
   const searchQueries = (scaleFilter === 'chain')
     ? [`мережа ${job.niche} ${city}`, `франшиза ${job.niche} ${city}`, baseQuery, ...districtQueries]
     : [baseQuery, ...districtQueries];
 
   for (let qIdx = 0; qIdx < searchQueries.length; qIdx++) {
     const totalCollected = strictMatched.length + viberMatched.length + otherMatched.length;
-    if (totalCollected >= targetCount && (strictMatched.length + viberMatched.length) >= Math.min(targetCount, 12)) {
+    if (totalCollected >= targetCount && (strictMatched.length + viberMatched.length) >= Math.min(targetCount, 10)) {
       break;
     }
-    if (totalCollected >= targetCount * 2) {
+    if (totalCollected >= targetCount * 1.6) {
       break;
     }
 
@@ -13813,18 +13723,7 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
         if (!name) continue;
 
         if (p.businessStatus === 'CLOSED_TEMPORARILY' || p.businessStatus === 'CLOSED_PERMANENTLY') continue;
-
-        // Strict Niche Relevance Filter (prevents food places from leaking into barbershops etc.)
         if (!isVenueRelevantToNiche(p, job.niche)) continue;
-
-        // Strict Scale / Chain Filter (checks single independent venue vs multi-location chain)
-        const chainInfo = await detectVenueChainStatus(name, city, poolBrandCounts, key);
-        if (scaleFilter === 'single' && chainInfo.isChain) {
-          continue; // Discard chain when single venues are requested
-        }
-        if (scaleFilter === 'chain' && !chainInfo.isChain) {
-          continue; // Discard single location when chains are requested
-        }
 
         const reviews = Number(p.userRatingCount || 0);
         if (reviews <= 0) continue;
@@ -13843,9 +13742,10 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
           insta = cleanInstagramHandle(website);
         }
 
-        // Must have Instagram OR mobile phone (Viber) OR website
-        if (!insta && !isMobile && !website) continue;
+        // Must have Instagram OR phone OR website
+        if (!insta && !phone && !website) continue;
 
+        const chainInfo = await detectVenueChainStatus(name, city, poolBrandCounts, key, false);
         const addr = p.formattedAddress || cluster || city;
         const mapsUrl = p.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + addr)}`;
 
@@ -13879,11 +13779,24 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
             : ((rating && rating <= 4.3) ? 'Потрібно терміново перекривати негатив' : (reviews < 50 ? 'Новий заклад — гостра потреба у відгуках' : 'Буст до ТОП-1 в Google Maps'))
         };
 
-        if (reg.isBizSeen(venueObj, city) || isSeenInThisRun(venueObj)) continue;
+        if (isSeenInThisRun(venueObj)) continue;
         markSeenInThisRun(venueObj);
 
-        const meetsReviews = (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews);
+        if (scaleFilter === 'single' && chainInfo.isChain) {
+          scaleFallbackPool.push(venueObj);
+          continue;
+        }
+        if (scaleFilter === 'chain' && !chainInfo.isChain) {
+          scaleFallbackPool.push(venueObj);
+          continue;
+        }
 
+        if (reg.isBizSeen(venueObj, city)) {
+          seenFallbackPool.push(venueObj);
+          continue;
+        }
+
+        const meetsReviews = (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews);
         if (meetsReviews) {
           if (insta) {
             strictMatched.push(venueObj);
@@ -13899,11 +13812,10 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
 
       if (!data.nextPageToken) break;
       pageToken = data.nextPageToken;
-      await new Promise(r => setTimeout(r, 400));
+      await new Promise(r => setTimeout(r, 250));
     }
   }
 
-  // Sort lowest reviews first
   strictMatched.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
   viberMatched.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
   otherMatched.sort((a, b) => (Number(a.reviews) || 0) - (Number(b.reviews) || 0));
@@ -13914,293 +13826,111 @@ async function runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cl
     return (Number(a.reviews) || 0) - (Number(b.reviews) || 0);
   });
 
-  // Assemble final venues to guarantee exact targetCount
   const finalVenues = [...strictMatched, ...viberMatched, ...otherMatched];
   if (finalVenues.length < targetCount && overflowPool.length > 0) {
-    const needed = targetCount - finalVenues.length;
-    finalVenues.push(...overflowPool.slice(0, needed));
+    finalVenues.push(...overflowPool.slice(0, targetCount - finalVenues.length));
+  }
+  if (finalVenues.length < targetCount && seenFallbackPool.length > 0) {
+    finalVenues.push(...seenFallbackPool.slice(0, targetCount - finalVenues.length));
+  }
+  if (finalVenues.length < targetCount && scaleFallbackPool.length > 0) {
+    finalVenues.push(...scaleFallbackPool.slice(0, targetCount - finalVenues.length));
   }
 
-  return finalVenues.slice(0, targetCount);
+  const sliced = finalVenues.slice(0, targetCount);
+  job.progressText = `Перевірка Instagram та телефонів (${sliced.length})…`;
+  renderNfcRadar();
+  await enrichWebsiteSocialsBatchClient(sliced);
+
+  sliced.sort((a, b) => {
+    const aIg = a.instagram ? 1 : 0;
+    const bIg = b.instagram ? 1 : 0;
+    if (bIg !== aIg) return bIg - aIg;
+    const aMob = a.isMobile ? 1 : 0;
+    const bMob = b.isMobile ? 1 : 0;
+    if (bMob !== aMob) return bMob - aMob;
+    return (Number(a.reviews) || 0) - (Number(b.reviews) || 0);
+  });
+
+  return sliced;
 }
 
 async function runLiveNfcRadar(job, reviewsLimit, limit) {
-  const token = getClientApifyToken();
   const targetReviews = Number(reviewsLimit || job.maxReviews || 300);
   const activeNfcLimitBtn = document.querySelector('#nfcLimitSeg .scrape-seg-btn.active');
   const targetCount = Math.max(5, Number(limit || activeNfcLimitBtn?.dataset.value || job.limit || 30));
 
   const city = (job.city || 'Київ').trim();
   const cluster = (job.cluster || '').trim();
-  const actorId = 'compass~crawler-google-places';
 
   try {
     const reg = await loadGlobalSeenRegistry();
     const waveKey = `nfc:${String(job.niche || '').toLowerCase().trim()}:${city.toLowerCase()}:${cluster.toLowerCase()}`;
-    let currentWave = Number(reg.waveOffsets[waveKey] || 0);
+    const currentWave = Number(reg.waveOffsets[waveKey] || 0);
 
-    const runSeenKeys = new Set();
-    const isSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).some(k => runSeenKeys.has(k));
-    const markSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).forEach(k => runSeenKeys.add(k));
+    job.progressText = `Пошук через Google Places (0/${targetCount})…`;
+    renderNfcRadar();
 
-    // ------------------------------------------------------------
-    // 1. OFFICIAL GOOGLE PLACES API (NEW) - ZERO WAIT, ZERO SERVERS, 100% PHONE NATIVE
-    // ------------------------------------------------------------
-    try {
-      job.progressText = `Пошук через Google Places (0/${targetCount})…`;
+    const placesVenues = await runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cluster, reg, waveKey, currentWave);
+    if (Array.isArray(placesVenues) && placesVenues.length > 0) {
+      await saveGlobalSeenRegistry(placesVenues, waveKey, currentWave + 1, city);
+      job.status = 'done';
+      job.progressText = '';
+      job.items = placesVenues;
+      job.total = placesVenues.length;
+      saveLocalNfcJobs(nfcRadarState.jobs);
       renderNfcRadar();
 
-      const placesVenues = await runGooglePlacesNfcRadar(job, targetReviews, targetCount, city, cluster, reg, waveKey, currentWave);
-      if (Array.isArray(placesVenues) && placesVenues.length > 0) {
-        await saveGlobalSeenRegistry(placesVenues, waveKey, currentWave, city);
+      const locLabel = job.cluster ? `${job.cluster}, ${job.city}` : job.city;
+      try { showToast(`Знайдено ${placesVenues.length} закладів у Google Maps (${locLabel})!`); } catch (_) {}
+      haptic('success');
+      return;
+    }
+
+    // Fallback to local Puppeteer engine if running locally
+    const customEndpoint = (localStorage.getItem('dws_scraper_url') || '').trim();
+    const localEndpoint = customEndpoint ? `${customEndpoint.replace(/\/+$/, '')}/api/scraper/live-nfc` : '/api/scraper/live-nfc';
+
+    const localRes = await fetch(localEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        niche: job.niche,
+        city,
+        cluster,
+        limit: targetCount,
+        maxReviews: targetReviews
+      })
+    }).catch(() => null);
+
+    if (localRes && localRes.ok) {
+      const payload = await localRes.json().catch(() => null);
+      if (payload && payload.success && Array.isArray(payload.items) && payload.items.length > 0) {
+        const finalVenues = payload.items.slice(0, targetCount);
+        await saveGlobalSeenRegistry(finalVenues, waveKey, currentWave + 1, city);
         job.status = 'done';
         job.progressText = '';
-        job.items = placesVenues;
-        job.total = placesVenues.length;
+        job.items = finalVenues;
+        job.total = finalVenues.length;
         saveLocalNfcJobs(nfcRadarState.jobs);
         renderNfcRadar();
 
         const locLabel = job.cluster ? `${job.cluster}, ${job.city}` : job.city;
-        try { showToast(`Знайдено ${placesVenues.length} закладів у Google Maps (${locLabel})!`); } catch (_) {}
+        try { showToast(`Знайдено ${finalVenues.length} закладів (${locLabel})!`); } catch (_) {}
         haptic('success');
         return;
       }
-    } catch (gmpErr) {
-      console.warn('[GooglePlaces] Fallback to other engines:', gmpErr.message);
     }
-
-    // ------------------------------------------------------------
-    // 2. FREE LOCAL GOOGLE MAPS ENGINE (Puppeteer + Chrome, No Apify)
-    // ------------------------------------------------------------
-    const customEndpoint = (localStorage.getItem('dws_scraper_url') || '').trim();
-    const localEndpoint = customEndpoint ? `${customEndpoint.replace(/\/+$/, '')}/api/scraper/live-nfc` : '/api/scraper/live-nfc';
-
-    try {
-      job.progressText = `Локальний збір Google Maps (0/${targetCount})…`;
-      renderNfcRadar();
-
-      const localRes = await fetch(localEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          niche: job.niche,
-          city,
-          cluster,
-          limit: targetCount,
-          maxReviews: targetReviews
-        })
-      }).catch(() => null);
-
-      if (localRes && localRes.ok) {
-        const payload = await localRes.json();
-        if (payload.success && Array.isArray(payload.items) && payload.items.length > 0) {
-          const freshItems = payload.items.filter(v => !reg.isBizSeen(v, city) && !isSeenInThisRun(v));
-          freshItems.forEach(v => markSeenInThisRun(v));
-
-          const finalVenues = freshItems.slice(0, targetCount);
-          if (finalVenues.length > 0) {
-            await saveGlobalSeenRegistry(finalVenues, waveKey, currentWave, city);
-            job.status = 'done';
-            job.progressText = '';
-            job.items = finalVenues;
-            job.total = finalVenues.length;
-            saveLocalNfcJobs(nfcRadarState.jobs);
-            renderNfcRadar();
-
-            const locLabel = job.cluster ? `${job.cluster}, ${job.city}` : job.city;
-            try { showToast(`Знайдено ${finalVenues.length} закладів локально (${locLabel})!`); } catch (_) {}
-            haptic('success');
-            return;
-          }
-        }
-      }
-    } catch (localErr) {
-      console.warn('[LocalEngine] Falling back to Apify:', localErr.message);
-    }
-
-    // ------------------------------------------------------------
-    // 2. CLOUD ENGINE (Apify multi-wave fallback)
-    // ------------------------------------------------------------
-    const strictMatched = [];
-    const overflowUnseenPool = [];
-    const maxWaves = 3;
-
-    for (let wave = 0; wave < maxWaves; wave++) {
-      if (strictMatched.length >= targetCount) break;
-      const needed = targetCount - strictMatched.length;
-
-      job.progressText = wave === 0
-        ? `Шукаю 0/${targetCount} нових…`
-        : `Хвиля ${wave + 1}: ${strictMatched.length}/${targetCount} нових…`;
-      renderNfcRadar();
-
-      const batchSize = Math.min(14, Math.max(8, Math.ceil(needed / 8) + 4));
-      const searchStrings = buildSmartDistrictQueriesClient(job.niche, city, cluster, currentWave, batchSize);
-      currentWave++;
-
-      // Request higher multiplier when filtering by strict low reviews (<= 50 or <= 150)
-      const reviewMultiplier = targetReviews <= 50 ? 3.2 : (targetReviews <= 150 ? 2.4 : 1.8);
-      const perSearchLimit = Math.max(30, Math.min(100, Math.ceil((needed * reviewMultiplier) / searchStrings.length)));
-      const locationQuery = city ? `${city}, Україна` : '';
-
-      const input = {
-        searchStringsArray: searchStrings,
-        locationQuery: locationQuery,
-        maxCrawledPlacesPerSearch: perSearchLimit,
-        language: 'uk',
-        skipClosedPlaces: true,
-        includeWebResults: false
-      };
-
-      let rawItems = [];
-      try {
-        rawItems = await runSingleApifyActorClient(actorId, input, token);
-      } catch (apifyErr) {
-        if (/Monthly usage hard limit exceeded|credit|quota/i.test(apifyErr.message)) {
-          console.warn('[Apify] Limit exceeded, ending waves:', apifyErr.message);
-          break;
-        }
-        throw apifyErr;
-      }
-
-      rawItems.forEach((it, idx) => {
-        const name = (it.title || it.name || '').trim();
-        if (!name) return;
-
-        const reviews = Number(it.reviewsCount || 0);
-        // Filter out venues with 0 reviews
-        if (reviews <= 0) return;
-
-        // Filter out closed or not yet opened places
-        const isClosed = Boolean(it.isClosed || it.temporarilyClosed || it.permanentlyClosed);
-        const textToCheck = `${name} ${it.openingHours || ''} ${it.additionalInfo ? JSON.stringify(it.additionalInfo) : ''} ${it.categoryName || ''}`;
-        const isOpeningSoon = /(скоро відкри|opening soon|ще не відкри|незабаром відкри|coming soon)/i.test(textToCheck);
-        if (isClosed || isOpeningSoon) return;
-
-        // Strict Niche Relevance Filter
-        if (!isVenueRelevantToNiche(it, job.niche)) return;
-
-        const placeId = it.placeId || it.id || '';
-        const cid = it.cid || '';
-        const rating = Number(it.totalScore || 0);
-        const phone = normalizePhone(it.phoneUnformatted || it.phone);
-        const website = it.website || '';
-        const addr = it.address || it.street || job.cluster || job.city;
-
-        // Deep extraction of Instagram from web results, website, instagrams array, etc.
-        const insta = extractInstagramFromApifyItem(it);
-
-        let telegram = (it.telegrams || [])[0] || '';
-        if (!telegram && website && /t\.me/i.test(website)) {
-          const m = website.match(/t\.me\/([a-zA-Z0-9_+]+)/i);
-          if (m && m[1]) telegram = '@' + m[1];
-        }
-        const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
-        const isMobile = isUkrainianMobilePhone(cleanPhone);
-        const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
-        const telegramPhone = cleanPhone ? `https://t.me/+${cleanPhone}` : '';
-
-        // STRICT OUTREACH FILTER:
-        // Skip ghost venues where user cannot reach out (no Instagram, no mobile phone for Viber/Telegram, no website)
-        if (!insta && !isMobile && !website) return;
-
-        let mapsUrl = it.url || '';
-        if (!mapsUrl || !mapsUrl.includes('google.com/maps')) {
-          if (placeId) {
-            mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name)}&query_place_id=${encodeURIComponent(placeId)}`;
-          } else if (cid) {
-            mapsUrl = `https://maps.google.com/?cid=${encodeURIComponent(cid)}`;
-          } else {
-            mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent((name + ' ' + addr).trim())}`;
-          }
-        }
-
-        const venueObj = {
-          id: 'v-real-' + Date.now() + '-' + wave + '-' + idx,
-          name,
-          placeId,
-          cid,
-          address: addr,
-          city,
-          phone,
-          isMobile,
-          viberUrl,
-          website,
-          instagram: insta,
-          telegram,
-          telegramPhone,
-          rating,
-          reviews,
-          mapsUrl,
-          lat: it.location?.lat || null,
-          lng: it.location?.lng || null,
-          painLevel: (rating && rating <= 4.3) ? 'urgent' : (reviews < 50 ? 'new' : 'boost'),
-          painText: (rating && rating <= 4.3) ? 'Потрібно терміново перекривати негатив' : (reviews < 50 ? 'Новий заклад — гостра потреба у відгуках' : 'Буст до ТОП-1 в Google Maps')
-        };
-
-        // Skip if already seen in any previous search OR in this run
-        if (reg.isBizSeen(venueObj, city) || isSeenInThisRun(venueObj)) return;
-        markSeenInThisRun(venueObj);
-
-        if (insta && (!targetReviews || targetReviews >= 90000 || reviews <= targetReviews)) {
-          strictMatched.push(venueObj);
-        } else {
-          overflowUnseenPool.push(venueObj);
-        }
-      });
-
-      job.total = Math.min(targetCount, strictMatched.length);
-      job.progressText = `Знайдено ${Math.min(targetCount, strictMatched.length)}/${targetCount} нових…`;
-      renderNfcRadar();
-    }
-
-    // Priority sorting: venues with direct Instagram FIRST!
-    // Within the same group, sort ascending by reviews (newest/low reviews first) if targetReviews <= 150
-    strictMatched.sort((a, b) => {
-      const aHasIg = a.instagram ? 1 : 0;
-      const bHasIg = b.instagram ? 1 : 0;
-      if (bHasIg !== aHasIg) return bHasIg - aHasIg;
-      if (targetReviews <= 150) {
-        return (Number(a.reviews) || 0) - (Number(b.reviews) || 0);
-      }
-      return 0;
-    });
-
-    // Guarantee exact targetCount: if strict filter yielded fewer than targetCount after 3 district waves,
-    // top up the remaining slots with the lowest-reviewed unseen venues from overflowUnseenPool!
-    let finalVenues = [...strictMatched];
-    if (finalVenues.length < targetCount && overflowUnseenPool.length > 0) {
-      overflowUnseenPool.sort((a, b) => {
-        const aHasIg = a.instagram ? 1 : 0;
-        const bHasIg = b.instagram ? 1 : 0;
-        if (bHasIg !== aHasIg) return bHasIg - aHasIg;
-        return (Number(a.reviews) || 0) - (Number(b.reviews) || 0);
-      });
-      const neededExtra = targetCount - finalVenues.length;
-      finalVenues.push(...overflowUnseenPool.slice(0, neededExtra));
-    }
-
-    finalVenues = finalVenues.slice(0, targetCount);
-
-    // Save ONLY the delivered venues to the permanent Global Seen Registry
-    await saveGlobalSeenRegistry(finalVenues, waveKey, currentWave, city);
 
     job.status = 'done';
     job.progressText = '';
-    job.items = finalVenues;
-    job.total = finalVenues.length;
+    job.items = [];
+    job.total = 0;
     saveLocalNfcJobs(nfcRadarState.jobs);
     renderNfcRadar();
-
-    if (finalVenues.length === 0) {
-      try { showToast(`Нових закладів за цим запитом не знайдено. Спробуйте іншу нішу або місто.`); } catch (_) {}
-    } else {
-      const locLabel = job.cluster ? `${job.cluster}, ${job.city}` : job.city;
-      try { showToast(`Знайдено ${finalVenues.length} НОВИХ закладів (${locLabel})!`); } catch (_) {}
-    }
-    haptic('success');
+    try { showToast('За цим запитом закладів не знайдено. Спробуйте уточнити нішу або місто.'); } catch (_) {}
   } catch (err) {
-    console.error('[NFC Apify] Error:', err);
+    console.error('[NFC Radar] Error:', err);
     job.status = 'error';
     job.progressText = '';
     job.error = err.message || 'Помилка виконання радару';
@@ -14218,7 +13948,6 @@ function buildSmartD2dQueriesClient(niche, city, cluster = '') {
   const cl = String(cluster || '').trim();
   const loc = cl ? `${cl} ${c}` : c;
 
-  // STRICTLY D2D / Field Sales ("ходоки") / Promo squads / Field Trading Reps — ZERO printing, ZERO coffee/cups/HoReCa suppliers!
   return [
     { q: `промо агентство BTL промоутери ${loc}`, type: 'd2d_promo' },
     { q: `роздача листівок флаєрів промоутери кур'єрська доставка ${loc}`, type: 'd2d_promo' },
@@ -14232,10 +13961,9 @@ function buildSmartD2dQueriesClient(niche, city, cluster = '') {
   ];
 }
 
-// Strict blocklist: excludes all printing shops, coffee/cup/packaging suppliers, salons, clinics, auto shops, web/SMM studios, real estate, retail stores, etc.
-const D2D_HARD_STOP_REGEX = /(поліграф|друкарн|друк|print|вивіск|зовнішня реклама|сувенір|тейбл|стенд|таблич|посуд|стакан|упаков|пакет|полімер|кава|каво|coffee|сироп|вода|пиво|продукт|фрукт|овоч|м'яс|молоч|кондитер|пекарн|косметик|салон|перукар|манікюр|барбер|стоматолог|клінік|медич|аптек|автохім|автозапчаст|шиномонтаж|автомийк|автосервіс|мебл|будівн|ремонт|сантехн|плитк|вікна|двері|нерухоміст|забудовник|концерн поділля|житловий комплекс|рієлтор|оцінка майна|ocenka|ligapro|армії|військов|територіальний центр|осбб|міська рада|державн|\.gov\.ua|разработка сайтов|створення сайтів|webhit|kraft|копірайтинг|seo|таргет|дизайн студія|фотосвіт|фотостуд|аніматор|аниматор|дитяч|свята|весілл|паб|docker|ресторан|кафе|кав'ярн|кофейн|піцері|суші|готел|банк|приватбанк|ощадбанк|нова пошта|укрпошта|meest|розетка|атб|сільпо|фора|аврора|епіцентр|фуршет|трц|торгово-розважальний| the mall|s-mall|бастилія|нотаріус|адвокат|юридичн|вінбазар|портал|газета|новини|радіо|телеканал)/i;
+const D2D_HARD_STOP_REGEX = /(поліграф|друкарн|друк|print|вивіск|зовнішня реклама|сувенір|тейбл|стенд|таблич|посуд|стакан|упаков|пакет|полімер|кава|каво|coffee|сироп|вода|пиво|продукт|фрукт|овоч|м'яс|молоч|кондитер|пекарн|косметик|салон|перукар|манікюр|барбер|стоматолог|клінік|медич|аптек|автохім|автозапчаст|шиномонтаж|автомийк|автосервіс|мебл|будівн|ремонт|сантехн|плитк|вікна|двері|нерухоміст|забудовник|концерн поділля|житловий комплекс|рієлтор|оцінка майна|ocenka|ligapro|армії|військов|територіальний центр|осбб|міська рада|державн|\.gov\.ua|разработка сайтов|створення сайтів|webhit|kraft|копірайтинг|seo|таргет|дизайн студія|фотосвіт|фотостуд|аніматор|аниматор|дитяч|свята|весілл|паб|docker|ресторан|кафе|кав['’ʼʻ`]?ярн|кофейн|піцері|суші|готел|банк|приватбанк|ощадбанк|нова пошта|укрпошта|meest|розетка|атб|сільпо|фора|аврора|епіцентр|фуршет|трц|торгово-розважальний| the mall|s-mall|бастилія|нотаріус|адвокат|юридичн|вінбазар|портал|газета|новини|радіо|телеканал)/i;
 
-const D2D_POSITIVE_SIGNAL_REGEX = /(промо|promo|btl|прям[іи]х? продаж|активн[іи]х? продаж|торгов[иії]й? представник|торгових|мерчендайз|дистриб'юц|дистрибьюшн|дистриб'ютор|кур'єр|курьер|тук-тук|рекрут|підбір персонал|подбор персонал|winwork|best heads|jobs go|кол-центр|колл-центр|контакт-центр|телемаркетинг|маркетингова агенція|маркетингове агентство|просування бізнесу)/i;
+const D2D_POSITIVE_SIGNAL_REGEX = /(промо|promo|btl|прям[іи]х? продаж|активн[іи]х? продаж|торгов[иії]й? представник|торгових|мерчендайз|дистриб|кур'єр|курьер|тук-тук|рекрут|підбір персонал|подбор персонал|winwork|best heads|jobs go|кол-центр|колл-центр|контакт-центр|телемаркетинг|маркетингова|маркетингове|агенція|агентство|компанія|офіс|торгов|логіст|доставк|сервіс|груп|group|team)/i;
 
 function classifyAndVerifyD2dCandidate(p, defaultType, city, cluster, qIdx, idx) {
   if (!p || p.businessStatus === 'CLOSED_TEMPORARILY' || p.businessStatus === 'CLOSED_PERMANENTLY') return null;
@@ -14247,11 +13975,8 @@ function classifyAndVerifyD2dCandidate(p, defaultType, city, cluster, qIdx, idx)
   const website = p.websiteUri || '';
   const combinedText = `${name} ${addr} ${website}`;
 
-  // 1. Hard anti-noise filter (ZERO printing shops, ZERO coffee/cups suppliers, ZERO retail/service venues)
+  // 1. Hard anti-noise filter (excludes retail, food, salons, printing, etc.)
   if (D2D_HARD_STOP_REGEX.test(combinedText)) return null;
-
-  // Must match at least one positive D2D / Promo / Field Rep / Sales Agency signal
-  if (!D2D_POSITIVE_SIGNAL_REGEX.test(combinedText)) return null;
 
   // 2. Verify city match so other oblast centers don't leak in
   const cleanCityRoot = String(city || '').toLowerCase().trim().slice(0, 5);
@@ -14261,7 +13986,7 @@ function classifyAndVerifyD2dCandidate(p, defaultType, city, cluster, qIdx, idx)
     if (hitsOtherCity) return null;
   }
 
-  // 3. Hard contactability gate: must have Ukrainian mobile phone (Viber/Telegram) or Instagram
+  // 3. Contactability gate: must have phone number or Instagram
   const rawPhone = p.internationalPhoneNumber || p.nationalPhoneNumber || '';
   const phone = normalizePhone(rawPhone);
   const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
@@ -14274,9 +13999,8 @@ function classifyAndVerifyD2dCandidate(p, defaultType, city, cluster, qIdx, idx)
     insta = cleanInstagramHandle(website);
   }
 
-  if (!isMobile && !insta) return null;
+  if (!phone && !insta && !website) return null;
 
-  // 4. Determine strict D2D sub-type
   let d2dType = defaultType || 'd2d_direct';
   const lowerNameWeb = `${name} ${website}`.toLowerCase();
 
@@ -14289,7 +14013,8 @@ function classifyAndVerifyD2dCandidate(p, defaultType, city, cluster, qIdx, idx)
   }
 
   let painLevel = 'urgent';
-  let d2dMatchScore = isMobile && insta ? 99 : 97;
+  const hasStrongSignal = D2D_POSITIVE_SIGNAL_REGEX.test(combinedText);
+  let d2dMatchScore = (isMobile && insta) ? 99 : (isMobile ? (hasStrongSignal ? 98 : 95) : 92);
   let painChipLabel = `Офіс активних продажів / D2D (${d2dMatchScore}% Match)`;
   let painText = 'Команда активних продажів — запропонуй викуп партії 50–100 NFC-карток по 280–300 ₴, щоб їхні агенти продавали їх у лице власникам бізнесів за 500–600 ₴ (+200–300 ₴ маржі з карти)!';
 
@@ -14331,18 +14056,18 @@ function classifyAndVerifyD2dCandidate(p, defaultType, city, cluster, qIdx, idx)
 }
 
 async function enrichWebsiteSocialsBatchClient(items) {
-  const toEnrich = items.filter(it => it.website && !it.instagram && !/instagram\.com|facebook\.com|prom\.ua|t\.me|work\.ua|olx\.ua/i.test(it.website)).slice(0, 20);
+  const toEnrich = items.filter(it => it.website && !it.instagram && !/instagram\.com|facebook\.com|prom\.ua|t\.me|work\.ua|olx\.ua/i.test(it.website)).slice(0, 16);
   if (!toEnrich.length) return;
 
   await Promise.allSettled(toEnrich.map(async (it) => {
     const proxies = [
-      'https://api.allorigins.win/raw?url=' + encodeURIComponent(it.website),
-      'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(it.website)
+      '/api/proxy?url=' + encodeURIComponent(it.website),
+      'https://r.jina.ai/' + it.website
     ];
     for (const proxyUrl of proxies) {
       try {
         const ctrl = new AbortController();
-        const tid = setTimeout(() => ctrl.abort(), 2800);
+        const tid = setTimeout(() => ctrl.abort(), 3200);
         const res = await fetch(proxyUrl, { signal: ctrl.signal });
         clearTimeout(tid);
         if (!res.ok) continue;
@@ -14350,6 +14075,7 @@ async function enrichWebsiteSocialsBatchClient(items) {
         const igMatch = html.match(/instagram\.com\/([a-zA-Z0-9._]{3,30})/i);
         if (igMatch && igMatch[1] && !/^(p|reel|stories|explore|accounts|share)$/i.test(igMatch[1])) {
           it.instagram = '@' + igMatch[1];
+          if (!it.username) it.username = it.instagram;
         }
         const tgMatch = html.match(/t\.me\/([a-zA-Z0-9_]{4,32})/i);
         if (tgMatch && tgMatch[1] && !/^(share|joinchat|addstickers|s)$/i.test(tgMatch[1])) {
@@ -14365,7 +14091,7 @@ async function enrichWebsiteSocialsBatchClient(items) {
             it.telegramPhone = 'https://t.me/+380' + d.slice(-9);
           }
         }
-        if (it.instagram || it.telegram) break;
+        if (it.instagram || it.telegram || it.isMobile) break;
       } catch (_) {}
     }
   }));
@@ -14399,9 +14125,9 @@ async function scanTelegramD2dVacanciesClient(city) {
 
   await Promise.allSettled(channels.map(async (ch) => {
     let nextTargetUrl = `https://t.me/s/${ch}`;
-    for (let page = 0; page < 4; page++) {
+    for (let page = 0; page < 2; page++) {
       try {
-        const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(nextTargetUrl);
+        const proxyUrl = '/api/proxy?url=' + encodeURIComponent(nextTargetUrl);
         const ctrl = new AbortController();
         const tid = setTimeout(() => ctrl.abort(), 3500);
         const res = await fetch(proxyUrl, { signal: ctrl.signal });
@@ -14511,11 +14237,9 @@ async function scanWorkUaFieldTeamsClient(city, key) {
         if (!m) continue;
         const jobTitle = m[1];
         const jobUrl = m[2];
-        // Exclude in-store retail cashiers/sellers unless it's promo/field rep/supervisor
         if (/продавець-консультант|касир|бариста|кухар|охоронець/i.test(jobTitle) && !/промоутер|торговий|представник|супервайзер|активн/i.test(jobTitle)) {
           continue;
         }
-        // Find company name in next 3 lines
         let companyName = '';
         for (let k = 1; k <= 3 && (i + k) < lines.length; k++) {
           const line = lines[i + k];
@@ -14532,7 +14256,6 @@ async function scanWorkUaFieldTeamsClient(city, key) {
   }));
 
   const verifiedFromWork = [];
-  // Look up discovered employers in Google Places API v1 to get their direct phone number in the target city
   await Promise.allSettled(discoveredCompanies.slice(0, 8).map(async (co, idx) => {
     try {
       const data = await searchPlacesApiDirect(`${co.companyName} ${city}`, key, '');
@@ -14542,7 +14265,7 @@ async function scanWorkUaFieldTeamsClient(city, key) {
       const phone = normalizePhone(rawPhone);
       const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
       const isMobile = isUkrainianMobilePhone(cleanPhone);
-      if (!isMobile) return;
+      if (!phone) return;
 
       verifiedFromWork.push({
         id: 'v-d2d-workua-' + Date.now() + '-' + idx,
@@ -14553,12 +14276,12 @@ async function scanWorkUaFieldTeamsClient(city, key) {
         address: p.formattedAddress || `${city} (Work.ua роботодавець)`,
         city,
         phone,
-        isMobile: true,
-        viberUrl: getViberDirectUrl(cleanPhone),
+        isMobile,
+        viberUrl: isMobile ? getViberDirectUrl(cleanPhone) : '',
         website: co.jobUrl,
         instagram: (p.websiteUri && /instagram\.com/i.test(p.websiteUri)) ? cleanInstagramHandle(p.websiteUri) : '',
         telegram: '',
-        telegramPhone: `https://t.me/+${cleanPhone}`,
+        telegramPhone: cleanPhone ? `https://t.me/+${cleanPhone}` : '',
         rating: Number(p.rating || 4.9),
         reviews: Number(p.userRatingCount || 18),
         mapsUrl: p.googleMapsUri || co.jobUrl,
@@ -14571,113 +14294,11 @@ async function scanWorkUaFieldTeamsClient(city, key) {
     } catch (_) {}
   }));
 
-  // Also include undercover Work.ua D2D / Promo / Brand-Consultant offices that hide public phone numbers
-  discoveredCompanies.slice(0, 8).forEach((co, idx) => {
-    if (!verifiedFromWork.some(v => v.website === co.jobUrl) && /промоутер|бренд-консультант|торговий представник|супервайзер/i.test(co.jobTitle)) {
-      verifiedFromWork.push({
-        id: 'v-d2d-workua-uc-' + Date.now() + '-' + idx,
-        isD2d: true,
-        d2dType: 'd2d_direct',
-        d2dMatchScore: 98,
-        name: `${co.companyName}: «${co.jobTitle}»`,
-        address: `${city} (Активний набір у D2D / польову команду на Work.ua)`,
-        city,
-        phone: '',
-        isMobile: false,
-        viberUrl: '',
-        website: co.jobUrl,
-        instagram: '',
-        telegram: '',
-        telegramPhone: '',
-        rating: 4.9,
-        reviews: 16,
-        mapsUrl: co.jobUrl,
-        lat: null,
-        lng: null,
-        painLevel: 'urgent',
-        painChipLabel: `Набір «ходоків» / промо на Work.ua (98% Match)`,
-        painText: `Прямо зараз шукають «${co.jobTitle}» у м. ${city} — натисни «Опт Офер», скопіюється повідомлення для керівника офісу і відкриється вакансія!`
-      });
-    }
-  });
   return verifiedFromWork;
 }
 
-// Live OLX.ua Undercover D2D Office Scanner via r.jina.ai (catches "1000-1300 грн/день щодня", "Промоутер представник компанії", "Без досвіду")
 async function scanOlxUndercoverD2dClient(city) {
-  const cLower = String(city || 'Вінниця').toLowerCase();
-  let citySlug = 'vinnitsa';
-  if (cLower.includes('київ')) citySlug = 'kiev';
-  else if (cLower.includes('львів')) citySlug = 'lvov';
-  else if (cLower.includes('одес')) citySlug = 'odessa';
-  else if (cLower.includes('дніпр')) citySlug = 'dnepr';
-  else if (cLower.includes('харків')) citySlug = 'kharkov';
-  else if (cLower.includes('хмельниц')) citySlug = 'khmelnitskiy';
-  else if (cLower.includes('терноп')) citySlug = 'ternopol';
-  else if (cLower.includes('франківськ')) citySlug = 'ivano-frankovsk';
-  else if (cLower.includes('чернівц')) citySlug = 'chernovtsy';
-  else if (cLower.includes('рівн')) citySlug = 'rovno';
-  else if (cLower.includes('луцьк')) citySlug = 'lutsk';
-  else if (cLower.includes('житомир')) citySlug = 'zhitomir';
-  else if (cLower.includes('полтав')) citySlug = 'poltava';
-  else if (cLower.includes('черкас')) citySlug = 'cherkassy';
-
-  const olxQueries = [
-    '%D0%BF%D1%80%D0%BE%D0%BC%D0%BE%D1%83%D1%82%D0%B5%D1%80',
-    '%D1%89%D0%BE%D0%B4%D0%B5%D0%BD%D0%BD%D0%B0-%D0%BE%D0%BF%D0%BB%D0%B0%D1%82%D0%B0',
-    '%D1%82%D0%BE%D1%80%D0%B3%D0%BE%D0%B2%D0%B8%D0%B9-%D0%BF%D1%80%D0%B5%D0%B4%D1%81%D1%82%D0%B0%D0%B2%D0%BD%D0%B8%D0%BA'
-  ];
-
-  const foundOlx = [];
-  const seenUrls = new Set();
-  const hardNoise = /(будівництв|стройк|підсобник|разнорабоч|різноробоч|заклад харчування|кухар|повар|шаурм|пекар|тістоміс|вантажник|грузчик|склад|комплектувальн|пакувальн|армосітк|автосервіс|автомийк|шиномонтаж|швачк|прибиральн|няня|доглядальн|охоронець|водій|таксі|продавець на 2 дні|копірайтер)/i;
-
-  await Promise.allSettled(olxQueries.map(async (qSlug, qIdx) => {
-    try {
-      const url = `https://r.jina.ai/https://www.olx.ua/uk/rabota/${citySlug}/q-${qSlug}/`;
-      const ctrl = new AbortController();
-      const tid = setTimeout(() => ctrl.abort(), 4800);
-      const res = await fetch(url, { signal: ctrl.signal });
-      clearTimeout(tid);
-      if (!res.ok) return;
-      const txt = await res.text();
-      const matches = [...txt.matchAll(/\[([^\]]{8,110})\]\((https:\/\/www\.olx\.ua\/uk\/obyavlenie\/rabota\/[^\)]+)\)/g)];
-      matches.forEach((m, idx) => {
-        const rawTitle = m[1].replace(/\s+/g, ' ').trim();
-        const adUrl = m[2].trim();
-        if (seenUrls.has(adUrl)) return;
-        if (hardNoise.test(rawTitle)) return;
-        seenUrls.add(adUrl);
-
-        foundOlx.push({
-          id: 'v-d2d-olx-' + Date.now() + '-' + qIdx + '-' + idx,
-          isD2d: true,
-          d2dType: /торгов|b2b/i.test(rawTitle) ? 'field_reps' : (/промоутер/i.test(rawTitle) ? 'd2d_promo' : 'd2d_direct'),
-          d2dMatchScore: 99,
-          name: `Зашифрований D2D-офіс (OLX): «${rawTitle}»`,
-          address: `${city} (Жива вакансія D2D / щоденна оплата на OLX.ua)`,
-          city,
-          phone: '',
-          isMobile: false,
-          viberUrl: '',
-          website: adUrl,
-          instagram: '',
-          telegram: '',
-          telegramPhone: '',
-          rating: 5.0,
-          reviews: 19,
-          mapsUrl: adUrl,
-          lat: null,
-          lng: null,
-          painLevel: 'urgent',
-          painChipLabel: 'Зашифрований D2D-офіс на OLX (99% Match)',
-          painText: 'Оголошення з маркерами закритого D2D-офісу («ходоки», щоденні виплати, промоутери без досвіду) — натисни «Опт Офер», скопіюється «Троянський кінь» для директора і відкриється OLX!'
-        });
-      });
-    } catch (_) {}
-  }));
-
-  return foundOlx;
+  return [];
 }
 
 async function runLiveD2dRadar(job, limit) {
@@ -14699,16 +14320,15 @@ async function runLiveD2dRadar(job, limit) {
     const seenOverflowPool = [];
 
     // 1. Scan Telegram job channels + Work.ua live field-sales vacancies in parallel
-    job.progressText = `Сканую зашифровані D2D-офіси на OLX, Work.ua та у Telegram (0/${targetCount})…`;
+    job.progressText = `Сканую D2D-офіси та польові команди у ${city} (0/${targetCount})…`;
     renderNfcRadar();
 
-    const [tgItems, workUaItems, olxItems] = await Promise.all([
+    const [tgItems, workUaItems] = await Promise.all([
       scanTelegramD2dVacanciesClient(city),
-      scanWorkUaFieldTeamsClient(city, key),
-      scanOlxUndercoverD2dClient(city)
+      scanWorkUaFieldTeamsClient(city, key)
     ]);
 
-    for (const item of [...tgItems, ...olxItems, ...workUaItems]) {
+    for (const item of [...tgItems, ...workUaItems]) {
       if (!isSeenInThisRun(item)) {
         markSeenInThisRun(item);
         if (reg.isBizSeen(item, city)) {
@@ -14719,11 +14339,11 @@ async function runLiveD2dRadar(job, limit) {
       }
     }
 
-    // 2. Scan Google Places API v1 strictly for Promo/BTL, Field Reps, Courier/Flyer teams & Sales Staffing
+    // 2. Scan Google Places API v1 for Promo/BTL, Field Reps, Courier/Flyer teams & Sales Staffing
     const queryObjects = buildSmartD2dQueriesClient(job.niche, city, cluster);
 
     for (let qIdx = 0; qIdx < queryObjects.length; qIdx++) {
-      if (freshCollected.length >= targetCount * 1.35) break;
+      if (freshCollected.length >= targetCount * 1.4) break;
 
       const { q, type } = queryObjects[qIdx];
       job.progressText = `Пошук D2D-офісів та польових бригад (${Math.min(targetCount, freshCollected.length)}/${targetCount})…`;
@@ -14754,11 +14374,10 @@ async function runLiveD2dRadar(job, limit) {
 
         if (!data.nextPageToken || freshCollected.length >= targetCount) break;
         pageToken = data.nextPageToken;
-        await new Promise(r => setTimeout(r, 350));
+        await new Promise(r => setTimeout(r, 300));
       }
     }
 
-    // Guarantee targetCount using seenOverflowPool or starter Vinnytsia D2D pool if needed
     let combined = [...freshCollected];
     if (combined.length < targetCount && seenOverflowPool.length > 0) {
       combined.push(...seenOverflowPool.slice(0, targetCount - combined.length));
@@ -14773,8 +14392,10 @@ async function runLiveD2dRadar(job, limit) {
       }
     }
 
-    // Sort by D2D match score before enriching websites
     combined.sort((a, b) => {
+      const aPhone = a.phone ? 1 : 0;
+      const bPhone = b.phone ? 1 : 0;
+      if (bPhone !== aPhone) return bPhone - aPhone;
       const aSocial = (a.instagram || a.telegram) ? 1 : 0;
       const bSocial = (b.instagram || b.telegram) ? 1 : 0;
       if (bSocial !== aSocial) return bSocial - aSocial;
@@ -14783,13 +14404,14 @@ async function runLiveD2dRadar(job, limit) {
 
     const finalItems = combined.slice(0, targetCount);
 
-    // 3. Fast website enrichment to pull @instagram and @telegram handles
     job.progressText = `Перевірка прямих контактів (Viber / Telegram / Instagram)…`;
     renderNfcRadar();
     await enrichWebsiteSocialsBatchClient(finalItems);
 
-    // Re-sort so enriched profiles float to the top
     finalItems.sort((a, b) => {
+      const aPhone = a.phone ? 1 : 0;
+      const bPhone = b.phone ? 1 : 0;
+      if (bPhone !== aPhone) return bPhone - aPhone;
       const aSocial = (a.instagram || a.telegram) ? 1 : 0;
       const bSocial = (b.instagram || b.telegram) ? 1 : 0;
       if (bSocial !== aSocial) return bSocial - aSocial;

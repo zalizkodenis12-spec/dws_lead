@@ -18,6 +18,10 @@ function readDb() {
       const data = fs.readFileSync(DB_PATH, 'utf-8');
       return JSON.parse(data);
     }
+    if (IS_SERVERLESS && fs.existsSync(BUNDLED_DB_PATH)) {
+      const data = fs.readFileSync(BUNDLED_DB_PATH, 'utf-8');
+      return JSON.parse(data);
+    }
   } catch (err) {
     console.error('Error reading database file:', err.message);
   }
