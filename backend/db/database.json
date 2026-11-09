@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794246755042-821",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Access Social",
+      "authorUsername": "@tg_id_8725056944",
+      "title": "Всім привіт, хто має гарне портфоліо з ведення інстаграм сторінок ? Будь ла...",
+      "text": "Всім привіт, хто має гарне портфоліо з ведення інстаграм сторінок ? Будь ласка надішліть у особисті. Є цікавий проект для ведення . Дякую",
+      "date": "2026-11-09T17:52:35.041Z",
+      "dateFormatted": "Сьогодні, 19:52",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794246026608-349",
       "category": "development",
       "categoryName": "Веброзробка",
