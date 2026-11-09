@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794239721395-82",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Target Partners Pepe",
+      "authorUsername": "@tg_id_8740260028",
+      "title": "🫶ОПЫТНЫЙ ТАРГЕТОЛОГ ОТ $20 В ДЕНЬ",
+      "text": "🫶ОПЫТНЫЙ ТАРГЕТОЛОГ ОТ $20 В ДЕНЬ\n\n🕺White / Grey — $20/день\n🐈‍⬛Blackhat — $33/день\n+ рекламный бюджет\n\n😎 Диктуем тренды в рекламе, приводим дешёвые депозиты и нужную аудиторию. Умеем работать с банами и выгоранием аудитории.\n\n⏺ Только опытные специалисты\n⏺ Креативы, баннеры и GIF бесплатно\n⏺ Лендинги и Telegram-прокладки бесплатно\n⏺ Анализ конкурентов и рабочие связки\n⏺ Ежедневная оптимизация и отчёты\n\n 🍸Можно попробовать наш залив всего на 1 день без обязательств на месяц!\n\n🖐️ Напишите мне обсудим вашу нишу и запустим рекламу.",
+      "date": "2026-11-09T15:55:21.395Z",
+      "dateFormatted": "Сьогодні, 17:55",
+      "budget": 1000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 64,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 1000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794237863428-5566",
       "category": "development",
       "categoryName": "Веброзробка",
