@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794240989066-331",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@rumbubblegum",
+      "title": "Payments Project Manager",
+      "text": "Payments Project Manager\nв TrafMasters — международная компания, работающая в сфере iGaming (betting & gambling), которая специализируется на арбитраже трафика и реализации масштабных проектов.\nУдалённая работа. Гибкий график.\nИщет Стас Березин, его пост на LinkedIn.",
+      "date": "2026-11-09T16:16:29.066Z",
+      "dateFormatted": "Сьогодні, 18:16",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794239721395-82",
       "category": "marketing",
       "categoryName": "Маркетинг",
