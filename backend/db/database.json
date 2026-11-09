@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794242260861-954",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Diana🪬",
+      "authorUsername": "@tg_id_674212717",
+      "title": "SAINT STUDIO шукає SMM-спеціаліста в команду ❤️",
+      "text": "SAINT STUDIO шукає SMM-спеціаліста в команду ❤️\n\nМи — Saint Studio, не шаблонна SMM-агенція у сферах beauty/wellness: про сильну команду, естетику, якість та свободу в креативі.\n\nЗараз шукаємо сильного спеціаліста з відчуттям естетики та вмінням створювати контент, який привертає увагу.\n\nЩо важливо:\n• Досвід в SMM від 2 років\n• Canva/Figma, Lightroom, CapCut/VN\n• Грамотні тексти, креативність та ініціативність\n\nУмови:\n• Part-time / full-time\n• Віддалено або Київ\n• Пн–Пт, 10:00–18:30\n• 💰 25 000–50 000 грн/міс залежно від досвіду, кількості проєктів і залученості\n\nАнкета - forms.gle/2YhBmLQsFMZkVFMs9",
+      "date": "2026-11-09T16:37:40.861Z",
+      "dateFormatted": "Сьогодні, 18:37",
+      "budget": 50000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 87,
+      "aiSummary": "Замовлення: маркетинг з бюджетом 50000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794242071625-884",
       "category": "development",
       "categoryName": "Веброзробка",
