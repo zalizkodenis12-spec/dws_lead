@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794326972802-840",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "mariia_kalitsun",
+      "authorUsername": "@mariia_kalitsun",
+      "title": "🖥 Вакансія: SMM в команду LIONCOM | віддалено / офіс, м. Київ, full time...",
+      "text": "🖥 Вакансія: SMM в команду LIONCOM | віддалено / офіс, м. Київ, full time\n\n📍Віддалено / офіс, м. Київ, full time\n\n\nLIONCOM — одна з найбільших івент-агенцій України!\n\nЩо потрібно буде робити?\n• Стратегія: SMM-стратегія Instagram, рубрики, контент-план і регулярність публікацій.\n• Зйомка офісу: живі кадри команди, підготовки проєктів, нарад і смішних моментів.\n• Івенти: виїзди на події, бекстейдж, атмосфера, емоції гостей, короткі інтерв’ю.\n• Зйомка і монтаж: переважно на телефон, за потреби на професійну камеру; монтаж reels, stories і каруселей у CapCut, Edits чи інших редакторах.\n• Тренди та інфоприводи: оперативно ловити їх і адаптувати під Lioncom за години, а не за тиждень.\n• Усі формати Instagram: Reels, Stories, каруселі, пости, ефіри, колаби, Trial Reels, нотатки, канал трансляції.\n\nДля звʼязку @mariia_kalitsun ✉️\n\n#SMM #вакансія #контентмейкер #віддалено #роботаКиїв",
+      "date": "2026-11-10T16:09:32.801Z",
+      "dateFormatted": "Сьогодні, 18:09",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794326500467-786",
       "category": "marketing",
       "categoryName": "Маркетинг",
