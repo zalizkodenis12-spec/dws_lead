@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794330901424-86",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "tiktok_ads",
+      "subcategoryName": "TikTok реклама",
+      "sourceType": "chat",
+      "sourceName": "Happy Monday",
+      "sourceUsername": "@happymonday",
+      "authorName": "list",
+      "authorUsername": "@list",
+      "title": "​​Вакансії для junior-фахівців і фахівчинь 🔥",
+      "text": "​​Вакансії для junior-фахівців і фахівчинь 🔥\n\nВтомилися від пропозицій, де вимагають багаторічний досвід? Зібрали посади, де раді початківцям. Переглядайте варіанти та шукайте свою можливість кар'єрно зростати:\n\n▪️ Молодший юрист/молодша юристка в практику нерухомості до EY\n\n▪️ HR Specialist до JDC\n\n▪️ Junior AI/ML Engineer до ОККО\n\n▪️ Фахівець/фахівчиня з управління грантами до The Mines Advisory Group\n\n▪️ Логіст/логістка до IDS Aqua Service\n\n▪️ Менеджер/менеджерка українських партнерств до ГО «Військова школа “Боривітер”»\n\n▪️ Product Manager (Cybersecurity) до Київстар\n\n▪️ Intern or Consultant, Global Mobility Services до KPMG в Україні\n\n▪️ Marketing Analyst до Code Street\n\n▪️ Risk Operations Analyst до Solidgate\n\n▪️ Фахівець/фахівчиня з комунікацій і SMM до КУ ММР «Агенція розвитку Миколаєва»\n\n▪️ Оператор/операторка збору та обробки інформації до 237 ОББпС Apachi\n\n▪️ Менеджер/менеджерка з B2B-продажів зі знанням французької мови до NOWIMA\n\n▪️ Рекрутер/рекрутерка до 237 ОББпС Apachi\n\n▪️ Azure DevOps Engineer до Державної служби статистики\n\nВідгукуйтеся на пропозиції, які вам найбільше подобаються 💙\n\n🔗 А ще більше вакансій для джуніорів шукайте за лінком: https://happymonday.ua/s/faBoILF\n\n#vacanciesHappyMonday\n\ntelegram | inst | fb | threads | linkedin | tiktok | youtube",
+      "date": "2026-11-10T17:15:01.422Z",
+      "dateFormatted": "Сьогодні, 19:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: tiktok реклама.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794330009259-340",
       "category": "marketing",
       "categoryName": "Маркетинг",
