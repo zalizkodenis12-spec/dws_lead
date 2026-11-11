@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794407057011-580",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@_Arina",
+      "title": "🔥 Kokoc Global ищет Senior-специалистов",
+      "text": "🔥 Kokoc Global ищет Senior-специалистов\nKokoc Global — международная IT-компания, которая работает в формате аутстаффинга и подключает сильных специалистов к проектам зарубежных клиентов.\nСейчас расширяем пул экспертов и ищем Senior-разработчиков и инженеров.\n━━━━━━━━━━━━━━\n❗️ Обязательные условия:\n🇬🇧 Английский B2+\n💻 Наличие MacBook\n📍 Локация не РФ / РБ / Украина\n🎯 Грейд Senior / Senior+\n💶 Рейт: 15–40 €/час\n━━━━━━━━━━━━━━\nОткрытые позиции:\n1. Senior Analytics Engineer\nМиграция attribution-пайплайна на core DWH, витрины в BigQuery, data quality.\nСтек: SQL (expert), Python, dbt, Airflow, Git. Опыт с DWH от 3 лет.\nПлюс: AppsFlyer/Adjust, GCP, Looker/Tableau.\n\n2. Senior QA Engineer\nТест-стратегия платформы сбора данных: мобильные приложения (WebView), бэк-офис, бэкенд, финансовые флоу и выплаты.\nСтек: API/E2E-тестирование, REST/gRPC, Playwright/Cypress/Appium, Kafka, SQL, AWS, CI/CD, Docker.\n\n3. Senior Backend Developer (Go)\nПроектирование и развитие высоконагруженных микросервисов, observability, менторинг.\nСтек: Go (generics, reflection, sync-примитивы), SQL (шардирование, партиционирование), Redis, gRPC, брокеры, Docker, K8s, AWS. Опыт от 5 лет.\n\n4. Senior Backend Developer (Go): Intercity\nC2C-бэкенд под нагрузкой: заказы, статусы, прайсинг, антифрод, платежи.\nСтек: Go, Kafka, event-driven, SQL, Redis, gRPC, observability. Опыт от 5 лет.\nПлюс: владение сервисом end-to-end.\n\n📝 Подходите? Заполните анкету:\nhttps://docs.google.com/forms/d/e/1FAIpQLSf8MdhZpf-_Bptexc0RaEWk7F1cqNp7EU4l7UMuZKRw6sBWKA/viewform?usp=send_form\n💬 Вопросы: @Kokoc_Global_HR_Arina\n#вакансия #senior #go #backend #qa #analyticsengineer #remote\n\n👉 Наш второй канал с резюме",
+      "date": "2026-11-11T14:24:17.009Z",
+      "dateFormatted": "Сьогодні, 16:24",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794406100469-754",
       "category": "montage",
       "categoryName": "Монтаж",
