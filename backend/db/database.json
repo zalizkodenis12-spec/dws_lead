@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794412632190-536",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "youtube",
+      "subcategoryName": "YouTube монтаж",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "HR",
+      "authorUsername": "@d_hr123",
+      "title": "Всім привіт)",
+      "text": "Всім привіт)\nВ один з проектів відкрито декілька вакансій.\nЯкщо є досвід в трейднігу, пишіть мені @d_hr123\n1) Сценарист для ютуб проектів\n2) Відеомонтажер для ютуб проектів\n3) Інфлюенсер/Блогер\nБуду рада поспілкуватися)",
+      "date": "2026-11-11T15:57:12.189Z",
+      "dateFormatted": "Сьогодні, 17:57",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: youtube монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794411563241-63",
       "category": "development",
       "categoryName": "Веброзробка",
