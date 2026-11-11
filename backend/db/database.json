@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794414327247-838",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "backend",
+      "subcategoryName": "Backend & API розробка",
+      "sourceType": "chat",
+      "sourceName": "CG Freelance",
+      "sourceUsername": "",
+      "authorName": "form",
+      "authorUsername": "@form",
+      "title": "🚀 HIRING: ROBLOX CONTENT TEAM",
+      "text": "🚀 HIRING: ROBLOX CONTENT TEAM\nWe're expanding our Roblox YouTube Shorts production and looking for talented people for TWO POSITIONS with long-term collaboration opportunities.\n━━━━━━━━━━━━━━━━━━\n1. TOPIC RESEARCHER & SCRIPTWRITER\nWe're looking for someone who understands the Roblox niche and knows how to turn viral topics into engaging YouTube Shorts scripts.\nResponsibilities:\n- Find viral Roblox topics independently\n- Write 3 high-quality scripts per day\n- Analyze successful videos and identify trends\n- Create strong hooks, storytelling, and high-retention scripts\nRequirements:\n- Previous experience in the Roblox niche is a MUST\n- Experience writing YouTube Shorts scripts\n- Strong understanding of storytelling and audience retention\n- Ability to consistently deliver 3 scripts daily\n\n💰 Starting salary: $1,000/month\nSalary increases as your daily script output increases.\n━━━━━━━━━━━━━━━━━━\n2. AI DEVELOPER – CLAUDE PIPELINE\nWe're looking for an experienced AI developer to build a private Claude-based pipeline that automates our entire AI Roblox video production process.\nThe pipeline should automate:\n- Viral topic research\n- Scriptwriting\n- AI animation generation\n- Captions and subtitles\n- Sound effects (SFX)\n- Final video assembly and export\nRequirements:\n- Experience with Claude and its API\n- Experience building AI automation pipelines\n- Strong Python and API integration skills\n- Familiarity with AI video and animation tools\n- Previous automated content production experience is a plus\n\n💰 Compensation: Submit your offer through the application form.\n━━━━━━━━━━━━━━━━━━\nREFERENCE VIDEOS\nhttps://www.youtube.com/shorts/RjalHrl6ER4\nhttps://www.youtube.com/shorts/zioYxU9PYGo\nhttps://www.youtube.com/shorts/n9MMIWS220c\nhttps://www.youtube.com/shorts/LFPhpi5nhug\nhttps://www.youtube.com/shorts/PLCU5QmjW7k\n━━━━━━━━━━━━━━━━━━\nHOW TO APPLY\nInterested? Fill out our application form:\n👉 https://forms.gle/Lq6aW9NxaZukkmWR8\nSelect the position you're applying for and provide your experience, portfolio, and relevant work examples.\n\n@cgfreelance 👩‍🎨",
+      "date": "2026-11-11T16:25:27.246Z",
+      "dateFormatted": "Сьогодні, 18:25",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: backend & api розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794412632190-536",
       "category": "montage",
       "categoryName": "Монтаж",
