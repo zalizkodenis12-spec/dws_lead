@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794408047505-769",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Глєб",
+      "authorUsername": "@tg_id_813371162",
+      "title": "Всім привіт!",
+      "text": "Всім привіт!\nСтворюю контент комбінуючи АІ та сучасні тренди.\n\n ∙ АІ відео та фото контент\n ∙ АІ моделі/інфлуенсери\n ∙ АІ голоси та озвучка\n ∙ Монтаж відео\n ∙ Написання сценаріїв\n ∙ Аудіо дизайн\n\nПортфоліо надішлю в дірект\n\nПишіть в особисті — обговоримо ваш проєкт 🙌",
+      "date": "2026-11-11T14:40:47.505Z",
+      "dateFormatted": "Сьогодні, 16:40",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 60,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794407973115-625",
       "category": "marketing",
       "categoryName": "Маркетинг",
