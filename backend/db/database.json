@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794408865209-528",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "eads",
+      "authorUsername": "@eads",
+      "title": "💬 🔥 Вакансія: Тредсолог / SMM для threads | віддалена робота, part time...",
+      "text": "💬 🔥 Вакансія: Тредсолог / SMM для threads | віддалена робота, part time\n\n📍Віддалено, part time\n\nLAMA CASH шукає людину, яка знає, як підкорювати Threads. І не просто постити, а робити так, щоб про нас говорили!\n\nЯкщо вмієш ловити охоплення, запускати обговорення та розкручувати акаунти - нам точно є про що поговорити!\n\nПокажи нам свої кейси, а ми розповімо про свої амбіції.\nА якщо знаєш такого профі - тегай або пересилай йому цей пост 🦙!\n\nДля звʼязку @polprocenta_manager ✉️\n\n#SMM #вакансія #тредс #віддаленаробота #роботаУкраїна #фріланс\n\n———\n🔗 Більше вакансій ти знайдеш у нашому\nчаті з вакансіями\nРозмістити вакансію @Irina_MK26",
+      "date": "2026-11-11T14:54:25.207Z",
+      "dateFormatted": "Сьогодні, 16:54",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 65,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794408047505-769",
       "category": "montage",
       "categoryName": "Монтаж",
