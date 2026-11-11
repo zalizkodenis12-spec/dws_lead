@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794421538411-653",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Katerina",
+      "authorUsername": "@tg_id_612783484",
+      "title": "Шукаю монтажера для створення розмовних Reels :)",
+      "text": "Шукаю монтажера для створення розмовних Reels :)\n\nКому цікаво — пишіть у приватні повідомлення з прайсом на послуги та прикладами робіт",
+      "date": "2026-11-11T18:25:38.377Z",
+      "dateFormatted": "Сьогодні, 20:25",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794418726572-6313",
       "category": "development",
       "categoryName": "Веброзробка",
