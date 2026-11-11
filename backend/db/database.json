@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794407272279-415",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Prassd Korde",
+      "authorUsername": "@ADV_AGENT_S",
+      "title": "🚀 ВАС ДОЛЖНЫ УВИДЕТЬ!",
+      "text": "🚀 ВАС ДОЛЖНЫ УВИДЕТЬ!\n\nПродвижение в одном Telegram-канале — это только начало. Представьте, что ваше предложение может появиться сразу в сети из 850+ сообществ!\n\nМы поможем рассказать о вашем проекте широкой аудитории.\n\n💼 Продвигаем:\n▪️ Бизнес и личные проекты\n▪️ Telegram-каналы и боты\n▪️ Сайты и онлайн-магазины\n▪️ Услуги и товары\n▪️ Вакансии и предложения о работе\n\n⏳ Варианты размещения: 6 / 12 / 24 / 48 часов.\n\n📩 Узнать условия и запустить рекламу: @ADV_AGENT_S\n\nНе ждите, пока найдут вас. Заявите о себе сами! 🔥",
+      "date": "2026-11-11T14:27:52.278Z",
+      "dateFormatted": "Сьогодні, 16:27",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794407249632-612",
       "category": "marketing",
       "categoryName": "Маркетинг",
