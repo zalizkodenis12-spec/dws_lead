@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794406100469-754",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Oleg Bakaiev | Brand Visual Creator | Target (Inst, Fb)",
+      "authorUsername": "@tg_id_493324985",
+      "title": "Реклама є, а уваги немає?",
+      "text": "Реклама є, а уваги немає?\n\nЯ — AI Designer & AI UGC Creator. Створюю відео та креативи, які виглядають нестандартно й реально зупиняють скрол.\n\nAI UGC, Reels, CGI, рекламні ролики, продуктові відео, AI-анімація — без зйомок, моделей і студій.\n\nПотрібен контент для реклами або соцмереж — пишіть у приватні.",
+      "date": "2026-11-11T14:08:20.466Z",
+      "dateFormatted": "Сьогодні, 16:08",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794404349476-3990",
       "category": "development",
       "categoryName": "Веброзробка",
