@@ -1,6 +1,18 @@
-node_modules/
+# Environment variables and secrets
 .env
-.env.local
+.env.*
+*.env
+*.env.local
+
+# Telegram & Outreach session databases and cookies
+backend/db/nfc-outreach.json
+backend/db/*-session.json
+backend/db/ig-session.json
+*.session
+*.session-journal
+
+# Dependencies and binaries
+node_modules/
 .DS_Store
 Thumbs.db
 backend/scraper/scrapes.json
