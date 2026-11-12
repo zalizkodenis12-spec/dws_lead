@@ -30,15 +30,18 @@ async function main() {
   console.log('🤖 DWS Lead — Підключення Telegram Акаунта #2');
   console.log('======================================================\n');
 
-  let apiId = process.env.TELEGRAM_API_ID;
-  let apiHash = process.env.TELEGRAM_API_HASH;
+  let apiId = process.env.TELEGRAM_API_ID_2 || process.env.TELEGRAM_API_ID;
+  let apiHash = process.env.TELEGRAM_API_HASH_2 || process.env.TELEGRAM_API_HASH;
 
-  if (!apiId || !apiHash) {
-    console.log('Не знайдено TELEGRAM_API_ID або TELEGRAM_API_HASH у .env');
-    apiId = await question('Введіть ваш TELEGRAM_API_ID: ');
-    apiHash = await question('Введіть ваш TELEGRAM_API_HASH: ');
-  } else {
-    console.log(`Використовуємо TELEGRAM_API_ID з .env: ${apiId}`);
+  console.log('Вкажіть API ID та API HASH вашого другого акаунта (з my.telegram.org):');
+  const inputApiId = await question(`Введіть API_ID акаунта #2 ${apiId ? `(натисніть Enter для ${apiId})` : ''}: `);
+  if (inputApiId.trim()) {
+    apiId = inputApiId.trim();
+  }
+
+  const inputApiHash = await question(`Введіть API_HASH акаунта #2 ${apiHash ? `(натисніть Enter для наявного)` : ''}: `);
+  if (inputApiHash.trim()) {
+    apiHash = inputApiHash.trim();
   }
 
   apiId = parseInt(String(apiId).trim(), 10);
@@ -79,6 +82,8 @@ async function main() {
   }
 
   const updates = {
+    TELEGRAM_API_ID_2: String(apiId),
+    TELEGRAM_API_HASH_2: String(apiHash),
     TELEGRAM_SESSION_2: sessionSaved
   };
 

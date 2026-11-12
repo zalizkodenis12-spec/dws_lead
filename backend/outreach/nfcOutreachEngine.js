@@ -383,7 +383,9 @@ async function getMtprotoClientForAccount(accountId) {
     try {
       const { TelegramClient } = await import('telegram');
       const { StringSession } = await import('telegram/sessions/index.js');
-      const client2 = new TelegramClient(new StringSession(sess2), apiId, apiHash, {
+      const apiId2 = Number(process.env.TELEGRAM_API_ID_2 || apiId);
+      const apiHash2 = String(process.env.TELEGRAM_API_HASH_2 || apiHash).trim();
+      const client2 = new TelegramClient(new StringSession(sess2), apiId2, apiHash2, {
         connectionRetries: 5
       });
       await client2.connect();
