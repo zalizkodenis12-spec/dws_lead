@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794497480509-690",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Bogdana Ishchyk",
+      "authorUsername": "@olgaianchuk",
+      "title": "Привіт! Шукаємо SMM-спеціаліста для бренду текстилю з ручною вишивкою samis...",
+      "text": "Привіт! Шукаємо SMM-спеціаліста для бренду текстилю з ручною вишивкою samiswoi.textile 🤍\n\n📍 Бажано з Луцька\n\nДосвід буде перевагою, але готові розглянути й початківців. Важливо мати базове розуміння SMM, теоретичну базу та бажання вчитися й розвиватися на практиці.\n\nЗа деталями пишіть безпосередньо власниці бренду — @olgaianchuk 💌",
+      "date": "2026-11-12T15:31:20.508Z",
+      "dateFormatted": "Сьогодні, 17:31",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794496885029-479",
       "category": "marketing",
       "categoryName": "Маркетинг",
