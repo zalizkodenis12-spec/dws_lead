@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794498632457-210",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Ira",
+      "authorUsername": "@tg_id_2119907640",
+      "title": "Відкрита до нових SMM-проєктів✨.",
+      "text": "Відкрита до нових SMM-проєктів✨.\n\nПрацюю як із комплексним веденням, так і з окремими задачами: стратегія, контент-план, зйомка, монтаж відео, оформлення сторіс, копірайтинг, написання сценаріїв, оформлення профілю.\n\nЯкщо шукаєте SMM-фахівця, надішлю портфоліо та обговоримо ваш запит🙌🏼.",
+      "date": "2026-11-12T15:50:32.456Z",
+      "dateFormatted": "Сьогодні, 17:50",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 60,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794498207946-772",
       "category": "marketing",
       "categoryName": "Маркетинг",
