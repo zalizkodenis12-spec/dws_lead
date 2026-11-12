@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794481461430-502",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Irina_MK26",
+      "authorUsername": "@Irina_MK26",
+      "title": "🤑 💼 Вакансія: Продюсер в проєкт по кармології грошей | віддалена робота,...",
+      "text": "🤑 💼 Вакансія: Продюсер в проєкт по кармології грошей | віддалена робота, full time / part time\n\n📍Віддалено, full time / part time\n\n\nЄ вся інфраструктура та укомплектована команда (тех відділ, таргет-відділ, SMM-спеціаліст)\n\nЗараз шукаємо сильного продюсера, який вміє вибудовувати системні продажі, та управляти цифрами\n\nПеревагою буде досвід щонайменше 2 запусків у психології, коучингу\n\nУмови та деталі обговоримо індивідуально в особистих, пишіть одразу з кейсами та досвідом!\n\nДля звʼязку @pan_producer  ✉️\n\n#продюсер #вакансія #віддаленаробота #роботаУкраїна #діджитал\n\n———\n🔗 Більше вакансій ти знайдеш у нашому\nчаті з вакансіями\nРозмістити вакансію @Irina_MK26",
+      "date": "2026-11-12T11:04:21.430Z",
+      "dateFormatted": "Сьогодні, 13:04",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794481398989-335",
       "category": "development",
       "categoryName": "Веброзробка",
