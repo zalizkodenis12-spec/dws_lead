@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794495463375-964",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Чат: продажі на Prom.ua / Rozetka",
+      "sourceUsername": "@evo_prom",
+      "authorName": "Катерина",
+      "authorUsername": "@tg_id_1011230511",
+      "title": "Писала 3.11 запит на ел.пошту щодо повернення комісії просейл за замовлення...",
+      "text": "Писала 3.11 запит на ел.пошту щодо повернення комісії просейл за замовлення, де покупець повернув майже одразу товар назад.\n\nЗвернення має номер свій, сьогодні вже через чат-бот написала звернення. Воно також має свій номер.\n\nКількість запитів між ними - 53 145 шт\n\nГарна черга🥳",
+      "date": "2026-11-12T14:57:43.341Z",
+      "dateFormatted": "Сьогодні, 16:57",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794493868155-180",
       "category": "marketing",
       "categoryName": "Маркетинг",
