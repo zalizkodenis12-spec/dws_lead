@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794479520009-162",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Віктор",
+      "authorUsername": "@tg_id_6978490648",
+      "title": "Шукаємо продюсера в проект по кармології грошей",
+      "text": "Шукаємо продюсера в проект по кармології грошей\n\nЄ вся інфраструктура та укомплектована команда (тех відділ, таргет-відділ, SMM-спеціаліст)\n\nЗараз шукаємо сильного продюсера, який вміє вибудовувати системні продажі та управляти цифрами\n\nПеревагою буде досвід щонайменше 2 запусків у психології, коучингу\n\nУмови та деталі обговоримо індивідуально в особистих, пишіть відразу з кейсами та досвідом🤝",
+      "date": "2026-11-12T10:32:00.009Z",
+      "dateFormatted": "Сьогодні, 12:32",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794478905508-5",
       "category": "marketing",
       "categoryName": "Маркетинг",
