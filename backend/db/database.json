@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794491101567-311",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "gamedev_roblox",
+      "subcategoryName": "gamedev_roblox",
+      "sourceType": "chat",
+      "sourceName": "DOU Jobs: DevOps | SysAdmin",
+      "sourceUsername": "@dou_jobs",
+      "authorName": "dou_jobs",
+      "authorUsername": "@dou_jobs",
+      "title": "🔸 Azure DevOps Tech Lead в 2ops",
+      "text": "🔸 Azure DevOps Tech Lead в 2ops\n📍 віддалено\nWe are looking for an Azure DevOps Tech Lead who will guide our internal team and partner with clients to bring strong Azure DevOps expertise. This role combines technical leadership, client engagement, and pre-sales support. This is an opportunity to leverage your personality and experience to…",
+      "date": "2026-11-12T13:45:01.566Z",
+      "dateFormatted": "Сьогодні, 15:45",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: gamedev_roblox.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794491042593-453",
       "category": "development",
       "categoryName": "Веброзробка",
