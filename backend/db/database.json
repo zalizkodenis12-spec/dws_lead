@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794514577129-537",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "oper",
+      "authorUsername": "@oper",
+      "title": "🔥 Резюме Senior Frontend Developer (React / TypeScript) от @alexey_shaykov...",
+      "text": "🔥 Резюме Senior Frontend Developer (React / TypeScript) от @alexey_shaykov, от 250 000₽, Москва, удаленка или гибрид, фуллтайм\n\n⭐ Ощутимые метрики: ускорение сборки в 3 раза, сжатие бандла на 40% и миллион пользователей на Litero.ai.\n⭐ Небанальные технические задачи: управление квадрокоптерами через Mapbox/WebSocket, графы на D3.js и редактор на Slate.js.\n⭐ Адекватная интеграция AI-инструментов (Claude Code, Copilot) в рабочий пайплайн без лишнего инфоцыганства.",
+      "date": "2026-11-12T20:16:17.129Z",
+      "dateFormatted": "Сьогодні, 22:16",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794514280406-6930",
       "category": "development",
       "categoryName": "Веброзробка",
