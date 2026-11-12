@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794515222392-2",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "ads_creatives",
+      "subcategoryName": "Рекламні креативи",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Rita",
+      "authorUsername": "@tg_id_992403140",
+      "title": "‼️‼️",
+      "text": "‼️‼️\n\n\nSMM, монтаж відео, створення креативів‼️\n\nДосвід - більше року🗝️\nМонтую окремо відео 📹\nСтворюю окремо креативи 🍁\nПовністю веду проєкт як SMM📍\n Не за всі гроші світу!\n\n‼️‼️",
+      "date": "2026-11-12T20:27:02.391Z",
+      "dateFormatted": "Сьогодні, 22:27",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 48,
+      "aiSummary": "Замовлення: рекламні креативи.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794514577129-537",
       "category": "development",
       "categoryName": "Веброзробка",
