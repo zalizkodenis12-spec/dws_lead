@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794488406354-423",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "google_ads",
+      "subcategoryName": "Google реклама",
+      "sourceType": "chat",
+      "sourceName": "Норм работа",
+      "sourceUsername": "@normrabota",
+      "authorName": "aude",
+      "authorUsername": "@aude",
+      "title": "SEO Content Manager / AI Content Editor (EN) в Selzy",
+      "text": "SEO Content Manager / AI Content Editor (EN) в Selzy\n\nУдаленка (кроме РФ и РБ), фултайм, оплата до $2000\n\nМеждународная компания в сфере email-маркетинга.\n\nЧто делать:\n— Писать и обновлять SEO-статьи на английском с Claude\n— По данным GSC / GA4 / Ahrefs и выдаче решать, что переписать\n— Выстраивать процесс работы с Claude: скиллы, инструкции, контроль качества\n\nТребования:\n— Английский C1+\n— Уверенная работа с Claude и проверка его выводов (включая работу с источниками, контекстом и SEO/SERP-скиллами)\n— Опыт SEO-контента: интент, выдача, структура, перелинковка\n— Портфолио англоязычных статей\n— Работа с Google Search Console, GA4, Ahrefs или аналогами\n\nОткликнуться: @CurlyIntHR\nПроцесс найма: пара кратких вопросов в переписке - звонок (частично на английском) - тестовое (краткое) - звонок - оффер (результат по каждому этапу в течение 2-3 дней).",
+      "date": "2026-11-12T13:00:06.354Z",
+      "dateFormatted": "Сьогодні, 15:00",
+      "budget": 83000,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 70,
+      "aiSummary": "Замовлення: google реклама з бюджетом 83000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794488234937-146",
       "category": "development",
       "categoryName": "Веброзробка",
