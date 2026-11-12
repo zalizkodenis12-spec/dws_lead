@@ -15743,7 +15743,7 @@ function saveCustomRequisites() {
 // ============================================================================
 // AUTO-OUTREACH & BLUE-BORDER VACANCY SELECTION ENGINE (v4.8.0)
 // ============================================================================
-const DEFAULT_OUTREACH_STATE = {
+var DEFAULT_OUTREACH_STATE = {
   selectedIds: [],
   activeTab: 'select',
   platformFilter: 'all',
@@ -15782,11 +15782,13 @@ function loadOutreachState() {
   }
 }
 
-const outreachState = loadOutreachState();
-const outreachSelectedSet = new Set(outreachState.selectedIds);
-let outreachTimerInterval = null;
+var outreachState = loadOutreachState();
+var outreachSelectedSet = new Set(outreachState.selectedIds);
+var outreachTimerInterval = null;
 
 function saveOutreachState() {
+  if (!outreachState) outreachState = loadOutreachState();
+  if (!outreachSelectedSet) outreachSelectedSet = new Set(outreachState.selectedIds || []);
   outreachState.selectedIds = [...outreachSelectedSet];
   try {
     localStorage.setItem('dws_outreach_state', JSON.stringify(outreachState));
@@ -15794,6 +15796,7 @@ function saveOutreachState() {
 }
 
 function isOutreachLeadSelected(leadId) {
+  if (!outreachSelectedSet) return false;
   return outreachSelectedSet.has(leadId);
 }
 
@@ -16673,13 +16676,13 @@ if (document.readyState === 'loading') {
 }
 
 // ==========================================
-// NFC SMART AUTO-OUTREACH & RESULTS TABLE (v4.8.24)
+// NFC SMART AUTO-OUTREACH & RESULTS TABLE (v4.8.25)
 // ==========================================
-const NFC_OUTREACH_STORAGE_KEY = 'dws_nfc_outreach_state_v1';
-const NFC_TG_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
-const NFC_IG_INTERVAL_MS = 3 * 60 * 1000;  // 3 minutes
+var NFC_OUTREACH_STORAGE_KEY = 'dws_nfc_outreach_state_v1';
+var NFC_TG_INTERVAL_MS = 10 * 60 * 1000; // 10 minutes
+var NFC_IG_INTERVAL_MS = 3 * 60 * 1000;  // 3 minutes
 
-const NFC_TG_CONFIRM_TEMPLATES = [
+var NFC_TG_CONFIRM_TEMPLATES = [
   'Доброго дня! Підкажіть, будь ласка, це заклад «{NAME}» з міста {CITY}?',
   'Вітаю! Скажіть, я правильно попав — це «{NAME}» ({CITY})?',
   'Добрий день! Підкажіть, це робочий контакт закладу «{NAME}» у місті {CITY}?',
@@ -16705,13 +16708,24 @@ function getDefaultNfcOutreachState() {
   };
 }
 
-let nfcOutreachClientState = (() => {
+var nfcOutreachClientState = null;
+var activeNfcOutreachModalJobId = null;
+var activeNfcResultsModalJobId = null;
+
+function getNfcOutreachState() {
+  if (nfcOutreachClientState && nfcOutreachClientState.campaigns && nfcOutreachClientState.accounts) {
+    return nfcOutreachClientState;
+  }
+  const key = NFC_OUTREACH_STORAGE_KEY || 'dws_nfc_outreach_state_v1';
   try {
-    const raw = localStorage.getItem(NFC_OUTREACH_STORAGE_KEY);
-    if (!raw) return getDefaultNfcOutreachState();
+    const raw = localStorage.getItem(key);
+    if (!raw) {
+      nfcOutreachClientState = getDefaultNfcOutreachState();
+      return nfcOutreachClientState;
+    }
     const parsed = JSON.parse(raw);
     const def = getDefaultNfcOutreachState();
-    return {
+    nfcOutreachClientState = {
       ...def,
       ...parsed,
       accounts: {
@@ -16721,22 +16735,23 @@ let nfcOutreachClientState = (() => {
       },
       campaigns: parsed.campaigns && typeof parsed.campaigns === 'object' ? parsed.campaigns : {}
     };
+    return nfcOutreachClientState;
   } catch (e) {
-    return getDefaultNfcOutreachState();
+    nfcOutreachClientState = getDefaultNfcOutreachState();
+    return nfcOutreachClientState;
   }
-})();
-
-let activeNfcOutreachModalJobId = null;
-let activeNfcResultsModalJobId = null;
+}
 
 function saveNfcOutreachClientState() {
   try {
-    localStorage.setItem(NFC_OUTREACH_STORAGE_KEY, JSON.stringify(nfcOutreachClientState));
+    const st = getNfcOutreachState();
+    localStorage.setItem(NFC_OUTREACH_STORAGE_KEY || 'dws_nfc_outreach_state_v1', JSON.stringify(st));
   } catch (e) {}
 }
 
-function getNfcOutreachQuotas(mode = nfcOutreachClientState.warmupMode) {
-  const isWarmed = mode === 'warmed';
+function getNfcOutreachQuotas(mode) {
+  const st = getNfcOutreachState();
+  const isWarmed = (mode || st.warmupMode) === 'warmed';
   return {
     tgPerAccount: isWarmed ? 20 : 10,
     igPerAccount: 30,
@@ -16745,10 +16760,11 @@ function getNfcOutreachQuotas(mode = nfcOutreachClientState.warmupMode) {
 }
 
 function checkNfcOutreachDailyReset() {
+  const st = getNfcOutreachState();
   const today = new Date().toISOString().slice(0, 10);
-  if (nfcOutreachClientState.dayKey !== today) {
-    nfcOutreachClientState.dayKey = today;
-    Object.values(nfcOutreachClientState.accounts).forEach(acc => {
+  if (st.dayKey !== today) {
+    st.dayKey = today;
+    Object.values(st.accounts).forEach(acc => {
       acc.sentToday = 0;
     });
     saveNfcOutreachClientState();
@@ -16756,14 +16772,15 @@ function checkNfcOutreachDailyReset() {
 }
 
 function mergeNfcOutreachRemoteState(remote) {
-  if (!remote || typeof remote !== 'object') return;
+  if (!remote || typeof remote !== 'object') return false;
+  const st = getNfcOutreachState();
   const cfg = remote.config || remote;
-  if (cfg.warmupMode) nfcOutreachClientState.warmupMode = cfg.warmupMode;
+  if (cfg.warmupMode) st.warmupMode = cfg.warmupMode;
   if (cfg.accounts) {
     ['tg1', 'tg2', 'ig1'].forEach(k => {
       if (cfg.accounts[k]) {
-        nfcOutreachClientState.accounts[k] = {
-          ...nfcOutreachClientState.accounts[k],
+        st.accounts[k] = {
+          ...st.accounts[k],
           ...cfg.accounts[k]
         };
       }
@@ -16778,9 +16795,9 @@ function mergeNfcOutreachRemoteState(remote) {
         venueId: String(it.venueId || it.id || `v_${idx}`),
         username: it.username || it.use || '—'
       }));
-      const locCamp = nfcOutreachClientState.campaigns[jobId];
+      const locCamp = st.campaigns[jobId];
       if (!locCamp) {
-        nfcOutreachClientState.campaigns[jobId] = { ...remCamp, items: normItems };
+        st.campaigns[jobId] = { ...remCamp, items: normItems };
       } else {
         locCamp.status = remCamp.status || locCamp.status;
         locCamp.nextSendAt = remCamp.nextSendAt !== undefined ? remCamp.nextSendAt : locCamp.nextSendAt;
@@ -16802,6 +16819,7 @@ function mergeNfcOutreachRemoteState(remote) {
     });
   }
   saveNfcOutreachClientState();
+  return true;
 }
 
 function extractNfcVenueOutreachInfo(venue) {
@@ -16835,10 +16853,6 @@ function extractNfcVenueOutreachInfo(venue) {
     else if (digits.length >= 9) normPhone = '+' + digits;
   }
 
-  // Strictly Telegram or Instagram:
-  // 1) If venue has @tg handle -> Telegram
-  // 2) Else if venue has @ig handle -> Instagram
-  // 3) Else if venue has phone -> Telegram by phone (+380...)
   let channel = null;
   let displayUse = '—';
   if (tgHandle) {
@@ -16862,7 +16876,8 @@ function extractNfcVenueOutreachInfo(venue) {
 }
 
 function buildNfcTgConfirmMessage(venueName, cityName, index = 0) {
-  const tpl = NFC_TG_CONFIRM_TEMPLATES[index % NFC_TG_CONFIRM_TEMPLATES.length];
+  const list = NFC_TG_CONFIRM_TEMPLATES || ['Доброго дня! Підкажіть, це заклад «{NAME}» з міста {CITY}?'];
+  const tpl = list[index % list.length];
   const cleanName = String(venueName || 'ваш заклад').trim();
   const cleanCity = String(cityName || 'вашому місті').replace(/^м\.\s*/i, '').trim() || 'вашому місті';
   return tpl
@@ -16881,11 +16896,12 @@ function buildNfcIgOfferMessage(venueName, index = 0) {
 
 function ensureLocalNfcCampaign(job, startImmediately = false) {
   if (!job || !job.id) return null;
+  const st = getNfcOutreachState();
   checkNfcOutreachDailyReset();
 
-  const existing = nfcOutreachClientState.campaigns[job.id];
-  const existingMap = new Map((existing?.items || []).map(it => [String(it.venueId), it]));
-  const venues = Array.isArray(job.items) ? job.items : [];
+  const existing = st.campaigns[job.id];
+  const existingMap = new Map((existing?.items || []).map(it => [String(it.venueId || it.id), it]));
+  const venues = Array.isArray(job.items) ? job.items : (typeof getJobFlatItems === 'function' ? getJobFlatItems(job) : []);
   const city = job.city || '';
 
   const mergedItems = venues.map((v, idx) => {
@@ -16895,9 +16911,11 @@ function ensureLocalNfcCampaign(job, startImmediately = false) {
 
     return {
       venueId: vId,
+      id: vId,
       name: v.name || 'Заклад',
       city: city || v.city || '',
       username: prev?.username && prev.username !== '—' ? prev.username : info.displayUse,
+      use: prev?.username && prev.username !== '—' ? prev.username : info.displayUse,
       tgHandle: info.tgHandle,
       igHandle: info.igHandle,
       phone: info.normPhone,
@@ -16927,14 +16945,15 @@ function ensureLocalNfcCampaign(job, startImmediately = false) {
     items: mergedItems
   };
 
-  nfcOutreachClientState.campaigns[String(job.id)] = campaign;
+  st.campaigns[String(job.id)] = campaign;
   saveNfcOutreachClientState();
   return campaign;
 }
 
 function renderNfcJobOutreachBottomRow(job) {
   if (!job || job.isD2d) return '';
-  const camp = nfcOutreachClientState.campaigns[String(job.id)];
+  const st = getNfcOutreachState();
+  const camp = st.campaigns ? st.campaigns[String(job.id)] : null;
   let outreachLabel = 'Авторозсилка';
   let extraClass = '';
 
@@ -16965,9 +16984,10 @@ function renderNfcJobOutreachBottomRow(job) {
 }
 
 function selectNextLocalNfcStep(campaign) {
+  const st = getNfcOutreachState();
   checkNfcOutreachDailyReset();
   const quotas = getNfcOutreachQuotas();
-  const accs = nfcOutreachClientState.accounts;
+  const accs = st.accounts;
   const pending = (campaign.items || []).filter(it => it.sendStatus === 'pending' && (it.channel === 'telegram' || it.channel === 'instagram'));
 
   if (pending.length === 0) {
@@ -16977,37 +16997,33 @@ function selectNextLocalNfcStep(campaign) {
   const pendingTg = pending.filter(it => it.channel === 'telegram');
   const pendingIg = pending.filter(it => it.channel === 'instagram');
 
-  // 1) TG Account #1 (up to 10 in warmup, 20 in warmed)
   if (accs.tg1.enabled !== false && accs.tg1.sentToday < quotas.tgPerAccount && pendingTg.length > 0) {
     return {
       action: 'send',
       account: accs.tg1,
       item: pendingTg[0],
-      intervalMs: NFC_TG_INTERVAL_MS
+      intervalMs: NFC_TG_INTERVAL_MS || 600000
     };
   }
 
-  // 2) TG Account #2 (up to 10 in warmup, 20 in warmed)
   if (accs.tg2.enabled !== false && accs.tg2.sentToday < quotas.tgPerAccount && pendingTg.length > 0) {
     return {
       action: 'send',
       account: accs.tg2,
       item: pendingTg[0],
-      intervalMs: NFC_TG_INTERVAL_MS
+      intervalMs: NFC_TG_INTERVAL_MS || 600000
     };
   }
 
-  // 3) IG Account #1 (up to 30/day)
   if (accs.ig1.enabled !== false && accs.ig1.sentToday < quotas.igPerAccount && pendingIg.length > 0) {
     return {
       action: 'send',
       account: accs.ig1,
       item: pendingIg[0],
-      intervalMs: NFC_IG_INTERVAL_MS
+      intervalMs: NFC_IG_INTERVAL_MS || 180000
     };
   }
 
-  // Daily quota reached on all accounts -> set 15-20h cooldown timer (never loop on the same day)
   const cooldownHours = 18;
   const cooldownUntil = Date.now() + cooldownHours * 3600 * 1000;
   return {
@@ -17035,10 +17051,10 @@ async function syncNfcOutreachWithServer(action = 'status', payload = {}) {
 }
 
 async function executeNfcOutreachStepForCampaign(jobId, manualTrigger = false) {
-  const camp = nfcOutreachClientState.campaigns[String(jobId)];
+  const st = getNfcOutreachState();
+  const camp = st.campaigns[String(jobId)];
   if (!camp) return;
 
-  // Ask backend first (if local MTProto server is reachable, it sends via MTProto in background)
   const serverRes = await syncNfcOutreachWithServer('step', { jobId: String(jobId), force: manualTrigger });
   if (serverRes && serverRes.campaign) {
     renderNfcAutoOutreachModal();
@@ -17050,7 +17066,6 @@ async function executeNfcOutreachStepForCampaign(jobId, manualTrigger = false) {
     return;
   }
 
-  // Client-side execution fallback
   const decision = selectNextLocalNfcStep(camp);
   const now = Date.now();
 
@@ -17095,7 +17110,6 @@ async function executeNfcOutreachStepForCampaign(jobId, manualTrigger = false) {
     camp.nextSendAt = now + intervalMs;
     camp.updatedAt = now;
 
-    // Copy message & open deep link if user triggered manually or has app open without backend MTProto
     try {
       await navigator.clipboard.writeText(msg);
     } catch (e) {}
@@ -17124,9 +17138,10 @@ async function executeNfcOutreachStepForCampaign(jobId, manualTrigger = false) {
 async function handleNfcAutoOutreachClick(job) {
   if (!job) return;
   haptic('medium');
+  const st = getNfcOutreachState();
   activeNfcOutreachModalJobId = String(job.id);
 
-  let camp = nfcOutreachClientState.campaigns[String(job.id)];
+  let camp = st.campaigns[String(job.id)];
   const isAlreadyRunning = camp && (camp.status === 'running' || camp.status === 'cooldown');
   camp = ensureLocalNfcCampaign(job, !isAlreadyRunning);
 
@@ -17141,9 +17156,9 @@ async function handleNfcAutoOutreachClick(job) {
         city: job.city,
         categoryLabel: job.categoryLabel,
         query: job.query,
-        items: job.items
+        items: typeof getJobFlatItems === 'function' ? getJobFlatItems(job) : job.items
       },
-      warmupMode: nfcOutreachClientState.warmupMode
+      warmupMode: st.warmupMode
     });
     showToast('Розумну авторозсилку NFC запущено');
   }
@@ -17167,7 +17182,7 @@ async function openNfcOutreachResultsModal(job) {
       city: job.city,
       categoryLabel: job.categoryLabel,
       query: job.query,
-      items: job.items
+      items: typeof getJobFlatItems === 'function' ? getJobFlatItems(job) : job.items
     }
   }).then(() => {
     renderNfcOutreachResultsModal();
@@ -17193,20 +17208,21 @@ function formatNfcCountdown(msRemaining) {
 function renderNfcAutoOutreachModal() {
   const jobId = activeNfcOutreachModalJobId;
   if (!jobId) return;
-  const camp = nfcOutreachClientState.campaigns[String(jobId)];
+  const st = getNfcOutreachState();
+  const camp = st.campaigns[String(jobId)];
   if (!camp) return;
 
   checkNfcOutreachDailyReset();
   const quotas = getNfcOutreachQuotas();
-  const accs = nfcOutreachClientState.accounts;
+  const accs = st.accounts;
 
-  const titleEl = document.getElementById('nfcOutreachJobTitle');
-  if (titleEl) titleEl.textContent = camp.title || 'Збір закладів';
+  const titleEl = document.getElementById('nfcAutoOutreachTitle') || document.getElementById('nfcOutreachJobTitle');
+  if (titleEl) titleEl.textContent = `Авторозсилка · ${camp.title || 'NFC'}`;
 
   const statusBadge = document.getElementById('nfcOutreachStatusBadge');
   if (statusBadge) {
-    if (camp.status === 'running') statusBadge.textContent = 'Активна';
-    else if (camp.status === 'cooldown') statusBadge.textContent = 'Пауза 15-20 год';
+    if (camp.status === 'running') statusBadge.textContent = 'Активна авторозсилка';
+    else if (camp.status === 'cooldown') statusBadge.textContent = 'Пауза 15-20 год (ліміт дня)';
     else if (camp.status === 'paused') statusBadge.textContent = 'На паузі';
     else if (camp.status === 'completed') statusBadge.textContent = 'Завершено';
     else statusBadge.textContent = 'Готова';
@@ -17215,37 +17231,35 @@ function renderNfcAutoOutreachModal() {
   const eligible = (camp.items || []).filter(it => it.channel === 'telegram' || it.channel === 'instagram');
   const sentCount = eligible.filter(it => it.sendStatus === 'sent').length;
 
-  const sentCountEl = document.getElementById('nfcOutreachSentCount');
+  const sentCountEl = document.getElementById('nfcOutreachProgressBadge') || document.getElementById('nfcOutreachSentCount');
   if (sentCountEl) sentCountEl.textContent = `${sentCount} / ${eligible.length}`;
 
-  const activeAccEl = document.getElementById('nfcOutreachActiveAccountLabel');
-  if (activeAccEl) {
+  const stageEl = document.getElementById('nfcOutreachStageText') || document.getElementById('nfcOutreachActiveAccountLabel');
+  if (stageEl) {
     const step = selectNextLocalNfcStep(camp);
     if (step.action === 'send' && step.account) {
-      activeAccEl.textContent = step.account.label;
+      stageEl.textContent = `Активний акаунт зараз: ${step.account.label} (${step.account.platform === 'telegram' ? 'інтервал 10 хв' : 'інтервал 3 хв'})`;
     } else if (step.action === 'cooldown' || camp.status === 'cooldown') {
-      activeAccEl.textContent = 'Ліміт вичерпано (очікування)';
+      stageEl.textContent = 'Денний ліміт 3 акаунтів вичерпано. Очікування 15-20 год до наступного дня.';
     } else if (step.action === 'completed') {
-      activeAccEl.textContent = 'Усі опрацьовано';
+      stageEl.textContent = 'Усі контакти цього збору успішно опрацьовано.';
     } else {
-      activeAccEl.textContent = accs[camp.activeAccountId]?.label || 'TG Акаунт #1';
+      stageEl.textContent = 'Послідовність: ТГ Акаунт #1 (10 хв) -> ТГ Акаунт #2 (10 хв) -> Instagram (3 хв)';
     }
   }
 
-  // Warmup segment buttons
   const warmupSeg = document.getElementById('nfcOutreachWarmupSeg');
   if (warmupSeg) {
     warmupSeg.querySelectorAll('[data-warmup]').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.warmup === nfcOutreachClientState.warmupMode);
+      btn.classList.toggle('active', btn.dataset.warmup === st.warmupMode);
     });
   }
 
-  // Quotas and handles
-  const qTg1 = document.getElementById('nfcAccTg1Quota');
+  const qTg1 = document.getElementById('nfcAccTg1Count') || document.getElementById('nfcAccTg1Quota');
   if (qTg1) qTg1.textContent = `${accs.tg1.sentToday || 0} / ${quotas.tgPerAccount} сьогодні`;
-  const qTg2 = document.getElementById('nfcAccTg2Quota');
+  const qTg2 = document.getElementById('nfcAccTg2Count') || document.getElementById('nfcAccTg2Quota');
   if (qTg2) qTg2.textContent = `${accs.tg2.sentToday || 0} / ${quotas.tgPerAccount} сьогодні`;
-  const qIg1 = document.getElementById('nfcAccIg1Quota');
+  const qIg1 = document.getElementById('nfcAccIg1Count') || document.getElementById('nfcAccIg1Quota');
   if (qIg1) qIg1.textContent = `${accs.ig1.sentToday || 0} / ${quotas.igPerAccount} сьогодні`;
 
   const inpTg1 = document.getElementById('nfcAccTg1Handle');
@@ -17258,8 +17272,8 @@ function renderNfcAutoOutreachModal() {
   const toggleBtn = document.getElementById('nfcOutreachToggleRunBtn');
   if (toggleBtn) {
     toggleBtn.textContent = (camp.status === 'running' || camp.status === 'cooldown')
-      ? 'Поставити на паузу'
-      : 'Запустити розсилку';
+      ? 'ПОСТАВИТИ НА ПАУЗУ'
+      : 'ПРОДОВЖИТИ АВТОРОЗСИЛКУ';
   }
 
   updateNfcOutreachTimerDisplay();
@@ -17268,8 +17282,9 @@ function renderNfcAutoOutreachModal() {
 function updateNfcOutreachTimerDisplay() {
   const jobId = activeNfcOutreachModalJobId;
   if (!jobId) return;
-  const camp = nfcOutreachClientState.campaigns[String(jobId)];
-  const timerEl = document.getElementById('nfcOutreachTimerLabel');
+  const st = getNfcOutreachState();
+  const camp = st.campaigns[String(jobId)];
+  const timerEl = document.getElementById('nfcOutreachCountdown') || document.getElementById('nfcOutreachTimerLabel');
   if (!timerEl || !camp) return;
 
   const now = Date.now();
@@ -17289,11 +17304,9 @@ function updateNfcOutreachTimerDisplay() {
 function renderNfcOutreachResultsModal() {
   const jobId = activeNfcResultsModalJobId;
   if (!jobId) return;
-  const camp = nfcOutreachClientState.campaigns[String(jobId)];
+  const st = getNfcOutreachState();
+  const camp = st.campaigns[String(jobId)];
   if (!camp) return;
-
-  const subEl = document.getElementById('nfcOutreachResultsSubtitle');
-  if (subEl) subEl.textContent = camp.title || 'Збір закладів';
 
   const items = Array.isArray(camp.items) ? camp.items : [];
   const totalCount = items.length;
@@ -17301,67 +17314,74 @@ function renderNfcOutreachResultsModal() {
   const noCount = items.filter(it => it.result === 'Ні / не цікаво').length;
   const ignoreCount = totalCount - yesCount - noCount;
 
-  const elTotal = document.getElementById('nfcResTotalCount');
-  if (elTotal) elTotal.textContent = String(totalCount);
-  const elYes = document.getElementById('nfcResYesCount');
-  if (elYes) elYes.textContent = String(yesCount);
-  const elIgnore = document.getElementById('nfcResIgnoreCount');
-  if (elIgnore) elIgnore.textContent = String(ignoreCount);
-  const elNo = document.getElementById('nfcResNoCount');
-  if (elNo) elNo.textContent = String(noCount);
+  const statsEl = document.getElementById('nfcOutreachResultsStats');
+  if (statsEl) {
+    statsEl.textContent = `Усього: ${totalCount} · Так: ${yesCount} · Ігнор / не відповідає: ${ignoreCount} · Ні / не цікаво: ${noCount}`;
+  }
 
-  const tbody = document.getElementById('nfcOutreachResultsTableBody');
-  if (!tbody) return;
+  const wrap = document.getElementById('nfcOutreachResultsTableWrap');
+  if (!wrap) return;
 
   if (items.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:18px; color:var(--black);">Немає контактів у цьому зборі</td></tr>`;
+    wrap.innerHTML = `<div style="text-align:center; padding:18px; color:var(--black);">Немає контактів у цьому зборі</div>`;
     return;
   }
 
   const statuses = ['Ігнор / не відповідає', 'Ні / не цікаво', 'Так'];
 
-  tbody.innerHTML = items.map(it => {
-    const curResult = statuses.includes(it.result) ? it.result : 'Ігнор / не відповідає';
-    const chanBadge = it.channel === 'telegram' ? 'TG' : (it.channel === 'instagram' ? 'IG' : '');
-    return `
-      <tr>
-        <td>
-          <div style="font-weight:700; color:var(--black);">${escapeHtml(it.name || 'Заклад')}</div>
-        </td>
-        <td>
-          <div style="font-weight:600; color:var(--black); word-break:break-all;">
-            ${escapeHtml(it.username || '—')}${chanBadge ? ` <span style="font-size:10px; opacity:0.65;">(${chanBadge})</span>` : ''}
-          </div>
-        </td>
-        <td>
-          <select class="nfc-outreach-result-select" data-nfc-res-job="${escapeHtml(String(camp.jobId))}" data-nfc-res-venue="${escapeHtml(String(it.venueId))}">
-            ${statuses.map(st => `<option value="${escapeHtml(st)}" ${st === curResult ? 'selected' : ''}>${escapeHtml(st)}</option>`).join('')}
-          </select>
-        </td>
-      </tr>
-    `;
-  }).join('');
+  wrap.innerHTML = `
+    <table class="csv-preview-table nfc-outreach-results-table">
+      <thead>
+        <tr>
+          <th>Назва</th>
+          <th>Юз</th>
+          <th>Результат</th>
+        </tr>
+      </thead>
+      <tbody id="nfcOutreachResultsTableBody">
+        ${items.map(it => {
+          const curResult = statuses.includes(it.result) ? it.result : 'Ігнор / не відповідає';
+          const useText = it.username || it.use || '—';
+          return `
+            <tr>
+              <td>
+                <div style="font-weight:700; color:var(--black);">${escapeHtml(it.name || 'Заклад')}</div>
+              </td>
+              <td>
+                <div style="font-weight:600; color:var(--black); word-break:break-all;">${escapeHtml(useText)}</div>
+              </td>
+              <td>
+                <select class="nfc-outreach-result-select" data-nfc-res-job="${escapeHtml(String(camp.jobId))}" data-nfc-res-venue="${escapeHtml(String(it.venueId || it.id))}">
+                  ${statuses.map(s => `<option value="${escapeHtml(s)}" ${s === curResult ? 'selected' : ''}>${escapeHtml(s)}</option>`).join('')}
+                </select>
+              </td>
+            </tr>
+          `;
+        }).join('')}
+      </tbody>
+    </table>
+  `;
 }
 
 function setupNfcAutoOutreachModule() {
-  // Warmup mode switcher
+  const st = getNfcOutreachState();
+
   document.getElementById('nfcOutreachWarmupSeg')?.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-warmup]');
     if (!btn) return;
     const mode = btn.dataset.warmup === 'warmed' ? 'warmed' : 'warmup';
-    nfcOutreachClientState.warmupMode = mode;
+    st.warmupMode = mode;
     saveNfcOutreachClientState();
     syncNfcOutreachWithServer('config', { warmupMode: mode });
     renderNfcAutoOutreachModal();
     haptic('light');
   });
 
-  // Account handle inputs
   const bindHandleInput = (inputId, accKey) => {
     const el = document.getElementById(inputId);
     if (!el) return;
     el.addEventListener('change', () => {
-      nfcOutreachClientState.accounts[accKey].handle = el.value.trim();
+      st.accounts[accKey].handle = el.value.trim();
       saveNfcOutreachClientState();
       syncNfcOutreachWithServer('config', {
         accounts: {
@@ -17374,11 +17394,10 @@ function setupNfcAutoOutreachModule() {
   bindHandleInput('nfcAccTg2Handle', 'tg2');
   bindHandleInput('nfcAccIg1Handle', 'ig1');
 
-  // Pause / Resume button
   document.getElementById('nfcOutreachToggleRunBtn')?.addEventListener('click', () => {
     const jobId = activeNfcOutreachModalJobId;
     if (!jobId) return;
-    const camp = nfcOutreachClientState.campaigns[String(jobId)];
+    const camp = st.campaigns[String(jobId)];
     if (!camp) return;
 
     if (camp.status === 'running' || camp.status === 'cooldown') {
@@ -17399,7 +17418,6 @@ function setupNfcAutoOutreachModule() {
     haptic('light');
   });
 
-  // Send Now button
   document.getElementById('nfcOutreachSendNowBtn')?.addEventListener('click', () => {
     const jobId = activeNfcOutreachModalJobId;
     if (!jobId) return;
@@ -17407,7 +17425,6 @@ function setupNfcAutoOutreachModule() {
     executeNfcOutreachStepForCampaign(jobId, true);
   });
 
-  // Open Results Table from Auto-Outreach Modal
   document.getElementById('nfcOutreachOpenResultsFromModalBtn')?.addEventListener('click', () => {
     const jobId = activeNfcOutreachModalJobId;
     if (!jobId) return;
@@ -17418,17 +17435,16 @@ function setupNfcAutoOutreachModule() {
     haptic('light');
   });
 
-  // Status dropdown change inside Results Table
-  document.getElementById('nfcOutreachResultsTableBody')?.addEventListener('change', (e) => {
+  document.getElementById('nfcOutreachResultsTableWrap')?.addEventListener('change', (e) => {
     const sel = e.target.closest('.nfc-outreach-result-select');
     if (!sel) return;
     const jobId = sel.dataset.nfcResJob;
     const venueId = sel.dataset.nfcResVenue;
     const newResult = sel.value;
 
-    const camp = nfcOutreachClientState.campaigns[String(jobId)];
+    const camp = st.campaigns[String(jobId)];
     if (!camp) return;
-    const item = (camp.items || []).find(it => String(it.venueId) === String(venueId));
+    const item = (camp.items || []).find(it => String(it.venueId || it.id) === String(venueId));
     if (!item) return;
 
     item.result = newResult;
@@ -17437,35 +17453,33 @@ function setupNfcAutoOutreachModule() {
     syncNfcOutreachWithServer('update-result', {
       jobId: String(jobId),
       venueId: String(venueId),
+      itemId: String(venueId),
       result: newResult
     });
     renderNfcOutreachResultsModal();
     haptic('light');
   });
 
-  // Initial sync from backend
   syncNfcOutreachWithServer('status');
 
-  // 1-second timer tick for UI countdown & due outreach steps
   setInterval(() => {
     updateNfcOutreachTimerDisplay();
     const now = Date.now();
-    Object.values(nfcOutreachClientState.campaigns).forEach(camp => {
+    Object.values(st.campaigns).forEach(camp => {
       if (camp.status === 'cooldown' && camp.cooldownUntil && now >= camp.cooldownUntil) {
         camp.status = 'running';
         camp.cooldownUntil = null;
         camp.nextSendAt = now + 1000;
-        Object.values(nfcOutreachClientState.accounts).forEach(a => { a.sentToday = 0; });
+        Object.values(st.accounts).forEach(a => { a.sentToday = 0; });
         saveNfcOutreachClientState();
       }
       if (camp.status === 'running' && camp.nextSendAt && now >= camp.nextSendAt) {
-        camp.nextSendAt = now + 60000; // prevent duplicate fire while step resolves
+        camp.nextSendAt = now + 60000;
         executeNfcOutreachStepForCampaign(camp.jobId, false);
       }
     });
   }, 1000);
 
-  // Continuous 24/7 reply & status sync with backend every 12 seconds
   setInterval(() => {
     syncNfcOutreachWithServer('status').then(res => {
       if (!res) return;
