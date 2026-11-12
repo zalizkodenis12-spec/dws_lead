@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794483405681-200",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Олена Логвиновська",
+      "authorUsername": "@tg_id_7177474339",
+      "title": "Доброго дня, тут є програмісти? Хто може проконсультувати?",
+      "text": "Доброго дня, тут є програмісти? Хто може проконсультувати?",
+      "date": "2026-11-12T11:36:45.681Z",
+      "dateFormatted": "Сьогодні, 13:36",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794482987473-922",
       "category": "development",
       "categoryName": "Веброзробка",
