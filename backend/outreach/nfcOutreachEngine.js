@@ -50,7 +50,7 @@ const DEFAULT_OUTREACH_DB = {
       tg1: {
         id: 'tg1',
         label: 'Telegram Акаунт #1',
-        handle: '@absolutikdenchik',
+        handle: '@denis_nfc_developing',
         enabled: true,
         dailyLimit: 10,
         sentToday: 0,
@@ -363,6 +363,11 @@ async function getMtprotoClientForAccount(accountId) {
     const primary = getPrimaryMtprotoClient();
     if (primary && primary.connected) {
       attachRealtimeReplyListener(primary, 'tg1');
+      primary.getMe().then(me => {
+        if (me?.username && state.config?.accounts?.tg1) {
+          state.config.accounts.tg1.handle = '@' + me.username;
+        }
+      }).catch(() => {});
       return primary;
     }
     return null;
@@ -384,6 +389,12 @@ async function getMtprotoClientForAccount(accountId) {
       await client2.connect();
       secondaryMtprotoClient = client2;
       attachRealtimeReplyListener(client2, 'tg2');
+      client2.getMe().then(me => {
+        if (me?.username && state.config?.accounts?.tg2) {
+          state.config.accounts.tg2.handle = '@' + me.username;
+          saveNfcOutreachDb(state);
+        }
+      }).catch(() => {});
       return client2;
     } catch (err) {
       console.warn('[NFC Outreach] TG #2 connect error:', err.message);

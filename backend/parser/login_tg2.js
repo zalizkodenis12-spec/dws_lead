@@ -52,12 +52,14 @@ async function main() {
   console.log('\nПідключення до Telegram серверів для Акаунта #2...');
   await client.start({
     phoneNumber: async () => {
-      let raw = await question('Введіть номер телефону другого акаунта (+380...): ');
+      let raw = await question('Введіть номер телефону другого акаунта (наприклад, +1... для США або +380...): ');
       raw = raw.trim().replace(/[\s()-]/g, '');
-      if (raw.startsWith('0') && raw.length === 10) raw = '+38' + raw;
-      else if (!raw.startsWith('+') && !raw.startsWith('380') && raw.length === 9) raw = '+380' + raw;
-      else if (!raw.startsWith('+')) raw = '+' + raw;
-      return raw;
+      if (raw.startsWith('+')) return raw;
+      if (raw.startsWith('1') && raw.length === 11) return '+' + raw;
+      if (raw.startsWith('0') && raw.length === 10) return '+38' + raw;
+      if (raw.startsWith('380') && raw.length === 12) return '+' + raw;
+      if (raw.length === 10) return '+1' + raw;
+      return '+' + raw;
     },
     password: async () => await question('Введіть пароль 2FA хмарного захисту другого акаунта (якщо є): '),
     phoneCode: async () => (await question('Введіть 5-значний код з додатку Telegram: ')).trim(),
