@@ -69,7 +69,7 @@ const DEFAULT_OUTREACH_DB = {
       ig1: {
         id: 'ig1',
         label: 'Instagram Акаунт #1',
-        handle: '',
+        handle: '@denis__zalizko',
         enabled: true,
         dailyLimit: 30,
         sentToday: 0,

@@ -18,6 +18,9 @@ function decorateOutreachConfig(config) {
   }
   if (accs.ig1) {
     accs.ig1.hasSession = Boolean(accs.ig1.sessionCookie || process.env.INSTAGRAM_SESSION_COOKIE);
+    if (!accs.ig1.handle) {
+      accs.ig1.handle = process.env.INSTAGRAM_USERNAME || '@denis__zalizko';
+    }
   }
   return cfg;
 }
