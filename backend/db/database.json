@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794477454027-130",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "mobile",
+      "subcategoryName": "Мобільні додатки",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@rumbubblegum",
+      "title": "2D Artist / Game Artist (Mobile Puzzle Games) / Gear Seven ⚡️",
+      "text": "2D Artist / Game Artist (Mobile Puzzle Games) / Gear Seven ⚡️\nRemote\n\nGear Seven is a brand-new casual puzzle studio in Warsaw, remote-first. We make cozy, clever puzzle games for players all over the world, and we are hiring the crew that builds them.\n\nTLDR: Ищем первого художника для создания визуального стиля мобильной игры-головоломки с возможностью роста до арт-лида.\n\nТребования к кандидату:\n- Опыт работы в игровой индустрии 3+ года\n- Портфолио с казуальными головоломками\n- Знание Unity и работы с ассетами\n- Умение использовать AI в процессе работы\n- Опыт создания эффектов и анимаций\n\nЧитать подробнее:\n→ Откликнуться тут",
+      "date": "2026-11-12T09:57:34.026Z",
+      "dateFormatted": "Сьогодні, 11:57",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: мобільні додатки.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794477436092-680",
       "category": "development",
       "categoryName": "Веброзробка",
