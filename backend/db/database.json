@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794481632073-884",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Nikita",
+      "authorUsername": "@tg_id_259314193",
+      "title": "Бізнес-акаунти та експерти! 📢",
+      "text": "Бізнес-акаунти та експерти! 📢\n\nШукаю свій перший проєкт на SMM-ведення у Варшаві або по всій Польщі.\n\nУ тестовому режимі (1 місяць) за символічну ціну.\n\nЩойно закінчив курси й шукаю перший проєкт для застосування знань на практиці.\n\nПишіть, якщо цікаво! 📩",
+      "date": "2026-11-12T11:07:12.073Z",
+      "dateFormatted": "Сьогодні, 13:07",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Польща",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 50,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794481461430-502",
       "category": "marketing",
       "categoryName": "Маркетинг",
