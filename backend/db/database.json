@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794488537731-320",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Поліна // Effecto",
+      "authorUsername": "@ttps",
+      "title": "Ми у пошуках Middle SMM-спеціалістів з досвідом роботи від 3-х місяців в на...",
+      "text": "Ми у пошуках Middle SMM-спеціалістів з досвідом роботи від 3-х місяців в нашу команду ⭐️\n\nНавички роботи у Figma обовʼязкові ‼️\n\nЩо ми пропонуємо:\n• часткову або повну зайнятість\n• круті проєкти, підтримку та дружню команду\n• можливість швидкого росту та розвитку\n•  кар’єрний ріст до посад Senior SMM або Team Lead\n\n📥ТУТ ВСІ ДЕТАЛІ ТА АНКЕТА ДЛЯ ВІДГУКУ:\nhttps://kanevetskasmm.notion.site/SMM-studio-Effecto-22bd5ef4dab680f48630f2d93375793b?source=copy_link",
+      "date": "2026-11-12T13:02:17.731Z",
+      "dateFormatted": "Сьогодні, 15:02",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794488406354-423",
       "category": "marketing",
       "categoryName": "Маркетинг",
