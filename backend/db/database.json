@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794519471272-931",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Ксюша Рекрутер",
+      "authorUsername": "@ananasickin",
+      "title": "Нужен модератор чата по крипте.  Ставка $1000 + % KPI. Общаться с лидами и...",
+      "text": "Нужен модератор чата по крипте.  Ставка $1000 + % KPI. Общаться с лидами и отвечать на их вопросы по скрипту. Всему научим: @ananasickin",
+      "date": "2026-11-12T21:37:51.223Z",
+      "dateFormatted": "Сьогодні, 23:37",
+      "budget": 41500,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація з бюджетом 41500 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794517881112-3396",
       "category": "development",
       "categoryName": "Веброзробка",
