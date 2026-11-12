@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794480706444-153",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Катя Кравець",
+      "authorUsername": "@rect",
+      "title": "Шукаєте спосіб залучити більше клієнтів у свій бізнес?",
+      "text": "Шукаєте спосіб залучити більше клієнтів у свій бізнес?\n\nЯ Катя, таргетолог. Допомагаю бізнесам та експертам знаходити свою аудиторію через рекламу в Instagram та Facebook.\n\nНалаштовую рекламу, займаюся її веденням, а також проводжу консультації для тих, хто хоче запускати рекламу самостійно.\n\nВідкрита до нових проєктів 🤍\n\nЗа деталями пишіть у Direct 📩",
+      "date": "2026-11-12T10:51:46.444Z",
+      "dateFormatted": "Сьогодні, 12:51",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794480568211-205",
       "category": "marketing",
       "categoryName": "Маркетинг",
