@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794496376664-98",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Yulchik",
+      "authorUsername": "@tg_id_9285967074",
+      "title": "Привіт! Я Юля, SMM-спеціаліст із досвідом понад 3 роки. Зараз вільна для 2...",
+      "text": "Привіт! Я Юля, SMM-спеціаліст із досвідом понад 3 роки. Зараз вільна для 2 проєктів. Працювала з різноманітними нішами. Вартість ведення акаунта від 5000 грн. Портфоліо надішлю в особисті ♥️\n\nВідкрита до співпраць! ✨",
+      "date": "2026-11-12T15:12:56.663Z",
+      "dateFormatted": "Сьогодні, 17:12",
+      "budget": 5000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 70,
+      "aiSummary": "Замовлення: маркетинг з бюджетом 5000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794495524496-436",
       "category": "marketing",
       "categoryName": "Маркетинг",
