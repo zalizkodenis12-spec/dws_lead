@@ -5299,6 +5299,90 @@ body.dark-theme .pwa-install-card {
   flex-shrink: 0;
 }
 
+/* ============================================================
+   NFC AUTO-OUTREACH BOTTOM ROW & RESULTS TABLE (CLEAN BLACK)
+   ============================================================ */
+.nfc-outreach-bottom-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.nfc-outreach-bottom-btn {
+  flex: 1 1 50%;
+  width: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 12px;
+  background: var(--white);
+  color: var(--black) !important;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r);
+  font-family: var(--ffh);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  cursor: pointer;
+  transition: border-color var(--trans), background var(--trans);
+  text-align: center;
+}
+
+body.dark-theme .nfc-outreach-bottom-btn {
+  background: var(--card-sub);
+  border-color: var(--border);
+}
+
+.nfc-outreach-bottom-btn:hover,
+.nfc-outreach-bottom-btn.is-active {
+  border-color: var(--black);
+}
+
+.nfc-outreach-results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  color: var(--black);
+}
+
+.nfc-outreach-results-table th,
+.nfc-outreach-results-table td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  color: var(--black) !important;
+  font-weight: 600;
+  vertical-align: middle;
+}
+
+.nfc-outreach-results-table th {
+  font-family: var(--ffh);
+  font-weight: 800;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  background: var(--card-sub);
+  color: var(--black) !important;
+}
+
+.nfc-outreach-result-select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--black) !important;
+  cursor: pointer;
+}
+
+
 
 
 

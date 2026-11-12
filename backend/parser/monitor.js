@@ -472,6 +472,11 @@ async function syncAndJoinSuperchats(client, sources) {
   }
 }
 
+let activeMtprotoClient = null;
+export function getPrimaryMtprotoClient() {
+  return activeMtprotoClient;
+}
+
 /**
  * Start MTProto client if credentials exist in .env and start periodic web scanner
  */
@@ -512,6 +517,7 @@ export async function startMonitor() {
     });
 
     await client.connect();
+    activeMtprotoClient = client;
     console.log('[DWS Lead Monitor] ✅ MTProto Юзербот успішно підключено! Слухаємо всі суперчати в реальному часі.');
 
     // Auto-join superchats in initial batch

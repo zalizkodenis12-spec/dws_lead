@@ -128,7 +128,7 @@
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.8.23">
+  <link rel="stylesheet" href="css/app.css?v=4.8.24">
   <link rel="icon" type="image/png" href="assets/app-avatar.png">
 </head>
 <body class="light-theme">
@@ -2452,6 +2452,112 @@
     </div>
   </div>
 
+  <!-- MODAL: АВТОРОЗСИЛКА NFC (ТГ 10 ХВ + ІНСТА 3 ХВ + ОЧІКУВАННЯ 15-20 ГОД) -->
+  <div id="modalNfcAutoOutreach" class="modal-overlay">
+    <div class="modal-sheet" style="max-height: 90vh; display: flex; flex-direction: column; position: relative;">
+      <div class="modal-header" style="position: relative; padding: 16px 50px 10px 16px;">
+        <h3 class="modal-title" id="nfcAutoOutreachTitle" style="font-size: 1.05rem; font-weight: 800; color: var(--black);">Авторозсилка NFC</h3>
+        <button type="button" class="modal-close modal-close-round-blue" data-close="modalNfcAutoOutreach" title="Закрити" aria-label="Закрити" style="position: absolute; top: 12px; right: 12px; margin: 0;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 12px 16px;">
+        <!-- Live Status Box -->
+        <div class="outreach-queue-box" id="nfcOutreachLiveBox" style="margin-bottom: 12px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px;">
+            <span id="nfcOutreachStatusBadge" style="font-size: 0.78rem; font-weight: 800; color: var(--black);">Активна авторозсилка</span>
+            <span id="nfcOutreachProgressBadge" style="font-size: 0.78rem; font-weight: 800; color: var(--black);">0 / 0</span>
+          </div>
+          <div id="nfcOutreachStageText" style="font-size: 0.76rem; color: var(--muted); line-height: 1.4; margin-bottom: 8px;">
+            Послідовність: ТГ Акаунт #1 (інтервал 10 хв) -> ТГ Акаунт #2 (10 хв) -> Instagram (3 хв)
+          </div>
+          <div id="nfcOutreachTimerRow" style="display: flex; align-items: center; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--border);">
+            <span id="nfcOutreachTimerLabel" style="font-size: 0.75rem; font-weight: 700; color: var(--black);">Наступне повідомлення через:</span>
+            <span id="nfcOutreachCountdown" class="outreach-timer-big" style="font-size: 1.15rem; color: var(--black);">10:00</span>
+          </div>
+        </div>
+
+        <!-- Mode Selector: Прогрів (50/день) vs Прогріті (70/день) -->
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label class="form-label" style="color: var(--black);">РЕЖИМ ЛІМІТІВ НА ДЕНЬ (2 ТГ + 1 ІНСТА):</label>
+          <div class="scrape-seg" id="nfcOutreachWarmupSeg">
+            <button type="button" class="scrape-seg-btn active" data-warmup="warmup">Прогрів: 50/день (10+10+30)</button>
+            <button type="button" class="scrape-seg-btn" data-warmup="warmed">Прогріті: 70/день (20+20+30)</button>
+          </div>
+        </div>
+
+        <!-- Accounts Status & Handles -->
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+          <div class="outreach-acc-card">
+            <div class="outreach-acc-head">
+              <span class="outreach-acc-name">1. Telegram Акаунт #1 (інтервал 10 хв)</span>
+              <span id="nfcAccTg1Count" style="font-size: 0.75rem; font-weight: 800; color: var(--black);">0 / 10 сьогодні</span>
+            </div>
+            <input type="text" id="nfcAccTg1Handle" class="form-input" placeholder="@username першого ТГ акаунта" style="padding: 8px 10px; font-size: 0.8rem;">
+          </div>
+
+          <div class="outreach-acc-card">
+            <div class="outreach-acc-head">
+              <span class="outreach-acc-name">2. Telegram Акаунт #2 (інтервал 10 хв)</span>
+              <span id="nfcAccTg2Count" style="font-size: 0.75rem; font-weight: 800; color: var(--black);">0 / 10 сьогодні</span>
+            </div>
+            <input type="text" id="nfcAccTg2Handle" class="form-input" placeholder="@username другого ТГ акаунта" style="padding: 8px 10px; font-size: 0.8rem;">
+          </div>
+
+          <div class="outreach-acc-card">
+            <div class="outreach-acc-head">
+              <span class="outreach-acc-name">3. Instagram Акаунт #1 (інтервал 3 хв)</span>
+              <span id="nfcAccIg1Count" style="font-size: 0.75rem; font-weight: 800; color: var(--black);">0 / 30 сьогодні</span>
+            </div>
+            <input type="text" id="nfcAccIg1Handle" class="form-input" placeholder="@username Instagram акаунта" style="padding: 8px 10px; font-size: 0.8rem;">
+          </div>
+        </div>
+
+        <!-- Templates Preview for TG vs IG -->
+        <div style="background: var(--card-sub); border: 1px solid var(--border); border-radius: var(--r); padding: 10px 12px; margin-bottom: 12px;">
+          <div style="font-size: 0.76rem; font-weight: 800; color: var(--black); margin-bottom: 4px;">Шаблони для Telegram (уточнення закладу):</div>
+          <div style="font-size: 0.75rem; color: var(--black); line-height: 1.4;">«Доброго дня! Підкажіть, це заклад «{NAME}» з міста {CITY}?» (10 рандомних варіацій)</div>
+          <div style="font-size: 0.76rem; font-weight: 800; color: var(--black); margin-top: 8px; margin-bottom: 4px;">Шаблони для Instagram (офер презентації):</div>
+          <div style="font-size: 0.75rem; color: var(--black); line-height: 1.4;">Використовуються ваші 10 варіацій першого повідомлення NFC з профілю.</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button type="button" id="nfcOutreachToggleRunBtn" class="btn btn--fill btn--block" style="padding: 13px; font-weight: 800;">
+            ПОСТАВИТИ НА ПАУЗУ
+          </button>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" id="nfcOutreachSendNowBtn" class="btn btn--out btn--sm" style="flex: 1; color: var(--black); border-color: var(--border);">
+              Надіслати наступне зараз
+            </button>
+            <button type="button" id="nfcOutreachOpenResultsFromModalBtn" class="btn btn--out btn--sm" style="flex: 1; color: var(--black); border-color: var(--border);">
+              Відкрити Результати
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ТАБЛИЦЯ РЕЗУЛЬТАТІВ АВТОРОЗСИЛКИ NFC (НАЗВА, ЮЗ, РЕЗУЛЬТАТ) -->
+  <div id="modalNfcOutreachResults" class="modal-overlay">
+    <div class="modal-sheet" style="max-height: 88vh; display: flex; flex-direction: column;">
+      <div class="modal-header" style="position: relative; padding-right: 50px;">
+        <h3 class="modal-title" id="nfcOutreachResultsTitle" style="flex: 1; font-size: 1.05rem; color: var(--black);">Результати авторозсилки</h3>
+        <button type="button" class="modal-close modal-close-round-blue" data-close="modalNfcOutreachResults" title="Закрити" aria-label="Закрити">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body" style="flex: 1; overflow-y: auto; padding-top: 10px;">
+        <div id="nfcOutreachResultsStats" style="font-size: 0.78rem; color: var(--black); font-weight: 600; margin-bottom: 10px;"></div>
+        <div class="csv-preview-table-wrap" id="nfcOutreachResultsTableWrap" style="overflow-x: auto; background: var(--white); border: 1px solid var(--border); border-radius: var(--r); user-select: text; -webkit-user-select: text;">
+          <!-- Dynamically populated table: Назва | Юз | Результат -->
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL: ВСТАНОВЛЕННЯ ДОДАТКА (PWA) НА ТЕЛЕФОН / ПК -->
   <div id="modalInstallPwa" class="modal-overlay">
     <div class="modal-sheet" style="max-height: 88vh; display: flex; flex-direction: column; position: relative;">
@@ -2531,7 +2637,7 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.8.23"></script>
+  <script src="js/app.js?v=4.8.24"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

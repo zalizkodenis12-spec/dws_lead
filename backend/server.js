@@ -10,6 +10,8 @@ import { sendScanReport } from './bot.js';
 import './bot.js';
 import { startScrape, listJobs, getJob, deleteJob, buildCsv, csvFileName, sendCsvToTelegram, scraperMode, setApifyToken, getApifyToken, getSeenData, registerSeenBusinesses } from './scraper/scraper.js';
 import { scrapeLocalGmaps } from './scraper/localGmapsScraper.js';
+import { startNfcOutreachScheduler } from './outreach/nfcOutreachEngine.js';
+import nfcOutreachHandler from '../api/nfc-outreach.js';
 
 dotenv.config();
 
@@ -665,6 +667,9 @@ app.post('/api/outreach/dispatch', (req, res) => {
   }
 });
 
+// 9. NFC SMART AUTO-OUTREACH & 24/7 RESULTS MONITOR
+app.all('/api/nfc-outreach', (req, res) => nfcOutreachHandler(req, res));
+
 // Fallback to index.html for SPA routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(MINIAPP_DIR, 'index.html'));
@@ -680,6 +685,7 @@ if (!process.env.VERCEL) {
     
     // Launch live channel monitor & scheduler
     startMonitor();
+    startNfcOutreachScheduler();
   });
 }
 
