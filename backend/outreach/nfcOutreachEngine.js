@@ -485,16 +485,21 @@ async function dispatchTelegramMessageMtproto(accountId, item, messageText) {
     if (!target) return { sentViaMtproto: false, peerId: '' };
 
     let entity = null;
-    if (target.startsWith('+')) {
+    const isPhone = target.startsWith('+') || /^\d{9,15}$/.test(target.replace(/[\s()-]/g, ''));
+    if (isPhone) {
+      let normPhone = target.replace(/[\s()-]/g, '');
+      if (normPhone.startsWith('0') && normPhone.length === 10) normPhone = '+38' + normPhone;
+      else if (!normPhone.startsWith('+')) normPhone = '+' + normPhone;
+
       try {
         const importRes = await client.invoke(
           new Api.contacts.ImportContacts({
             contacts: [
               new Api.InputPhoneContact({
-                clientId: BigInt(Date.now()),
-                phone: target,
-                firstName: item.name || 'Заклад',
-                lastName: item.city || ''
+                clientId: BigInt(Date.now() + Math.floor(Math.random() * 1000)),
+                phone: normPhone,
+                firstName: String(item.name || 'Заклад').slice(0, 30),
+                lastName: String(item.city || '').slice(0, 30)
               })
             ]
           })
@@ -504,10 +509,10 @@ async function dispatchTelegramMessageMtproto(accountId, item, messageText) {
         }
       } catch (_) {}
       if (!entity) {
-        entity = await client.getEntity(target).catch(() => null);
+        entity = await client.getEntity(normPhone).catch(() => null);
       }
     } else {
-      const cleanHandle = target.replace(/^@+/, '');
+      const cleanHandle = target.replace(/^@+/, '').split(/[/?#]/)[0].trim();
       entity = await client.getEntity(cleanHandle).catch(() => null);
     }
 
