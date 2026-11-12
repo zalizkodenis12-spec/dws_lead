@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794486348715-516",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "ads_creatives",
+      "subcategoryName": "Рекламні креативи",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Lana",
+      "authorUsername": "@tg_id_939572308",
+      "title": "Привіт, я - Світлана, графічна та motion-дизайнерка.",
+      "text": "Привіт, я - Світлана, графічна та motion-дизайнерка.\n\nНаразі в пошуку цікавих проектів, розробляю:\n\n🔹рекламні статичні та відеокреативи (монтаж відео із субтитрами в CapCut)\n🔹комплексний візуал соцмереж та дизайн постів\n🔹презентації\n\nЗа цінами та більше прикладів робіт звертайтесь в особисті повідомлення. Буду рада співпраці)",
+      "date": "2026-11-12T12:25:48.715Z",
+      "dateFormatted": "Сьогодні, 14:25",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: рекламні креативи.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794485713673-6738",
       "category": "marketing",
       "categoryName": "Маркетинг",
