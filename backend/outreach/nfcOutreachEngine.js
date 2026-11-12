@@ -556,9 +556,10 @@ async function dispatchInstagramDirectMessage(item, messageText) {
       'Origin': 'https://www.instagram.com'
     };
 
+    let csrfToken = '';
     const csrfMatch = cleanCookie.match(/csrftoken=([^;]+)/);
     if (csrfMatch) {
-      headers['X-CSRFToken'] = csrfMatch[1];
+      csrfToken = csrfMatch[1];
     }
 
     // 1. Get user ID from web profile info
@@ -574,6 +575,16 @@ async function dispatchInstagramDirectMessage(item, messageText) {
 
     if (!targetUserId) {
       return { sentViaApi: false, reason: 'user_id_not_found' };
+    }
+
+    // Extract CSRF token from set-cookie if not present
+    if (!csrfToken && infoRes) {
+      const setCookie = infoRes.headers.get('set-cookie') || '';
+      const scMatch = setCookie.match(/csrftoken=([^;]+)/);
+      if (scMatch) csrfToken = scMatch[1];
+    }
+    if (csrfToken) {
+      headers['X-CSRFToken'] = csrfToken;
     }
 
     // 2. Broadcast Direct Message via Instagram Web API
@@ -606,10 +617,12 @@ async function dispatchInstagramDirectMessage(item, messageText) {
 
 /**
  * Picks the next account + venue in strict sequential order:
- * 1) TG Account #1 (up to 10 or 20 msgs, 10m interval)
- * 2) TG Account #2 (up to 10 or 20 msgs, 10m interval)
- * 3) IG Account #1 (up to 30 msgs, 3m interval)
- * 4) If all active accounts reached daily limits and queued items remain -> 15-20h Cooldown!
+ * 1) For each business: check if Telegram is available (tgTarget).
+ *    If YES and TG daily quota remains -> send via TG (tg1 first up to limit, then tg2 up to limit, 10m interval).
+ * 2) If Telegram is NOT available (or all TG accounts reached daily limits):
+ *    Check if Instagram is available (igTarget).
+ *    If YES and IG daily quota remains (< 30) -> send via Instagram (3m interval).
+ * 3) If all active accounts reached daily limits and queued items remain -> 15-20h Cooldown!
  */
 export function selectNextOutreachStep(campaign, state) {
   const accs = state.config.accounts;
@@ -617,78 +630,61 @@ export function selectNextOutreachStep(campaign, state) {
   const tg2Limit = Number(accs.tg2?.dailyLimit) || (state.config.warmupMode === 'warmed' ? 20 : 10);
   const ig1Limit = Number(accs.ig1?.dailyLimit) || 30;
 
+  const tg1Available = accs.tg1?.enabled !== false && (accs.tg1.sentToday || 0) < tg1Limit;
+  const tg2Available = accs.tg2?.enabled !== false && (accs.tg2.sentToday || 0) < tg2Limit;
+  const tgAvailable = tg1Available || tg2Available;
+  const ig1Available = accs.ig1?.enabled !== false && (accs.ig1.sentToday || 0) < ig1Limit;
+
   const queued = (campaign.items || []).filter(i => i.sendState === 'queued');
   if (queued.length === 0) {
     return { action: 'completed' };
   }
 
-  const queuedWithTg = queued.filter(i => Boolean(i.tgTarget));
-  const queuedWithIg = queued.filter(i => Boolean(i.igTarget));
+  for (const item of queued) {
+    const hasTg = Boolean(item.tgTarget);
+    const hasIg = Boolean(item.igTarget);
 
-  // Stage 1: Telegram Account #1 (first 10 or 20 venues with Telegram)
-  if (accs.tg1?.enabled !== false && (accs.tg1.sentToday || 0) < tg1Limit && queuedWithTg.length > 0) {
-    return {
-      action: 'send',
-      stage: 'tg1',
-      account: accs.tg1,
-      channel: 'telegram',
-      intervalMinutes: Number(state.config.tgIntervalMinutes) || 10,
-      item: queuedWithTg[0]
-    };
-  }
+    if (!hasTg && !hasIg) {
+      item.sendState = 'skipped';
+      item.result = 'Немає контактів (TG/IG)';
+      continue;
+    }
 
-  // Stage 2: Telegram Account #2 (next 10 or 20 venues with Telegram)
-  if (accs.tg2?.enabled !== false && (accs.tg2.sentToday || 0) < tg2Limit && queuedWithTg.length > 0) {
-    return {
-      action: 'send',
-      stage: 'tg2',
-      account: accs.tg2,
-      channel: 'telegram',
-      intervalMinutes: Number(state.config.tgIntervalMinutes) || 10,
-      item: queuedWithTg[0]
-    };
-  }
+    if (hasTg && tgAvailable) {
+      const activeStage = tg1Available ? 'tg1' : 'tg2';
+      const activeAccount = tg1Available ? accs.tg1 : accs.tg2;
+      return {
+        action: 'send',
+        stage: activeStage,
+        account: activeAccount,
+        channel: 'telegram',
+        intervalMinutes: Number(state.config.tgIntervalMinutes) || 10,
+        item
+      };
+    }
 
-  // Stage 3: Instagram Account #1 (next 30 venues with Instagram)
-  if (accs.ig1?.enabled !== false && (accs.ig1.sentToday || 0) < ig1Limit && queuedWithIg.length > 0) {
-    return {
-      action: 'send',
-      stage: 'ig1',
-      account: accs.ig1,
-      channel: 'instagram',
-      intervalMinutes: Number(state.config.igIntervalMinutes) || 3,
-      item: queuedWithIg[0]
-    };
-  }
-
-  // Check if remaining items have no available channel on remaining accounts, or if daily limits were hit
-  const anyAccountHitLimit =
-    ((accs.tg1?.enabled !== false && (accs.tg1.sentToday || 0) >= tg1Limit) ||
-     (accs.tg2?.enabled !== false && (accs.tg2.sentToday || 0) >= tg2Limit)) && queuedWithTg.length > 0
-    ||
-    (accs.ig1?.enabled !== false && (accs.ig1.sentToday || 0) >= ig1Limit && queuedWithIg.length > 0);
-
-  if (anyAccountHitLimit) {
-    return { action: 'cooldown' };
-  }
-
-  // Fallback if an item only has TG and IG still has quota (or vice versa): use whichever contact the item has if an account has quota
-  if (queued.length > 0) {
-    const fallbackItem = queued[0];
-    if (fallbackItem.igTarget && accs.ig1?.enabled !== false && (accs.ig1.sentToday || 0) < ig1Limit) {
+    // Business either has NO Telegram, or all Telegram daily quotas (tg1 + tg2) are exhausted today!
+    // Seamlessly write to its Instagram if available!
+    if (hasIg && ig1Available) {
       return {
         action: 'send',
         stage: 'ig1',
         account: accs.ig1,
         channel: 'instagram',
         intervalMinutes: Number(state.config.igIntervalMinutes) || 3,
-        item: fallbackItem
+        item
       };
     }
-    return { action: 'cooldown' };
   }
 
-  return { action: 'completed' };
+  // If there are still queued items, but none can be contacted today due to daily limits:
+  const remainingQueued = (campaign.items || []).filter(i => i.sendState === 'queued');
+  if (remainingQueued.length === 0) {
+    return { action: 'completed' };
+  }
+
+  // Trigger 15-20h cooldown until tomorrow morning
+  return { action: 'cooldown' };
 }
 
 export async function executeNextOutreachSend(jobId = null, forceImmediate = false) {
@@ -743,13 +739,17 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
   }
 
   const { item, account, channel, stage, intervalMinutes } = step;
-  const targetHandle = channel === 'telegram' ? (item.tgTarget || item.username) : (item.igTarget || item.username);
-  const msgText = buildMessageForVenue(item.name, item.city || campaign.city, channel, item.templateIndex, state);
+  const accs = state.config.accounts;
+  let activeChannel = channel;
+  let activeAccount = account;
+  let activeStage = stage;
+  let targetHandle = activeChannel === 'telegram' ? (item.tgTarget || item.username) : (item.igTarget || item.username);
+  let msgText = buildMessageForVenue(item.name, item.city || campaign.city, activeChannel, item.templateIndex, state);
 
-  item.channel = channel;
+  item.channel = activeChannel;
   item.username = targetHandle;
-  item.accountId = account.id;
-  item.accountLabel = account.handle ? `${account.label} (${account.handle})` : account.label;
+  item.accountId = activeAccount.id;
+  item.accountLabel = activeAccount.handle ? `${activeAccount.label} (${activeAccount.handle})` : activeAccount.label;
   item.messageSent = msgText;
   item.sendState = 'sent';
   item.sentAt = new Date().toISOString();
@@ -757,21 +757,63 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
     item.result = 'Ігнор / не відповідає';
   }
 
-  if (channel === 'telegram') {
-    const mtRes = await dispatchTelegramMessageMtproto(account.id, item, msgText);
-    if (mtRes.peerId) {
+  let sentSuccessfully = false;
+
+  if (activeChannel === 'telegram') {
+    const mtRes = await dispatchTelegramMessageMtproto(activeAccount.id, item, msgText);
+    if (mtRes.sentViaMtproto && mtRes.peerId) {
       item.peerId = mtRes.peerId;
+      sentSuccessfully = true;
+    } else {
+      // Telegram entity/phone lookup failed!
+      console.warn(`[NFC Outreach] Telegram resolution failed for "${item.name}" (${item.username}).`);
+      
+      // Check if fallback to Instagram is available!
+      const ig1Limit = Number(accs.ig1?.dailyLimit) || 30;
+      const ig1Available = accs.ig1?.enabled !== false && (accs.ig1.sentToday || 0) < ig1Limit;
+      if (item.igTarget && ig1Available) {
+        console.log(`[NFC Outreach] Seamless fallback to Instagram (@${item.igTarget}) for "${item.name}"...`);
+        activeChannel = 'instagram';
+        activeAccount = accs.ig1;
+        activeStage = 'ig1';
+        targetHandle = item.igTarget;
+        msgText = buildMessageForVenue(item.name, item.city || campaign.city, 'instagram', item.templateIndex, state);
+
+        item.channel = 'instagram';
+        item.username = targetHandle;
+        item.accountId = activeAccount.id;
+        item.accountLabel = activeAccount.handle ? `${activeAccount.label} (${activeAccount.handle})` : activeAccount.label;
+        item.messageSent = msgText;
+
+        const igRes = await dispatchInstagramDirectMessage(item, msgText);
+        if (igRes.sentViaApi && igRes.targetUserId) {
+          item.peerId = igRes.targetUserId;
+          sentSuccessfully = true;
+        } else {
+          item.sendState = 'failed';
+          item.result = 'Не вдалося надіслати в IG';
+        }
+      } else {
+        item.sendState = 'failed';
+        item.result = 'Контакт недоступний в TG';
+      }
     }
-  } else if (channel === 'instagram') {
+  } else if (activeChannel === 'instagram') {
     const igRes = await dispatchInstagramDirectMessage(item, msgText);
-    if (igRes.targetUserId) {
+    if (igRes.sentViaApi && igRes.targetUserId) {
       item.peerId = igRes.targetUserId;
+      sentSuccessfully = true;
+    } else {
+      item.sendState = 'failed';
+      item.result = 'Не вдалося надіслати в IG';
     }
   }
 
-  account.sentToday = (Number(account.sentToday) || 0) + 1;
-  account.lastSentAt = item.sentAt;
-  campaign.currentStage = stage;
+  if (sentSuccessfully) {
+    activeAccount.sentToday = (Number(activeAccount.sentToday) || 0) + 1;
+    activeAccount.lastSentAt = item.sentAt;
+  }
+  campaign.currentStage = activeStage;
 
   // Check what the NEXT step after this message will be
   const nextStepCheck = selectNextOutreachStep(campaign, state);
