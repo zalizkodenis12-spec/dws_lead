@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794493679530-726",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "ads_creatives",
+      "subcategoryName": "Рекламні креативи",
+      "sourceType": "chat",
+      "sourceName": "Маркетинг Club",
+      "sourceUsername": "@marketing_network1",
+      "authorName": "S Mol",
+      "authorUsername": "@svetlichna_design",
+      "title": "Всім привіт! 👋",
+      "text": "Всім привіт! 👋\nЯ графічна дизайнерка, створюю рекламні креативи для бізнесу та реклами. Відкрита до нових знайомств і співпраці на проєктній або постійній основі.\nБуду рада новим пропозиціям та цікавим проєктам! 💌\nhttps://t.me/svetlichna_design\nhttps://www.behance.net/karinasvetlic",
+      "date": "2026-11-12T14:27:59.529Z",
+      "dateFormatted": "Сьогодні, 16:27",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: рекламні креативи.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794492915502-1153",
       "category": "development",
       "categoryName": "Веброзробка",
