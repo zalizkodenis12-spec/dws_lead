@@ -5342,20 +5342,23 @@ body.dark-theme .nfc-outreach-bottom-btn {
 }
 
 .nfc-outreach-results-table {
-  width: 100%;
+  min-width: 580px !important;
+  width: 100% !important;
   border-collapse: collapse;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--black);
+  table-layout: fixed;
 }
 
 .nfc-outreach-results-table th,
 .nfc-outreach-results-table td {
-  padding: 10px 12px;
+  padding: 12px 14px;
   text-align: left;
   border-bottom: 1px solid var(--border);
   color: var(--black) !important;
   font-weight: 600;
   vertical-align: middle;
+  white-space: nowrap !important;
 }
 
 .nfc-outreach-results-table th {
@@ -5363,23 +5366,86 @@ body.dark-theme .nfc-outreach-bottom-btn {
   font-weight: 800;
   font-size: 0.74rem;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
   background: var(--card-sub);
   color: var(--black) !important;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.nfc-outreach-results-table th:nth-child(1),
+.nfc-outreach-results-table td:nth-child(1) {
+  width: 240px;
+  min-width: 240px;
+  max-width: 240px;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.nfc-outreach-results-table th:nth-child(2),
+.nfc-outreach-results-table td:nth-child(2) {
+  width: 170px;
+  min-width: 170px;
+  max-width: 170px;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.nfc-outreach-results-table th:nth-child(3),
+.nfc-outreach-results-table td:nth-child(3) {
+  width: 170px;
+  min-width: 170px;
+  max-width: 170px;
+  white-space: nowrap !important;
+  overflow: visible;
+}
+
+.nfc-res-cell-nowrap {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  display: block;
 }
 
 .nfc-outreach-result-select {
   appearance: none;
   -webkit-appearance: none;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 5px 10px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 28px 7px 10px;
   font-family: inherit;
   font-size: 0.78rem;
   font-weight: 700;
   color: var(--black) !important;
   cursor: pointer;
+  white-space: nowrap;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%23111827' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  background-size: 16px;
+  width: 100%;
+  max-width: 160px;
+  transition: border-color var(--trans);
+}
+
+.nfc-outreach-result-select:focus {
+  border-color: #0066FF;
+  outline: none;
+}
+
+#nfcOutreachResultsTableWrap {
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  border-radius: var(--r);
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 

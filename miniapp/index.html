@@ -128,7 +128,7 @@
   <!-- Leaflet Interactive Maps CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   
-  <link rel="stylesheet" href="css/app.css?v=4.8.25">
+  <link rel="stylesheet" href="css/app.css?v=4.8.26">
   <link rel="icon" type="image/png" href="assets/app-avatar.png">
 </head>
 <body class="light-theme">
@@ -2488,29 +2488,62 @@
         </div>
 
         <!-- Accounts Status & Handles -->
-        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px;">
+          <!-- 1. Telegram #1 -->
           <div class="outreach-acc-card">
             <div class="outreach-acc-head">
-              <span class="outreach-acc-name">1. Telegram Акаунт #1 (інтервал 10 хв)</span>
+              <span class="outreach-acc-name">1. Telegram Акаунт #1 (10 хв)</span>
               <span id="nfcAccTg1Count" style="font-size: 0.75rem; font-weight: 800; color: var(--black);">0 / 10 сьогодні</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <span id="nfcAccTg1Status" style="font-size: 0.72rem; font-weight: 700; color: #10B981;">Сесія: Активна (ПК)</span>
+              <span style="font-size: 0.7rem; color: var(--muted);">npm run login</span>
             </div>
             <input type="text" id="nfcAccTg1Handle" class="form-input" placeholder="@username першого ТГ акаунта" style="padding: 8px 10px; font-size: 0.8rem;">
           </div>
 
+          <!-- 2. Telegram #2 -->
           <div class="outreach-acc-card">
             <div class="outreach-acc-head">
-              <span class="outreach-acc-name">2. Telegram Акаунт #2 (інтервал 10 хв)</span>
+              <span class="outreach-acc-name">2. Telegram Акаунт #2 (10 хв)</span>
               <span id="nfcAccTg2Count" style="font-size: 0.75rem; font-weight: 800; color: var(--black);">0 / 10 сьогодні</span>
             </div>
-            <input type="text" id="nfcAccTg2Handle" class="form-input" placeholder="@username другого ТГ акаунта" style="padding: 8px 10px; font-size: 0.8rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <span id="nfcAccTg2Status" style="font-size: 0.72rem; font-weight: 700; color: #F59E0B;">Сесія: Очікує авторизації</span>
+              <span style="font-size: 0.7rem; color: var(--muted); font-weight: 600;">npm run login:tg2</span>
+            </div>
+            <input type="text" id="nfcAccTg2Handle" class="form-input" placeholder="@username другого ТГ акаунта" style="padding: 8px 10px; font-size: 0.8rem; margin-bottom: 6px;">
+            <details style="font-size: 0.74rem; color: var(--muted);">
+              <summary style="cursor: pointer; color: #0066FF; font-weight: 700; outline: none;">Як підключити 2-й акаунт Telegram?</summary>
+              <div style="padding: 6px 0; line-height: 1.4; color: var(--black);">
+                1. У терміналі ПК виконайте: <code style="background: rgba(0,0,0,0.06); padding: 2px 5px; border-radius: 4px; font-weight: 700;">npm run login:tg2</code><br>
+                2. Введіть номер телефону і код з Telegram — сесія збережеться автоматично.<br>
+                Або вставте Session String сюди напряму:
+              </div>
+              <input type="password" id="nfcAccTg2Session" class="form-input" placeholder="Вставити TELEGRAM_SESSION_2" style="padding: 6px 8px; font-size: 0.74rem; width: 100%; margin-top: 4px;">
+            </details>
           </div>
 
+          <!-- 3. Instagram #1 -->
           <div class="outreach-acc-card">
             <div class="outreach-acc-head">
-              <span class="outreach-acc-name">3. Instagram Акаунт #1 (інтервал 3 хв)</span>
+              <span class="outreach-acc-name">3. Instagram Акаунт #1 (3 хв)</span>
               <span id="nfcAccIg1Count" style="font-size: 0.75rem; font-weight: 800; color: var(--black);">0 / 30 сьогодні</span>
             </div>
-            <input type="text" id="nfcAccIg1Handle" class="form-input" placeholder="@username Instagram акаунта" style="padding: 8px 10px; font-size: 0.8rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <span id="nfcAccIg1Status" style="font-size: 0.72rem; font-weight: 700; color: #F59E0B;">Сесія: Очікує кукі sessionid</span>
+              <span style="font-size: 0.7rem; color: var(--muted); font-weight: 600;">npm run login:ig</span>
+            </div>
+            <input type="text" id="nfcAccIg1Handle" class="form-input" placeholder="@username Instagram акаунта" style="padding: 8px 10px; font-size: 0.8rem; margin-bottom: 6px;">
+            <details style="font-size: 0.74rem; color: var(--muted);">
+              <summary style="cursor: pointer; color: #0066FF; font-weight: 700; outline: none;">Як підключити Instagram акаунт?</summary>
+              <div style="padding: 6px 0; line-height: 1.4; color: var(--black);">
+                1. Скопіюйте кукі <b>sessionid</b> з браузера (F12 -> Application -> Cookies -> instagram.com).<br>
+                2. Або виконайте в терміналі ПК: <code style="background: rgba(0,0,0,0.06); padding: 2px 5px; border-radius: 4px; font-weight: 700;">npm run login:ig</code><br>
+                Або вставте cookie sessionid сюди:
+              </div>
+              <input type="password" id="nfcAccIg1Cookie" class="form-input" placeholder="Вставити sessionid кукі" style="padding: 6px 8px; font-size: 0.74rem; width: 100%; margin-top: 4px;">
+            </details>
           </div>
         </div>
 
@@ -2637,7 +2670,7 @@
 
   <!-- Leaflet Interactive Maps JS Engine -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="js/app.js?v=4.8.25"></script>
+  <script src="js/app.js?v=4.8.26"></script>
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {

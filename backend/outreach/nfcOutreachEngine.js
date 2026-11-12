@@ -513,6 +513,79 @@ async function dispatchTelegramMessageMtproto(accountId, item, messageText) {
   }
 }
 
+async function dispatchInstagramDirectMessage(item, messageText) {
+  const state = loadNfcOutreachDb();
+  let sessionCookie = state.config.accounts.ig1?.sessionCookie || process.env.INSTAGRAM_SESSION_COOKIE || '';
+  if (!sessionCookie) {
+    return { sentViaApi: false, reason: 'no_session_cookie' };
+  }
+
+  const rawHandle = String(item.igTarget || item.username || '').replace(/^@+/, '').split(/[/?#]/)[0].trim();
+  if (!rawHandle) return { sentViaApi: false, reason: 'no_target_handle' };
+
+  try {
+    let cleanCookie = sessionCookie.trim();
+    if (!cleanCookie.includes('sessionid=')) {
+      cleanCookie = `sessionid=${cleanCookie}`;
+    }
+
+    const headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
+      'X-IG-App-ID': '936619743392459',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Cookie': cleanCookie,
+      'Referer': `https://www.instagram.com/${rawHandle}/`,
+      'Origin': 'https://www.instagram.com'
+    };
+
+    const csrfMatch = cleanCookie.match(/csrftoken=([^;]+)/);
+    if (csrfMatch) {
+      headers['X-CSRFToken'] = csrfMatch[1];
+    }
+
+    // 1. Get user ID from web profile info
+    const infoRes = await fetch(`https://www.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(rawHandle)}`, {
+      headers
+    }).catch(() => null);
+
+    let targetUserId = null;
+    if (infoRes && infoRes.ok) {
+      const infoData = await infoRes.json().catch(() => null);
+      targetUserId = infoData?.data?.user?.id;
+    }
+
+    if (!targetUserId) {
+      return { sentViaApi: false, reason: 'user_id_not_found' };
+    }
+
+    // 2. Broadcast Direct Message via Instagram Web API
+    const broadcastBody = new URLSearchParams({
+      recipient_users: JSON.stringify([targetUserId]),
+      action: 'send-item',
+      client_context: String(Date.now()) + Math.floor(Math.random() * 10000),
+      text: messageText
+    });
+
+    const sendRes = await fetch('https://www.instagram.com/api/v1/direct_v2/threads/broadcast/text/', {
+      method: 'POST',
+      headers: {
+        ...headers,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: broadcastBody.toString()
+    }).catch(() => null);
+
+    if (sendRes && sendRes.ok) {
+      return { sentViaApi: true, targetUserId: String(targetUserId) };
+    } else {
+      const errText = sendRes ? await sendRes.text().catch(() => '') : 'network_error';
+      return { sentViaApi: false, reason: 'broadcast_failed', error: errText };
+    }
+  } catch (err) {
+    return { sentViaApi: false, error: err.message };
+  }
+}
+
 /**
  * Picks the next account + venue in strict sequential order:
  * 1) TG Account #1 (up to 10 or 20 msgs, 10m interval)
@@ -670,6 +743,11 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
     const mtRes = await dispatchTelegramMessageMtproto(account.id, item, msgText);
     if (mtRes.peerId) {
       item.peerId = mtRes.peerId;
+    }
+  } else if (channel === 'instagram') {
+    const igRes = await dispatchInstagramDirectMessage(item, msgText);
+    if (igRes.targetUserId) {
+      item.peerId = igRes.targetUserId;
     }
   }
 

@@ -17262,6 +17262,25 @@ function renderNfcAutoOutreachModal() {
   const qIg1 = document.getElementById('nfcAccIg1Count') || document.getElementById('nfcAccIg1Quota');
   if (qIg1) qIg1.textContent = `${accs.ig1.sentToday || 0} / ${quotas.igPerAccount} сьогодні`;
 
+  const stTg1 = document.getElementById('nfcAccTg1Status');
+  if (stTg1) {
+    const hasSess = accs.tg1.hasSession !== false;
+    stTg1.textContent = hasSess ? 'Сесія: Підключено (ПК)' : 'Сесія: Очікує авторизації';
+    stTg1.style.color = hasSess ? '#10B981' : '#F59E0B';
+  }
+  const stTg2 = document.getElementById('nfcAccTg2Status');
+  if (stTg2) {
+    const hasSess = Boolean(accs.tg2.hasSession || accs.tg2.sessionString);
+    stTg2.textContent = hasSess ? 'Сесія: Підключено' : 'Сесія: Очікує авторизації';
+    stTg2.style.color = hasSess ? '#10B981' : '#F59E0B';
+  }
+  const stIg1 = document.getElementById('nfcAccIg1Status');
+  if (stIg1) {
+    const hasSess = Boolean(accs.ig1.hasSession || accs.ig1.sessionCookie);
+    stIg1.textContent = hasSess ? 'Сесія: Підключено' : 'Сесія: Очікує кукі sessionid';
+    stIg1.style.color = hasSess ? '#10B981' : '#F59E0B';
+  }
+
   const inpTg1 = document.getElementById('nfcAccTg1Handle');
   if (inpTg1 && document.activeElement !== inpTg1) inpTg1.value = accs.tg1.handle || '';
   const inpTg2 = document.getElementById('nfcAccTg2Handle');
@@ -17316,7 +17335,14 @@ function renderNfcOutreachResultsModal() {
 
   const statsEl = document.getElementById('nfcOutreachResultsStats');
   if (statsEl) {
-    statsEl.textContent = `Усього: ${totalCount} · Так: ${yesCount} · Ігнор / не відповідає: ${ignoreCount} · Ні / не цікаво: ${noCount}`;
+    statsEl.innerHTML = `
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
+        <span style="font-weight:700; color:var(--black);">Усього: ${totalCount} · Так: ${yesCount} · Ігнор: ${ignoreCount} · Ні: ${noCount}</span>
+        <span style="font-size:0.72rem; font-weight:800; color:#0066FF; background:rgba(0,102,255,0.08); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;">
+          Листайте вправо &rarr;
+        </span>
+      </div>
+    `;
   }
 
   const wrap = document.getElementById('nfcOutreachResultsTableWrap');
@@ -17345,10 +17371,14 @@ function renderNfcOutreachResultsModal() {
           return `
             <tr>
               <td>
-                <div style="font-weight:700; color:var(--black);">${escapeHtml(it.name || 'Заклад')}</div>
+                <div class="nfc-res-cell-nowrap" style="font-weight:700; color:var(--black);" title="${escapeHtml(it.name || 'Заклад')}">
+                  ${escapeHtml(it.name || 'Заклад')}
+                </div>
               </td>
               <td>
-                <div style="font-weight:600; color:var(--black); word-break:break-all;">${escapeHtml(useText)}</div>
+                <div class="nfc-res-cell-nowrap" style="font-weight:600; color:var(--black);" title="${escapeHtml(useText)}">
+                  ${escapeHtml(useText)}
+                </div>
               </td>
               <td>
                 <select class="nfc-outreach-result-select" data-nfc-res-job="${escapeHtml(String(camp.jobId))}" data-nfc-res-venue="${escapeHtml(String(it.venueId || it.id))}">
@@ -17393,6 +17423,32 @@ function setupNfcAutoOutreachModule() {
   bindHandleInput('nfcAccTg1Handle', 'tg1');
   bindHandleInput('nfcAccTg2Handle', 'tg2');
   bindHandleInput('nfcAccIg1Handle', 'ig1');
+
+  document.getElementById('nfcAccTg2Session')?.addEventListener('change', (e) => {
+    const val = e.target.value.trim();
+    if (!val) return;
+    st.accounts.tg2.sessionString = val;
+    st.accounts.tg2.hasSession = true;
+    saveNfcOutreachClientState();
+    syncNfcOutreachWithServer('config', {
+      accounts: { tg2: { sessionString: val } }
+    });
+    showToast('Сесію Telegram #2 збережено');
+    renderNfcAutoOutreachModal();
+  });
+
+  document.getElementById('nfcAccIg1Cookie')?.addEventListener('change', (e) => {
+    const val = e.target.value.trim();
+    if (!val) return;
+    st.accounts.ig1.sessionCookie = val;
+    st.accounts.ig1.hasSession = true;
+    saveNfcOutreachClientState();
+    syncNfcOutreachWithServer('config', {
+      accounts: { ig1: { sessionCookie: val } }
+    });
+    showToast('Кукі Instagram збережено');
+    renderNfcAutoOutreachModal();
+  });
 
   document.getElementById('nfcOutreachToggleRunBtn')?.addEventListener('click', () => {
     const jobId = activeNfcOutreachModalJobId;

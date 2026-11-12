@@ -9,6 +9,8 @@
     "bot": "node backend/bot.js",
     "monitor": "node backend/parser/monitor.js",
     "login": "node backend/parser/login_userbot.js",
+    "login:tg2": "node backend/parser/login_tg2.js",
+    "login:ig": "node backend/parser/login_instagram.js",
     "dev": "node backend/server.js"
   },
   "dependencies": {

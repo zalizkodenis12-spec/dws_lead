@@ -7,6 +7,21 @@ import {
   handleIncomingLeadReply
 } from '../backend/outreach/nfcOutreachEngine.js';
 
+function decorateOutreachConfig(config) {
+  const cfg = JSON.parse(JSON.stringify(config || {}));
+  const accs = cfg.accounts || {};
+  if (accs.tg1) {
+    accs.tg1.hasSession = Boolean(process.env.TELEGRAM_SESSION || process.env.TELEGRAM_SESSION_STRING);
+  }
+  if (accs.tg2) {
+    accs.tg2.hasSession = Boolean(accs.tg2.sessionString || process.env.TELEGRAM_SESSION_2);
+  }
+  if (accs.ig1) {
+    accs.ig1.hasSession = Boolean(accs.ig1.sessionCookie || process.env.INSTAGRAM_SESSION_COOKIE);
+  }
+  return cfg;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, OPTIONS');
@@ -29,7 +44,7 @@ export default async function handler(req, res) {
       }
       return res.status(200).json({
         success: true,
-        config: state.config,
+        config: decorateOutreachConfig(state.config),
         activeJobId: state.activeJobId,
         campaign: jobId ? (state.campaigns[jobId] || null) : null,
         campaigns: state.campaigns
@@ -45,7 +60,7 @@ export default async function handler(req, res) {
       const state = loadNfcOutreachDb();
       return res.status(200).json({
         success: true,
-        config: state.config,
+        config: decorateOutreachConfig(state.config),
         campaign: updated || campaign
       });
     }
@@ -56,7 +71,7 @@ export default async function handler(req, res) {
       const state = loadNfcOutreachDb();
       return res.status(200).json({
         success: true,
-        config: state.config,
+        config: decorateOutreachConfig(state.config),
         campaign
       });
     }
@@ -89,7 +104,7 @@ export default async function handler(req, res) {
       }
       return res.status(200).json({
         success: true,
-        config: state.config,
+        config: decorateOutreachConfig(state.config),
         campaign: camp || null
       });
     }
@@ -100,7 +115,7 @@ export default async function handler(req, res) {
       const state = loadNfcOutreachDb();
       return res.status(200).json({
         success: true,
-        config: state.config,
+        config: decorateOutreachConfig(state.config),
         campaign: updated
       });
     }
@@ -121,7 +136,7 @@ export default async function handler(req, res) {
       }
       return res.status(200).json({
         success: true,
-        config: state.config,
+        config: decorateOutreachConfig(state.config),
         campaign: camp || null,
         campaigns: state.campaigns
       });
@@ -131,7 +146,7 @@ export default async function handler(req, res) {
       const cfg = updateOutreachConfig(req.body?.config || req.body || {});
       return res.status(200).json({
         success: true,
-        config: cfg
+        config: decorateOutreachConfig(cfg)
       });
     }
 
