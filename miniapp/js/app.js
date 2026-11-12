@@ -16757,35 +16757,46 @@ function checkNfcOutreachDailyReset() {
 
 function mergeNfcOutreachRemoteState(remote) {
   if (!remote || typeof remote !== 'object') return;
-  if (remote.warmupMode) nfcOutreachClientState.warmupMode = remote.warmupMode;
-  if (remote.accounts) {
+  const cfg = remote.config || remote;
+  if (cfg.warmupMode) nfcOutreachClientState.warmupMode = cfg.warmupMode;
+  if (cfg.accounts) {
     ['tg1', 'tg2', 'ig1'].forEach(k => {
-      if (remote.accounts[k]) {
+      if (cfg.accounts[k]) {
         nfcOutreachClientState.accounts[k] = {
           ...nfcOutreachClientState.accounts[k],
-          ...remote.accounts[k]
+          ...cfg.accounts[k]
         };
       }
     });
   }
-  if (remote.campaigns && typeof remote.campaigns === 'object') {
-    Object.entries(remote.campaigns).forEach(([jobId, remCamp]) => {
+  const remCampaigns = remote.campaigns || (remote.campaign && remote.campaign.jobId ? { [remote.campaign.jobId]: remote.campaign } : null);
+  if (remCampaigns && typeof remCampaigns === 'object') {
+    Object.entries(remCampaigns).forEach(([jobId, remCamp]) => {
+      if (!remCamp) return;
+      const normItems = (remCamp.items || []).map((it, idx) => ({
+        ...it,
+        venueId: String(it.venueId || it.id || `v_${idx}`),
+        username: it.username || it.use || '—'
+      }));
       const locCamp = nfcOutreachClientState.campaigns[jobId];
-      if (!locCamp || (remCamp.updatedAt || 0) >= (locCamp.updatedAt || 0)) {
-        nfcOutreachClientState.campaigns[jobId] = remCamp;
-      } else if (locCamp && Array.isArray(remCamp.items)) {
-        // Merge reply results from backend monitor
-        const remMap = new Map(remCamp.items.map(it => [it.venueId, it]));
+      if (!locCamp) {
+        nfcOutreachClientState.campaigns[jobId] = { ...remCamp, items: normItems };
+      } else {
+        locCamp.status = remCamp.status || locCamp.status;
+        locCamp.nextSendAt = remCamp.nextSendAt !== undefined ? remCamp.nextSendAt : locCamp.nextSendAt;
+        locCamp.cooldownUntil = remCamp.cooldownUntil !== undefined ? remCamp.cooldownUntil : locCamp.cooldownUntil;
+        locCamp.activeAccountId = remCamp.activeAccountId || locCamp.activeAccountId;
+        const remMap = new Map(normItems.map(it => [String(it.venueId), it]));
         locCamp.items = (locCamp.items || []).map(it => {
-          const rIt = remMap.get(it.venueId);
+          const rIt = remMap.get(String(it.venueId || it.id)) || normItems.find(x => x.name === it.name);
           if (!rIt) return it;
-          if (rIt.result && rIt.result !== 'Ігнор / не відповідає') {
-            return { ...it, ...rIt };
-          }
-          if (rIt.sendStatus === 'sent' && it.sendStatus !== 'sent') {
-            return { ...it, ...rIt };
-          }
-          return it;
+          return {
+            ...it,
+            ...rIt,
+            venueId: String(it.venueId || rIt.venueId),
+            username: rIt.username && rIt.username !== '—' ? rIt.username : it.username,
+            result: (rIt.result && rIt.result !== 'Ігнор / не відповідає') ? rIt.result : (it.result || 'Ігнор / не відповідає')
+          };
         });
       }
     });
@@ -17008,15 +17019,15 @@ function selectNextLocalNfcStep(campaign) {
 async function syncNfcOutreachWithServer(action = 'status', payload = {}) {
   try {
     const isGet = action === 'status' && Object.keys(payload).length === 0;
-    const res = await fetch(isGet ? '/api/nfc-outreach' : '/api/nfc-outreach', {
+    const res = await fetch('/api/nfc-outreach', {
       method: isGet ? 'GET' : 'POST',
       headers: isGet ? undefined : { 'Content-Type': 'application/json' },
       body: isGet ? undefined : JSON.stringify({ action, ...payload })
     });
     if (!res.ok) return null;
     const data = await res.json();
-    if (data && data.ok && data.state) {
-      mergeNfcOutreachRemoteState(data.state);
+    if (data && (data.success || data.ok)) {
+      mergeNfcOutreachRemoteState(data.state || data);
       return data;
     }
   } catch (e) {}
@@ -17028,13 +17039,13 @@ async function executeNfcOutreachStepForCampaign(jobId, manualTrigger = false) {
   if (!camp) return;
 
   // Ask backend first (if local MTProto server is reachable, it sends via MTProto in background)
-  const serverRes = await syncNfcOutreachWithServer('step', { jobId: String(jobId), forceNow: manualTrigger });
-  if (serverRes && serverRes.stepResult && serverRes.stepResult.ok) {
+  const serverRes = await syncNfcOutreachWithServer('step', { jobId: String(jobId), force: manualTrigger });
+  if (serverRes && serverRes.campaign) {
     renderNfcAutoOutreachModal();
     renderNfcOutreachResultsModal();
     renderNfcRadar();
     if (manualTrigger) {
-      showToast('Повідомлення відправлено в роботу');
+      showToast('Крок авторозсилки виконано');
     }
     return;
   }

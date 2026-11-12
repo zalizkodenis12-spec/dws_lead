@@ -106,11 +106,12 @@ export default async function handler(req, res) {
     }
 
     if (action === 'update-result') {
-      const { jobId, itemId, result, replyText } = req.body || {};
+      const { jobId, itemId, venueId, result, replyText } = req.body || {};
+      const targetId = String(itemId || venueId || '');
       const state = loadNfcOutreachDb();
       const camp = state.campaigns[jobId];
       if (camp && Array.isArray(camp.items)) {
-        const item = camp.items.find(i => i.id === itemId);
+        const item = camp.items.find(i => String(i.id || i.venueId) === targetId);
         if (item && ['Ігнор / не відповідає', 'Ні / не цікаво', 'Так'].includes(result)) {
           item.result = result;
           if (replyText !== undefined) item.lastReplyText = String(replyText || '');
@@ -120,7 +121,9 @@ export default async function handler(req, res) {
       }
       return res.status(200).json({
         success: true,
-        campaign: camp || null
+        config: state.config,
+        campaign: camp || null,
+        campaigns: state.campaigns
       });
     }
 
