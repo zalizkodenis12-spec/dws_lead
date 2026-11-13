@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794576493699-428",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Maria",
+      "authorUsername": "@tg_id_927826949",
+      "title": "Шукаю нові проєкти на SMM-ведення 🤍",
+      "text": "Шукаю нові проєкти на SMM-ведення 🤍\n\nВже понад 2 роки займаюся SMM, створюю контент, розробляю сторіс та допомагаю бізнесам розвивати їхні сторінки й залучати нову аудиторію.\n\nВідкрита до нових цікавих співпраць! За деталями пишіть у дірект 💌",
+      "date": "2026-11-13T13:28:13.697Z",
+      "dateFormatted": "Сьогодні, 15:28",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794576123494-335",
       "category": "development",
       "categoryName": "Веброзробка",
