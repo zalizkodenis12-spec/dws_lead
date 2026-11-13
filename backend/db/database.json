@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794571133228-981",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "motion",
+      "subcategoryName": "Моушн-дизайн",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Daniel",
+      "authorUsername": "@tg_id_5817336748",
+      "title": "Шукаю відеомонтажерів для бізнесів з анімаціями",
+      "text": "Шукаю відеомонтажерів для бізнесів з анімаціями\n\n—Потрібно щоб на англ були відео у портфоліо\n\n—Монтаж в капкаті не підходить\n\n—Відео змонтоване повністю з ШІ не приймаю (я з досвідом тому я зразу побачу якщо відео з ШІ)\n\nНадішліть \"+\" в особисті, надішлю інформацію!",
+      "date": "2026-11-13T11:58:53.227Z",
+      "dateFormatted": "Сьогодні, 13:58",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 51,
+      "aiSummary": "Замовлення: моушн-дизайн.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794570891824-341",
       "category": "marketing",
       "categoryName": "Маркетинг",
