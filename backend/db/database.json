@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794574801157-212",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "backend",
+      "subcategoryName": "Backend & API розробка",
+      "sourceType": "chat",
+      "sourceName": "DOU Jobs: DevOps | SysAdmin",
+      "sourceUsername": "@dou_jobs",
+      "authorName": "dou_jobs",
+      "authorUsername": "@dou_jobs",
+      "title": "🔸 Atlassian Engineer в SPRIBE",
+      "text": "🔸 Atlassian Engineer в SPRIBE\n📍 віддалено\nSPRIBE is an innovative B2B iGaming software developer reshaping the industry with cutting-edge technology and a forward-thinking approach to game design. The company pioneered the crash-game format with its flagship title Aviator, setting a new standard in player engagement and paving the way for…",
+      "date": "2026-11-13T13:00:01.156Z",
+      "dateFormatted": "Сьогодні, 15:00",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: backend & api розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794574745306-684",
       "category": "development",
       "categoryName": "Веброзробка",
