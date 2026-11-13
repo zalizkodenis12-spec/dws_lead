@@ -4,6 +4,7 @@ import {
   syncNfcOutreachFromCloud,
   pushNfcOutreachToCloud,
   createOrUpdateCampaign,
+  createOrUpdateCustomCampaign,
   finishOutreachCampaign,
   updateOutreachConfig,
   executeNextOutreachSend,
@@ -77,6 +78,30 @@ export default async function handler(req, res) {
         updateOutreachConfig({ warmupMode });
       }
       const campaign = createOrUpdateCampaign(job, true);
+      const updated = await executeNextOutreachSend(campaign.jobId, true);
+      const state = loadNfcOutreachDb();
+      await pushNfcOutreachToCloud(state);
+      return res.status(200).json({
+        success: true,
+        config: decorateOutreachConfig(state.config),
+        campaign: updated || campaign,
+        campaigns: state.campaigns
+      });
+    }
+
+    if (action === 'start-custom') {
+      const { job, names, city, title, jobId, config, warmupMode } = req.body || {};
+      if (config) updateOutreachConfig(config);
+      if (warmupMode === 'warmup' || warmupMode === 'warmed') {
+        updateOutreachConfig({ warmupMode });
+      }
+      const campaign = createOrUpdateCustomCampaign({
+        jobId: jobId || job?.id,
+        title: title || job?.cluster,
+        city: city !== undefined ? city : job?.city,
+        names: Array.isArray(names) ? names : (job?.items || []).map(i => i?.name).filter(Boolean),
+        items: job?.items || []
+      }, true);
       const updated = await executeNextOutreachSend(campaign.jobId, true);
       const state = loadNfcOutreachDb();
       await pushNfcOutreachToCloud(state);

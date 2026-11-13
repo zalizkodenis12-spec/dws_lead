@@ -309,12 +309,14 @@ export async function syncNfcOutreachFromCloud() {
             if (cIt.sendState === 'sent' && lIt.sendState !== 'sent') {
               Object.assign(lIt, cIt);
             } else if (lIt.sendState === 'sent' && cIt.sendState === 'sent') {
-              if (cIt.result && cIt.result !== 'Ігнор / не відповідає') {
+              if (cIt.result && cIt.result !== 'Ігнор / не відповідає' && cIt.result !== 'Пошук контактів...') {
                 lIt.result = cIt.result;
               }
               if (cIt.lastReplyText) lIt.lastReplyText = cIt.lastReplyText;
               if (cIt.repliedAt) lIt.repliedAt = cIt.repliedAt;
-            } else if (cloudNewer && cIt.result && cIt.result !== lIt.result) {
+            } else if ((cIt.discoveryState === 'found' || cIt.discoveryState === 'not_found') && lIt.discoveryState === 'pending') {
+              Object.assign(lIt, cIt);
+            } else if (cloudNewer && cIt.result && cIt.result !== lIt.result && !(lIt.discoveryState === 'found' && cIt.discoveryState === 'pending')) {
               lIt.result = cIt.result;
             }
           }
@@ -490,6 +492,88 @@ export function createOrUpdateCampaign(jobData, startImmediately = true) {
       }
     }
   }
+
+  state.campaigns[jobId] = campaign;
+  if (startImmediately) {
+    state.activeJobId = jobId;
+  }
+  saveNfcOutreachDb(state);
+  return campaign;
+}
+
+export function createOrUpdateCustomCampaign(payload = {}, startImmediately = true) {
+  const state = loadNfcOutreachDb();
+  const jobId = String(payload.jobId || payload.id || `nfc_custom_${Date.now()}`).trim();
+  const city = String(payload.city || '').trim();
+  const rawNames = Array.isArray(payload.names)
+    ? payload.names
+    : (Array.isArray(payload.items) ? payload.items.map(i => i?.name).filter(Boolean) : []);
+  const cleanNames = [];
+  const seenLower = new Set();
+  for (const raw of rawNames) {
+    const clean = String(raw || '').replace(/^\s*(?:[-•*]|\d+[.)])\s*/, '').trim();
+    if (!clean) continue;
+    const key = clean.toLowerCase();
+    if (seenLower.has(key)) continue;
+    seenLower.add(key);
+    cleanNames.push(clean);
+  }
+  if (cleanNames.length === 0) {
+    throw new Error('Додайте хоча б одну назву закладу');
+  }
+
+  const title = String(payload.title || `Власний список (${cleanNames.length})`).trim();
+  const incomingItems = Array.isArray(payload.items) ? payload.items : [];
+
+  const items = cleanNames.map((name, idx) => {
+    const inc = incomingItems[idx] || {};
+    const vid = String(inc.id || `custom_${jobId}_${idx}`);
+    const contacts = normalizeVenueContacts(inc);
+    const alreadyFound = contacts.hasTg || contacts.hasIg;
+    const preferredChannel = contacts.hasTg ? 'telegram' : (contacts.hasIg ? 'instagram' : 'pending');
+    const displayUsername = alreadyFound
+      ? (preferredChannel === 'telegram' ? contacts.tgTarget : contacts.igTarget)
+      : 'Пошук TG/IG...';
+
+    return {
+      id: vid,
+      name,
+      city: city || inc.city || '',
+      username: displayUsername,
+      tgTarget: contacts.tgTarget || '',
+      igTarget: contacts.igTarget || '',
+      phone: inc.phone || '',
+      website: inc.website || '',
+      channel: preferredChannel,
+      needsDiscovery: !alreadyFound,
+      discoveryState: alreadyFound ? 'found' : 'pending',
+      accountId: '',
+      accountLabel: '',
+      templateIndex: idx % 10,
+      messageSent: '',
+      sendState: 'queued',
+      sentAt: null,
+      peerId: '',
+      result: alreadyFound ? 'Ігнор / не відповідає' : 'Пошук контактів...',
+      lastReplyText: '',
+      repliedAt: null
+    };
+  });
+
+  const campaign = {
+    jobId,
+    title,
+    city: city || 'Україна',
+    isCustomList: true,
+    createdAt: new Date().toISOString(),
+    updatedAt: Date.now(),
+    status: startImmediately ? 'running' : 'idle',
+    currentStage: 'tg1',
+    nextSendAt: startImmediately ? Date.now() + 1000 : null,
+    cooldownUntil: null,
+    forceImmediateSend: Boolean(startImmediately),
+    items
+  };
 
   state.campaigns[jobId] = campaign;
   if (startImmediately) {
@@ -948,6 +1032,515 @@ async function dispatchInstagramDirectMessage(item, messageText) {
   }
 }
 
+const UA_STOP_WORDS = new Set([
+  'кафе', 'кавярня', 'кав\'ярня', 'ресторан', 'бар', 'паб', 'піцерія', 'піца',
+  'суші', 'клуб', 'салон', 'студія', 'клініка', 'стоматологія', 'магазин',
+  'крамниця', 'заклад', 'пекарня', 'кондитерська', 'барбершоп', 'офіс',
+  'м', 'місто', 'city', 'cafe', 'coffee', 'bar', 'restaurant', 'studio', 'shop', 'club'
+]);
+
+const CYR_TO_LAT_MAP = {
+  'а': 'a', 'б': 'b', 'в': 'v', 'г': 'h', 'ґ': 'g', 'д': 'd', 'е': 'e',
+  'є': 'ye', 'ж': 'zh', 'з': 'z', 'и': 'y', 'і': 'i', 'ї': 'yi', 'й': 'y',
+  'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r',
+  'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch',
+  'ш': 'sh', 'щ': 'shch', 'ь': '', 'ю': 'yu', 'я': 'ya',
+  'ы': 'y', 'э': 'e', 'ё': 'yo', 'ъ': ''
+};
+
+function transliterateToLat(str) {
+  return String(str || '')
+    .toLowerCase()
+    .split('')
+    .map(ch => (CYR_TO_LAT_MAP[ch] !== undefined ? CYR_TO_LAT_MAP[ch] : ch))
+    .join('');
+}
+
+function getVenueMatchTokens(venueName) {
+  const clean = String(venueName || '').toLowerCase().replace(/["'«»ʼ`]/g, ' ');
+  const words = clean.split(/[\s,.\-_/|()]+/).filter(Boolean);
+  let sigWords = words.filter(w => w.length >= 3 && !UA_STOP_WORDS.has(w));
+  if (sigWords.length === 0) sigWords = words.filter(w => w.length >= 2);
+
+  const tokens = new Set();
+  for (const w of sigWords) {
+    tokens.add(w);
+    const tr = transliterateToLat(w).replace(/[^a-z0-9]/g, '');
+    if (tr.length >= 3) {
+      tokens.add(tr);
+      // Common Russian/Ukrainian transliteration variants (chornomorka/chernomorka, hlib/khlib, y/i)
+      tokens.add(tr.replace(/kh/g, 'h').replace(/ye/g, 'e').replace(/yi/g, 'i').replace(/yi/g, 'y'));
+      tokens.add(tr.replace(/o/g, 'e'));
+    }
+  }
+  const joinedLat = transliterateToLat(sigWords.join('')).replace(/[^a-z0-9]/g, '');
+  if (joinedLat.length >= 4) tokens.add(joinedLat);
+  return Array.from(tokens).filter(t => t.length >= 3);
+}
+
+function scoreCandidateRelevance(candidateText, venueName) {
+  const tokens = getVenueMatchTokens(venueName);
+  if (tokens.length === 0) return 0;
+  const hay = String(candidateText || '').toLowerCase().replace(/["'«»ʼ`._\-]/g, '');
+  const hayLat = transliterateToLat(candidateText).toLowerCase().replace(/[^a-z0-9]/g, '');
+  let score = 0;
+  for (const t of tokens) {
+    const cleanT = t.replace(/[^a-zа-яіїєґ0-9]/g, '');
+    if (cleanT.length < 3) continue;
+    if (hay.includes(cleanT) || hayLat.includes(cleanT)) {
+      score += cleanT.length;
+    }
+  }
+  return score;
+}
+
+const IG_RESERVED_PATHS = new Set([
+  'explore', 'p', 'reels', 'reel', 'stories', 'direct', 'accounts', 'tags', 'tv', 'locations', 'directory', 'about', 'legal'
+]);
+
+const TG_RESERVED_PATHS = new Set([
+  's', 'joinchat', 'addstickers', 'share', 'iv', 'proxy', 'socks', 'setlanguage', 'addlist', 'boost'
+]);
+
+function extractSocialHandlesFromHtml(html, baseUrl = '') {
+  const igSet = new Set();
+  const tgSet = new Set();
+  const str = String(html || '');
+
+  for (const m of str.matchAll(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/([a-zA-Z0-9._]{2,30})/gi)) {
+    const h = m[1].replace(/[\/?#&"'<>].*$/, '').trim().toLowerCase();
+    if (h && !IG_RESERVED_PATHS.has(h) && !h.endsWith('.js') && !h.endsWith('.css') && !h.endsWith('.png')) {
+      igSet.add('@' + h);
+    }
+  }
+
+  for (const m of str.matchAll(/(?:https?:\/\/)?(?:www\.)?(?:t\.me|telegram\.me)\/([a-zA-Z0-9_]{4,32})/gi)) {
+    const h = m[1].replace(/[\/?#&"'<>].*$/, '').trim().toLowerCase();
+    if (h && !TG_RESERVED_PATHS.has(h)) {
+      tgSet.add('@' + h);
+    }
+  }
+
+  return {
+    igHandles: Array.from(igSet),
+    tgHandles: Array.from(tgSet)
+  };
+}
+
+async function lookupGoogleMapsSinglePlace(venueName, city) {
+  if (process.env.VERCEL) return { phone: '', website: '', address: '', igHandles: [], tgHandles: [] };
+  const chromePath = findLocalBrowserPath();
+  if (!chromePath) return { phone: '', website: '', address: '', igHandles: [], tgHandles: [] };
+
+  while (igDispatchLock) {
+    await new Promise(r => setTimeout(r, 300));
+  }
+  igDispatchLock = true;
+  let page = null;
+  try {
+    const puppeteer = await import('puppeteer-core');
+    if (!igBrowserInstance || !igBrowserInstance.isConnected()) {
+      igBrowserInstance = await puppeteer.default.launch({
+        executablePath: chromePath,
+        headless: 'new',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-notifications', '--lang=uk-UA,uk']
+      });
+    }
+
+    page = await igBrowserInstance.newPage();
+    await page.setViewport({ width: 1280, height: 840 });
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36');
+
+    const queryParts = [venueName, (city && city !== 'Україна' && city !== 'Власний список') ? city : ''].filter(Boolean);
+    const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(queryParts.join(' '))}?hl=uk`;
+    await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 22000 });
+    await page.waitForSelector('h1.DUwDvf, a.hfpxzc, button[data-item-id*="phone"]', { timeout: 9000 }).catch(() => {});
+
+    // Check if landed directly on place panel or search list
+    const firstCardHref = await page.evaluate((vName) => {
+      const h1 = document.querySelector('h1.DUwDvf');
+      if (h1 && h1.innerText && document.querySelector('button[data-item-id*="address"], button[data-item-id*="phone"], a[data-item-id*="authority"]')) {
+        return null; // Already on place page
+      }
+      const links = Array.from(document.querySelectorAll('a.hfpxzc'));
+      if (links.length === 0) return null;
+      const lowerName = String(vName || '').toLowerCase();
+      const best = links.find(a => (a.getAttribute('aria-label') || '').toLowerCase().includes(lowerName)) || links[0];
+      return best ? best.href : null;
+    }, venueName);
+
+    if (firstCardHref) {
+      await page.goto(firstCardHref, { waitUntil: 'domcontentloaded', timeout: 15000 });
+      await page.waitForSelector('h1.DUwDvf, button[data-item-id*="phone"], a[data-item-id*="authority"]', { timeout: 6000 }).catch(() => {});
+    }
+
+    const details = await page.evaluate(() => {
+      const phoneBtn = document.querySelector('button[data-tooltip*="телефон"], button[data-item-id*="phone"]');
+      const phone = phoneBtn ? phoneBtn.innerText.replace(/[\uE000-\uF8FF\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, ' ').trim() : '';
+      const webBtn = document.querySelector('a[data-tooltip*="веб-сайт"], a[data-item-id*="authority"]');
+      const website = webBtn ? webBtn.href : '';
+      const addrBtn = document.querySelector('button[data-tooltip*="адресу"], button[data-item-id*="address"]');
+      const address = addrBtn ? addrBtn.innerText.replace(/[\uE000-\uF8FF\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, ' ').trim() : '';
+      return { phone, website, address };
+    });
+
+    await page.close().catch(() => {});
+    page = null;
+
+    const result = {
+      phone: details.phone || '',
+      website: details.website || '',
+      address: details.address || '',
+      igHandles: [],
+      tgHandles: []
+    };
+
+    if (result.website) {
+      const direct = extractSocialHandlesFromHtml(result.website);
+      result.igHandles.push(...direct.igHandles);
+      result.tgHandles.push(...direct.tgHandles);
+
+      // Fetch venue website / Linktree / Taplink HTML if not directly a social URL
+      if (!/instagram\.com|t\.me/i.test(result.website) && /^https?:\/\//i.test(result.website)) {
+        try {
+          const siteRes = await fetch(result.website, {
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Safari/537.36' },
+            signal: AbortSignal.timeout(4800)
+          });
+          if (siteRes.ok) {
+            const siteHtml = await siteRes.text();
+            const extracted = extractSocialHandlesFromHtml(siteHtml, result.website);
+            result.igHandles.push(...extracted.igHandles);
+            result.tgHandles.push(...extracted.tgHandles);
+          }
+        } catch (_) {}
+      }
+    }
+
+    return {
+      ...result,
+      igHandles: Array.from(new Set(result.igHandles)),
+      tgHandles: Array.from(new Set(result.tgHandles))
+    };
+  } catch (err) {
+    console.warn(`[NFC Discovery] Google Maps lookup warning (${venueName}):`, err.message);
+    if (page) await page.close().catch(() => {});
+    return { phone: '', website: '', address: '', igHandles: [], tgHandles: [] };
+  } finally {
+    igDispatchLock = false;
+  }
+}
+
+async function searchDuckDuckGoContacts(venueName, city) {
+  const igCandidates = [];
+  const tgCandidates = [];
+  const cityPart = (city && city !== 'Україна' && city !== 'Власний список') ? city : '';
+
+  const parseDdgBlocks = (html) => {
+    const blocks = String(html || '').split(/class="result\s/i);
+    const out = [];
+    for (let i = 1; i < blocks.length; i++) {
+      const b = blocks[i];
+      const hrefMatch = b.match(/href="([^"]+)"/i);
+      const titleMatch = b.match(/class="result__a"[^>]*>([\s\S]*?)<\/a>/i);
+      const snipMatch = b.match(/class="result__snippet"[^>]*>([\s\S]*?)<\/(?:a|div)>/i);
+      let url = hrefMatch ? decodeURIComponent(hrefMatch[1].replace(/.*uddg=/, '').split('&')[0]) : '';
+      const stripTags = (s) => String(s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+      const title = stripTags(titleMatch ? titleMatch[1] : '');
+      const snippet = stripTags(snipMatch ? snipMatch[1] : '');
+      out.push({ url, title, snippet });
+    }
+    return out;
+  };
+
+  try {
+    const qIg = `site:instagram.com "${venueName}" ${cityPart}`.trim();
+    const resIg = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(qIg)}`, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Safari/537.36' },
+      signal: AbortSignal.timeout(5500)
+    });
+    if (resIg.ok) {
+      let blocks = parseDdgBlocks(await resIg.text());
+      if (blocks.length === 0) {
+        const resIgBroad = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(`${venueName} ${cityPart} instagram`.trim())}`, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Safari/537.36' },
+          signal: AbortSignal.timeout(5500)
+        });
+        if (resIgBroad.ok) blocks = parseDdgBlocks(await resIgBroad.text());
+      }
+      for (const blk of blocks) {
+        const m = blk.url.match(/instagram\.com\/([a-zA-Z0-9._]{2,30})/i);
+        if (m && m[1]) {
+          const handle = m[1].replace(/[\/?#].*$/, '').toLowerCase();
+          if (!IG_RESERVED_PATHS.has(handle)) {
+            const relScore = scoreCandidateRelevance(`${handle} ${blk.title} ${blk.snippet}`, venueName);
+            if (relScore >= 3) {
+              igCandidates.push({ handle: '@' + handle, score: relScore + (cityPart && (`${blk.title} ${blk.snippet}`.toLowerCase().includes(cityPart.toLowerCase())) ? 3 : 0) });
+            }
+          }
+        }
+      }
+    }
+  } catch (_) {}
+
+  try {
+    const qTg = `site:t.me "${venueName}" ${cityPart}`.trim();
+    const resTg = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(qTg)}`, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Safari/537.36' },
+      signal: AbortSignal.timeout(5500)
+    });
+    if (resTg.ok) {
+      const blocks = parseDdgBlocks(await resTg.text());
+      for (const blk of blocks) {
+        const m = blk.url.match(/(?:t\.me|telegram\.me)\/([a-zA-Z0-9_]{4,32})/i);
+        if (m && m[1]) {
+          const handle = m[1].replace(/[\/?#].*$/, '').toLowerCase();
+          if (!TG_RESERVED_PATHS.has(handle)) {
+            const relScore = scoreCandidateRelevance(`${handle} ${blk.title} ${blk.snippet}`, venueName);
+            if (relScore >= 4) {
+              tgCandidates.push({ handle: '@' + handle, score: relScore });
+            }
+          }
+        }
+      }
+    }
+  } catch (_) {}
+
+  igCandidates.sort((a, b) => b.score - a.score);
+  tgCandidates.sort((a, b) => b.score - a.score);
+  return {
+    igHandle: igCandidates[0]?.handle || '',
+    tgHandle: tgCandidates[0]?.handle || ''
+  };
+}
+
+async function searchInstagramTopsearch(venueName, city) {
+  if (process.env.VERCEL) return '';
+  const state = loadNfcOutreachDb();
+  const sessionCookie = state.config.accounts.ig1?.sessionCookie || process.env.INSTAGRAM_SESSION_COOKIE || '';
+  const chromePath = findLocalBrowserPath();
+  if (!sessionCookie || !chromePath) return '';
+
+  while (igDispatchLock) {
+    await new Promise(r => setTimeout(r, 300));
+  }
+  igDispatchLock = true;
+  let page = null;
+  try {
+    const puppeteer = await import('puppeteer-core');
+    if (!igBrowserInstance || !igBrowserInstance.isConnected()) {
+      igBrowserInstance = await puppeteer.default.launch({
+        executablePath: chromePath,
+        headless: 'new',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-notifications', '--lang=uk-UA,uk']
+      });
+    }
+
+    page = await igBrowserInstance.newPage();
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36');
+    const sessVal = sessionCookie.replace(/^.*sessionid=/, '').split(';')[0].trim();
+    const dsUserId = decodeURIComponent(sessVal).match(/^(\d+):/)?.[1] || '67526535310';
+    await page.setCookie(
+      { name: 'sessionid', value: sessVal, domain: '.instagram.com', path: '/', httpOnly: true, secure: true },
+      { name: 'ds_user_id', value: dsUserId, domain: '.instagram.com', path: '/', secure: true }
+    );
+
+    await page.goto('https://www.instagram.com/', { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const cityPart = (city && city !== 'Україна' && city !== 'Власний список') ? city : '';
+    const queries = cityPart ? [`${venueName} ${cityPart}`, venueName] : [venueName];
+    let users = [];
+
+    for (const q of queries) {
+      const resData = await page.evaluate(async (queryStr) => {
+        try {
+          const r = await fetch(`/api/v1/web/search/topsearch/?context=blended&query=${encodeURIComponent(queryStr)}`, {
+            headers: { 'x-requested-with': 'XMLHttpRequest' }
+          });
+          if (!r.ok) return null;
+          return await r.json();
+        } catch (_) {
+          return null;
+        }
+      }, q);
+      if (resData && Array.isArray(resData.users) && resData.users.length > 0) {
+        users = users.concat(resData.users.map(u => u.user).filter(Boolean));
+      }
+      if (users.length >= 5) break;
+    }
+
+    await page.close().catch(() => {});
+    page = null;
+
+    let bestHandle = '';
+    let bestScore = 0;
+    for (const u of users) {
+      const uname = String(u.username || '').trim();
+      if (!uname) continue;
+      const fullName = String(u.full_name || '').trim();
+      const s = scoreCandidateRelevance(`${uname} ${fullName}`, venueName)
+        + (cityPart && `${uname} ${fullName}`.toLowerCase().includes(cityPart.toLowerCase()) ? 4 : 0);
+      if (s > bestScore && s >= 3) {
+        bestScore = s;
+        bestHandle = '@' + uname;
+      }
+    }
+    return bestHandle;
+  } catch (_) {
+    if (page) await page.close().catch(() => {});
+    return '';
+  } finally {
+    igDispatchLock = false;
+  }
+}
+
+async function resolveTelegramViaMtproto(candidatePhone, candidateHandle, venueName) {
+  if (process.env.VERCEL) return '';
+  const client = await getMtprotoClientForAccount('tg1') || await getMtprotoClientForAccount('tg2');
+  if (!client) return candidateHandle || candidatePhone || '';
+
+  try {
+    const { Api } = await import('telegram');
+
+    // 1. Verify @username handle if present; if it's a channel, inspect about text for admin @username
+    if (candidateHandle) {
+      const clean = candidateHandle.replace(/^@+/, '').trim();
+      const ent = await client.getEntity(clean).catch(() => null);
+      if (ent) {
+        if (ent.className === 'User' && !ent.bot) {
+          return ent.username ? ('@' + ent.username) : candidateHandle;
+        }
+        if (ent.className === 'Channel' || ent.className === 'Chat') {
+          try {
+            const full = await client.invoke(new Api.channels.GetFullChannel({ channel: ent }));
+            const about = String(full?.fullChat?.about || '');
+            const mentionMatch = about.match(/@([a-zA-Z0-9_]{4,32})/) || about.match(/t\.me\/([a-zA-Z0-9_]{4,32})/i);
+            if (mentionMatch && mentionMatch[1] && !TG_RESERVED_PATHS.has(mentionMatch[1].toLowerCase())) {
+              const adminEnt = await client.getEntity(mentionMatch[1]).catch(() => null);
+              if (adminEnt && adminEnt.className === 'User' && !adminEnt.bot) {
+                return '@' + (adminEnt.username || mentionMatch[1]);
+              }
+            }
+          } catch (_) {}
+        }
+      }
+    }
+
+    // 2. Verify mobile phone registration in Telegram via ImportContacts
+    if (candidatePhone) {
+      const importRes = await client.invoke(
+        new Api.contacts.ImportContacts({
+          contacts: [
+            new Api.InputPhoneContact({
+              clientId: BigInt(Date.now() + Math.floor(Math.random() * 1000)),
+              phone: candidatePhone,
+              firstName: String(venueName || 'Заклад').slice(0, 30),
+              lastName: ''
+            })
+          ]
+        })
+      ).catch(() => null);
+      if (importRes?.users?.length > 0) {
+        const u = importRes.users[0];
+        return u.username ? ('@' + u.username) : candidatePhone;
+      }
+    }
+
+    // 3. Fallback global Telegram contacts search for matching private user
+    if (!candidateHandle && venueName) {
+      const searchRes = await client.invoke(new Api.contacts.Search({ q: venueName, limit: 5 })).catch(() => null);
+      if (searchRes?.users?.length > 0) {
+        for (const u of searchRes.users) {
+          if (u.bot) continue;
+          const label = `${u.username || ''} ${u.firstName || ''} ${u.lastName || ''}`;
+          if (scoreCandidateRelevance(label, venueName) >= 4) {
+            return u.username ? ('@' + u.username) : '';
+          }
+        }
+      }
+    }
+  } catch (_) {}
+
+  return '';
+}
+
+export async function discoverContactsForVenueItem(item, fallbackCity = '') {
+  const venueName = String(item?.name || '').trim();
+  const city = String(item?.city || fallbackCity || '').trim();
+  if (!venueName) return item;
+
+  console.log(`[NFC Discovery] Пошук TG/IG для "${venueName}" (${city || 'без міста'})...`);
+
+  // Step 1: Google Maps Place Lookup + Website HTML scraping
+  const gm = await lookupGoogleMapsSinglePlace(venueName, city);
+  const norm = normalizeVenueContacts({
+    phone: gm.phone || item.phone || '',
+    instagram: gm.igHandles[0] || item.igTarget || '',
+    telegram: gm.tgHandles[0] || item.tgTarget || ''
+  });
+
+  let rawIg = gm.igHandles[0] || norm.igTarget || '';
+  let rawTgHandle = gm.tgHandles[0] || (norm.tgTarget && norm.tgTarget.startsWith('@') ? norm.tgTarget : '');
+  const rawPhone = (norm.tgTarget && norm.tgTarget.startsWith('+')) ? norm.tgTarget : '';
+
+  // Step 2: DuckDuckGo Web Search (Instagram + Telegram)
+  if (!rawIg || !rawTgHandle) {
+    const ddg = await searchDuckDuckGoContacts(venueName, city);
+    if (!rawIg && ddg.igHandle) rawIg = ddg.igHandle;
+    if (!rawTgHandle && ddg.tgHandle) rawTgHandle = ddg.tgHandle;
+  }
+
+  // Step 3: Logged-in Instagram Topsearch (if still missing IG)
+  if (!rawIg) {
+    const igTop = await searchInstagramTopsearch(venueName, city);
+    if (igTop) rawIg = igTop;
+  }
+
+  // Step 4: Verify Telegram availability via MTProto (phone registration / @username / admin extract)
+  const verifiedTg = await resolveTelegramViaMtproto(rawPhone, rawTgHandle, venueName);
+
+  item.phone = gm.phone || item.phone || '';
+  item.website = gm.website || item.website || '';
+  item.tgTarget = verifiedTg || '';
+  item.igTarget = rawIg || '';
+  item.needsDiscovery = false;
+
+  if (item.tgTarget || item.igTarget) {
+    item.discoveryState = 'found';
+    item.channel = item.tgTarget ? 'telegram' : 'instagram';
+    item.username = item.tgTarget || item.igTarget;
+    if (!item.result || item.result === 'Пошук контактів...') {
+      item.result = 'Ігнор / не відповідає';
+    }
+    console.log(`[NFC Discovery] Знайдено для "${venueName}": TG=${item.tgTarget || '-'} | IG=${item.igTarget || '-'}`);
+  } else {
+    item.discoveryState = 'not_found';
+    item.channel = 'none';
+    item.username = '—';
+    item.sendState = 'skipped';
+    item.result = 'Контактів TG/IG не знайдено';
+    console.log(`[NFC Discovery] Контакти TG/IG не знайдено для "${venueName}".`);
+  }
+
+  return item;
+}
+
+export async function discoverNextPendingVenueInCampaign(jobId) {
+  if (process.env.VERCEL) return false;
+  const state = loadNfcOutreachDb();
+  const camp = state.campaigns?.[String(jobId)];
+  if (!camp || (camp.status !== 'running' && camp.status !== 'cooldown')) return false;
+
+  const pendingItem = (camp.items || []).find(it =>
+    it.sendState === 'queued' && (it.discoveryState === 'pending' || it.needsDiscovery)
+  );
+  if (!pendingItem) return false;
+
+  await discoverContactsForVenueItem(pendingItem, camp.city);
+  camp.updatedAt = Date.now();
+  saveNfcOutreachDb(state);
+  return true;
+}
+
 export function selectNextOutreachStep(campaign, state) {
   const accs = state.config.accounts;
   const tg1Limit = Number(accs.tg1?.dailyLimit) || (state.config.warmupMode === 'warmed' ? 20 : 10);
@@ -964,11 +1557,16 @@ export function selectNextOutreachStep(campaign, state) {
     return { action: 'completed' };
   }
 
+  let hasPendingDiscovery = false;
   for (const item of queued) {
     const hasTg = Boolean(item.tgTarget);
     const hasIg = Boolean(item.igTarget);
 
     if (!hasTg && !hasIg) {
+      if (item.needsDiscovery || item.discoveryState === 'pending') {
+        hasPendingDiscovery = true;
+        continue;
+      }
       item.sendState = 'skipped';
       item.result = 'Немає контактів (TG/IG)';
       continue;
@@ -997,6 +1595,10 @@ export function selectNextOutreachStep(campaign, state) {
         item
       };
     }
+  }
+
+  if (hasPendingDiscovery) {
+    return { action: 'await_discovery' };
   }
 
   const remainingQueued = (campaign.items || []).filter(i => i.sendState === 'queued');
@@ -1035,7 +1637,28 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
     return campaign;
   }
 
-  const step = selectNextOutreachStep(campaign, state);
+  let step = selectNextOutreachStep(campaign, state);
+
+  if (step.action === 'await_discovery') {
+    if (process.env.VERCEL && !process.env.TELEGRAM_SESSION) {
+      campaign.status = 'running';
+      campaign.forceImmediateSend = true;
+      campaign.nextSendAt = now;
+      campaign.updatedAt = Date.now();
+      await pushNfcOutreachToCloud(state);
+      return campaign;
+    }
+    const discovered = await discoverNextPendingVenueInCampaign(targetJobId);
+    if (discovered) {
+      step = selectNextOutreachStep(campaign, state);
+    }
+    if (step.action === 'await_discovery') {
+      campaign.nextSendAt = Date.now() + 3000;
+      campaign.updatedAt = Date.now();
+      saveNfcOutreachDb(state);
+      return campaign;
+    }
+  }
 
   if (step.action === 'completed') {
     campaign.status = 'completed';
@@ -1260,6 +1883,11 @@ export function startNfcOutreachScheduler() {
     try {
       const state = await syncNfcOutreachFromCloud();
       for (const camp of Object.values(state.campaigns || {})) {
+        if (camp.status === 'running') {
+          await discoverNextPendingVenueInCampaign(camp.jobId).catch(err => {
+            console.warn('[NFC Discovery] Tick warning:', err.message);
+          });
+        }
         if (camp.status === 'running' || camp.status === 'cooldown' || camp.forceImmediateSend) {
           const forceNow = Boolean(camp.forceImmediateSend);
           await executeNextOutreachSend(camp.jobId, forceNow).catch(err => {
