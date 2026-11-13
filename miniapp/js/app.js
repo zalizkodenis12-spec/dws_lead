@@ -17566,7 +17566,7 @@ function setupNfcAutoOutreachModule() {
     const seen = new Set();
     const out = [];
     String(raw || '')
-      .split(/\r?\n/)
+      .split(/\r?\n|;/)
       .forEach(line => {
         const clean = line.replace(/^\s*(?:[-•*]|\d+[.)])\s*/, '').trim();
         if (!clean) return;
@@ -17581,18 +17581,6 @@ function setupNfcAutoOutreachModule() {
   document.getElementById('openNfcCustomOutreachBtn')?.addEventListener('click', () => {
     haptic('light');
     openModal('modalNfcCustomOutreach');
-    const namesEl = document.getElementById('nfcCustomOutreachNames');
-    const badgeEl = document.getElementById('nfcCustomOutreachCountBadge');
-    if (namesEl && badgeEl) {
-      badgeEl.textContent = `Додано: ${parseCustomVenueNames(namesEl.value).length}`;
-    }
-  });
-
-  document.getElementById('nfcCustomOutreachNames')?.addEventListener('input', (e) => {
-    const badgeEl = document.getElementById('nfcCustomOutreachCountBadge');
-    if (badgeEl) {
-      badgeEl.textContent = `Додано: ${parseCustomVenueNames(e.target.value).length}`;
-    }
   });
 
   document.getElementById('startNfcCustomOutreachBtn')?.addEventListener('click', async () => {
@@ -17651,8 +17639,6 @@ function setupNfcAutoOutreachModule() {
     document.getElementById('modalNfcCustomOutreach')?.classList.remove('open');
     if (namesEl) namesEl.value = '';
     if (titleEl) titleEl.value = '';
-    const badgeEl = document.getElementById('nfcCustomOutreachCountBadge');
-    if (badgeEl) badgeEl.textContent = 'Додано: 0';
 
     activeNfcOutreachModalJobId = jobId;
     ensureLocalNfcCampaign(newJob, true);

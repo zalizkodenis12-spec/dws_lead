@@ -1535,9 +1535,18 @@ export async function discoverNextPendingVenueInCampaign(jobId) {
   );
   if (!pendingItem) return false;
 
-  await discoverContactsForVenueItem(pendingItem, camp.city);
-  camp.updatedAt = Date.now();
-  saveNfcOutreachDb(state);
+  const snapshot = { ...pendingItem };
+  await discoverContactsForVenueItem(snapshot, camp.city);
+
+  // Re-sync from Cloud KV in case user paused or finished campaign on iPhone during discovery
+  const freshState = await syncNfcOutreachFromCloud();
+  const freshCamp = freshState.campaigns?.[String(jobId)];
+  const freshItem = (freshCamp?.items || []).find(it => String(it.id) === String(pendingItem.id));
+  if (freshItem) {
+    Object.assign(freshItem, snapshot);
+    freshCamp.updatedAt = Date.now();
+    saveNfcOutreachDb(freshState);
+  }
   return true;
 }
 
