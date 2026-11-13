@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794592277443-870",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Вадим",
+      "authorUsername": "@tg_id_8680516784",
+      "title": "Привіт! Роблю для бізнесу: сайти під ключ і їх доробку, SEO та Google Карти...",
+      "text": "Привіт! Роблю для бізнесу: сайти під ключ і їх доробку, SEO та Google Карти, Telegram-боти (замовлення, запис, розсилки), автоматизацію на Python (парсинг, синхронізація товарів, інтеграції, звіти). Мій бот уже працює в кав’ярні в Києві. Пишіть в особисті 🙂",
+      "date": "2026-11-13T17:51:17.442Z",
+      "dateFormatted": "Сьогодні, 19:51",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794592017781-722",
       "category": "montage",
       "categoryName": "Монтаж",
