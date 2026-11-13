@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794587978000-790",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Yulchik",
+      "authorUsername": "@tg_id_9285967074",
+      "title": "Шукаю експерта для smm-співпраці та кейсу з продюсування 🤍",
+      "text": "Шукаю експерта для smm-співпраці та кейсу з продюсування 🤍\n\nЗ мене: розпаковка, позиціонування, оформлення профілю, сценарії та монтаж Reels.\n\nМаю понад 3 роки досвіду в SMM та класне портфоліо\n\nХочу допомогти тобі перетворити блог на джерело клієнтів і грошей 🤌🏻\n\nУмови дуууже приємні\n Хто зацікавлений — пишіть + або в особисті 👀",
+      "date": "2026-11-13T16:39:38.000Z",
+      "dateFormatted": "Сьогодні, 18:39",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 51,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794587699257-18",
       "category": "development",
       "categoryName": "Веброзробка",
