@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794581801178-670",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "seo",
+      "subcategoryName": "SEO оптимізація",
+      "sourceType": "chat",
+      "sourceName": "DIGITAL Tender / freelance / фриланс",
+      "sourceUsername": "@digitaltender",
+      "authorName": "digitaltender",
+      "authorUsername": "@digitaltender",
+      "title": "👔 Маркетолог",
+      "text": "👔 Маркетолог\n\n💼 Тип работы: постоянная\n\n👀 Задача: Запуск, настройка, оптимизация и масштабирование рекламных кампаний. Создание и прогрев аккаунтов, настройка прокси и антидетектов, обход блокировок и модерации. Сбор данных, парсинг, скрипты, дашборды, поиск скрытых закономерностей. Автоматизация рутины и использование AI для генерации гипотез. Внесение предложений по процессам и автоматизации. Работа с SEO-оптимизацией.\n\n💰 Оплата: от 500$ + KPI от привлечённого трафика",
+      "date": "2026-11-13T14:56:41.177Z",
+      "dateFormatted": "Сьогодні, 16:56",
+      "budget": 21000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 72,
+      "aiSummary": "Замовлення: seo оптимізація з бюджетом 21000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794580122380-669",
       "category": "marketing",
       "categoryName": "Маркетинг",
