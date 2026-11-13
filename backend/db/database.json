@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794608174378-990",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Elena Morozova",
+      "authorUsername": "@tg_id_8589664120",
+      "title": "Шукаю таргетолога в агенцію",
+      "text": "Шукаю таргетолога в агенцію\nякий , хоче заробляти від 1.200$ і працювати з масштабними проєктами по всьому світу 🌍\n\nПрацювати з бюджетами компанії , які сягають 25.000$ / months\n\nВід нас також ->\n- постійне навчання , база 20+ різних курсів та константів\n- доставка солодощів , або букетів для дівчат або хлопцям ахах за класну роботу , абонементи в SPA / масаж\n- фінансові бонуси , відпустки , day-off\n\nМи створили еко-систему в першу чергу для людей, і до всіх ставимося з повагою\n\nЯкщо цікаво деталі , заповнюй форму і ми з тобою звʼяжемось\nhttps://forms.gle/1YsZAAEQ4xHCNn376",
+      "date": "2026-11-13T22:16:14.322Z",
+      "dateFormatted": "Сьогодні, 00:16",
+      "budget": 8500,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 73,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 8500 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794602154829-3037",
       "category": "marketing",
       "categoryName": "Маркетинг",
