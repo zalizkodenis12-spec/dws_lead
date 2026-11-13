@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794580122380-669",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Вероніка",
+      "authorUsername": "@rect",
+      "title": "🔥 Шукаємо Джуна / Помічника таргетолога в команду Gentleman Traffic!",
+      "text": "🔥 Шукаємо Джуна / Помічника таргетолога в команду Gentleman Traffic!\nГоловне — мінімальний досвід у Meta Ads, розуміння роботи в Facebook та бажання розвиватися.\n\nЩо робитимете:\n▫️ Супровід рекламних акаунтів\n▫️ Робота з Facebook та трафіком\n\nУмови:\n💰 Перші 3 місяці: $250\n📈 Після 3 місяців: $300–$350 + кар'єрне зростання до позиціі Баєра\n\nВід вас:\n▪️ Ініціативність та відповідальність\n▪️ Величезне бажання вчитися новому\nПишіть у Direct 📩",
+      "date": "2026-11-13T14:28:42.379Z",
+      "dateFormatted": "Сьогодні, 16:28",
+      "budget": 10500,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 64,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 10500 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794578919210-4792",
       "category": "marketing",
       "categoryName": "Маркетинг",
