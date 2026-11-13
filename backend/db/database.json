@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794587638771-695",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "motion",
+      "subcategoryName": "Моушн-дизайн",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@rumbubblegum",
+      "title": "Unreal Engine Motion Designer – Mob Control",
+      "text": "Unreal Engine Motion Designer – Mob Control\nв Voodoo — технологическая компания, которая создаёт мобильные игры и приложения.\nУдалённая работа. Возможна проектная занятость.\nОписание вакансии.\nИщет Дмитрий Леош, его пост на LinkedIn.",
+      "date": "2026-11-13T16:33:58.770Z",
+      "dateFormatted": "Сьогодні, 18:33",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: моушн-дизайн.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794586117853-4895",
       "category": "development",
       "categoryName": "Веброзробка",
