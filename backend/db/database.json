@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794592485874-910",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "backend",
+      "subcategoryName": "Backend & API розробка",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ivan",
+      "authorUsername": "@ttps",
+      "title": "🆕 NEXTERS | 2 НОВЫЕ ВАКАНСИИ В GAMEDEV",
+      "text": "🆕 NEXTERS | 2 НОВЫЕ ВАКАНСИИ В GAMEDEV\n\n👀 Nexters расширяет команду и ищет специалистов сразу на две позиции! Возможно, одна из них станет твоим следующим карьерным шагом.\n\n🖥 Backend C# Developer\n👨‍💻 Senior System Game Designer\n\n📱 Кипр, Армения, Казахстан или удалённо\n🗓 Полная занятость\n✈️ Возможность релокации\n\nЕсли у тебя есть опыт в Backend-разработке на C# или системном геймдизайне — переходи к вакансиям, изучай требования и отправляй отклик!\n\n📱 Все подробности и отклики: https://spawnparty.dev/jobs\n\n📱 Больше вакансий от игровых студий — в нашем Telegram-канале.\n\n#GameDev #GameDevJobs #Nexters #CSharp #BackendDeveloper #GameDesigner #SpawnParty",
+      "date": "2026-11-13T17:54:45.873Z",
+      "dateFormatted": "Сьогодні, 19:54",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Казахстан",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: backend & api розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794592277443-870",
       "category": "development",
       "categoryName": "Веброзробка",
