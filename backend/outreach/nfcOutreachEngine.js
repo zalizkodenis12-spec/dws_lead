@@ -1470,26 +1470,23 @@ export async function discoverContactsForVenueItem(item, fallbackCity = '') {
 
   console.log(`[NFC Discovery] Пошук TG/IG для "${venueName}" (${city || 'без міста'})...`);
 
-  // Step 1: Google Maps Place Lookup + Website HTML scraping
-  const gm = await lookupGoogleMapsSinglePlace(venueName, city);
+  // Step 1 & 2 in parallel: Google Maps + Website HTML scraping alongside DuckDuckGo Web Search
+  const [gm, ddg] = await Promise.all([
+    lookupGoogleMapsSinglePlace(venueName, city).catch(() => ({ phone: '', website: '', address: '', igHandles: [], tgHandles: [] })),
+    searchDuckDuckGoContacts(venueName, city).catch(() => ({ igHandle: '', tgHandle: '' }))
+  ]);
+
   const norm = normalizeVenueContacts({
     phone: gm.phone || item.phone || '',
-    instagram: gm.igHandles[0] || item.igTarget || '',
-    telegram: gm.tgHandles[0] || item.tgTarget || ''
+    instagram: gm.igHandles[0] || ddg.igHandle || item.igTarget || '',
+    telegram: gm.tgHandles[0] || ddg.tgHandle || item.tgTarget || ''
   });
 
-  let rawIg = gm.igHandles[0] || norm.igTarget || '';
-  let rawTgHandle = gm.tgHandles[0] || (norm.tgTarget && norm.tgTarget.startsWith('@') ? norm.tgTarget : '');
+  let rawIg = gm.igHandles[0] || ddg.igHandle || norm.igTarget || '';
+  let rawTgHandle = gm.tgHandles[0] || ddg.tgHandle || (norm.tgTarget && norm.tgTarget.startsWith('@') ? norm.tgTarget : '');
   const rawPhone = (norm.tgTarget && norm.tgTarget.startsWith('+')) ? norm.tgTarget : '';
 
-  // Step 2: DuckDuckGo Web Search (Instagram + Telegram)
-  if (!rawIg || !rawTgHandle) {
-    const ddg = await searchDuckDuckGoContacts(venueName, city);
-    if (!rawIg && ddg.igHandle) rawIg = ddg.igHandle;
-    if (!rawTgHandle && ddg.tgHandle) rawTgHandle = ddg.tgHandle;
-  }
-
-  // Step 3: Logged-in Instagram Topsearch (if still missing IG)
+  // Step 3: Logged-in Instagram Topsearch (only if still missing IG)
   if (!rawIg) {
     const igTop = await searchInstagramTopsearch(venueName, city);
     if (igTop) rawIg = igTop;

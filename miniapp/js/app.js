@@ -9687,6 +9687,13 @@ function getCloudKvRecordUrl(accountKey) {
   return `https://api.apify.com/v2/key-value-stores/${DWS_CLOUD_KV_STORE_ID}/records/account_${safeKey}?token=${encodeURIComponent(token)}`;
 }
 
+function getCloudKvNfcOutreachUrl() {
+  const token = (typeof getClientApifyToken === 'function' ? getClientApifyToken() : '') ||
+    (() => { try { return atob('YXBpZnlfYXBpX1gzM1I4NEsyWDJia2ZNZjdYQWZrQ1R5RU1rblNiSTR4dXVmWA=='); } catch { return ''; } })();
+  if (!token) return '';
+  return `https://api.apify.com/v2/key-value-stores/${DWS_CLOUD_KV_STORE_ID}/records/nfc_outreach_state?token=${encodeURIComponent(token)}`;
+}
+
 function mergeArraysById(primaryArr, secondaryArr) {
   const pList = Array.isArray(primaryArr) ? primaryArr : [];
   const sList = Array.isArray(secondaryArr) ? secondaryArr : [];
@@ -17077,37 +17084,28 @@ function getNfcJobOutreachStats(job, rawItems) {
   let showBadge = false;
 
   if (status === 'running') {
-    const pendingDisc = (camp?.items || []).filter(it => it.discoveryState === 'pending' || it.needsDiscovery).length;
-    statusText = pendingDisc > 0 && sentCount === 0
-      ? `Пошук TG/IG (${pendingDisc}) • Написано: ${sentCount} / ${eligibleCount}`
-      : `Розсилка активна • Написано: ${sentCount} / ${eligibleCount}`;
+    statusText = `Йде розсилка: ${sentCount} / ${eligibleCount}`;
     badgeColor = '#059669';
     badgeBg = 'rgba(16,185,129,0.12)';
     dotColor = '#10B981';
     showBadge = true;
   } else if (status === 'cooldown') {
-    statusText = `Таймер паузи • Написано: ${sentCount} / ${eligibleCount}`;
+    statusText = `Пауза між днями: ${sentCount} / ${eligibleCount}`;
     badgeColor = '#0066FF';
     badgeBg = 'rgba(0,102,255,0.10)';
     dotColor = '#0066FF';
     showBadge = true;
   } else if (status === 'paused') {
-    statusText = `Розсилка на паузі • Написано: ${sentCount} / ${eligibleCount}`;
+    statusText = `На паузі: ${sentCount} / ${eligibleCount}`;
     badgeColor = '#D97706';
     badgeBg = 'rgba(245,158,11,0.12)';
     dotColor = '#F59E0B';
     showBadge = true;
   } else if (status === 'completed') {
-    statusText = `Розсилку завершено • Написано: ${sentCount} / ${eligibleCount}`;
+    statusText = `Завершено: ${sentCount} / ${eligibleCount}`;
     badgeColor = 'var(--black)';
     badgeBg = 'rgba(0,0,0,0.08)';
     dotColor = '#111827';
-    showBadge = true;
-  } else if (sentCount > 0) {
-    statusText = `Написано: ${sentCount} / ${eligibleCount}`;
-    badgeColor = '#0066FF';
-    badgeBg = 'rgba(0,102,255,0.08)';
-    dotColor = '#0066FF';
     showBadge = true;
   }
 
@@ -17151,15 +17149,8 @@ function renderNfcJobOutreachBottomRow(job) {
     outreachLabel = `Завершено (${stats.sentCount}/${stats.eligibleCount})`;
   }
 
-  const bannerHtml = (stats.showBadge && stats.statusText)
-    ? `<div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; margin-bottom: 6px; border-radius: 8px; background: ${stats.badgeBg}; color: ${stats.badgeColor}; font-size: 0.75rem; font-weight: 800;">
-        <span>${escapeHtml(stats.statusText)}</span>
-      </div>`
-    : '';
-
   return `
     <div style="margin-top: 10px;">
-      ${bannerHtml}
       <div class="nfc-outreach-bottom-row">
         <button type="button" class="nfc-outreach-bottom-btn ${extraClass}" data-nfc-act="auto-outreach" data-job="${escapeHtml(String(job.id))}">
           <span>${escapeHtml(outreachLabel)}</span>
@@ -17221,6 +17212,235 @@ function selectNextLocalNfcStep(campaign) {
   };
 }
 
+async function syncNfcOutreachViaCloudKv(action = 'status', payload = {}) {
+  const kvUrl = typeof getCloudKvNfcOutreachUrl === 'function' ? getCloudKvNfcOutreachUrl() : '';
+  if (!kvUrl) return null;
+
+  const sep = kvUrl.includes('?') ? '&' : '?';
+  let cloud = null;
+  try {
+    const getRes = await fetch(`${kvUrl}${sep}_t=${Date.now()}`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+    if (getRes.ok) {
+      cloud = await getRes.json().catch(() => null);
+    }
+  } catch (_) {}
+
+  if (!cloud || typeof cloud !== 'object') {
+    const def = getDefaultNfcOutreachState();
+    cloud = {
+      config: {
+        warmupMode: def.warmupMode,
+        tgIntervalMinutes: 10,
+        igIntervalMinutes: 3,
+        accounts: def.accounts
+      },
+      activeJobId: null,
+      campaigns: {},
+      updatedAt: 0
+    };
+  }
+  if (!cloud.config) cloud.config = {};
+  if (!cloud.config.accounts) cloud.config.accounts = getDefaultNfcOutreachState().accounts;
+  if (!cloud.campaigns || typeof cloud.campaigns !== 'object') cloud.campaigns = {};
+
+  if (action === 'status') {
+    mergeNfcOutreachRemoteState(cloud);
+    return { success: true, ...cloud };
+  }
+
+  const now = Date.now();
+  const targetJobId = String(payload.jobId || payload.job?.id || '');
+
+  if (action === 'config') {
+    if (payload.warmupMode === 'warmup' || payload.warmupMode === 'warmed') {
+      cloud.config.warmupMode = payload.warmupMode;
+      const tgLimit = payload.warmupMode === 'warmed' ? 20 : 10;
+      if (cloud.config.accounts.tg1) cloud.config.accounts.tg1.dailyLimit = tgLimit;
+      if (cloud.config.accounts.tg2) cloud.config.accounts.tg2.dailyLimit = tgLimit;
+    }
+    if (payload.accounts && typeof payload.accounts === 'object') {
+      ['tg1', 'tg2', 'ig1'].forEach(k => {
+        if (payload.accounts[k]) {
+          cloud.config.accounts[k] = {
+            ...(cloud.config.accounts[k] || {}),
+            ...payload.accounts[k],
+            hasSession: true
+          };
+        }
+      });
+    }
+  } else if (action === 'start-custom') {
+    const rawNames = Array.isArray(payload.names) ? payload.names : (payload.job?.items || []).map(i => i?.name).filter(Boolean);
+    const city = String(payload.city !== undefined ? payload.city : (payload.job?.city || '')).trim();
+    const title = String(payload.title || payload.job?.cluster || `Власний список (${rawNames.length})`).trim();
+    const jid = targetJobId || `nfc_custom_${now}`;
+    const items = rawNames.map((name, idx) => ({
+      id: `custom_${jid}_${idx}`,
+      venueId: `custom_${jid}_${idx}`,
+      name: String(name || '').trim(),
+      city,
+      username: 'Пошук TG/IG...',
+      tgTarget: '',
+      igTarget: '',
+      phone: '',
+      website: '',
+      channel: 'pending',
+      needsDiscovery: true,
+      discoveryState: 'pending',
+      accountId: '',
+      accountLabel: '',
+      templateIndex: idx % 10,
+      messageSent: '',
+      sendState: 'queued',
+      sentAt: null,
+      peerId: '',
+      result: 'Пошук контактів...',
+      lastReplyText: '',
+      repliedAt: null
+    }));
+
+    cloud.campaigns[jid] = {
+      jobId: jid,
+      title,
+      city: city || 'Україна',
+      isCustomList: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: now,
+      status: 'running',
+      currentStage: 'tg1',
+      nextSendAt: now + 500,
+      cooldownUntil: null,
+      forceImmediateSend: true,
+      items
+    };
+    cloud.activeJobId = jid;
+  } else if (action === 'start' || action === 'init-table') {
+    const job = payload.job || {};
+    const jid = targetJobId;
+    if (jid) {
+      const startNow = action === 'start';
+      const existing = cloud.campaigns[jid];
+      const existingById = new Map((existing?.items || []).map(it => [String(it.id || it.venueId), it]));
+      const venues = Array.isArray(job.items) ? job.items : [];
+      const items = [];
+      venues.forEach((v, idx) => {
+        const vid = String(v.id || `v_${idx}`);
+        if (existingById.has(vid)) {
+          const ex = existingById.get(vid);
+          if (startNow && ex.sendState === 'failed') {
+            ex.sendState = 'queued';
+            ex.result = 'Ігнор / не відповідає';
+          }
+          items.push(ex);
+          return;
+        }
+        const info = extractNfcVenueOutreachInfo(v);
+        if (!info.channel && !v.needsDiscovery) return;
+        const tgTarget = info.tgHandle ? `@${info.tgHandle}` : (info.normPhone || '');
+        const igTarget = info.igHandle ? `@${info.igHandle}` : '';
+        items.push({
+          id: vid,
+          venueId: vid,
+          name: String(v.name || 'Заклад').trim(),
+          city: String(job.city || v.city || '').trim(),
+          username: tgTarget || igTarget || 'Пошук TG/IG...',
+          tgTarget,
+          igTarget,
+          channel: info.channel || 'pending',
+          needsDiscovery: Boolean(v.needsDiscovery && !info.channel),
+          discoveryState: info.channel ? 'found' : 'pending',
+          accountId: '',
+          accountLabel: '',
+          templateIndex: idx % 10,
+          messageSent: '',
+          sendState: 'queued',
+          sentAt: null,
+          peerId: '',
+          result: info.channel ? 'Ігнор / не відповідає' : 'Пошук контактів...',
+          lastReplyText: '',
+          repliedAt: null
+        });
+      });
+
+      if (!existing) {
+        cloud.campaigns[jid] = {
+          jobId: jid,
+          title: String(job.cluster || job.niche || job.categoryLabel || job.query || 'Заклади NFC').trim(),
+          city: String(job.city || 'Київ').trim(),
+          createdAt: new Date().toISOString(),
+          updatedAt: now,
+          status: startNow ? 'running' : 'idle',
+          currentStage: 'tg1',
+          nextSendAt: startNow ? now + 500 : null,
+          cooldownUntil: null,
+          forceImmediateSend: startNow,
+          items
+        };
+      } else {
+        if (items.length > 0) existing.items = items;
+        existing.updatedAt = now;
+        if (startNow) {
+          existing.status = 'running';
+          existing.forceImmediateSend = true;
+          existing.nextSendAt = now + 500;
+        }
+      }
+      if (startNow) cloud.activeJobId = jid;
+    }
+  } else if (action === 'pause' && targetJobId && cloud.campaigns[targetJobId]) {
+    cloud.campaigns[targetJobId].status = 'paused';
+    cloud.campaigns[targetJobId].forceImmediateSend = false;
+    cloud.campaigns[targetJobId].nextSendAt = null;
+    cloud.campaigns[targetJobId].updatedAt = now;
+  } else if (action === 'resume' && targetJobId && cloud.campaigns[targetJobId]) {
+    cloud.campaigns[targetJobId].status = 'running';
+    cloud.campaigns[targetJobId].forceImmediateSend = true;
+    cloud.campaigns[targetJobId].nextSendAt = now + 500;
+    cloud.campaigns[targetJobId].updatedAt = now;
+    cloud.activeJobId = targetJobId;
+  } else if ((action === 'finish' || action === 'stop') && targetJobId && cloud.campaigns[targetJobId]) {
+    cloud.campaigns[targetJobId].status = 'completed';
+    cloud.campaigns[targetJobId].currentStage = 'done';
+    cloud.campaigns[targetJobId].forceImmediateSend = false;
+    cloud.campaigns[targetJobId].nextSendAt = null;
+    cloud.campaigns[targetJobId].cooldownUntil = null;
+    cloud.campaigns[targetJobId].updatedAt = now;
+    if (String(cloud.activeJobId) === targetJobId) cloud.activeJobId = null;
+  } else if (action === 'step' && targetJobId && cloud.campaigns[targetJobId]) {
+    cloud.campaigns[targetJobId].status = 'running';
+    cloud.campaigns[targetJobId].forceImmediateSend = true;
+    cloud.campaigns[targetJobId].nextSendAt = now;
+    cloud.campaigns[targetJobId].updatedAt = now;
+    cloud.activeJobId = targetJobId;
+  } else if (action === 'update-result' && targetJobId && cloud.campaigns[targetJobId]) {
+    const camp = cloud.campaigns[targetJobId];
+    const tId = String(payload.itemId || payload.venueId || '');
+    const it = (camp.items || []).find(x => String(x.id || x.venueId) === tId);
+    if (it && payload.result) {
+      it.result = payload.result;
+      it.repliedAt = new Date().toISOString();
+      camp.updatedAt = now;
+    }
+  }
+
+  cloud.updatedAt = now;
+  try {
+    const putRes = await fetch(kvUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify(cloud)
+    });
+    if (putRes.ok) {
+      mergeNfcOutreachRemoteState(cloud);
+      return { success: true, ...cloud };
+    }
+  } catch (_) {}
+  return null;
+}
+
 async function syncNfcOutreachWithServer(action = 'status', payload = {}) {
   try {
     const isGet = action === 'status' && Object.keys(payload).length === 0;
@@ -17229,14 +17449,20 @@ async function syncNfcOutreachWithServer(action = 'status', payload = {}) {
       headers: isGet ? undefined : { 'Content-Type': 'application/json' },
       body: isGet ? undefined : JSON.stringify({ action, ...payload })
     });
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (data && (data.success || data.ok)) {
-      mergeNfcOutreachRemoteState(data.state || data);
-      return data;
+    if (res.ok) {
+      const cType = res.headers.get('content-type') || '';
+      if (cType.includes('application/json')) {
+        const data = await res.json();
+        if (data && (data.success || data.ok)) {
+          mergeNfcOutreachRemoteState(data.state || data);
+          return data;
+        }
+      }
     }
   } catch (e) {}
-  return null;
+
+  // Fallback directly to Apify Cloud KV when hosted as static MiniApp root (e.g., dwslead-miniapp.vercel.app)
+  return await syncNfcOutreachViaCloudKv(action, payload);
 }
 
 async function executeNfcOutreachStepForCampaign(jobId, manualTrigger = false) {
@@ -17504,9 +17730,6 @@ function renderNfcOutreachResultsModal() {
     statsEl.innerHTML = `
       <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
         <span style="font-weight:700; color:var(--black);">Написано: ${sentCount}/${totalCount} · Так: ${yesCount} · Ігнор: ${ignoreCount} · Ні: ${noCount}</span>
-        <span style="font-size:0.72rem; font-weight:800; color:#0066FF; background:rgba(0,102,255,0.08); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;">
-          Листайте вправо &rarr;
-        </span>
       </div>
     `;
   }
