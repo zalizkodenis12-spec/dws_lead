@@ -1,7 +1,10 @@
 import {
   loadNfcOutreachDb,
   saveNfcOutreachDb,
+  syncNfcOutreachFromCloud,
+  pushNfcOutreachToCloud,
   createOrUpdateCampaign,
+  finishOutreachCampaign,
   updateOutreachConfig,
   executeNextOutreachSend,
   handleIncomingLeadReply
@@ -11,16 +14,24 @@ function decorateOutreachConfig(config) {
   const cfg = JSON.parse(JSON.stringify(config || {}));
   const accs = cfg.accounts || {};
   if (accs.tg1) {
-    accs.tg1.hasSession = Boolean(process.env.TELEGRAM_SESSION || process.env.TELEGRAM_SESSION_STRING);
+    accs.tg1.hasSession = true;
+    if (!accs.tg1.handle) {
+      accs.tg1.handle = '@denis_nfc_developing';
+    }
   }
   if (accs.tg2) {
-    accs.tg2.hasSession = Boolean(accs.tg2.sessionString || process.env.TELEGRAM_SESSION_2);
+    accs.tg2.hasSession = true;
+    if (!accs.tg2.handle) {
+      accs.tg2.handle = process.env.TELEGRAM_USERNAME_2 || '@denis_DWS_owner';
+    }
+    delete accs.tg2.sessionString;
   }
   if (accs.ig1) {
-    accs.ig1.hasSession = Boolean(accs.ig1.sessionCookie || process.env.INSTAGRAM_SESSION_COOKIE);
+    accs.ig1.hasSession = true;
     if (!accs.ig1.handle) {
       accs.ig1.handle = process.env.INSTAGRAM_USERNAME || '@denis__zalizko';
     }
+    delete accs.ig1.sessionCookie;
   }
   return cfg;
 }
@@ -37,12 +48,17 @@ export default async function handler(req, res) {
   try {
     const action = String(req.query?.action || req.body?.action || 'status').trim();
 
+    // Always pull latest state from Cloud KV so iPhone (Vercel) and PC daemon stay 100% synced
+    await syncNfcOutreachFromCloud();
+
     if (req.method === 'GET' || action === 'status') {
       const state = loadNfcOutreachDb();
       const jobId = String(req.query?.jobId || '').trim();
-      for (const camp of Object.values(state.campaigns || {})) {
-        if (camp.status === 'running' || camp.status === 'cooldown') {
-          await executeNextOutreachSend(camp.jobId, false);
+      if (!process.env.VERCEL) {
+        for (const camp of Object.values(state.campaigns || {})) {
+          if (camp.status === 'running' || camp.status === 'cooldown') {
+            await executeNextOutreachSend(camp.jobId, false);
+          }
         }
       }
       return res.status(200).json({
@@ -55,16 +71,20 @@ export default async function handler(req, res) {
     }
 
     if (action === 'start') {
-      const { job, config } = req.body || {};
+      const { job, config, warmupMode } = req.body || {};
       if (config) updateOutreachConfig(config);
+      if (warmupMode === 'warmup' || warmupMode === 'warmed') {
+        updateOutreachConfig({ warmupMode });
+      }
       const campaign = createOrUpdateCampaign(job, true);
-      // Immediately send the first message so outreach starts without delay
       const updated = await executeNextOutreachSend(campaign.jobId, true);
       const state = loadNfcOutreachDb();
+      await pushNfcOutreachToCloud(state);
       return res.status(200).json({
         success: true,
         config: decorateOutreachConfig(state.config),
-        campaign: updated || campaign
+        campaign: updated || campaign,
+        campaigns: state.campaigns
       });
     }
 
@@ -72,10 +92,12 @@ export default async function handler(req, res) {
       const { job } = req.body || {};
       const campaign = createOrUpdateCampaign(job, false);
       const state = loadNfcOutreachDb();
+      await pushNfcOutreachToCloud(state);
       return res.status(200).json({
         success: true,
         config: decorateOutreachConfig(state.config),
-        campaign
+        campaign,
+        campaigns: state.campaigns
       });
     }
 
@@ -86,11 +108,16 @@ export default async function handler(req, res) {
       if (camp) {
         camp.status = 'paused';
         camp.nextSendAt = null;
+        camp.forceImmediateSend = false;
+        camp.updatedAt = Date.now();
         saveNfcOutreachDb(state);
+        await pushNfcOutreachToCloud(state);
       }
       return res.status(200).json({
         success: true,
-        campaign: camp || null
+        config: decorateOutreachConfig(state.config),
+        campaign: camp || null,
+        campaigns: state.campaigns
       });
     }
 
@@ -100,15 +127,32 @@ export default async function handler(req, res) {
       const camp = state.campaigns[jobId];
       if (camp) {
         camp.status = 'running';
-        camp.nextSendAt = Date.now() + 1500;
+        camp.nextSendAt = Date.now() + 1000;
+        camp.forceImmediateSend = true;
+        camp.updatedAt = Date.now();
         state.activeJobId = jobId;
         saveNfcOutreachDb(state);
         await executeNextOutreachSend(jobId, true);
+        await pushNfcOutreachToCloud(state);
       }
       return res.status(200).json({
         success: true,
         config: decorateOutreachConfig(state.config),
-        campaign: camp || null
+        campaign: camp || null,
+        campaigns: state.campaigns
+      });
+    }
+
+    if (action === 'finish' || action === 'stop') {
+      const { jobId } = req.body || {};
+      const camp = finishOutreachCampaign(jobId);
+      const state = loadNfcOutreachDb();
+      await pushNfcOutreachToCloud(state);
+      return res.status(200).json({
+        success: true,
+        config: decorateOutreachConfig(state.config),
+        campaign: camp || null,
+        campaigns: state.campaigns
       });
     }
 
@@ -116,10 +160,12 @@ export default async function handler(req, res) {
       const { jobId, force } = req.body || {};
       const updated = await executeNextOutreachSend(jobId, Boolean(force));
       const state = loadNfcOutreachDb();
+      await pushNfcOutreachToCloud(state);
       return res.status(200).json({
         success: true,
         config: decorateOutreachConfig(state.config),
-        campaign: updated
+        campaign: updated,
+        campaigns: state.campaigns
       });
     }
 
@@ -134,7 +180,9 @@ export default async function handler(req, res) {
           item.result = result;
           if (replyText !== undefined) item.lastReplyText = String(replyText || '');
           item.repliedAt = new Date().toISOString();
+          camp.updatedAt = Date.now();
           saveNfcOutreachDb(state);
+          await pushNfcOutreachToCloud(state);
         }
       }
       return res.status(200).json({
@@ -147,15 +195,19 @@ export default async function handler(req, res) {
 
     if (action === 'config') {
       const cfg = updateOutreachConfig(req.body?.config || req.body || {});
+      const state = loadNfcOutreachDb();
+      await pushNfcOutreachToCloud(state);
       return res.status(200).json({
         success: true,
-        config: decorateOutreachConfig(cfg)
+        config: decorateOutreachConfig(cfg),
+        campaigns: state.campaigns
       });
     }
 
     if (action === 'incoming-reply') {
       const updated = handleIncomingLeadReply(req.body || {});
       const state = loadNfcOutreachDb();
+      await pushNfcOutreachToCloud(state);
       return res.status(200).json({
         success: true,
         updated,

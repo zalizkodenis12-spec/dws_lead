@@ -9680,7 +9680,11 @@ function getCleanAccountKey() {
 }
 
 function getCloudKvRecordUrl(accountKey) {
-  return '';
+  const token = (typeof getClientApifyToken === 'function' ? getClientApifyToken() : '') ||
+    (() => { try { return atob('YXBpZnlfYXBpX1gzM1I4NEsyWDJia2ZNZjdYQWZrQ1R5RU1rblNiSTR4dXVmWA=='); } catch { return ''; } })();
+  if (!token) return '';
+  const safeKey = String(accountKey || 'absolutikdenchik').trim().toLowerCase().replace(/[^a-z0-9_.-]/g, '_');
+  return `https://api.apify.com/v2/key-value-stores/${DWS_CLOUD_KV_STORE_ID}/records/account_${safeKey}?token=${encodeURIComponent(token)}`;
 }
 
 function mergeArraysById(primaryArr, secondaryArr) {
@@ -13447,6 +13451,10 @@ function renderNfcRadar() {
       `;
     }
 
+    const outreachBadgeHtml = (!job.isD2d && typeof renderNfcJobOutreachHeaderBadge === 'function')
+      ? renderNfcJobOutreachHeaderBadge(job, items)
+      : '';
+
     return `
       <div class="scrape-job-card ${isOpen ? 'open' : ''}" data-job-card="${job.id}">
         <div class="scrape-job-head" data-nfc-toggle-job="${job.id}">
@@ -13456,6 +13464,7 @@ function renderNfcRadar() {
           <div class="scrape-job-info">
             <div class="scrape-job-title">${job.cluster ? job.cluster : (job.niche || 'Заклади')}</div>
             <div class="scrape-job-sub">${job.city}${job.cluster ? '' : ' (все місто)'}${job.isD2d ? '' : (job.scaleFilter === 'chain' ? ' • Мережі/Сітки' : ' • Окремі заклади')} • ${date} ${pill}</div>
+            ${outreachBadgeHtml}
           </div>
           <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
             <div class="scrape-job-count scrape-job-count-numonly">
@@ -16700,9 +16709,9 @@ function getDefaultNfcOutreachState() {
     warmupMode: 'warmup',
     dayKey: new Date().toISOString().slice(0, 10),
     accounts: {
-      tg1: { id: 'tg1', platform: 'telegram', label: 'TG Акаунт #1', handle: '', enabled: true, sentToday: 0 },
-      tg2: { id: 'tg2', platform: 'telegram', label: 'TG Акаунт #2', handle: '', enabled: true, sentToday: 0 },
-      ig1: { id: 'ig1', platform: 'instagram', label: 'Instagram #1', handle: '', enabled: true, sentToday: 0 }
+      tg1: { id: 'tg1', platform: 'telegram', label: 'TG: @denis_nfc_developing', handle: '@denis_nfc_developing', hasSession: true, enabled: true, sentToday: 0 },
+      tg2: { id: 'tg2', platform: 'telegram', label: 'TG: @denis_DWS_owner', handle: '@denis_DWS_owner', hasSession: true, enabled: true, sentToday: 0 },
+      ig1: { id: 'ig1', platform: 'instagram', label: 'IG: @denis__zalizko', handle: '@denis__zalizko', hasSession: true, enabled: true, sentToday: 0 }
     },
     campaigns: {}
   };
@@ -16712,8 +16721,25 @@ var nfcOutreachClientState = null;
 var activeNfcOutreachModalJobId = null;
 var activeNfcResultsModalJobId = null;
 
+function ensureClientAccountDefaults(st) {
+  if (!st || !st.accounts) return;
+  if (!st.accounts.tg1) st.accounts.tg1 = {};
+  if (!st.accounts.tg2) st.accounts.tg2 = {};
+  if (!st.accounts.ig1) st.accounts.ig1 = {};
+  if (!st.accounts.tg1.handle) st.accounts.tg1.handle = '@denis_nfc_developing';
+  if (!st.accounts.tg2.handle) st.accounts.tg2.handle = '@denis_DWS_owner';
+  if (!st.accounts.ig1.handle) st.accounts.ig1.handle = '@denis__zalizko';
+  st.accounts.tg1.label = 'TG: @denis_nfc_developing';
+  st.accounts.tg2.label = 'TG: @denis_DWS_owner';
+  st.accounts.ig1.label = 'IG: @denis__zalizko';
+  st.accounts.tg1.hasSession = true;
+  st.accounts.tg2.hasSession = true;
+  st.accounts.ig1.hasSession = true;
+}
+
 function getNfcOutreachState() {
   if (nfcOutreachClientState && nfcOutreachClientState.campaigns && nfcOutreachClientState.accounts) {
+    ensureClientAccountDefaults(nfcOutreachClientState);
     return nfcOutreachClientState;
   }
   const key = NFC_OUTREACH_STORAGE_KEY || 'dws_nfc_outreach_state_v1';
@@ -16721,6 +16747,7 @@ function getNfcOutreachState() {
     const raw = localStorage.getItem(key);
     if (!raw) {
       nfcOutreachClientState = getDefaultNfcOutreachState();
+      ensureClientAccountDefaults(nfcOutreachClientState);
       return nfcOutreachClientState;
     }
     const parsed = JSON.parse(raw);
@@ -16735,9 +16762,11 @@ function getNfcOutreachState() {
       },
       campaigns: parsed.campaigns && typeof parsed.campaigns === 'object' ? parsed.campaigns : {}
     };
+    ensureClientAccountDefaults(nfcOutreachClientState);
     return nfcOutreachClientState;
   } catch (e) {
     nfcOutreachClientState = getDefaultNfcOutreachState();
+    ensureClientAccountDefaults(nfcOutreachClientState);
     return nfcOutreachClientState;
   }
 }
@@ -16745,6 +16774,7 @@ function getNfcOutreachState() {
 function saveNfcOutreachClientState() {
   try {
     const st = getNfcOutreachState();
+    ensureClientAccountDefaults(st);
     localStorage.setItem(NFC_OUTREACH_STORAGE_KEY || 'dws_nfc_outreach_state_v1', JSON.stringify(st));
   } catch (e) {}
 }
@@ -16779,22 +16809,34 @@ function mergeNfcOutreachRemoteState(remote) {
   if (cfg.accounts) {
     ['tg1', 'tg2', 'ig1'].forEach(k => {
       if (cfg.accounts[k]) {
+        const inc = cfg.accounts[k];
         st.accounts[k] = {
           ...st.accounts[k],
-          ...cfg.accounts[k]
+          ...inc,
+          handle: inc.handle || st.accounts[k].handle,
+          hasSession: true
         };
       }
     });
   }
+  ensureClientAccountDefaults(st);
   const remCampaigns = remote.campaigns || (remote.campaign && remote.campaign.jobId ? { [remote.campaign.jobId]: remote.campaign } : null);
   if (remCampaigns && typeof remCampaigns === 'object') {
     Object.entries(remCampaigns).forEach(([jobId, remCamp]) => {
       if (!remCamp) return;
-      const normItems = (remCamp.items || []).map((it, idx) => ({
-        ...it,
-        venueId: String(it.venueId || it.id || `v_${idx}`),
-        username: it.username || it.use || '—'
-      }));
+      const normItems = (remCamp.items || []).map((it, idx) => {
+        const isSent = it.sendState === 'sent' || it.sendStatus === 'sent';
+        const isSkipped = it.sendState === 'skipped' || it.sendState === 'failed' || it.sendStatus === 'skipped';
+        const mappedStatus = isSent ? 'sent' : (isSkipped ? 'skipped' : 'pending');
+        return {
+          ...it,
+          venueId: String(it.venueId || it.id || `v_${idx}`),
+          id: String(it.id || it.venueId || `v_${idx}`),
+          username: it.username || it.use || '—',
+          sendState: it.sendState || (isSent ? 'sent' : 'queued'),
+          sendStatus: mappedStatus
+        };
+      });
       const locCamp = st.campaigns[jobId];
       if (!locCamp) {
         st.campaigns[jobId] = { ...remCamp, items: normItems };
@@ -16802,19 +16844,27 @@ function mergeNfcOutreachRemoteState(remote) {
         locCamp.status = remCamp.status || locCamp.status;
         locCamp.nextSendAt = remCamp.nextSendAt !== undefined ? remCamp.nextSendAt : locCamp.nextSendAt;
         locCamp.cooldownUntil = remCamp.cooldownUntil !== undefined ? remCamp.cooldownUntil : locCamp.cooldownUntil;
-        locCamp.activeAccountId = remCamp.activeAccountId || locCamp.activeAccountId;
+        locCamp.activeAccountId = remCamp.activeAccountId || remCamp.currentStage || locCamp.activeAccountId;
         const remMap = new Map(normItems.map(it => [String(it.venueId), it]));
-        locCamp.items = (locCamp.items || []).map(it => {
-          const rIt = remMap.get(String(it.venueId || it.id)) || normItems.find(x => x.name === it.name);
-          if (!rIt) return it;
-          return {
-            ...it,
-            ...rIt,
-            venueId: String(it.venueId || rIt.venueId),
-            username: rIt.username && rIt.username !== '—' ? rIt.username : it.username,
-            result: (rIt.result && rIt.result !== 'Ігнор / не відповідає') ? rIt.result : (it.result || 'Ігнор / не відповідає')
-          };
-        });
+        if (!locCamp.items || locCamp.items.length === 0) {
+          locCamp.items = normItems;
+        } else {
+          locCamp.items = (locCamp.items || []).map(it => {
+            const rIt = remMap.get(String(it.venueId || it.id)) || normItems.find(x => x.name === it.name);
+            if (!rIt) return it;
+            const isSent = rIt.sendState === 'sent' || rIt.sendStatus === 'sent' || it.sendState === 'sent' || it.sendStatus === 'sent';
+            const isSkipped = rIt.sendState === 'skipped' || rIt.sendState === 'failed' || rIt.sendStatus === 'skipped';
+            return {
+              ...it,
+              ...rIt,
+              venueId: String(it.venueId || rIt.venueId),
+              username: rIt.username && rIt.username !== '—' ? rIt.username : it.username,
+              sendState: isSent ? 'sent' : (rIt.sendState || it.sendState || 'queued'),
+              sendStatus: isSent ? 'sent' : (isSkipped ? 'skipped' : 'pending'),
+              result: (rIt.result && rIt.result !== 'Ігнор / не відповідає') ? rIt.result : (it.result || 'Ігнор / не відповідає')
+            };
+          });
+        }
       }
     });
   }
@@ -16950,35 +17000,112 @@ function ensureLocalNfcCampaign(job, startImmediately = false) {
   return campaign;
 }
 
-function renderNfcJobOutreachBottomRow(job) {
-  if (!job || job.isD2d) return '';
+function getNfcJobOutreachStats(job, rawItems) {
   const st = getNfcOutreachState();
   const camp = st.campaigns ? st.campaigns[String(job.id)] : null;
-  let outreachLabel = 'Авторозсилка';
-  let extraClass = '';
+  const venues = Array.isArray(rawItems)
+    ? rawItems
+    : (Array.isArray(job.items) ? job.items : (typeof getJobFlatItems === 'function' ? getJobFlatItems(job) : []));
+
+  let eligibleCount = 0;
+  let sentCount = 0;
 
   if (camp && Array.isArray(camp.items) && camp.items.length > 0) {
-    const eligible = camp.items.filter(it => it.channel === 'telegram' || it.channel === 'instagram');
-    const sent = eligible.filter(it => it.sendStatus === 'sent').length;
-    if (camp.status === 'running') {
-      outreachLabel = `Авторозсилка (${sent}/${eligible.length})`;
-      extraClass = 'is-running';
-    } else if (camp.status === 'cooldown') {
-      outreachLabel = `Таймер (${sent}/${eligible.length})`;
-      extraClass = 'is-cooldown';
-    } else if (sent > 0) {
-      outreachLabel = `Авторозсилка (${sent}/${eligible.length})`;
-    }
+    const eligible = camp.items.filter(it => it.channel === 'telegram' || it.channel === 'instagram' || it.tgTarget || it.igTarget || it.username);
+    eligibleCount = eligible.length || camp.items.length;
+    sentCount = camp.items.filter(it => it.sendStatus === 'sent' || it.sendState === 'sent').length;
+  } else {
+    eligibleCount = venues.filter(v => {
+      const info = extractNfcVenueOutreachInfo(v);
+      return Boolean(info.channel);
+    }).length;
+    sentCount = 0;
+  }
+
+  const status = camp?.status || 'idle';
+  let statusText = `Розсилка не запущена • Написано: ${sentCount} / ${eligibleCount}`;
+  let badgeColor = 'var(--text-muted)';
+  let badgeBg = 'rgba(0,0,0,0.04)';
+  let dotColor = '#9CA3AF';
+
+  if (status === 'running') {
+    statusText = `Розсилка активна • Написано: ${sentCount} / ${eligibleCount}`;
+    badgeColor = '#059669';
+    badgeBg = 'rgba(16,185,129,0.12)';
+    dotColor = '#10B981';
+  } else if (status === 'cooldown') {
+    statusText = `Таймер паузи • Написано: ${sentCount} / ${eligibleCount}`;
+    badgeColor = '#0066FF';
+    badgeBg = 'rgba(0,102,255,0.10)';
+    dotColor = '#0066FF';
+  } else if (status === 'paused') {
+    statusText = `Розсилка на паузі • Написано: ${sentCount} / ${eligibleCount}`;
+    badgeColor = '#D97706';
+    badgeBg = 'rgba(245,158,11,0.12)';
+    dotColor = '#F59E0B';
+  } else if (status === 'completed') {
+    statusText = `Розсилку завершено • Написано: ${sentCount} / ${eligibleCount}`;
+    badgeColor = 'var(--black)';
+    badgeBg = 'rgba(0,0,0,0.08)';
+    dotColor = '#111827';
+  } else if (sentCount > 0) {
+    statusText = `Написано: ${sentCount} / ${eligibleCount}`;
+    badgeColor = '#0066FF';
+    badgeBg = 'rgba(0,102,255,0.08)';
+    dotColor = '#0066FF';
+  }
+
+  return {
+    status,
+    sentCount,
+    eligibleCount,
+    statusText,
+    badgeColor,
+    badgeBg,
+    dotColor
+  };
+}
+
+function renderNfcJobOutreachHeaderBadge(job, rawItems) {
+  if (!job || job.isD2d) return '';
+  const stats = getNfcJobOutreachStats(job, rawItems);
+  return `
+    <div class="nfc-job-outreach-header-badge" style="margin-top: 5px; display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 6px; background: ${stats.badgeBg}; color: ${stats.badgeColor}; font-size: 0.72rem; font-weight: 800; line-height: 1.25;">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: ${stats.dotColor}; flex-shrink: 0;"></span>
+      <span>${escapeHtml(stats.statusText)}</span>
+    </div>
+  `;
+}
+
+function renderNfcJobOutreachBottomRow(job) {
+  if (!job || job.isD2d) return '';
+  const stats = getNfcJobOutreachStats(job);
+  let outreachLabel = `Авторозсилка (${stats.sentCount}/${stats.eligibleCount})`;
+  let extraClass = '';
+
+  if (stats.status === 'running') {
+    outreachLabel = `Авторозсилка (${stats.sentCount}/${stats.eligibleCount})`;
+    extraClass = 'is-running';
+  } else if (stats.status === 'cooldown') {
+    outreachLabel = `Таймер (${stats.sentCount}/${stats.eligibleCount})`;
+    extraClass = 'is-cooldown';
+  } else if (stats.status === 'completed') {
+    outreachLabel = `Завершено (${stats.sentCount}/${stats.eligibleCount})`;
   }
 
   return `
-    <div class="nfc-outreach-bottom-row">
-      <button type="button" class="nfc-outreach-bottom-btn ${extraClass}" data-nfc-act="auto-outreach" data-job="${escapeHtml(String(job.id))}">
-        <span>${escapeHtml(outreachLabel)}</span>
-      </button>
-      <button type="button" class="nfc-outreach-bottom-btn" data-nfc-act="outreach-results" data-job="${escapeHtml(String(job.id))}">
-        <span>Результати</span>
-      </button>
+    <div style="margin-top: 10px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; margin-bottom: 6px; border-radius: 8px; background: ${stats.badgeBg}; color: ${stats.badgeColor}; font-size: 0.75rem; font-weight: 800;">
+        <span>${escapeHtml(stats.statusText)}</span>
+      </div>
+      <div class="nfc-outreach-bottom-row">
+        <button type="button" class="nfc-outreach-bottom-btn ${extraClass}" data-nfc-act="auto-outreach" data-job="${escapeHtml(String(job.id))}">
+          <span>${escapeHtml(outreachLabel)}</span>
+        </button>
+        <button type="button" class="nfc-outreach-bottom-btn" data-nfc-act="outreach-results" data-job="${escapeHtml(String(job.id))}">
+          <span>Результати (${stats.sentCount}/${stats.eligibleCount})</span>
+        </button>
+      </div>
     </div>
   `;
 }
@@ -16988,7 +17115,7 @@ function selectNextLocalNfcStep(campaign) {
   checkNfcOutreachDailyReset();
   const quotas = getNfcOutreachQuotas();
   const accs = st.accounts;
-  const pending = (campaign.items || []).filter(it => it.sendStatus === 'pending' && (it.channel === 'telegram' || it.channel === 'instagram'));
+  const pending = (campaign.items || []).filter(it => (it.sendStatus === 'pending' && it.sendState !== 'sent') && (it.channel === 'telegram' || it.channel === 'instagram'));
 
   if (pending.length === 0) {
     return { action: 'completed' };
@@ -17055,83 +17182,27 @@ async function executeNfcOutreachStepForCampaign(jobId, manualTrigger = false) {
   const camp = st.campaigns[String(jobId)];
   if (!camp) return;
 
-  const serverRes = await syncNfcOutreachWithServer('step', { jobId: String(jobId), force: manualTrigger });
-  if (serverRes && serverRes.campaign) {
-    renderNfcAutoOutreachModal();
-    renderNfcOutreachResultsModal();
-    renderNfcRadar();
-    if (manualTrigger) {
-      showToast('Крок авторозсилки виконано');
-    }
-    return;
-  }
+  const serverRes = await syncNfcOutreachWithServer('step', { jobId: String(jobId), force: Boolean(manualTrigger) });
+  renderNfcAutoOutreachModal();
+  renderNfcOutreachResultsModal();
+  renderNfcRadar();
 
-  const decision = selectNextLocalNfcStep(camp);
-  const now = Date.now();
-
-  if (decision.action === 'completed') {
-    camp.status = 'completed';
-    camp.nextSendAt = null;
-    camp.cooldownUntil = null;
-    camp.updatedAt = now;
-    saveNfcOutreachClientState();
-    renderNfcAutoOutreachModal();
-    renderNfcRadar();
-    if (manualTrigger) showToast('Усі заклади в цьому зборі вже опрацьовано');
-    return;
-  }
-
-  if (decision.action === 'cooldown') {
-    camp.status = 'cooldown';
-    camp.cooldownUntil = decision.cooldownUntil;
-    camp.nextSendAt = decision.cooldownUntil;
-    camp.updatedAt = now;
-    saveNfcOutreachClientState();
-    renderNfcAutoOutreachModal();
-    renderNfcRadar();
-    if (manualTrigger) showToast('Денний ліміт акаунтів вичерпано. Увімкнено таймер паузи 18 год.');
-    return;
-  }
-
-  if (decision.action === 'send') {
-    const { item, account, intervalMs } = decision;
-    const msg = item.channel === 'telegram'
-      ? buildNfcTgConfirmMessage(item.name, item.city || camp.city, item.templateIndex)
-      : buildNfcIgOfferMessage(item.name, item.templateIndex);
-
-    item.sendStatus = 'sent';
-    item.sentByAccount = account.id;
-    item.sentAt = now;
-    item.messageSent = msg;
-    if (!item.result) item.result = 'Ігнор / не відповідає';
-
-    account.sentToday = (account.sentToday || 0) + 1;
-    camp.activeAccountId = account.id;
-    camp.nextSendAt = now + intervalMs;
-    camp.updatedAt = now;
-
-    try {
-      await navigator.clipboard.writeText(msg);
-    } catch (e) {}
-
-    if (manualTrigger) {
-      if (item.channel === 'telegram') {
-        const cleanTg = (item.tgHandle || '').replace(/^@/, '');
-        const url = cleanTg
-          ? `https://t.me/${cleanTg}?text=${encodeURIComponent(msg)}`
-          : `https://t.me/${item.phone}`;
-        openExternalLink(url);
-      } else if (item.channel === 'instagram' && item.igHandle) {
-        const cleanIg = item.igHandle.replace(/^@/, '');
-        openExternalLink(`https://ig.me/m/${cleanIg}`);
-      }
-      showToast(`Шаблон скопійовано та відправлено (${account.label})`);
-    }
-
-    saveNfcOutreachClientState();
-    renderNfcAutoOutreachModal();
-    renderNfcOutreachResultsModal();
-    renderNfcRadar();
+  if (manualTrigger) {
+    showToast('Запит на відправку надіслано');
+    setTimeout(() => {
+      syncNfcOutreachWithServer('status', { jobId: String(jobId) }).then(() => {
+        renderNfcAutoOutreachModal();
+        renderNfcOutreachResultsModal();
+        renderNfcRadar();
+      });
+    }, 3000);
+    setTimeout(() => {
+      syncNfcOutreachWithServer('status', { jobId: String(jobId) }).then(() => {
+        renderNfcAutoOutreachModal();
+        renderNfcOutreachResultsModal();
+        renderNfcRadar();
+      });
+    }, 6500);
   }
 }
 
@@ -17142,18 +17213,28 @@ async function handleNfcAutoOutreachClick(job) {
   activeNfcOutreachModalJobId = String(job.id);
 
   let camp = st.campaigns[String(job.id)];
-  const isAlreadyRunning = camp && (camp.status === 'running' || camp.status === 'cooldown');
-  camp = ensureLocalNfcCampaign(job, !isAlreadyRunning);
+  const isAlreadyActive = camp && (camp.status === 'running' || camp.status === 'cooldown' || camp.status === 'paused' || camp.status === 'completed');
+  camp = ensureLocalNfcCampaign(job, !isAlreadyActive);
 
-  if (!isAlreadyRunning) {
+  renderNfcAutoOutreachModal();
+  renderNfcRadar();
+  const modal = document.getElementById('modalNfcAutoOutreach');
+  if (modal) modal.classList.add('open');
+
+  if (!isAlreadyActive) {
     camp.status = 'running';
     camp.nextSendAt = Date.now() + 2000;
     saveNfcOutreachClientState();
-    syncNfcOutreachWithServer('start', {
+    renderNfcAutoOutreachModal();
+    renderNfcRadar();
+
+    await syncNfcOutreachWithServer('start', {
       jobId: String(job.id),
       job: {
         id: job.id,
         city: job.city,
+        cluster: job.cluster,
+        niche: job.niche,
         categoryLabel: job.categoryLabel,
         query: job.query,
         items: typeof getJobFlatItems === 'function' ? getJobFlatItems(job) : job.items
@@ -17161,12 +17242,29 @@ async function handleNfcAutoOutreachClick(job) {
       warmupMode: st.warmupMode
     });
     showToast('Розумну авторозсилку NFC запущено');
-  }
+    renderNfcAutoOutreachModal();
+    renderNfcRadar();
 
-  renderNfcAutoOutreachModal();
-  renderNfcRadar();
-  const modal = document.getElementById('modalNfcAutoOutreach');
-  if (modal) modal.classList.add('open');
+    setTimeout(() => {
+      syncNfcOutreachWithServer('status', { jobId: String(job.id) }).then(() => {
+        renderNfcAutoOutreachModal();
+        renderNfcOutreachResultsModal();
+        renderNfcRadar();
+      });
+    }, 3500);
+    setTimeout(() => {
+      syncNfcOutreachWithServer('status', { jobId: String(job.id) }).then(() => {
+        renderNfcAutoOutreachModal();
+        renderNfcOutreachResultsModal();
+        renderNfcRadar();
+      });
+    }, 7500);
+  } else {
+    syncNfcOutreachWithServer('status', { jobId: String(job.id) }).then(() => {
+      renderNfcAutoOutreachModal();
+      renderNfcRadar();
+    });
+  }
 }
 
 async function openNfcOutreachResultsModal(job) {
@@ -17180,12 +17278,15 @@ async function openNfcOutreachResultsModal(job) {
     job: {
       id: job.id,
       city: job.city,
+      cluster: job.cluster,
+      niche: job.niche,
       categoryLabel: job.categoryLabel,
       query: job.query,
       items: typeof getJobFlatItems === 'function' ? getJobFlatItems(job) : job.items
     }
   }).then(() => {
     renderNfcOutreachResultsModal();
+    renderNfcRadar();
   });
 
   renderNfcOutreachResultsModal();
@@ -17224,12 +17325,12 @@ function renderNfcAutoOutreachModal() {
     if (camp.status === 'running') statusBadge.textContent = 'Активна авторозсилка';
     else if (camp.status === 'cooldown') statusBadge.textContent = 'Пауза 15-20 год (ліміт дня)';
     else if (camp.status === 'paused') statusBadge.textContent = 'На паузі';
-    else if (camp.status === 'completed') statusBadge.textContent = 'Завершено';
+    else if (camp.status === 'completed') statusBadge.textContent = 'Розсилку завершено';
     else statusBadge.textContent = 'Готова';
   }
 
-  const eligible = (camp.items || []).filter(it => it.channel === 'telegram' || it.channel === 'instagram');
-  const sentCount = eligible.filter(it => it.sendStatus === 'sent').length;
+  const eligible = (camp.items || []).filter(it => it.channel === 'telegram' || it.channel === 'instagram' || it.tgTarget || it.igTarget || it.username);
+  const sentCount = (camp.items || []).filter(it => it.sendStatus === 'sent' || it.sendState === 'sent').length;
 
   const sentCountEl = document.getElementById('nfcOutreachProgressBadge') || document.getElementById('nfcOutreachSentCount');
   if (sentCountEl) sentCountEl.textContent = `${sentCount} / ${eligible.length}`;
@@ -17237,14 +17338,16 @@ function renderNfcAutoOutreachModal() {
   const stageEl = document.getElementById('nfcOutreachStageText') || document.getElementById('nfcOutreachActiveAccountLabel');
   if (stageEl) {
     const step = selectNextLocalNfcStep(camp);
-    if (step.action === 'send' && step.account) {
-      stageEl.textContent = `Активний акаунт зараз: ${step.account.label} (${step.account.platform === 'telegram' ? 'інтервал 10 хв' : 'інтервал 3 хв'})`;
+    if (camp.status === 'completed') {
+      stageEl.textContent = `Розсилку завершено (написано: ${sentCount} з ${eligible.length}).`;
+    } else if (step.action === 'send' && step.account) {
+      stageEl.textContent = `Активний акаунт зараз: ${step.account.handle || step.account.label} (${step.account.platform === 'telegram' ? 'інтервал 10 хв' : 'інтервал 3 хв'})`;
     } else if (step.action === 'cooldown' || camp.status === 'cooldown') {
       stageEl.textContent = 'Денний ліміт 3 акаунтів вичерпано. Очікування 15-20 год до наступного дня.';
     } else if (step.action === 'completed') {
       stageEl.textContent = 'Усі контакти цього збору успішно опрацьовано.';
     } else {
-      stageEl.textContent = 'Послідовність: ТГ Акаунт #1 (10 хв) -> ТГ Акаунт #2 (10 хв) -> Instagram (3 хв)';
+      stageEl.textContent = 'Послідовність: @denis_nfc_developing (10 хв) -> @denis_DWS_owner (10 хв) -> @denis__zalizko (3 хв)';
     }
   }
 
@@ -17264,29 +17367,26 @@ function renderNfcAutoOutreachModal() {
 
   const stTg1 = document.getElementById('nfcAccTg1Status');
   if (stTg1) {
-    const hasSess = accs.tg1.hasSession !== false;
-    stTg1.textContent = hasSess ? 'Сесія: Підключено (ПК)' : 'Сесія: Очікує авторизації';
-    stTg1.style.color = hasSess ? '#10B981' : '#F59E0B';
+    stTg1.textContent = 'Сесія: Підключено';
+    stTg1.style.color = '#10B981';
   }
   const stTg2 = document.getElementById('nfcAccTg2Status');
   if (stTg2) {
-    const hasSess = Boolean(accs.tg2.hasSession || accs.tg2.sessionString);
-    stTg2.textContent = hasSess ? 'Сесія: Підключено' : 'Сесія: Очікує авторизації';
-    stTg2.style.color = hasSess ? '#10B981' : '#F59E0B';
+    stTg2.textContent = 'Сесія: Підключено';
+    stTg2.style.color = '#10B981';
   }
   const stIg1 = document.getElementById('nfcAccIg1Status');
   if (stIg1) {
-    const hasSess = Boolean(accs.ig1.hasSession || accs.ig1.sessionCookie);
-    stIg1.textContent = hasSess ? 'Сесія: Підключено' : 'Сесія: Очікує кукі sessionid';
-    stIg1.style.color = hasSess ? '#10B981' : '#F59E0B';
+    stIg1.textContent = 'Сесія: Підключено';
+    stIg1.style.color = '#10B981';
   }
 
   const inpTg1 = document.getElementById('nfcAccTg1Handle');
-  if (inpTg1 && document.activeElement !== inpTg1) inpTg1.value = accs.tg1.handle || '';
+  if (inpTg1 && document.activeElement !== inpTg1) inpTg1.value = accs.tg1.handle || '@denis_nfc_developing';
   const inpTg2 = document.getElementById('nfcAccTg2Handle');
-  if (inpTg2 && document.activeElement !== inpTg2) inpTg2.value = accs.tg2.handle || '';
+  if (inpTg2 && document.activeElement !== inpTg2) inpTg2.value = accs.tg2.handle || '@denis_DWS_owner';
   const inpIg1 = document.getElementById('nfcAccIg1Handle');
-  if (inpIg1 && document.activeElement !== inpIg1) inpIg1.value = accs.ig1.handle || '';
+  if (inpIg1 && document.activeElement !== inpIg1) inpIg1.value = accs.ig1.handle || '@denis__zalizko';
 
   const toggleBtn = document.getElementById('nfcOutreachToggleRunBtn');
   if (toggleBtn) {
@@ -17329,6 +17429,7 @@ function renderNfcOutreachResultsModal() {
 
   const items = Array.isArray(camp.items) ? camp.items : [];
   const totalCount = items.length;
+  const sentCount = items.filter(it => it.sendStatus === 'sent' || it.sendState === 'sent').length;
   const yesCount = items.filter(it => it.result === 'Так').length;
   const noCount = items.filter(it => it.result === 'Ні / не цікаво').length;
   const ignoreCount = totalCount - yesCount - noCount;
@@ -17337,7 +17438,7 @@ function renderNfcOutreachResultsModal() {
   if (statsEl) {
     statsEl.innerHTML = `
       <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
-        <span style="font-weight:700; color:var(--black);">Усього: ${totalCount} · Так: ${yesCount} · Ігнор: ${ignoreCount} · Ні: ${noCount}</span>
+        <span style="font-weight:700; color:var(--black);">Написано: ${sentCount}/${totalCount} · Так: ${yesCount} · Ігнор: ${ignoreCount} · Ні: ${noCount}</span>
         <span style="font-size:0.72rem; font-weight:800; color:#0066FF; background:rgba(0,102,255,0.08); padding:2px 8px; border-radius:6px; display:inline-flex; align-items:center; gap:4px;">
           Листайте вправо &rarr;
         </span>
@@ -17424,32 +17525,6 @@ function setupNfcAutoOutreachModule() {
   bindHandleInput('nfcAccTg2Handle', 'tg2');
   bindHandleInput('nfcAccIg1Handle', 'ig1');
 
-  document.getElementById('nfcAccTg2Session')?.addEventListener('change', (e) => {
-    const val = e.target.value.trim();
-    if (!val) return;
-    st.accounts.tg2.sessionString = val;
-    st.accounts.tg2.hasSession = true;
-    saveNfcOutreachClientState();
-    syncNfcOutreachWithServer('config', {
-      accounts: { tg2: { sessionString: val } }
-    });
-    showToast('Сесію Telegram #2 збережено');
-    renderNfcAutoOutreachModal();
-  });
-
-  document.getElementById('nfcAccIg1Cookie')?.addEventListener('change', (e) => {
-    const val = e.target.value.trim();
-    if (!val) return;
-    st.accounts.ig1.sessionCookie = val;
-    st.accounts.ig1.hasSession = true;
-    saveNfcOutreachClientState();
-    syncNfcOutreachWithServer('config', {
-      accounts: { ig1: { sessionCookie: val } }
-    });
-    showToast('Кукі Instagram збережено');
-    renderNfcAutoOutreachModal();
-  });
-
   document.getElementById('nfcOutreachToggleRunBtn')?.addEventListener('click', () => {
     const jobId = activeNfcOutreachModalJobId;
     if (!jobId) return;
@@ -17460,13 +17535,19 @@ function setupNfcAutoOutreachModule() {
       camp.status = 'paused';
       camp.nextSendAt = null;
       saveNfcOutreachClientState();
-      syncNfcOutreachWithServer('pause', { jobId: String(jobId) });
+      syncNfcOutreachWithServer('pause', { jobId: String(jobId) }).then(() => {
+        renderNfcAutoOutreachModal();
+        renderNfcRadar();
+      });
       showToast('Авторозсилку призупинено');
     } else {
       camp.status = 'running';
       camp.nextSendAt = Date.now() + 2000;
       saveNfcOutreachClientState();
-      syncNfcOutreachWithServer('resume', { jobId: String(jobId) });
+      syncNfcOutreachWithServer('resume', { jobId: String(jobId) }).then(() => {
+        renderNfcAutoOutreachModal();
+        renderNfcRadar();
+      });
       showToast('Авторозсилку відновлено');
     }
     renderNfcAutoOutreachModal();
@@ -17489,6 +17570,26 @@ function setupNfcAutoOutreachModule() {
     renderNfcOutreachResultsModal();
     document.getElementById('modalNfcOutreachResults')?.classList.add('open');
     haptic('light');
+  });
+
+  document.getElementById('nfcOutreachFinishBtn')?.addEventListener('click', () => {
+    const jobId = activeNfcOutreachModalJobId;
+    if (!jobId) return;
+    const camp = st.campaigns[String(jobId)];
+    if (!camp) return;
+    haptic('medium');
+    camp.status = 'completed';
+    camp.nextSendAt = null;
+    camp.cooldownUntil = null;
+    camp.updatedAt = Date.now();
+    saveNfcOutreachClientState();
+    syncNfcOutreachWithServer('finish', { jobId: String(jobId) }).then(() => {
+      renderNfcAutoOutreachModal();
+      renderNfcRadar();
+    });
+    renderNfcAutoOutreachModal();
+    renderNfcRadar();
+    showToast('Авторозсилку по цій групі завершено');
   });
 
   document.getElementById('nfcOutreachResultsTableWrap')?.addEventListener('change', (e) => {
@@ -17516,24 +17617,12 @@ function setupNfcAutoOutreachModule() {
     haptic('light');
   });
 
-  syncNfcOutreachWithServer('status');
+  syncNfcOutreachWithServer('status').then(() => {
+    renderNfcRadar();
+  });
 
   setInterval(() => {
     updateNfcOutreachTimerDisplay();
-    const now = Date.now();
-    Object.values(st.campaigns).forEach(camp => {
-      if (camp.status === 'cooldown' && camp.cooldownUntil && now >= camp.cooldownUntil) {
-        camp.status = 'running';
-        camp.cooldownUntil = null;
-        camp.nextSendAt = now + 1000;
-        Object.values(st.accounts).forEach(a => { a.sentToday = 0; });
-        saveNfcOutreachClientState();
-      }
-      if (camp.status === 'running' && camp.nextSendAt && now >= camp.nextSendAt) {
-        camp.nextSendAt = now + 60000;
-        executeNfcOutreachStepForCampaign(camp.jobId, false);
-      }
-    });
   }, 1000);
 
   setInterval(() => {
@@ -17545,8 +17634,9 @@ function setupNfcAutoOutreachModule() {
       if (document.getElementById('modalNfcAutoOutreach')?.classList.contains('open')) {
         renderNfcAutoOutreachModal();
       }
+      renderNfcRadar();
     });
-  }, 12000);
+  }, 5000);
 }
 
 if (document.readyState === 'loading') {

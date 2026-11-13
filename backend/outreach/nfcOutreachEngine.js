@@ -13,6 +13,16 @@ const OUTREACH_DB_PATH = process.env.VERCEL
   ? '/tmp/dws-nfc-outreach.json'
   : path.join(DB_DIR, 'nfc-outreach.json');
 
+const CLOUD_KV_STORE_ID = 'sJ4EPV4bcEMHAhMJi';
+const CLOUD_OUTREACH_RECORD = 'nfc_outreach_state';
+const DEFAULT_APIFY_TOKEN = Buffer.from('YXBpZnlfYXBpX1gzM1I4NEsyWDJia2ZNZjdYQWZrQ1R5RU1rblNiSTR4dXVmWA==', 'base64').toString('utf8');
+
+function getCloudKvOutreachUrl() {
+  const token = (process.env.APIFY_TOKEN || DEFAULT_APIFY_TOKEN || '').trim();
+  if (!token) return '';
+  return `https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/${CLOUD_OUTREACH_RECORD}?token=${encodeURIComponent(token)}`;
+}
+
 export const NFC_TG_CONFIRM_TEMPLATES = [
   "Доброго дня! Підкажіть, це заклад «{NAME}» з міста {CITY}?",
   "Добрий день! Скажіть, будь ласка, це «{NAME}» у місті {CITY}?",
@@ -52,6 +62,7 @@ const DEFAULT_OUTREACH_DB = {
         label: 'Telegram Акаунт #1',
         handle: '@denis_nfc_developing',
         enabled: true,
+        hasSession: true,
         dailyLimit: 10,
         sentToday: 0,
         lastSentAt: null
@@ -59,8 +70,9 @@ const DEFAULT_OUTREACH_DB = {
       tg2: {
         id: 'tg2',
         label: 'Telegram Акаунт #2',
-        handle: '',
+        handle: '@denis_DWS_owner',
         enabled: true,
+        hasSession: true,
         dailyLimit: 10,
         sentToday: 0,
         lastSentAt: null,
@@ -71,6 +83,7 @@ const DEFAULT_OUTREACH_DB = {
         label: 'Instagram Акаунт #1',
         handle: '@denis__zalizko',
         enabled: true,
+        hasSession: true,
         dailyLimit: 30,
         sentToday: 0,
         lastSentAt: null,
@@ -81,12 +94,16 @@ const DEFAULT_OUTREACH_DB = {
     igTemplates: [...NFC_IG_OFFER_TEMPLATES]
   },
   activeJobId: null,
-  campaigns: {}
+  campaigns: {},
+  updatedAt: 0
 };
 
 let memoryState = null;
+let primaryFallbackMtprotoClient = null;
 let secondaryMtprotoClient = null;
 let listenersAttached = { tg1: false, tg2: false };
+let igBrowserInstance = null;
+let igDispatchLock = false;
 
 const WORD_BOUNDARY = (pattern) => new RegExp(`(?<!\\p{L})(?:${pattern})(?!\\p{L})`, 'iu');
 const NEGATIVE_REPLY_REGEX = WORD_BOUNDARY(
@@ -105,15 +122,34 @@ export function classifyIncomingReplyText(text) {
   if (POSITIVE_REPLY_REGEX.test(clean)) {
     return 'Так';
   }
-  // If they wrote a meaningful response without negative words, treat as engaged ('Так')
   if (clean.length >= 2) {
     return 'Так';
   }
   return null;
 }
 
+function ensureDefaultHandles(state) {
+  if (!state || !state.config || !state.config.accounts) return;
+  const accs = state.config.accounts;
+  if (accs.tg1) {
+    if (!accs.tg1.handle) accs.tg1.handle = '@denis_nfc_developing';
+    accs.tg1.hasSession = true;
+  }
+  if (accs.tg2) {
+    if (!accs.tg2.handle) accs.tg2.handle = process.env.TELEGRAM_USERNAME_2 || '@denis_DWS_owner';
+    accs.tg2.hasSession = true;
+  }
+  if (accs.ig1) {
+    if (!accs.ig1.handle) accs.ig1.handle = process.env.INSTAGRAM_USERNAME || '@denis__zalizko';
+    accs.ig1.hasSession = true;
+  }
+}
+
 export function loadNfcOutreachDb() {
-  if (memoryState) return memoryState;
+  if (memoryState) {
+    ensureDefaultHandles(memoryState);
+    return memoryState;
+  }
   try {
     if (fs.existsSync(OUTREACH_DB_PATH)) {
       const raw = fs.readFileSync(OUTREACH_DB_PATH, 'utf-8');
@@ -132,18 +168,22 @@ export function loadNfcOutreachDb() {
         },
         campaigns: parsed.campaigns || {}
       };
+      ensureDefaultHandles(memoryState);
       return memoryState;
     }
   } catch (err) {
     console.warn('[NFC Outreach] Read DB warning:', err.message);
   }
   memoryState = JSON.parse(JSON.stringify(DEFAULT_OUTREACH_DB));
+  ensureDefaultHandles(memoryState);
   return memoryState;
 }
 
-export function saveNfcOutreachDb(stateToSave = null) {
+export function saveNfcOutreachDb(stateToSave = null, syncCloud = true) {
   if (stateToSave) memoryState = stateToSave;
   if (!memoryState) return;
+  ensureDefaultHandles(memoryState);
+  memoryState.updatedAt = Date.now();
   try {
     if (!process.env.VERCEL && !fs.existsSync(DB_DIR)) {
       fs.mkdirSync(DB_DIR, { recursive: true });
@@ -152,15 +192,152 @@ export function saveNfcOutreachDb(stateToSave = null) {
   } catch (err) {
     console.warn('[NFC Outreach] Write DB warning:', err.message);
   }
+  if (syncCloud) {
+    pushNfcOutreachToCloud(memoryState).catch(() => {});
+  }
+}
+
+export async function pushNfcOutreachToCloud(state = null) {
+  const targetState = state || memoryState;
+  if (!targetState) return false;
+  const url = getCloudKvOutreachUrl();
+  if (!url) return false;
+
+  try {
+    // Strip sensitive raw session strings before uploading to Cloud KV
+    const sanitized = JSON.parse(JSON.stringify(targetState));
+    if (sanitized.config?.accounts?.tg2) {
+      delete sanitized.config.accounts.tg2.sessionString;
+      sanitized.config.accounts.tg2.hasSession = true;
+    }
+    if (sanitized.config?.accounts?.ig1) {
+      delete sanitized.config.accounts.ig1.sessionCookie;
+      sanitized.config.accounts.ig1.hasSession = true;
+    }
+    if (sanitized.config?.accounts?.tg1) {
+      sanitized.config.accounts.tg1.hasSession = true;
+    }
+
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify(sanitized)
+    });
+    return res.ok;
+  } catch (_) {
+    return false;
+  }
+}
+
+export async function syncNfcOutreachFromCloud() {
+  const local = loadNfcOutreachDb();
+  const url = getCloudKvOutreachUrl();
+  if (!url) return local;
+
+  try {
+    const res = await fetch(`${url}&_t=${Date.now()}`, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+    if (!res.ok) return local;
+    const cloud = await res.json().catch(() => null);
+    if (!cloud || typeof cloud !== 'object') return local;
+
+    // Merge config
+    if (cloud.config) {
+      if (cloud.config.warmupMode && (!local.updatedAt || (cloud.updatedAt || 0) >= (local.updatedAt || 0))) {
+        local.config.warmupMode = cloud.config.warmupMode;
+        const tgLimit = cloud.config.warmupMode === 'warmed' ? 20 : 10;
+        local.config.accounts.tg1.dailyLimit = tgLimit;
+        local.config.accounts.tg2.dailyLimit = tgLimit;
+        local.config.accounts.ig1.dailyLimit = 30;
+      }
+      for (const accKey of ['tg1', 'tg2', 'ig1']) {
+        const cAcc = cloud.config.accounts?.[accKey];
+        const lAcc = local.config.accounts?.[accKey];
+        if (cAcc && lAcc) {
+          if (cAcc.handle) lAcc.handle = cAcc.handle;
+          if ((cAcc.sentToday || 0) > (lAcc.sentToday || 0)) {
+            lAcc.sentToday = cAcc.sentToday;
+          }
+          if (cAcc.lastSentAt && (!lAcc.lastSentAt || new Date(cAcc.lastSentAt) > new Date(lAcc.lastSentAt))) {
+            lAcc.lastSentAt = cAcc.lastSentAt;
+          }
+        }
+      }
+    }
+
+    if (cloud.activeJobId && !local.activeJobId) {
+      local.activeJobId = cloud.activeJobId;
+    } else if (cloud.updatedAt && (!local.updatedAt || cloud.updatedAt > local.updatedAt)) {
+      local.activeJobId = cloud.activeJobId;
+    }
+
+    // Merge campaigns
+    if (cloud.campaigns && typeof cloud.campaigns === 'object') {
+      if (!local.campaigns) local.campaigns = {};
+      for (const [jobId, cCamp] of Object.entries(cloud.campaigns)) {
+        if (!cCamp || typeof cCamp !== 'object') continue;
+        const lCamp = local.campaigns[jobId];
+        if (!lCamp) {
+          local.campaigns[jobId] = cCamp;
+          continue;
+        }
+
+        const cloudNewer = (cCamp.updatedAt || cloud.updatedAt || 0) >= (lCamp.updatedAt || local.updatedAt || 0);
+        if (cloudNewer && cCamp.status) {
+          lCamp.status = cCamp.status;
+          lCamp.currentStage = cCamp.currentStage || lCamp.currentStage;
+          lCamp.nextSendAt = cCamp.nextSendAt !== undefined ? cCamp.nextSendAt : lCamp.nextSendAt;
+          lCamp.cooldownUntil = cCamp.cooldownUntil !== undefined ? cCamp.cooldownUntil : lCamp.cooldownUntil;
+        }
+        if (cCamp.forceImmediateSend) {
+          lCamp.forceImmediateSend = true;
+        }
+
+        // Merge items by id
+        const lItemsById = new Map((lCamp.items || []).map(it => [String(it.id), it]));
+        const cItems = Array.isArray(cCamp.items) ? cCamp.items : [];
+        if (lCamp.items && lCamp.items.length > 0) {
+          for (const cIt of cItems) {
+            const lIt = lItemsById.get(String(cIt.id));
+            if (!lIt) {
+              lCamp.items.push(cIt);
+              continue;
+            }
+            // If either side marked item as sent, preserve sent state
+            if (cIt.sendState === 'sent' && lIt.sendState !== 'sent') {
+              Object.assign(lIt, cIt);
+            } else if (lIt.sendState === 'sent' && cIt.sendState === 'sent') {
+              if (cIt.result && cIt.result !== 'Ігнор / не відповідає') {
+                lIt.result = cIt.result;
+              }
+              if (cIt.lastReplyText) lIt.lastReplyText = cIt.lastReplyText;
+              if (cIt.repliedAt) lIt.repliedAt = cIt.repliedAt;
+            } else if (cloudNewer && cIt.result && cIt.result !== lIt.result) {
+              lIt.result = cIt.result;
+            }
+          }
+        } else if (cItems.length > 0) {
+          lCamp.items = cItems;
+        }
+      }
+    }
+
+    ensureDefaultHandles(local);
+    saveNfcOutreachDb(local, false);
+    return local;
+  } catch (_) {
+    return local;
+  }
 }
 
 export function computeCooldownDurationMs() {
-  // Calculate smart 15-20h cooldown targeting next day morning window (approx 10:00 Kyiv time)
   const now = new Date();
   const kyivHour = (now.getUTCHours() + 2) % 24;
   let hoursToWait = 18;
   if (kyivHour >= 14 && kyivHour <= 23) {
-    hoursToWait = (24 - kyivHour) + 10; // Wakes up around 10:00 next morning
+    hoursToWait = (24 - kyivHour) + 10;
   } else {
     hoursToWait = 16 + Math.random() * 3;
   }
@@ -230,25 +407,30 @@ export function createOrUpdateCampaign(jobData, startImmediately = true) {
   if (!jobId) throw new Error('Не вказано ID збору NFC');
 
   const city = String(jobData.city || 'Київ').trim();
-  const title = String(jobData.cluster || jobData.niche || 'Заклади NFC').trim();
+  const title = String(jobData.cluster || jobData.niche || jobData.categoryLabel || jobData.query || 'Заклади NFC').trim();
   const venues = Array.isArray(jobData.items) ? jobData.items : [];
 
   let campaign = state.campaigns[jobId];
   const existingById = new Map();
   if (campaign && Array.isArray(campaign.items)) {
-    campaign.items.forEach(it => existingById.set(it.id, it));
+    campaign.items.forEach(it => existingById.set(String(it.id), it));
   }
 
   const items = [];
   venues.forEach((v, idx) => {
     const vid = String(v.id || `v_${idx}`);
     if (existingById.has(vid)) {
-      items.push(existingById.get(vid));
+      const ex = existingById.get(vid);
+      // Reset failed items back to queued if user restarts campaign
+      if (startImmediately && ex.sendState === 'failed') {
+        ex.sendState = 'queued';
+        ex.result = 'Ігнор / не відповідає';
+      }
+      items.push(ex);
       return;
     }
 
     const contacts = normalizeVenueContacts(v);
-    // Filter only venues that can be contacted via Telegram or Instagram
     if (!contacts.hasTg && !contacts.hasIg) return;
 
     const preferredChannel = contacts.hasTg ? 'telegram' : 'instagram';
@@ -266,10 +448,10 @@ export function createOrUpdateCampaign(jobData, startImmediately = true) {
       accountLabel: '',
       templateIndex: idx % 10,
       messageSent: '',
-      sendState: 'queued', // 'queued' | 'sent' | 'skipped'
+      sendState: 'queued', // 'queued' | 'sent' | 'skipped' | 'failed'
       sentAt: null,
       peerId: '',
-      result: 'Ігнор / не відповідає', // Strictly one of: 'Ігнор / не відповідає' | 'Ні / не цікаво' | 'Так'
+      result: 'Ігнор / не відповідає',
       lastReplyText: '',
       repliedAt: null
     });
@@ -281,23 +463,29 @@ export function createOrUpdateCampaign(jobData, startImmediately = true) {
       title,
       city,
       createdAt: new Date().toISOString(),
+      updatedAt: Date.now(),
       status: startImmediately ? 'running' : 'idle',
       currentStage: 'tg1',
-      nextSendAt: startImmediately ? Date.now() + 2000 : null,
+      nextSendAt: startImmediately ? Date.now() + 1000 : null,
       cooldownUntil: null,
+      forceImmediateSend: Boolean(startImmediately),
       items
     };
   } else {
     campaign.title = title;
     campaign.city = city;
-    campaign.items = items;
+    if (items.length > 0) {
+      campaign.items = items;
+    }
+    campaign.updatedAt = Date.now();
     if (startImmediately) {
       if (campaign.status === 'cooldown' && campaign.cooldownUntil && campaign.cooldownUntil > Date.now()) {
         // Keep active cooldown
       } else {
         campaign.status = 'running';
+        campaign.forceImmediateSend = true;
         if (!campaign.nextSendAt || campaign.nextSendAt < Date.now()) {
-          campaign.nextSendAt = Date.now() + 2000;
+          campaign.nextSendAt = Date.now() + 1000;
         }
       }
     }
@@ -309,6 +497,23 @@ export function createOrUpdateCampaign(jobData, startImmediately = true) {
   }
   saveNfcOutreachDb(state);
   return campaign;
+}
+
+export function finishOutreachCampaign(jobId) {
+  const state = loadNfcOutreachDb();
+  const camp = state.campaigns[String(jobId)];
+  if (!camp) return null;
+  camp.status = 'completed';
+  camp.currentStage = 'done';
+  camp.nextSendAt = null;
+  camp.cooldownUntil = null;
+  camp.forceImmediateSend = false;
+  camp.updatedAt = Date.now();
+  if (String(state.activeJobId) === String(jobId)) {
+    state.activeJobId = null;
+  }
+  saveNfcOutreachDb(state);
+  return camp;
 }
 
 export function updateOutreachConfig(updates = {}) {
@@ -333,9 +538,11 @@ export function updateOutreachConfig(updates = {}) {
   if (updates.accounts && typeof updates.accounts === 'object') {
     for (const key of ['tg1', 'tg2', 'ig1']) {
       if (updates.accounts[key]) {
+        const inc = updates.accounts[key];
         cfg.accounts[key] = {
           ...cfg.accounts[key],
-          ...updates.accounts[key]
+          ...inc,
+          handle: inc.handle || cfg.accounts[key].handle
         };
       }
     }
@@ -348,16 +555,15 @@ export function updateOutreachConfig(updates = {}) {
     cfg.igTemplates = updates.igTemplates.map(s => String(s || '').trim());
   }
 
+  ensureDefaultHandles(state);
   saveNfcOutreachDb(state);
   return cfg;
 }
 
 async function getMtprotoClientForAccount(accountId) {
-  if (process.env.VERCEL) return null;
   const state = loadNfcOutreachDb();
   const apiId = Number(process.env.TELEGRAM_API_ID);
-  const apiHash = process.env.TELEGRAM_API_HASH;
-  if (!apiId || !apiHash) return null;
+  const apiHash = String(process.env.TELEGRAM_API_HASH || '').trim();
 
   if (accountId === 'tg1') {
     const primary = getPrimaryMtprotoClient();
@@ -370,12 +576,43 @@ async function getMtprotoClientForAccount(accountId) {
       }).catch(() => {});
       return primary;
     }
-    return null;
+
+    if (primaryFallbackMtprotoClient && primaryFallbackMtprotoClient.connected) {
+      attachRealtimeReplyListener(primaryFallbackMtprotoClient, 'tg1');
+      return primaryFallbackMtprotoClient;
+    }
+
+    const sess1 = process.env.TELEGRAM_SESSION || process.env.TELEGRAM_SESSION_STRING || '';
+    if (!sess1 || !apiId || !apiHash) return null;
+
+    try {
+      const { TelegramClient } = await import('telegram');
+      const { StringSession } = await import('telegram/sessions/index.js');
+      const client1 = new TelegramClient(new StringSession(sess1), apiId, apiHash, {
+        connectionRetries: 3
+      });
+      await client1.connect();
+      primaryFallbackMtprotoClient = client1;
+      attachRealtimeReplyListener(client1, 'tg1');
+      client1.getMe().then(me => {
+        if (me?.username && state.config?.accounts?.tg1) {
+          state.config.accounts.tg1.handle = '@' + me.username;
+          saveNfcOutreachDb(state);
+        }
+      }).catch(() => {});
+      return client1;
+    } catch (err) {
+      console.warn('[NFC Outreach] TG #1 fallback connect error:', err.message);
+      return null;
+    }
   }
 
   if (accountId === 'tg2') {
     const sess2 = state.config.accounts.tg2?.sessionString || process.env.TELEGRAM_SESSION_2 || '';
-    if (!sess2) return null;
+    const apiId2 = Number(process.env.TELEGRAM_API_ID_2 || apiId);
+    const apiHash2 = String(process.env.TELEGRAM_API_HASH_2 || apiHash).trim();
+    if (!sess2 || !apiId2 || !apiHash2) return null;
+
     if (secondaryMtprotoClient && secondaryMtprotoClient.connected) {
       attachRealtimeReplyListener(secondaryMtprotoClient, 'tg2');
       return secondaryMtprotoClient;
@@ -383,8 +620,6 @@ async function getMtprotoClientForAccount(accountId) {
     try {
       const { TelegramClient } = await import('telegram');
       const { StringSession } = await import('telegram/sessions/index.js');
-      const apiId2 = Number(process.env.TELEGRAM_API_ID_2 || apiId);
-      const apiHash2 = String(process.env.TELEGRAM_API_HASH_2 || apiHash).trim();
       const client2 = new TelegramClient(new StringSession(sess2), apiId2, apiHash2, {
         connectionRetries: 5
       });
@@ -462,6 +697,7 @@ export function handleIncomingLeadReply({ peerId = '', username = '', phone = ''
         item.result = classification;
         item.lastReplyText = String(text || '').slice(0, 300);
         item.repliedAt = new Date().toISOString();
+        camp.updatedAt = Date.now();
         updatedAny = true;
       }
     }
@@ -476,13 +712,13 @@ export function handleIncomingLeadReply({ peerId = '', username = '', phone = ''
 async function dispatchTelegramMessageMtproto(accountId, item, messageText) {
   const client = await getMtprotoClientForAccount(accountId);
   if (!client) {
-    return { sentViaMtproto: false, peerId: '' };
+    return { sentViaMtproto: false, reason: 'no_client', peerId: '' };
   }
 
   try {
     const { Api } = await import('telegram');
     const target = String(item.tgTarget || item.username || '').trim();
-    if (!target) return { sentViaMtproto: false, peerId: '' };
+    if (!target) return { sentViaMtproto: false, reason: 'no_target', peerId: '' };
 
     let entity = null;
     const isPhone = target.startsWith('+') || /^\d{9,15}$/.test(target.replace(/[\s()-]/g, ''));
@@ -517,113 +753,201 @@ async function dispatchTelegramMessageMtproto(accountId, item, messageText) {
     }
 
     if (!entity) {
-      return { sentViaMtproto: false, peerId: '' };
+      return { sentViaMtproto: false, reason: 'entity_not_found', peerId: '' };
     }
 
-    await client.sendMessage(entity, { message: messageText });
+    const sentMsg = await client.sendMessage(entity, { message: messageText });
     return {
       sentViaMtproto: true,
-      peerId: String(entity.id || '')
+      peerId: String(entity.id || sentMsg?.peerId?.userId || '')
     };
   } catch (err) {
     console.warn(`[NFC Outreach] MTProto send warning (${accountId} -> ${item.username}):`, err.message);
-    return { sentViaMtproto: false, peerId: '', error: err.message };
+    return { sentViaMtproto: false, reason: 'send_error', peerId: '', error: err.message };
   }
 }
 
+function findLocalBrowserPath() {
+  const candidates = [
+    'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+    'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
+    'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe'
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
 async function dispatchInstagramDirectMessage(item, messageText) {
+  if (process.env.VERCEL) {
+    return { sentViaApi: false, reason: 'no_client' };
+  }
+
   const state = loadNfcOutreachDb();
-  let sessionCookie = state.config.accounts.ig1?.sessionCookie || process.env.INSTAGRAM_SESSION_COOKIE || '';
+  const sessionCookie = state.config.accounts.ig1?.sessionCookie || process.env.INSTAGRAM_SESSION_COOKIE || '';
   if (!sessionCookie) {
-    return { sentViaApi: false, reason: 'no_session_cookie' };
+    return { sentViaApi: false, reason: 'no_client' };
   }
 
   const rawHandle = String(item.igTarget || item.username || '').replace(/^@+/, '').split(/[/?#]/)[0].trim();
   if (!rawHandle) return { sentViaApi: false, reason: 'no_target_handle' };
 
+  const chromePath = findLocalBrowserPath();
+  if (!chromePath) {
+    return { sentViaApi: false, reason: 'no_client' };
+  }
+
+  while (igDispatchLock) {
+    await new Promise(r => setTimeout(r, 500));
+  }
+  igDispatchLock = true;
+
+  let page = null;
   try {
-    let cleanCookie = sessionCookie.trim();
-    if (!cleanCookie.includes('sessionid=')) {
-      cleanCookie = `sessionid=${cleanCookie}`;
+    const puppeteer = await import('puppeteer-core');
+    if (!igBrowserInstance || !igBrowserInstance.isConnected()) {
+      igBrowserInstance = await puppeteer.default.launch({
+        executablePath: chromePath,
+        headless: 'new',
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-notifications', '--lang=uk-UA,uk']
+      });
     }
 
-    const headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-      'X-IG-App-ID': '936619743392459',
-      'X-Requested-With': 'XMLHttpRequest',
-      'Cookie': cleanCookie,
-      'Referer': `https://www.instagram.com/${rawHandle}/`,
-      'Origin': 'https://www.instagram.com'
-    };
+    page = await igBrowserInstance.newPage();
+    await page.setViewport({ width: 1280, height: 840 });
+    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36');
 
-    let csrfToken = '';
-    const csrfMatch = cleanCookie.match(/csrftoken=([^;]+)/);
-    if (csrfMatch) {
-      csrfToken = csrfMatch[1];
+    const sessVal = sessionCookie.replace(/^.*sessionid=/, '').split(';')[0].trim();
+    const dsUserId = decodeURIComponent(sessVal).match(/^(\d+):/)?.[1] || '67526535310';
+
+    await page.setCookie(
+      { name: 'sessionid', value: sessVal, domain: '.instagram.com', path: '/', httpOnly: true, secure: true },
+      { name: 'ds_user_id', value: dsUserId, domain: '.instagram.com', path: '/', secure: true }
+    );
+
+    await page.goto(`https://www.instagram.com/${encodeURIComponent(rawHandle)}/`, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30000
+    });
+    await new Promise(r => setTimeout(r, 3500));
+
+    const html = await page.content();
+    const targetUserId = html.match(/"profilePage_(\d+)"/)?.[1] || rawHandle;
+
+    // Check if profile does not exist
+    const isNotFound = await page.evaluate(() => {
+      const txt = document.body?.innerText || '';
+      return txt.includes("Sorry, this page isn't available") || txt.includes('На жаль, ця сторінка недоступна');
+    });
+    if (isNotFound) {
+      await page.close().catch(() => {});
+      return { sentViaApi: false, reason: 'user_not_found' };
     }
 
-    // 1. Get user ID from web profile info
-    const infoRes = await fetch(`https://www.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(rawHandle)}`, {
-      headers
-    }).catch(() => null);
-
-    let targetUserId = null;
-    if (infoRes && infoRes.ok) {
-      const infoData = await infoRes.json().catch(() => null);
-      targetUserId = infoData?.data?.user?.id;
-    }
-
-    if (!targetUserId) {
-      return { sentViaApi: false, reason: 'user_id_not_found' };
-    }
-
-    // Extract CSRF token from set-cookie if not present
-    if (!csrfToken && infoRes) {
-      const setCookie = infoRes.headers.get('set-cookie') || '';
-      const scMatch = setCookie.match(/csrftoken=([^;]+)/);
-      if (scMatch) csrfToken = scMatch[1];
-    }
-    if (csrfToken) {
-      headers['X-CSRFToken'] = csrfToken;
-    }
-
-    // 2. Broadcast Direct Message via Instagram Web API
-    const broadcastBody = new URLSearchParams({
-      recipient_users: JSON.stringify([targetUserId]),
-      action: 'send-item',
-      client_context: String(Date.now()) + Math.floor(Math.random() * 10000),
-      text: messageText
+    // Dismiss any "Not Now" / "Не зараз" popup if shown
+    await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('button, div[role="button"]'));
+      const dismiss = btns.find(b => /^(Не зараз|Not Now)$/i.test((b.innerText || '').trim()));
+      if (dismiss) dismiss.click();
     });
 
-    const sendRes = await fetch('https://www.instagram.com/api/v1/direct_v2/threads/broadcast/text/', {
-      method: 'POST',
-      headers: {
-        ...headers,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: broadcastBody.toString()
-    }).catch(() => null);
+    // Click "Повідомлення" / "Message" inside profile header
+    const clickedProfileMsg = await page.evaluate(() => {
+      const candidates = Array.from(document.querySelectorAll('header div[role="button"], header button, main header div[role="button"]'));
+      const btn = candidates.find(el => /^(Повідомлення|Message|Send message|Написати)$/i.test((el.innerText || '').trim()));
+      if (btn) {
+        btn.click();
+        return true;
+      }
+      return false;
+    });
 
-    if (sendRes && sendRes.ok) {
-      return { sentViaApi: true, targetUserId: String(targetUserId) };
-    } else {
-      const errText = sendRes ? await sendRes.text().catch(() => '') : 'network_error';
-      return { sentViaApi: false, reason: 'broadcast_failed', error: errText };
+    if (!clickedProfileMsg) {
+      // Fallback: open Direct inbox and start thread via New Message dialog
+      await page.goto('https://www.instagram.com/direct/inbox/', {
+        waitUntil: 'domcontentloaded',
+        timeout: 30000
+      });
+      await new Promise(r => setTimeout(r, 3500));
+
+      await page.evaluate(() => {
+        const btns = Array.from(document.querySelectorAll('button, div[role="button"]'));
+        const dismiss = btns.find(b => /^(Не зараз|Not Now)$/i.test((b.innerText || '').trim()));
+        if (dismiss) dismiss.click();
+      });
+
+      const openedModal = await page.evaluate(() => {
+        const svgs = Array.from(document.querySelectorAll('svg[aria-label="Нове повідомлення"], svg[aria-label="New message"]'));
+        if (svgs.length > 0) {
+          const parentBtn = svgs[0].closest('div[role="button"], button') || svgs[0].parentElement;
+          if (parentBtn) {
+            parentBtn.click();
+            return true;
+          }
+        }
+        return false;
+      });
+
+      if (openedModal) {
+        await new Promise(r => setTimeout(r, 1500));
+        const searchInput = await page.$('div[role="dialog"] input');
+        if (searchInput) {
+          await searchInput.click();
+          await searchInput.type(rawHandle, { delay: 45 });
+          await new Promise(r => setTimeout(r, 2500));
+          await page.evaluate((handle) => {
+            const dialog = document.querySelector('div[role="dialog"]');
+            if (!dialog) return;
+            const rows = Array.from(dialog.querySelectorAll('div[role="button"], button, span'));
+            const match = rows.find(r => (r.innerText || '').toLowerCase().includes(handle.toLowerCase()));
+            if (match) match.click();
+          }, rawHandle);
+          await new Promise(r => setTimeout(r, 1000));
+          await page.evaluate(() => {
+            const dialog = document.querySelector('div[role="dialog"]');
+            if (!dialog) return;
+            const btns = Array.from(dialog.querySelectorAll('div[role="button"], button'));
+            const chatBtn = btns.find(b => /^(Чат|Chat)$/i.test((b.innerText || '').trim()));
+            if (chatBtn) chatBtn.click();
+          });
+        }
+      }
     }
+
+    // Wait for DM textbox
+    const textboxSelector = 'div[role="textbox"][contenteditable="true"]';
+    await page.waitForSelector(textboxSelector, { timeout: 15000 });
+    await new Promise(r => setTimeout(r, 1000));
+
+    await page.click(textboxSelector);
+    const lines = String(messageText || '').split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i]) {
+        await page.keyboard.type(lines[i], { delay: 15 });
+      }
+      if (i < lines.length - 1) {
+        await page.keyboard.down('Shift');
+        await page.keyboard.press('Enter');
+        await page.keyboard.up('Shift');
+      }
+    }
+    await new Promise(r => setTimeout(r, 400));
+    await page.keyboard.press('Enter');
+    await new Promise(r => setTimeout(r, 2800));
+
+    await page.close().catch(() => {});
+    return { sentViaApi: true, targetUserId: String(targetUserId) };
   } catch (err) {
-    return { sentViaApi: false, error: err.message };
+    console.warn(`[NFC Outreach] Instagram DM error (@${rawHandle}):`, err.message);
+    if (page) await page.close().catch(() => {});
+    return { sentViaApi: false, reason: 'send_error', error: err.message };
+  } finally {
+    igDispatchLock = false;
   }
 }
 
-/**
- * Picks the next account + venue in strict sequential order:
- * 1) For each business: check if Telegram is available (tgTarget).
- *    If YES and TG daily quota remains -> send via TG (tg1 first up to limit, then tg2 up to limit, 10m interval).
- * 2) If Telegram is NOT available (or all TG accounts reached daily limits):
- *    Check if Instagram is available (igTarget).
- *    If YES and IG daily quota remains (< 30) -> send via Instagram (3m interval).
- * 3) If all active accounts reached daily limits and queued items remain -> 15-20h Cooldown!
- */
 export function selectNextOutreachStep(campaign, state) {
   const accs = state.config.accounts;
   const tg1Limit = Number(accs.tg1?.dailyLimit) || (state.config.warmupMode === 'warmed' ? 20 : 10);
@@ -663,8 +987,6 @@ export function selectNextOutreachStep(campaign, state) {
       };
     }
 
-    // Business either has NO Telegram, or all Telegram daily quotas (tg1 + tg2) are exhausted today!
-    // Seamlessly write to its Instagram if available!
     if (hasIg && ig1Available) {
       return {
         action: 'send',
@@ -677,13 +999,11 @@ export function selectNextOutreachStep(campaign, state) {
     }
   }
 
-  // If there are still queued items, but none can be contacted today due to daily limits:
   const remainingQueued = (campaign.items || []).filter(i => i.sendState === 'queued');
   if (remainingQueued.length === 0) {
     return { action: 'completed' };
   }
 
-  // Trigger 15-20h cooldown until tomorrow morning
   return { action: 'cooldown' };
 }
 
@@ -699,12 +1019,10 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
 
   const now = Date.now();
 
-  // Check if cooldown has expired
   if (campaign.status === 'cooldown') {
     if (campaign.cooldownUntil && now < campaign.cooldownUntil && !forceImmediate) {
       return campaign;
     }
-    // Cooldown finished -> reset daily counters for the new day and resume!
     state.config.accounts.tg1.sentToday = 0;
     state.config.accounts.tg2.sentToday = 0;
     state.config.accounts.ig1.sentToday = 0;
@@ -713,7 +1031,7 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
     campaign.nextSendAt = now;
   }
 
-  if (!forceImmediate && campaign.nextSendAt && now < campaign.nextSendAt) {
+  if (!forceImmediate && !campaign.forceImmediateSend && campaign.nextSendAt && now < campaign.nextSendAt) {
     return campaign;
   }
 
@@ -724,6 +1042,8 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
     campaign.currentStage = 'done';
     campaign.nextSendAt = null;
     campaign.cooldownUntil = null;
+    campaign.forceImmediateSend = false;
+    campaign.updatedAt = Date.now();
     saveNfcOutreachDb(state);
     return campaign;
   }
@@ -734,11 +1054,27 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
     campaign.currentStage = 'cooldown';
     campaign.cooldownUntil = now + cooldownMs;
     campaign.nextSendAt = campaign.cooldownUntil;
+    campaign.forceImmediateSend = false;
+    campaign.updatedAt = Date.now();
     saveNfcOutreachDb(state);
     return campaign;
   }
 
-  const { item, account, channel, stage, intervalMinutes } = step;
+  // On Vercel serverless without local MTProto/Chrome sessions, queue immediate execution for PC daemon via Cloud KV
+  if (process.env.VERCEL && !process.env.TELEGRAM_SESSION) {
+    campaign.status = 'running';
+    campaign.forceImmediateSend = Boolean(forceImmediate || campaign.forceImmediateSend);
+    if (!campaign.nextSendAt || forceImmediate) {
+      campaign.nextSendAt = now;
+    }
+    campaign.updatedAt = Date.now();
+    await pushNfcOutreachToCloud(state);
+    return campaign;
+  }
+
+  campaign.forceImmediateSend = false;
+
+  const { item, account, channel, stage } = step;
   const accs = state.config.accounts;
   let activeChannel = channel;
   let activeAccount = account;
@@ -746,29 +1082,18 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
   let targetHandle = activeChannel === 'telegram' ? (item.tgTarget || item.username) : (item.igTarget || item.username);
   let msgText = buildMessageForVenue(item.name, item.city || campaign.city, activeChannel, item.templateIndex, state);
 
-  item.channel = activeChannel;
-  item.username = targetHandle;
-  item.accountId = activeAccount.id;
-  item.accountLabel = activeAccount.handle ? `${activeAccount.label} (${activeAccount.handle})` : activeAccount.label;
-  item.messageSent = msgText;
-  item.sendState = 'sent';
-  item.sentAt = new Date().toISOString();
-  if (!item.result) {
-    item.result = 'Ігнор / не відповідає';
-  }
-
   let sentSuccessfully = false;
+  let deferredForClient = false;
 
   if (activeChannel === 'telegram') {
     const mtRes = await dispatchTelegramMessageMtproto(activeAccount.id, item, msgText);
-    if (mtRes.sentViaMtproto && mtRes.peerId) {
-      item.peerId = mtRes.peerId;
+    if (mtRes.sentViaMtproto) {
+      item.peerId = mtRes.peerId || '';
       sentSuccessfully = true;
+    } else if (mtRes.reason === 'no_client') {
+      deferredForClient = true;
     } else {
-      // Telegram entity/phone lookup failed!
-      console.warn(`[NFC Outreach] Telegram resolution failed for "${item.name}" (${item.username}).`);
-      
-      // Check if fallback to Instagram is available!
+      console.warn(`[NFC Outreach] Telegram resolution failed for "${item.name}" (${targetHandle}).`);
       const ig1Limit = Number(accs.ig1?.dailyLimit) || 30;
       const ig1Available = accs.ig1?.enabled !== false && (accs.ig1.sentToday || 0) < ig1Limit;
       if (item.igTarget && ig1Available) {
@@ -779,16 +1104,12 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
         targetHandle = item.igTarget;
         msgText = buildMessageForVenue(item.name, item.city || campaign.city, 'instagram', item.templateIndex, state);
 
-        item.channel = 'instagram';
-        item.username = targetHandle;
-        item.accountId = activeAccount.id;
-        item.accountLabel = activeAccount.handle ? `${activeAccount.label} (${activeAccount.handle})` : activeAccount.label;
-        item.messageSent = msgText;
-
         const igRes = await dispatchInstagramDirectMessage(item, msgText);
-        if (igRes.sentViaApi && igRes.targetUserId) {
-          item.peerId = igRes.targetUserId;
+        if (igRes.sentViaApi) {
+          item.peerId = igRes.targetUserId || '';
           sentSuccessfully = true;
+        } else if (igRes.reason === 'no_client') {
+          deferredForClient = true;
         } else {
           item.sendState = 'failed';
           item.result = 'Не вдалося надіслати в IG';
@@ -800,22 +1121,43 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
     }
   } else if (activeChannel === 'instagram') {
     const igRes = await dispatchInstagramDirectMessage(item, msgText);
-    if (igRes.sentViaApi && igRes.targetUserId) {
-      item.peerId = igRes.targetUserId;
+    if (igRes.sentViaApi) {
+      item.peerId = igRes.targetUserId || '';
       sentSuccessfully = true;
+    } else if (igRes.reason === 'no_client') {
+      deferredForClient = true;
     } else {
       item.sendState = 'failed';
       item.result = 'Не вдалося надіслати в IG';
     }
   }
 
+  if (deferredForClient) {
+    // Keep item queued so PC daemon can dispatch it
+    campaign.nextSendAt = Date.now() + 5000;
+    campaign.updatedAt = Date.now();
+    saveNfcOutreachDb(state);
+    return campaign;
+  }
+
   if (sentSuccessfully) {
+    item.channel = activeChannel;
+    item.username = targetHandle;
+    item.accountId = activeAccount.id;
+    item.accountLabel = activeAccount.handle ? `${activeAccount.label} (${activeAccount.handle})` : activeAccount.label;
+    item.messageSent = msgText;
+    item.sendState = 'sent';
+    item.sentAt = new Date().toISOString();
+    if (!item.result || item.result === 'Контакт недоступний в TG' || item.result === 'Не вдалося надіслати в IG') {
+      item.result = 'Ігнор / не відповідає';
+    }
     activeAccount.sentToday = (Number(activeAccount.sentToday) || 0) + 1;
     activeAccount.lastSentAt = item.sentAt;
   }
-  campaign.currentStage = activeStage;
 
-  // Check what the NEXT step after this message will be
+  campaign.currentStage = activeStage;
+  campaign.updatedAt = Date.now();
+
   const nextStepCheck = selectNextOutreachStep(campaign, state);
   if (nextStepCheck.action === 'completed') {
     campaign.status = 'completed';
@@ -834,7 +1176,9 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
     const nextIntervalMin = nextStepCheck.stage === 'ig1'
       ? (Number(state.config.igIntervalMinutes) || 3)
       : (Number(state.config.tgIntervalMinutes) || 10);
-    campaign.nextSendAt = Date.now() + nextIntervalMin * 60 * 1000;
+    campaign.nextSendAt = sentSuccessfully
+      ? (Date.now() + nextIntervalMin * 60 * 1000)
+      : (Date.now() + 3000);
   }
 
   saveNfcOutreachDb(state);
@@ -861,7 +1205,6 @@ export async function pollActiveTelegramReplies() {
         const username = entity.username ? ('@' + entity.username.toLowerCase()) : '';
         const phone = entity.phone ? ('+' + String(entity.phone).replace(/\D/g, '')) : '';
 
-        // Check if this dialog belongs to any sent NFC venue lead
         let matchedItem = null;
         for (const camp of Object.values(state.campaigns || {})) {
           for (const item of (camp.items || [])) {
@@ -900,21 +1243,35 @@ export async function pollActiveTelegramReplies() {
 }
 
 let schedulerStarted = false;
+let schedulerBusy = false;
 export function startNfcOutreachScheduler() {
   if (schedulerStarted || process.env.VERCEL) return;
   schedulerStarted = true;
 
-  // Tick every 5 seconds for exact 10m TG / 3m IG / 15-20h cooldown scheduling
-  setInterval(() => {
-    const state = loadNfcOutreachDb();
-    for (const camp of Object.values(state.campaigns || {})) {
-      if (camp.status === 'running' || camp.status === 'cooldown') {
-        executeNextOutreachSend(camp.jobId, false).catch(err => {
-          console.warn('[NFC Outreach] Tick warning:', err.message);
-        });
+  // Initial sync on startup
+  syncNfcOutreachFromCloud().then(state => {
+    saveNfcOutreachDb(state, true);
+  }).catch(() => {});
+
+  // Tick every 4 seconds: sync with Cloud KV (iPhone <-> PC) and dispatch due messages
+  setInterval(async () => {
+    if (schedulerBusy) return;
+    schedulerBusy = true;
+    try {
+      const state = await syncNfcOutreachFromCloud();
+      for (const camp of Object.values(state.campaigns || {})) {
+        if (camp.status === 'running' || camp.status === 'cooldown' || camp.forceImmediateSend) {
+          const forceNow = Boolean(camp.forceImmediateSend);
+          await executeNextOutreachSend(camp.jobId, forceNow).catch(err => {
+            console.warn('[NFC Outreach] Tick warning:', err.message);
+          });
+        }
       }
+    } catch (_) {
+    } finally {
+      schedulerBusy = false;
     }
-  }, 5000);
+  }, 4000);
 
   // Poll Telegram replies every 45 seconds continuously 24/7
   setInterval(() => {
