@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794600326234-630",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Maxon",
+      "authorUsername": "@tg_id_571621328",
+      "title": "🎬 Вітаю! Я Максим — відеомонтажер із досвідом понад 3 роки.",
+      "text": "🎬 Вітаю! Я Максим — відеомонтажер із досвідом понад 3 роки.\n\nПрацюю з YouTube, Reels, Shorts, TikTok, рекламними та комерційними проєктами. За цей час долучився до запуску кількох успішних проєктів і працював із різними нішами бізнесу.\n\nСтворюю динамічний, сучасний монтаж, який утримує увагу глядача, завжди дотримуюся дедлайнів і відповідально ставлюся до кожного проєкту.\n\n💰 Вартість послуг — демократична та залежить від завдання.\n\n📩 Якщо шукаєте монтажера для разової роботи або довгострокової співпраці — пишіть у приватні повідомлення. Із задоволенням надішлю портфоліо та відповім на всі запитання.",
+      "date": "2026-11-13T20:05:26.234Z",
+      "dateFormatted": "Сьогодні, 22:05",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 65,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794598548069-6390",
       "category": "marketing",
       "categoryName": "Маркетинг",
