@@ -891,7 +891,7 @@ async function dispatchInstagramDirectMessage(item, messageText) {
   let page = null;
   try {
     const puppeteer = await import('puppeteer-core');
-    if (!igBrowserInstance || !igBrowserInstance.isConnected()) {
+    if (!igBrowserInstance || !igBrowserInstance.connected) {
       igBrowserInstance = await puppeteer.default.launch({
         executablePath: chromePath,
         headless: 'new',
@@ -1036,7 +1036,7 @@ const UA_STOP_WORDS = new Set([
   'кафе', 'кавярня', 'кав\'ярня', 'ресторан', 'бар', 'паб', 'піцерія', 'піца',
   'суші', 'клуб', 'салон', 'студія', 'клініка', 'стоматологія', 'магазин',
   'крамниця', 'заклад', 'пекарня', 'кондитерська', 'барбершоп', 'офіс',
-  'м', 'місто', 'city', 'cafe', 'coffee', 'bar', 'restaurant', 'studio', 'shop', 'club'
+  'м', 'місто', 'city', 'cafe', 'coffee', 'bar', 'restaurant', 'studio', 'shop', 'club', 'the', 'and', 'for'
 ]);
 
 const CYR_TO_LAT_MAP = {
@@ -1068,7 +1068,6 @@ function getVenueMatchTokens(venueName) {
     const tr = transliterateToLat(w).replace(/[^a-z0-9]/g, '');
     if (tr.length >= 3) {
       tokens.add(tr);
-      // Common Russian/Ukrainian transliteration variants (chornomorka/chernomorka, hlib/khlib, y/i)
       tokens.add(tr.replace(/kh/g, 'h').replace(/ye/g, 'e').replace(/yi/g, 'i').replace(/yi/g, 'y'));
       tokens.add(tr.replace(/o/g, 'e'));
     }
@@ -1094,103 +1093,282 @@ function scoreCandidateRelevance(candidateText, venueName) {
   return score;
 }
 
+const CITY_ALIASES_MAP = {
+  'вінниц': ['вінниця', 'вінниці', 'вінницьк', 'винница', 'виннице', 'vinnytsia', 'vinnitsa', 'vinnytsa', 'vinn', '_vin', '.vin', '_vn', '.vn'],
+  'київ': ['київ', 'києві', 'києва', 'киев', 'киеве', 'kyiv', 'kiev'],
+  'львів': ['львів', 'львові', 'львова', 'львов', 'lviv', 'lvov'],
+  'одес': ['одеса', 'одесі', 'одесса', 'odesa', 'odessa'],
+  'дніпр': ['дніпро', 'дніпрі', 'днепр', 'dnipro', 'dnepr'],
+  'харків': ['харків', 'харкові', 'харьков', 'kharkiv', 'kharkov'],
+  'хмельниц': ['хмельницьк', 'хмельницк', 'khmelnytskyi', 'khmelnitsky'],
+  'житомир': ['житомир', 'zhytomyr', 'zhitomir'],
+  'терноп': ['тернопіль', 'тернополі', 'тернополь', 'ternopil'],
+  'черкас': ['черкаси', 'черкасах', 'черкассы', 'cherkasy'],
+  'полтав': ['полтава', 'полтаві', 'полтаве', 'poltava'],
+  'рівн': ['рівне', 'рівному', 'ровно', 'rivne'],
+  'франків': ['івано-франківськ', 'франківськ', 'ivano-frankivsk', 'frankivsk'],
+  'чернівц': ['чернівці', 'чернівцях', 'черновцы', 'chernivtsi'],
+  'луцьк': ['луцьк', 'луцк', 'lutsk'],
+  'ужгород': ['ужгород', 'uzhhorod', 'uzhgorod']
+};
+
+function getCityVariants(city) {
+  const c = String(city || '').toLowerCase().trim();
+  if (!c || c === 'україна' || c === 'власний список') return [];
+  for (const [root, aliases] of Object.entries(CITY_ALIASES_MAP)) {
+    if (c.includes(root) || aliases.some(a => a.length >= 4 && c.includes(a))) {
+      return aliases;
+    }
+  }
+  const lat = transliterateToLat(c).replace(/[^a-z0-9]/g, '');
+  const list = [c];
+  if (c.length >= 5) list.push(c.slice(0, -1));
+  if (lat.length >= 4) list.push(lat);
+  return Array.from(new Set(list));
+}
+
+function textMatchesCity(text, targetCity) {
+  const variants = getCityVariants(targetCity);
+  if (variants.length === 0) return false;
+  const hay = String(text || '').toLowerCase();
+  const hayLat = transliterateToLat(hay);
+  return variants.some(v => hay.includes(v) || (v.length >= 4 && hayLat.includes(v)));
+}
+
+function hasForeignCityMismatch(text, targetCity) {
+  const variants = getCityVariants(targetCity);
+  if (variants.length === 0) return false;
+  if (textMatchesCity(text, targetCity)) return false;
+  const hay = String(text || '').toLowerCase();
+  for (const [root, aliases] of Object.entries(CITY_ALIASES_MAP)) {
+    if (variants.some(v => v.includes(root) || aliases.includes(v))) continue;
+    // Match explicit full city names/roots (skip short handle-only suffixes like _vin/.vn)
+    const explicitHit = aliases.some(a => a.length >= 4 && !a.startsWith('_') && !a.startsWith('.') && hay.includes(a));
+    if (explicitHit) return true;
+  }
+  return false;
+}
+
+const NOISE_PROFILE_RE = /(новини|тривог|світло|подслушано|підслухано|афіша|барахолка|огляди|блогер|відгуки|каталог заклад|vgorode|vinbazar|afisha|truexa|typical_|podslushano|foodblog|food_blog|guidenet|work_|robota_|vakans|rabota|реклама в |туристичн|офіс туризму)/i;
+const BOT_OR_SPAM_TG_RE = /(казино|ставк|крипт|crypto|vip signal|інтим|escort|арбітраж|гарант|реклама і співпраця лише)/i;
+const VENUE_BUSINESS_SIGNAL_RE = /(ресторан|кафе|кав['’ʼ]?ярн|кофейн|бар|паб|піц|суші|салон|студія|барбер|стоматолог|клініка|бронь|резерв|заброн|меню|доставк|вул\.|просп\.|пров\.|графік|щодня|запис|direct|по замовленн|заклад|кухня|гостей|готель|рецепц|адмін)/i;
+
 const IG_RESERVED_PATHS = new Set([
-  'explore', 'p', 'reels', 'reel', 'stories', 'direct', 'accounts', 'tags', 'tv', 'locations', 'directory', 'about', 'legal'
+  'explore', 'p', 'reels', 'reel', 'stories', 'direct', 'accounts', 'tags', 'tv', 'locations', 'directory', 'about', 'legal', 'popular', 'share'
 ]);
 
 const TG_RESERVED_PATHS = new Set([
-  's', 'joinchat', 'addstickers', 'share', 'iv', 'proxy', 'socks', 'setlanguage', 'addlist', 'boost'
+  's', 'joinchat', 'addstickers', 'share', 'iv', 'proxy', 'socks', 'setlanguage', 'addlist', 'boost', 'c'
 ]);
+
+const BIO_LINK_DOMAINS_RE = /https?:\/\/(?:www\.)?(?:linktr\.ee|taplink\.cc|mssg\.me|hipolink\.me|beacons\.ai|bento\.me|campsite\.bio|bio\.link)\/[a-zA-Z0-9._-]+/gi;
+
+function extractPhonesFromText(str) {
+  const out = new Set();
+  const s = String(str || '');
+  const matches = s.matchAll(/(?:\+?38[\s\-()]*)?0[\s\-()]*\d{2}[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2}/g);
+  for (const m of matches) {
+    const digits = m[0].replace(/\D/g, '');
+    const norm = digits.startsWith('380') ? digits : (digits.startsWith('0') ? ('38' + digits) : '');
+    if (norm.length === 12 && norm.startsWith('380')) {
+      out.add('+' + norm);
+    }
+  }
+  return Array.from(out);
+}
+
+function isUkrainianMobileNormalized(phone) {
+  const digits = String(phone || '').replace(/\D/g, '');
+  return /^380(50|63|66|67|68|73|75|77|89|91|92|93|94|95|96|97|98|99)\d{7}$/.test(digits);
+}
 
 function extractSocialHandlesFromHtml(html, baseUrl = '') {
   const igSet = new Set();
   const tgSet = new Set();
+  const linktreeSet = new Set();
   const str = String(html || '');
 
   for (const m of str.matchAll(/(?:https?:\/\/)?(?:www\.)?instagram\.com\/([a-zA-Z0-9._]{2,30})/gi)) {
     const h = m[1].replace(/[\/?#&"'<>].*$/, '').trim().toLowerCase();
-    if (h && !IG_RESERVED_PATHS.has(h) && !h.endsWith('.js') && !h.endsWith('.css') && !h.endsWith('.png')) {
+    if (h && !IG_RESERVED_PATHS.has(h) && !h.endsWith('.js') && !h.endsWith('.css') && !h.endsWith('.png') && !h.endsWith('.jpg')) {
       igSet.add('@' + h);
     }
   }
 
-  for (const m of str.matchAll(/(?:https?:\/\/)?(?:www\.)?(?:t\.me|telegram\.me)\/([a-zA-Z0-9_]{4,32})/gi)) {
+  // Handle both t.me/handle and t.me/s/handle (public channel web preview URLs)
+  for (const m of str.matchAll(/(?:https?:\/\/)?(?:www\.)?(?:t\.me|telegram\.me)\/(?:s\/)?([a-zA-Z0-9_]{4,32})/gi)) {
     const h = m[1].replace(/[\/?#&"'<>].*$/, '').trim().toLowerCase();
     if (h && !TG_RESERVED_PATHS.has(h)) {
       tgSet.add('@' + h);
     }
   }
 
+  for (const m of str.matchAll(BIO_LINK_DOMAINS_RE)) {
+    linktreeSet.add(m[0].replace(/[)"'<>]+$/, ''));
+  }
+
   return {
     igHandles: Array.from(igSet),
-    tgHandles: Array.from(tgSet)
+    tgHandles: Array.from(tgSet),
+    phones: extractPhonesFromText(str),
+    linktreeUrls: Array.from(linktreeSet)
   };
 }
 
-async function lookupGoogleMapsSinglePlace(venueName, city) {
-  if (process.env.VERCEL) return { phone: '', website: '', address: '', igHandles: [], tgHandles: [] };
-  const chromePath = findLocalBrowserPath();
-  if (!chromePath) return { phone: '', website: '', address: '', igHandles: [], tgHandles: [] };
+function extractBioTelegramMentions(text, excludeHandles = []) {
+  const excluded = new Set(excludeHandles.map(h => h.replace(/^@+/, '').toLowerCase()));
+  const out = new Set();
+  const s = String(text || '');
 
+  // Explicit t.me URLs anywhere in bio/posts
+  for (const m of s.matchAll(/(?:https?:\/\/)?(?:www\.)?(?:t\.me|telegram\.me)\/(?:s\/)?([a-zA-Z0-9_]{4,32})/gi)) {
+    const h = m[1].replace(/[\/?#&"'<>].*$/, '').trim().toLowerCase();
+    if (h && !TG_RESERVED_PATHS.has(h) && !h.endsWith('bot') && !excluded.has(h)) {
+      out.add('@' + h);
+    }
+  }
+
+  // @username mentions in bio/posts accompanied by TG/manager/booking context (not IG context)
+  for (const m of s.matchAll(/@([a-zA-Z0-9_]{4,32})/g)) {
+    const h = m[1].toLowerCase();
+    if (h.endsWith('bot') || excluded.has(h)) continue;
+    const idx = m.index || 0;
+    const before = s.slice(Math.max(0, idx - 45), idx).toLowerCase();
+    const after = s.slice(idx + m[0].length, idx + m[0].length + 25).toLowerCase();
+    const isIgLabeled = /(?:inst|ig|інст|інста)[\s:]*$/i.test(before);
+    const hasTgContext = /(?:tg|тг|telegram|телеграм|адмін|менеджер|замовлен|брон|резерв|пишіть|зв['’]?язок|співпрац|менедж|координат)/i.test(before + ' ' + after);
+    if (!isIgLabeled && hasTgContext) {
+      out.add('@' + h);
+    }
+  }
+  return Array.from(out);
+}
+
+async function fetchExternalBioLinks(urls, maxLinks = 2) {
+  const igSet = new Set();
+  const tgSet = new Set();
+  const phoneSet = new Set();
+  const uniqueUrls = Array.from(new Set((urls || []).filter(u => /^https?:\/\//i.test(u)))).slice(0, maxLinks);
+  for (const url of uniqueUrls) {
+    try {
+      const res = await fetch(url, {
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Safari/537.36' },
+        signal: AbortSignal.timeout(4000)
+      });
+      if (!res.ok) continue;
+      const html = await res.text();
+      const ext = extractSocialHandlesFromHtml(html, url);
+      ext.igHandles.forEach(h => igSet.add(h));
+      ext.tgHandles.forEach(h => tgSet.add(h));
+      ext.phones.forEach(p => phoneSet.add(p));
+    } catch (_) {}
+  }
+  return {
+    igHandles: Array.from(igSet),
+    tgHandles: Array.from(tgSet),
+    phones: Array.from(phoneSet)
+  };
+}
+
+async function withLockedChromePage(fn) {
+  const chromePath = findLocalBrowserPath();
+  if (!chromePath) return null;
   while (igDispatchLock) {
-    await new Promise(r => setTimeout(r, 300));
+    await new Promise(r => setTimeout(r, 250));
   }
   igDispatchLock = true;
   let page = null;
   try {
     const puppeteer = await import('puppeteer-core');
-    if (!igBrowserInstance || !igBrowserInstance.isConnected()) {
+    if (!igBrowserInstance || !igBrowserInstance.connected) {
       igBrowserInstance = await puppeteer.default.launch({
         executablePath: chromePath,
         headless: 'new',
         args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-notifications', '--lang=uk-UA,uk']
       });
     }
-
     page = await igBrowserInstance.newPage();
     await page.setViewport({ width: 1280, height: 840 });
     await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36');
-
-    const queryParts = [venueName, (city && city !== 'Україна' && city !== 'Власний список') ? city : ''].filter(Boolean);
-    const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(queryParts.join(' '))}?hl=uk`;
-    await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 22000 });
-    await page.waitForSelector('h1.DUwDvf, a.hfpxzc, button[data-item-id*="phone"]', { timeout: 9000 }).catch(() => {});
-
-    // Check if landed directly on place panel or search list
-    const firstCardHref = await page.evaluate((vName) => {
-      const h1 = document.querySelector('h1.DUwDvf');
-      if (h1 && h1.innerText && document.querySelector('button[data-item-id*="address"], button[data-item-id*="phone"], a[data-item-id*="authority"]')) {
-        return null; // Already on place page
-      }
-      const links = Array.from(document.querySelectorAll('a.hfpxzc'));
-      if (links.length === 0) return null;
-      const lowerName = String(vName || '').toLowerCase();
-      const best = links.find(a => (a.getAttribute('aria-label') || '').toLowerCase().includes(lowerName)) || links[0];
-      return best ? best.href : null;
-    }, venueName);
-
-    if (firstCardHref) {
-      await page.goto(firstCardHref, { waitUntil: 'domcontentloaded', timeout: 15000 });
-      await page.waitForSelector('h1.DUwDvf, button[data-item-id*="phone"], a[data-item-id*="authority"]', { timeout: 6000 }).catch(() => {});
+    return await fn(page);
+  } finally {
+    if (page) {
+      await Promise.race([
+        page.close().catch(() => {}),
+        new Promise(r => setTimeout(r, 1500))
+      ]);
     }
+    igDispatchLock = false;
+  }
+}
 
-    const details = await page.evaluate(() => {
-      const phoneBtn = document.querySelector('button[data-tooltip*="телефон"], button[data-item-id*="phone"]');
-      const phone = phoneBtn ? phoneBtn.innerText.replace(/[\uE000-\uF8FF\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, ' ').trim() : '';
-      const webBtn = document.querySelector('a[data-tooltip*="веб-сайт"], a[data-item-id*="authority"]');
-      const website = webBtn ? webBtn.href : '';
-      const addrBtn = document.querySelector('button[data-tooltip*="адресу"], button[data-item-id*="address"]');
-      const address = addrBtn ? addrBtn.innerText.replace(/[\uE000-\uF8FF\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, ' ').trim() : '';
-      return { phone, website, address };
+async function lookupGoogleMapsSinglePlace(venueName, city) {
+  const empty = { phone: '', sitePhones: [], website: '', address: '', title: '', igHandles: [], tgHandles: [] };
+  if (process.env.VERCEL || !findLocalBrowserPath()) return empty;
+
+  try {
+    const cityPart = (city && city !== 'Україна' && city !== 'Власний список') ? city : '';
+    const gmData = await withLockedChromePage(async (page) => {
+      const queryParts = [venueName, cityPart].filter(Boolean);
+      const searchUrl = `https://www.google.com/maps/search/${encodeURIComponent(queryParts.join(' '))}?hl=uk`;
+      await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 22000 });
+      await page.waitForSelector('h1.DUwDvf, a.hfpxzc, button[data-item-id*="phone"]', { timeout: 9000 }).catch(() => {});
+
+      const cityVariants = getCityVariants(city);
+      const venueTokens = getVenueMatchTokens(venueName);
+
+      const bestCardHref = await page.evaluate((vTokens, cVariants, rawName) => {
+        const h1 = document.querySelector('h1.DUwDvf');
+        if (h1 && h1.innerText && document.querySelector('button[data-item-id*="address"], button[data-item-id*="phone"], a[data-item-id*="authority"]')) {
+          return null; // Already landed directly on place panel
+        }
+        const links = Array.from(document.querySelectorAll('a.hfpxzc'));
+        if (links.length === 0) return null;
+
+        let bestHref = links[0].href;
+        let bestScore = -1;
+        for (const a of links.slice(0, 8)) {
+          const card = a.closest('div.Nv2PK') || a.parentElement;
+          const cardText = ((a.getAttribute('aria-label') || '') + ' ' + (card?.innerText || '')).toLowerCase();
+          let s = 0;
+          if (cardText.includes(String(rawName || '').toLowerCase())) s += 10;
+          for (const t of vTokens) {
+            if (t.length >= 3 && cardText.includes(t)) s += t.length;
+          }
+          if (cVariants.length > 0 && cVariants.some(cv => cv.length >= 4 && cardText.includes(cv))) s += 8;
+          if (s > bestScore) {
+            bestScore = s;
+            bestHref = a.href;
+          }
+        }
+        return bestHref;
+      }, venueTokens, cityVariants, venueName);
+
+      if (bestCardHref) {
+        await page.goto(bestCardHref, { waitUntil: 'domcontentloaded', timeout: 15000 });
+        await page.waitForSelector('h1.DUwDvf, button[data-item-id*="phone"], a[data-item-id*="authority"]', { timeout: 6000 }).catch(() => {});
+      }
+
+      return await page.evaluate(() => {
+        const titleEl = document.querySelector('h1.DUwDvf');
+        const title = titleEl ? titleEl.innerText.trim() : '';
+        const phoneBtn = document.querySelector('button[data-tooltip*="телефон"], button[data-item-id*="phone"]');
+        const phone = phoneBtn ? phoneBtn.innerText.replace(/[\uE000-\uF8FF\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, ' ').trim() : '';
+        const webBtn = document.querySelector('a[data-tooltip*="веб-сайт"], a[data-item-id*="authority"]');
+        const website = webBtn ? webBtn.href : '';
+        const addrBtn = document.querySelector('button[data-tooltip*="адресу"], button[data-item-id*="address"]');
+        const address = addrBtn ? addrBtn.innerText.replace(/[\uE000-\uF8FF\u200B-\u200D\uFEFF]/g, '').replace(/\s+/g, ' ').trim() : '';
+        return { title, phone, website, address };
+      });
     });
 
-    await page.close().catch(() => {});
-    page = null;
-
+    if (!gmData) return empty;
     const result = {
-      phone: details.phone || '',
-      website: details.website || '',
-      address: details.address || '',
+      title: gmData.title || '',
+      phone: gmData.phone || '',
+      sitePhones: [],
+      website: gmData.website || '',
+      address: gmData.address || '',
       igHandles: [],
       tgHandles: []
     };
@@ -1200,7 +1378,6 @@ async function lookupGoogleMapsSinglePlace(venueName, city) {
       result.igHandles.push(...direct.igHandles);
       result.tgHandles.push(...direct.tgHandles);
 
-      // Fetch venue website / Linktree / Taplink HTML if not directly a social URL
       if (!/instagram\.com|t\.me/i.test(result.website) && /^https?:\/\//i.test(result.website)) {
         try {
           const siteRes = await fetch(result.website, {
@@ -1212,6 +1389,14 @@ async function lookupGoogleMapsSinglePlace(venueName, city) {
             const extracted = extractSocialHandlesFromHtml(siteHtml, result.website);
             result.igHandles.push(...extracted.igHandles);
             result.tgHandles.push(...extracted.tgHandles);
+            result.sitePhones.push(...extracted.phones);
+
+            if (extracted.linktreeUrls.length > 0) {
+              const bioExt = await fetchExternalBioLinks(extracted.linktreeUrls, 2);
+              result.igHandles.push(...bioExt.igHandles);
+              result.tgHandles.push(...bioExt.tgHandles);
+              result.sitePhones.push(...bioExt.phones);
+            }
           }
         } catch (_) {}
       }
@@ -1219,248 +1404,611 @@ async function lookupGoogleMapsSinglePlace(venueName, city) {
 
     return {
       ...result,
+      sitePhones: Array.from(new Set(result.sitePhones)),
       igHandles: Array.from(new Set(result.igHandles)),
       tgHandles: Array.from(new Set(result.tgHandles))
     };
   } catch (err) {
     console.warn(`[NFC Discovery] Google Maps lookup warning (${venueName}):`, err.message);
-    if (page) await page.close().catch(() => {});
-    return { phone: '', website: '', address: '', igHandles: [], tgHandles: [] };
-  } finally {
-    igDispatchLock = false;
+    return empty;
   }
 }
 
-async function searchDuckDuckGoContacts(venueName, city) {
-  const igCandidates = [];
-  const tgCandidates = [];
+async function discoverAndVerifyInstagramAndWebWithChrome(venueName, city, gm, item) {
+  const igMap = new Map();
+  const tgMap = new Map();
   const cityPart = (city && city !== 'Україна' && city !== 'Власний список') ? city : '';
 
-  const parseDdgBlocks = (html) => {
-    const blocks = String(html || '').split(/class="result\s/i);
-    const out = [];
-    for (let i = 1; i < blocks.length; i++) {
-      const b = blocks[i];
-      const hrefMatch = b.match(/href="([^"]+)"/i);
-      const titleMatch = b.match(/class="result__a"[^>]*>([\s\S]*?)<\/a>/i);
-      const snipMatch = b.match(/class="result__snippet"[^>]*>([\s\S]*?)<\/(?:a|div)>/i);
-      let url = hrefMatch ? decodeURIComponent(hrefMatch[1].replace(/.*uddg=/, '').split('&')[0]) : '';
-      const stripTags = (s) => String(s || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-      const title = stripTags(titleMatch ? titleMatch[1] : '');
-      const snippet = stripTags(snipMatch ? snipMatch[1] : '');
-      out.push({ url, title, snippet });
-    }
-    return out;
+  const addIgCandidate = (rawHandle, trustBonus = 0, context = '', fromOfficialSite = false) => {
+    const clean = String(rawHandle || '').replace(/^@+/, '').replace(/[\/?#&"'<>].*$/, '').trim().toLowerCase();
+    if (!clean || clean.length < 2 || IG_RESERVED_PATHS.has(clean)) return;
+    const handle = '@' + clean;
+    const prev = igMap.get(handle) || { handle, baseScore: 0, context: '', fromOfficialSite: false };
+    prev.baseScore = Math.max(prev.baseScore, trustBonus + scoreCandidateRelevance(`${clean} ${context}`, venueName));
+    if (context) prev.context = (prev.context + ' ' + context).trim().slice(0, 320);
+    if (fromOfficialSite) prev.fromOfficialSite = true;
+    igMap.set(handle, prev);
   };
 
-  try {
-    const qIg = `site:instagram.com "${venueName}" ${cityPart}`.trim();
-    const resIg = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(qIg)}`, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Safari/537.36' },
-      signal: AbortSignal.timeout(5500)
-    });
-    if (resIg.ok) {
-      let blocks = parseDdgBlocks(await resIg.text());
-      if (blocks.length === 0) {
-        const resIgBroad = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(`${venueName} ${cityPart} instagram`.trim())}`, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Safari/537.36' },
-          signal: AbortSignal.timeout(5500)
-        });
-        if (resIgBroad.ok) blocks = parseDdgBlocks(await resIgBroad.text());
-      }
-      for (const blk of blocks) {
-        const m = blk.url.match(/instagram\.com\/([a-zA-Z0-9._]{2,30})/i);
-        if (m && m[1]) {
-          const handle = m[1].replace(/[\/?#].*$/, '').toLowerCase();
-          if (!IG_RESERVED_PATHS.has(handle)) {
-            const relScore = scoreCandidateRelevance(`${handle} ${blk.title} ${blk.snippet}`, venueName);
-            if (relScore >= 3) {
-              igCandidates.push({ handle: '@' + handle, score: relScore + (cityPart && (`${blk.title} ${blk.snippet}`.toLowerCase().includes(cityPart.toLowerCase())) ? 3 : 0) });
-            }
-          }
-        }
-      }
+  const addTgCandidate = (rawHandle, trust = 'web_search', context = '') => {
+    const clean = String(rawHandle || '').replace(/^@+/, '').replace(/[\/?#&"'<>].*$/, '').trim().toLowerCase();
+    if (!clean || clean.length < 4 || TG_RESERVED_PATHS.has(clean)) return;
+    const handle = '@' + clean;
+    const prev = tgMap.get(handle);
+    const trustRank = { official_site: 4, verified_ig_bio: 4, web_search: 2 };
+    if (!prev || (trustRank[trust] || 1) > (trustRank[prev.trust] || 1)) {
+      tgMap.set(handle, { handle, trust, context: context || prev?.context || '' });
     }
-  } catch (_) {}
-
-  try {
-    const qTg = `site:t.me "${venueName}" ${cityPart}`.trim();
-    const resTg = await fetch(`https://html.duckduckgo.com/html/?q=${encodeURIComponent(qTg)}`, {
-      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/128.0.0.0 Safari/537.36' },
-      signal: AbortSignal.timeout(5500)
-    });
-    if (resTg.ok) {
-      const blocks = parseDdgBlocks(await resTg.text());
-      for (const blk of blocks) {
-        const m = blk.url.match(/(?:t\.me|telegram\.me)\/([a-zA-Z0-9_]{4,32})/i);
-        if (m && m[1]) {
-          const handle = m[1].replace(/[\/?#].*$/, '').toLowerCase();
-          if (!TG_RESERVED_PATHS.has(handle)) {
-            const relScore = scoreCandidateRelevance(`${handle} ${blk.title} ${blk.snippet}`, venueName);
-            if (relScore >= 4) {
-              tgCandidates.push({ handle: '@' + handle, score: relScore });
-            }
-          }
-        }
-      }
-    }
-  } catch (_) {}
-
-  igCandidates.sort((a, b) => b.score - a.score);
-  tgCandidates.sort((a, b) => b.score - a.score);
-  return {
-    igHandle: igCandidates[0]?.handle || '',
-    tgHandle: tgCandidates[0]?.handle || ''
   };
-}
 
-async function searchInstagramTopsearch(venueName, city) {
-  if (process.env.VERCEL) return '';
+  // Seed official Google Maps website/Linktree & existing item candidates first
+  for (const h of (gm?.igHandles || [])) addIgCandidate(h, 14, gm.website || '', true);
+  for (const h of (gm?.tgHandles || [])) addTgCandidate(h, 'official_site', gm.website || '');
+  if (item?.igTarget) addIgCandidate(item.igTarget, 6, '', false);
+
   const state = loadNfcOutreachDb();
   const sessionCookie = state.config.accounts.ig1?.sessionCookie || process.env.INSTAGRAM_SESSION_COOKIE || '';
-  const chromePath = findLocalBrowserPath();
-  if (!sessionCookie || !chromePath) return '';
 
-  while (igDispatchLock) {
-    await new Promise(r => setTimeout(r, 300));
-  }
-  igDispatchLock = true;
-  let page = null;
+  let inspectedSummary = null;
+  let verifiedIgHandle = '';
+  const extractedTgFromVerifiedIg = [];
+  const extractedPhonesFromVerifiedIg = [];
+
   try {
-    const puppeteer = await import('puppeteer-core');
-    if (!igBrowserInstance || !igBrowserInstance.isConnected()) {
-      igBrowserInstance = await puppeteer.default.launch({
-        executablePath: chromePath,
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-notifications', '--lang=uk-UA,uk']
-      });
-    }
+    await withLockedChromePage(async (page) => {
+      // Phase 1: Brave Search (skip IG web query if official site/GM already gave an IG handle)
+      const braveQueries = [];
+      if (igMap.size === 0) {
+        braveQueries.push({ q: `site:instagram.com "${venueName}" ${cityPart}`.trim(), kind: 'ig' });
+      }
+      braveQueries.push({ q: `site:t.me "${venueName}" ${cityPart}`.trim(), kind: 'tg' });
 
-    page = await igBrowserInstance.newPage();
-    await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36');
-    const sessVal = sessionCookie.replace(/^.*sessionid=/, '').split(';')[0].trim();
-    const dsUserId = decodeURIComponent(sessVal).match(/^(\d+):/)?.[1] || '67526535310';
-    await page.setCookie(
-      { name: 'sessionid', value: sessVal, domain: '.instagram.com', path: '/', httpOnly: true, secure: true },
-      { name: 'ds_user_id', value: dsUserId, domain: '.instagram.com', path: '/', secure: true }
-    );
-
-    await page.goto('https://www.instagram.com/', { waitUntil: 'domcontentloaded', timeout: 20000 });
-    const cityPart = (city && city !== 'Україна' && city !== 'Власний список') ? city : '';
-    const queries = cityPart ? [`${venueName} ${cityPart}`, venueName] : [venueName];
-    let users = [];
-
-    for (const q of queries) {
-      const resData = await page.evaluate(async (queryStr) => {
+      for (const bq of braveQueries) {
         try {
-          const r = await fetch(`/api/v1/web/search/topsearch/?context=blended&query=${encodeURIComponent(queryStr)}`, {
-            headers: { 'x-requested-with': 'XMLHttpRequest' }
+          await page.goto(`https://search.brave.com/search?q=${encodeURIComponent(bq.q)}`, { waitUntil: 'domcontentloaded', timeout: 14000 });
+          await new Promise(r => setTimeout(r, 900));
+          const hits = await page.evaluate(() => {
+            const results = [];
+            const cards = Array.from(document.querySelectorAll('div.snippet[data-type="web"], #results .snippet'));
+            if (cards.length > 0) {
+              for (const card of cards.slice(0, 10)) {
+                const a = card.querySelector('a[href*="instagram.com"], a[href*="t.me/"], a.result-header, a.heading-serpresult');
+                if (a && a.href) {
+                  results.push({ href: a.href, text: (card.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 220) });
+                }
+              }
+            }
+            if (results.length === 0) {
+              for (const a of Array.from(document.querySelectorAll('a[href*="instagram.com/"], a[href*="t.me/"]')).slice(0, 10)) {
+                results.push({ href: a.href, text: (a.closest('div')?.innerText || a.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 180) });
+              }
+            }
+            return results;
           });
-          if (!r.ok) return null;
-          return await r.json();
-        } catch (_) {
-          return null;
-        }
-      }, q);
-      if (resData && Array.isArray(resData.users) && resData.users.length > 0) {
-        users = users.concat(resData.users.map(u => u.user).filter(Boolean));
+          for (const hit of hits) {
+            if (bq.kind === 'ig') {
+              const m = String(hit.href).match(/instagram\.com\/([a-zA-Z0-9._]{2,30})/i);
+              if (m && m[1]) addIgCandidate(m[1], 4 + (cityPart && textMatchesCity(hit.text, cityPart) ? 3 : 0), hit.text, false);
+            } else {
+              const m = String(hit.href).match(/(?:t\.me|telegram\.me)\/(?:s\/)?([a-zA-Z0-9_]{4,32})/i);
+              if (m && m[1]) {
+                const h = m[1].toLowerCase();
+                // Pre-filter noisy city portals/alerts unless snippet actually relates to the venue
+                const snippetRel = scoreCandidateRelevance(`${h} ${hit.text}`, venueName);
+                const snippetNoise = NOISE_PROFILE_RE.test(`${h} ${hit.text}`) && !NOISE_PROFILE_RE.test(venueName);
+                if (snippetRel >= 3 && !snippetNoise) {
+                  addTgCandidate(h, 'web_search', hit.text);
+                }
+              }
+            }
+          }
+        } catch (_) {}
       }
-      if (users.length >= 5) break;
-    }
 
-    await page.close().catch(() => {});
-    page = null;
-
-    let bestHandle = '';
-    let bestScore = 0;
-    for (const u of users) {
-      const uname = String(u.username || '').trim();
-      if (!uname) continue;
-      const fullName = String(u.full_name || '').trim();
-      const s = scoreCandidateRelevance(`${uname} ${fullName}`, venueName)
-        + (cityPart && `${uname} ${fullName}`.toLowerCase().includes(cityPart.toLowerCase()) ? 4 : 0);
-      if (s > bestScore && s >= 3) {
-        bestScore = s;
-        bestHandle = '@' + uname;
+      // Fallback broad DuckDuckGo JS if still < 2 IG candidates and not seeded from official site
+      if (igMap.size < 2 && !Array.from(igMap.values()).some(v => v.fromOfficialSite)) {
+        try {
+          const ddgQ = `${venueName} ${cityPart} instagram`.trim();
+          await page.goto(`https://duckduckgo.com/?q=${encodeURIComponent(ddgQ)}`, { waitUntil: 'domcontentloaded', timeout: 14000 });
+          await new Promise(r => setTimeout(r, 1500));
+          const ddgHits = await page.evaluate(() => {
+            return Array.from(document.querySelectorAll('article a[href*="instagram.com/"], a[data-testid="result-title-a"]'))
+              .map(a => ({ href: a.href, text: (a.closest('article')?.innerText || a.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 220) }))
+              .filter(x => x.href && x.href.includes('instagram.com/'))
+              .slice(0, 8);
+          });
+          for (const hit of ddgHits) {
+            const m = String(hit.href).match(/instagram\.com\/([a-zA-Z0-9._]{2,30})/i);
+            if (m && m[1]) addIgCandidate(m[1], 4 + (cityPart && textMatchesCity(hit.text, cityPart) ? 3 : 0), hit.text, false);
+          }
+        } catch (_) {}
       }
-    }
-    return bestHandle;
-  } catch (_) {
-    if (page) await page.close().catch(() => {});
-    return '';
-  } finally {
-    igDispatchLock = false;
-  }
-}
 
-async function resolveTelegramViaMtproto(candidatePhone, candidateHandle, venueName) {
-  if (process.env.VERCEL) return '';
-  const client = await getMtprotoClientForAccount('tg1') || await getMtprotoClientForAccount('tg2');
-  if (!client) return candidateHandle || candidatePhone || '';
+      // Phase 2: Authenticated Instagram Drawer Search + Real Profile Inspection
+      if (sessionCookie) {
+        const sessVal = sessionCookie.replace(/^.*sessionid=/, '').split(';')[0].trim();
+        const dsUserId = decodeURIComponent(sessVal).match(/^(\d+):/)?.[1] || '67526535310';
+        await page.setCookie(
+          { name: 'sessionid', value: sessVal, domain: '.instagram.com', path: '/', httpOnly: true, secure: true },
+          { name: 'ds_user_id', value: dsUserId, domain: '.instagram.com', path: '/', secure: true }
+        );
 
-  try {
-    const { Api } = await import('telegram');
-
-    // 1. Verify @username handle if present; if it's a channel, inspect about text for admin @username
-    if (candidateHandle) {
-      const clean = candidateHandle.replace(/^@+/, '').trim();
-      const ent = await client.getEntity(clean).catch(() => null);
-      if (ent) {
-        if (ent.className === 'User' && !ent.bot) {
-          return ent.username ? ('@' + ent.username) : candidateHandle;
-        }
-        if (ent.className === 'Channel' || ent.className === 'Chat') {
+        // Search inside IG Web Search Drawer if candidates are missing or not from official site
+        if (igMap.size < 3 && !Array.from(igMap.values()).some(v => v.fromOfficialSite)) {
           try {
-            const full = await client.invoke(new Api.channels.GetFullChannel({ channel: ent }));
-            const about = String(full?.fullChat?.about || '');
-            const mentionMatch = about.match(/@([a-zA-Z0-9_]{4,32})/) || about.match(/t\.me\/([a-zA-Z0-9_]{4,32})/i);
-            if (mentionMatch && mentionMatch[1] && !TG_RESERVED_PATHS.has(mentionMatch[1].toLowerCase())) {
-              const adminEnt = await client.getEntity(mentionMatch[1]).catch(() => null);
-              if (adminEnt && adminEnt.className === 'User' && !adminEnt.bot) {
-                return '@' + (adminEnt.username || mentionMatch[1]);
+            await page.goto('https://www.instagram.com/', { waitUntil: 'domcontentloaded', timeout: 18000 });
+            await new Promise(r => setTimeout(r, 1300));
+            const clickedSearch = await page.evaluate(() => {
+              const s = document.querySelector('svg[aria-label="Пошук"], svg[aria-label="Search"]');
+              if (!s) return false;
+              const btn = s.closest('a, button, div[role="button"]');
+              if (btn) { btn.click(); return true; }
+              return false;
+            });
+            if (clickedSearch) {
+              await new Promise(r => setTimeout(r, 900));
+              const inp = await page.$('input[aria-label*="пошуков"], input[aria-label*="Пошук"], input[aria-label*="Search"], input[placeholder*="Пошук"], input[placeholder*="Search"]');
+              if (inp) {
+                const drawerQuery = getVenueMatchTokens(venueName)[0] || venueName;
+                await inp.click();
+                await inp.type(drawerQuery.slice(0, 28), { delay: 35 });
+                await new Promise(r => setTimeout(r, 2000));
+                const drawerHits = await page.evaluate(() => {
+                  return Array.from(document.querySelectorAll('a[href^="/"]'))
+                    .map(a => ({ href: a.getAttribute('href'), text: (a.innerText || '').replace(/\s+/g, ' ').trim().slice(0, 120) }))
+                    .filter(x => x.href && /^\/[a-zA-Z0-9._]{2,30}\/$/.test(x.href))
+                    .slice(0, 10);
+                });
+                for (const d of drawerHits) {
+                  const h = d.href.replace(/^\/|\/$/g, '').toLowerCase();
+                  if (!IG_RESERVED_PATHS.has(h) && h !== 'denis__zalizko') {
+                    addIgCandidate(h, 5 + (cityPart && textMatchesCity(d.text, cityPart) ? 3 : 0), d.text, false);
+                  }
+                }
               }
             }
           } catch (_) {}
         }
+
+        // Phase 3: Deeply inspect top IG candidates (bio, posts, avatar, external link, DM open)
+        const rankedCandidates = Array.from(igMap.values())
+          .sort((a, b) => (Number(b.fromOfficialSite) - Number(a.fromOfficialSite)) || (b.baseScore - a.baseScore))
+          .slice(0, 5);
+
+        const knownPhonesDigits = [gm?.phone, ...(gm?.sitePhones || []), item?.phone]
+          .map(p => String(p || '').replace(/\D/g, '').slice(-9))
+          .filter(d => d.length >= 9);
+        let siteDomain = '';
+        try {
+          if (gm?.website && !/instagram\.com|t\.me/i.test(gm.website)) {
+            siteDomain = new URL(gm.website).hostname.replace(/^www\./, '').toLowerCase();
+          }
+        } catch (_) {}
+
+        let bestEval = null;
+        for (const cand of rankedCandidates) {
+          const uname = cand.handle.replace(/^@+/, '');
+          try {
+            await page.goto(`https://www.instagram.com/${encodeURIComponent(uname)}/`, { waitUntil: 'domcontentloaded', timeout: 16000 });
+            await page.waitForSelector('header, h2', { timeout: 2800 }).catch(() => {});
+            await new Promise(r => setTimeout(r, 900));
+
+            const prof = await page.evaluate(() => {
+              const bodyText = document.body?.innerText || '';
+              const notFound = /сторінка недоступна|page isn't available|sorry, this page/i.test(bodyText.slice(0, 500));
+              const header = document.querySelector('header');
+              const headerText = header ? header.innerText : '';
+              const imgs = header ? Array.from(header.querySelectorAll('img')).map(i => ({ alt: i.alt || '', src: i.src || '' })) : [];
+              const avatarImg = imgs.find(i => /основна світлина|profile picture|avatar/i.test(i.alt)) || imgs[0] || null;
+              const hasAvatar = Boolean(avatarImg && avatarImg.src && !/44884218_345707102882519_2446069589734326272_n/i.test(avatarImg.src));
+
+              const rawLinks = header
+                ? Array.from(header.querySelectorAll('a')).map(a => a.href).filter(Boolean)
+                : [];
+              const decodedLinks = rawLinks.map(href => {
+                try {
+                  if (href.includes('l.instagram.com/?') || href.includes('l.instagram.com?')) {
+                    const u = new URL(href).searchParams.get('u');
+                    if (u) return u;
+                  }
+                } catch (_) {}
+                return href;
+              }).filter(h => !h.includes('instagram.com') || h.includes('l.instagram.com'));
+
+              const buttonsText = header
+                ? Array.from(header.querySelectorAll('button, div[role="button"]')).map(b => b.innerText || '').join(' ')
+                : '';
+              const canMessage = /повідомлення|message/i.test(buttonsText);
+
+              const postAlts = Array.from(document.querySelectorAll('main a[href*="/p/"] img, main a[href*="/reel/"] img'))
+                .slice(0, 6)
+                .map(i => i.alt || '')
+                .filter(Boolean);
+
+              return {
+                notFound,
+                headerText: headerText.slice(0, 1200),
+                hasAvatar,
+                decodedLinks,
+                canMessage,
+                postAlts
+              };
+            });
+
+            if (!prof || prof.notFound || !prof.headerText) continue;
+
+            // Parse post count from header ("2 167 дописів" or "123 posts")
+            const postCntMatch = prof.headerText.match(/([\d\s\u00A0.,]+)\s*(?:допис|публикац|post)/i);
+            const postsCount = postCntMatch ? (parseInt(postCntMatch[1].replace(/[^\d]/g, ''), 10) || 0) : prof.postAlts.length;
+
+            // Fetch Linktree / external bio links discovered inside this IG header
+            const linktreeUrls = prof.decodedLinks.filter(u => BIO_LINK_DOMAINS_RE.test(u));
+            BIO_LINK_DOMAINS_RE.lastIndex = 0;
+            let bioLinkExtra = { tgHandles: [], phones: [] };
+            if (linktreeUrls.length > 0) {
+              bioLinkExtra = await fetchExternalBioLinks(linktreeUrls, 1);
+            }
+
+            const postsJoined = prof.postAlts.join(' | ');
+            const linksJoined = prof.decodedLinks.join(' ');
+            const fullInspectionBlob = `${uname} ${prof.headerText} ${linksJoined} ${postsJoined}`;
+
+            const nameMatch = scoreCandidateRelevance(fullInspectionBlob, venueName);
+            const hasPhoneMatch = knownPhonesDigits.some(d => fullInspectionBlob.replace(/\D/g, '').includes(d));
+            const hasSiteMatch = Boolean(siteDomain && fullInspectionBlob.toLowerCase().includes(siteDomain));
+            const cityMatch = textMatchesCity(fullInspectionBlob, city);
+            const foreignCity = hasForeignCityMismatch(`${uname} ${prof.headerText}`, city);
+            const isAggregatorNoise = NOISE_PROFILE_RE.test(`${uname} ${prof.headerText}`) && !NOISE_PROFILE_RE.test(venueName);
+            const hasBizSignal = VENUE_BUSINESS_SIGNAL_RE.test(`${prof.headerText} ${postsJoined}`);
+
+            let score = nameMatch;
+            if (cand.fromOfficialSite) score += 10;
+            if (hasPhoneMatch) score += 24;
+            if (hasSiteMatch) score += 20;
+            if (cityMatch) score += 10;
+            if (foreignCity) score -= 20;
+            if (isAggregatorNoise) score -= 22;
+            if (prof.hasAvatar) score += 3; else score -= 6;
+            if (postsCount >= 3) score += 4;
+            else if (postsCount === 0) score -= 9;
+            if (hasBizSignal) score += 4;
+            if (prof.canMessage) score += 2;
+
+            const passesGate = (nameMatch >= 3 || hasPhoneMatch || hasSiteMatch) &&
+              !isAggregatorNoise &&
+              (score >= 9 || (cand.fromOfficialSite && score >= 6 && !foreignCity));
+
+            const candPhones = Array.from(new Set([
+              ...extractPhonesFromText(`${prof.headerText} ${postsJoined}`),
+              ...bioLinkExtra.phones
+            ]));
+            const candTgHandles = Array.from(new Set([
+              ...extractBioTelegramMentions(`${prof.headerText} ${linksJoined} ${postsJoined}`, [uname]),
+              ...bioLinkExtra.tgHandles
+            ]));
+
+            console.log(`[NFC Discovery][IG Inspect] @${uname}: score=${score}, pass=${passesGate}, name=${nameMatch}, city=${cityMatch}, foreign=${foreignCity}, avatar=${prof.hasAvatar}, posts=${postsCount}, phoneMatch=${hasPhoneMatch}`);
+
+            if (passesGate && (!bestEval || score > bestEval.score)) {
+              bestEval = {
+                handle: '@' + uname,
+                score,
+                postsCount,
+                hasAvatar: prof.hasAvatar,
+                canMessage: prof.canMessage,
+                cityMatch,
+                hasPhoneMatch,
+                hasSiteMatch,
+                bioSnippet: prof.headerText.replace(/\s+/g, ' ').slice(0, 220),
+                tgHandles: candTgHandles,
+                phones: candPhones
+              };
+              // Stop early if officially confirmed by phone/domain + posts
+              if ((hasPhoneMatch || hasSiteMatch) && postsCount > 0 && (cityMatch || nameMatch >= 8)) break;
+            }
+          } catch (_) {}
+        }
+
+        if (bestEval) {
+          verifiedIgHandle = bestEval.handle;
+          inspectedSummary = {
+            handle: bestEval.handle,
+            score: bestEval.score,
+            postsCount: bestEval.postsCount,
+            hasAvatar: bestEval.hasAvatar,
+            canMessage: bestEval.canMessage,
+            bioSnippet: bestEval.bioSnippet
+          };
+          extractedTgFromVerifiedIg.push(...bestEval.tgHandles);
+          extractedPhonesFromVerifiedIg.push(...bestEval.phones);
+        }
+      }
+    });
+  } catch (err) {
+    console.warn(`[NFC Discovery] Chrome IG/Web check warning (${venueName}):`, err.message);
+  }
+
+  // Fallback without Chrome ONLY if Chrome unavailable and official website had IG handle
+  if (!verifiedIgHandle && gm?.igHandles?.[0]) {
+    const clean = gm.igHandles[0].replace(/^@+/, '').toLowerCase();
+    if (clean && !IG_RESERVED_PATHS.has(clean)) verifiedIgHandle = '@' + clean;
+  }
+
+  for (const tgH of extractedTgFromVerifiedIg) {
+    addTgCandidate(tgH, 'verified_ig_bio', inspectedSummary?.bioSnippet || '');
+  }
+
+  return {
+    verifiedIgHandle,
+    inspectedSummary,
+    tgCandidates: Array.from(tgMap.values()),
+    extractedPhonesFromVerifiedIg
+  };
+}
+
+async function inspectTelegramUserEntity(client, Api, ent) {
+  if (!ent || ent.className !== 'User' || ent.bot || ent.deleted) return null;
+  let fullUser = null;
+  try {
+    fullUser = await client.invoke(new Api.users.GetFullUser({ id: ent }));
+  } catch (_) {}
+  const about = String(fullUser?.fullUser?.about || '').trim();
+  const hasAvatar = Boolean(
+    (ent.photo && ent.photo.className !== 'UserProfilePhotoEmpty') ||
+    fullUser?.fullUser?.profilePhoto
+  );
+  const fullName = [ent.firstName, ent.lastName].filter(Boolean).join(' ').trim();
+  const username = ent.username ? ('@' + String(ent.username).trim()) : '';
+  const phone = ent.phone ? ('+' + String(ent.phone).replace(/\D/g, '')) : '';
+  return {
+    kind: 'user',
+    entity: ent,
+    target: username || phone,
+    username,
+    phone,
+    fullName,
+    bio: about,
+    hasAvatar
+  };
+}
+
+async function inspectTelegramChannelEntity(client, Api, ent) {
+  if (!ent || (ent.className !== 'Channel' && ent.className !== 'Chat')) return null;
+  let about = '';
+  try {
+    if (ent.className === 'Channel') {
+      const full = await client.invoke(new Api.channels.GetFullChannel({ channel: ent }));
+      about = String(full?.fullChat?.about || '').trim();
+    } else {
+      const full = await client.invoke(new Api.messages.GetFullChat({ chatId: ent.id }));
+      about = String(full?.fullChat?.about || '').trim();
+    }
+  } catch (_) {}
+
+  const hasAvatar = Boolean(ent.photo && ent.photo.className !== 'ChatPhotoEmpty');
+  const msgs = await client.getMessages(ent, { limit: 8 }).catch(() => []);
+  const recentPostsText = (msgs || []).map(m => String(m?.message || '')).filter(Boolean).join(' | ');
+  const ownHandle = ent.username ? String(ent.username).toLowerCase() : '';
+
+  const extractedHandles = extractBioTelegramMentions(`${about} | ${recentPostsText}`, ownHandle ? [ownHandle] : []);
+  // Also allow plain @username inside channel about text
+  for (const m of about.matchAll(/@([a-zA-Z0-9_]{4,32})/g)) {
+    const h = m[1].toLowerCase();
+    if (!h.endsWith('bot') && h !== ownHandle) extractedHandles.push('@' + h);
+  }
+  const extractedPhones = extractPhonesFromText(`${about} | ${recentPostsText}`);
+
+  return {
+    kind: 'channel',
+    title: String(ent.title || '').trim(),
+    username: ent.username ? ('@' + ent.username) : '',
+    bio: about,
+    hasAvatar,
+    recentPostsText: recentPostsText.slice(0, 1500),
+    extractedHandles: Array.from(new Set(extractedHandles)),
+    extractedPhones: Array.from(new Set(extractedPhones))
+  };
+}
+
+async function resolveTelegramViaMtproto({ candidatePhones = [], candidateHandles = [], venueName = '', city = '' }) {
+  if (process.env.VERCEL) return { tgTarget: '', tgInspection: null };
+  const client = await getMtprotoClientForAccount('tg1') || await getMtprotoClientForAccount('tg2');
+  if (!client) return { tgTarget: '', tgInspection: null };
+
+  const cityPart = (city && city !== 'Україна' && city !== 'Власний список') ? city : '';
+  const candidates = []; // { source, score, target, bio, hasAvatar, fullName }
+  const seenUserKeys = new Set();
+
+  try {
+    const { Api } = await import('telegram');
+
+    const evaluateAndAddUser = (profile, sourceTrust, extraContext = '') => {
+      if (!profile || !profile.target) return;
+      const key = profile.target.toLowerCase();
+      if (seenUserKeys.has(key)) return;
+      seenUserKeys.add(key);
+
+      const blob = `${profile.username} ${profile.fullName} ${profile.bio} ${extraContext}`;
+      if (BOT_OR_SPAM_TG_RE.test(blob)) return;
+      const isAggregatorNoise = NOISE_PROFILE_RE.test(blob) && !NOISE_PROFILE_RE.test(venueName);
+      if (isAggregatorNoise) return;
+
+      const nameMatch = scoreCandidateRelevance(blob, venueName);
+      const cityMatch = textMatchesCity(blob, cityPart);
+      const foreignCity = hasForeignCityMismatch(`${profile.username} ${profile.fullName} ${profile.bio}`, cityPart);
+      const hasBizBio = VENUE_BUSINESS_SIGNAL_RE.test(profile.bio);
+
+      const isTrustedOrigin = ['official_site', 'verified_ig_bio', 'verified_channel_admin', 'official_gm_phone', 'verified_ig_phone'].includes(sourceTrust);
+      if (foreignCity && !isTrustedOrigin) return;
+
+      let score = nameMatch;
+      if (sourceTrust === 'verified_ig_bio') score += 18;
+      else if (sourceTrust === 'official_site') score += 16;
+      else if (sourceTrust === 'verified_channel_admin') score += 14;
+      else if (sourceTrust === 'official_gm_phone' || sourceTrust === 'verified_ig_phone') score += 14;
+      if (cityMatch) score += 10;
+      if (hasBizBio) score += 6;
+      if (profile.hasAvatar) score += 4; else score -= 5;
+      if (profile.bio) score += 3;
+
+      const isPersonalBioNoise = /(florist|флорист|блогер|манікюр|перукар|візаж|фотограф|психолог|таро|астролог|мама |mommy|music|музикант|тату|tattoo)/i.test(profile.bio) && !/(florist|флорист|манікюр|перукар|візаж|фото|тату)/i.test(venueName);
+      if (isPersonalBioNoise && !isTrustedOrigin) return;
+
+      // Strict anti-random-user & anti-ghost-SIM verification:
+      // - Unverified searches (web / mtproto_search): require venue name match AND (city OR business bio).
+      // - Phone-only GM contacts without username/bio/avatar are rejected as inactive ghost SIMs so active IG or admin TG wins.
+      const passes = isTrustedOrigin
+        ? ((!foreignCity || cityMatch || sourceTrust === 'official_gm_phone') &&
+            (sourceTrust !== 'official_gm_phone' || profile.hasAvatar || Boolean(profile.bio) || Boolean(profile.username)))
+        : (nameMatch >= 5 && (cityMatch || (hasBizBio && nameMatch >= 6)) && !foreignCity);
+
+      console.log(`[NFC Discovery][TG Inspect] ${profile.target} (${sourceTrust}): score=${score}, pass=${passes}, name=${nameMatch}, city=${cityMatch}, avatar=${profile.hasAvatar}, bio="${profile.bio.slice(0, 70)}"`);
+
+      if (passes) {
+        candidates.push({
+          target: profile.target,
+          source: sourceTrust,
+          score,
+          bioSnippet: profile.bio.slice(0, 180),
+          hasAvatar: profile.hasAvatar,
+          fullName: profile.fullName
+        });
+      }
+    };
+
+    const inspectHandleCandidate = async (handleStr, trust, context = '') => {
+      const clean = String(handleStr || '').replace(/^@+/, '').trim();
+      if (!clean || TG_RESERVED_PATHS.has(clean.toLowerCase())) return;
+      const ent = await client.getEntity(clean).catch(() => null);
+      if (!ent) return;
+
+      if (ent.className === 'User') {
+        const userProf = await inspectTelegramUserEntity(client, Api, ent);
+        evaluateAndAddUser(userProf, trust, context);
+      } else if (ent.className === 'Channel' || ent.className === 'Chat') {
+        const chanProf = await inspectTelegramChannelEntity(client, Api, ent);
+        if (!chanProf) return;
+        const chanBlob = `${chanProf.title} ${chanProf.username} ${chanProf.bio} ${chanProf.recentPostsText}`;
+        const chanNameMatch = scoreCandidateRelevance(chanBlob, venueName);
+        const chanForeign = hasForeignCityMismatch(`${chanProf.title} ${chanProf.bio}`, cityPart);
+        const chanNoise = NOISE_PROFILE_RE.test(`${chanProf.title} ${chanProf.bio}`) && !NOISE_PROFILE_RE.test(venueName);
+        const chanVerified = (['official_site', 'verified_ig_bio'].includes(trust) || (chanNameMatch >= 5 && !chanForeign)) && !chanNoise;
+
+        console.log(`[NFC Discovery][TG Channel] ${chanProf.username || chanProf.title}: verified=${chanVerified}, admins=${chanProf.extractedHandles.join(',') || '-'}, phones=${chanProf.extractedPhones.join(',') || '-'}`);
+
+        if (chanVerified) {
+          for (const adminH of chanProf.extractedHandles.slice(0, 4)) {
+            const admEnt = await client.getEntity(adminH.replace(/^@+/, '')).catch(() => null);
+            if (admEnt && admEnt.className === 'User') {
+              const admProf = await inspectTelegramUserEntity(client, Api, admEnt);
+              evaluateAndAddUser(admProf, 'verified_channel_admin', `${chanProf.title} ${chanProf.bio}`);
+            }
+          }
+          for (const chPhone of chanProf.extractedPhones.slice(0, 2)) {
+            candidatePhones.push({ phone: chPhone, trust: 'official_gm_phone' });
+          }
+        }
+      }
+    };
+
+    // 1. Inspect explicit handles (official_site -> verified_ig_bio -> web_search)
+    for (const hObj of candidateHandles.slice(0, 8)) {
+      await inspectHandleCandidate(hObj.handle, hObj.trust, hObj.context || '');
+    }
+
+    // 2. Global MTProto Search for Users AND Channels matching venue + city
+    const tgSearchQueries = Array.from(new Set([
+      cityPart ? `${venueName} ${cityPart}` : '',
+      venueName
+    ].filter(Boolean)));
+    for (const sq of tgSearchQueries) {
+      const searchRes = await client.invoke(new Api.contacts.Search({ q: sq, limit: 8 })).catch(() => null);
+      if (searchRes?.users?.length) {
+        for (const u of searchRes.users.slice(0, 6)) {
+          if (u.bot || u.deleted) continue;
+          const label = `${u.username || ''} ${u.firstName || ''} ${u.lastName || ''}`;
+          if (scoreCandidateRelevance(label, venueName) < 3) continue;
+          const prof = await inspectTelegramUserEntity(client, Api, u);
+          evaluateAndAddUser(prof, 'mtproto_search', '');
+        }
+      }
+      if (searchRes?.chats?.length) {
+        for (const c of searchRes.chats.slice(0, 4)) {
+          const label = `${c.username || ''} ${c.title || ''}`;
+          if (scoreCandidateRelevance(label, venueName) < 4) continue;
+          const chanProf = await inspectTelegramChannelEntity(client, Api, c);
+          if (!chanProf) continue;
+          const chanNoise = NOISE_PROFILE_RE.test(`${chanProf.title} ${chanProf.bio}`) && !NOISE_PROFILE_RE.test(venueName);
+          const chanForeign = hasForeignCityMismatch(`${chanProf.title} ${chanProf.bio}`, cityPart);
+          if (!chanNoise && !chanForeign) {
+            for (const adminH of chanProf.extractedHandles.slice(0, 3)) {
+              const admEnt = await client.getEntity(adminH.replace(/^@+/, '')).catch(() => null);
+              if (admEnt && admEnt.className === 'User') {
+                const admProf = await inspectTelegramUserEntity(client, Api, admEnt);
+                evaluateAndAddUser(admProf, 'verified_channel_admin', `${chanProf.title} ${chanProf.bio}`);
+              }
+            }
+          }
+        }
       }
     }
 
-    // 2. Verify mobile phone registration in Telegram via ImportContacts
-    if (candidatePhone) {
+    // 3. Verify official business phones (GM phone + verified IG bio phones) via ImportContacts + GetFullUser
+    const uniquePhones = [];
+    const seenDigits = new Set();
+    for (const pObj of candidatePhones) {
+      const rawP = String(pObj?.phone || pObj || '').trim();
+      const digits = rawP.replace(/\D/g, '');
+      const norm = digits.startsWith('380') ? ('+' + digits) : (digits.startsWith('0') ? ('+38' + digits) : '');
+      if (!norm || norm.length !== 13 || seenDigits.has(norm)) continue;
+      if (!isUkrainianMobileNormalized(norm)) continue;
+      seenDigits.add(norm);
+      uniquePhones.push({ phone: norm, trust: pObj?.trust || 'official_gm_phone' });
+    }
+
+    for (const pObj of uniquePhones.slice(0, 3)) {
       const importRes = await client.invoke(
         new Api.contacts.ImportContacts({
           contacts: [
             new Api.InputPhoneContact({
               clientId: BigInt(Date.now() + Math.floor(Math.random() * 1000)),
-              phone: candidatePhone,
+              phone: pObj.phone,
               firstName: String(venueName || 'Заклад').slice(0, 30),
               lastName: ''
             })
           ]
         })
       ).catch(() => null);
+
       if (importRes?.users?.length > 0) {
         const u = importRes.users[0];
-        return u.username ? ('@' + u.username) : candidatePhone;
-      }
-    }
-
-    // 3. Fallback global Telegram contacts search for matching private user
-    if (!candidateHandle && venueName) {
-      const searchRes = await client.invoke(new Api.contacts.Search({ q: venueName, limit: 5 })).catch(() => null);
-      if (searchRes?.users?.length > 0) {
-        for (const u of searchRes.users) {
-          if (u.bot) continue;
-          const label = `${u.username || ''} ${u.firstName || ''} ${u.lastName || ''}`;
-          if (scoreCandidateRelevance(label, venueName) >= 4) {
-            return u.username ? ('@' + u.username) : '';
+        const userProf = await inspectTelegramUserEntity(client, Api, u);
+        if (userProf) {
+          if (!userProf.target) userProf.target = pObj.phone;
+          evaluateAndAddUser(userProf, pObj.trust, '');
+          // Clean up temporary imported contact if user has a @username (no need to keep in contact list)
+          if (u.username) {
+            await client.invoke(new Api.contacts.DeleteContacts({ id: [u] })).catch(() => {});
           }
         }
       }
     }
-  } catch (_) {}
+  } catch (err) {
+    console.warn(`[NFC Discovery] MTProto inspect warning (${venueName}):`, err.message);
+  }
 
-  return '';
+  candidates.sort((a, b) => b.score - a.score);
+  const winner = candidates[0] || null;
+  return {
+    tgTarget: winner ? winner.target : '',
+    tgInspection: winner ? {
+      target: winner.target,
+      source: winner.source,
+      score: winner.score,
+      hasAvatar: winner.hasAvatar,
+      bioSnippet: winner.bioSnippet
+    } : null
+  };
 }
 
 export async function discoverContactsForVenueItem(item, fallbackCity = '') {
@@ -1468,37 +2016,45 @@ export async function discoverContactsForVenueItem(item, fallbackCity = '') {
   const city = String(item?.city || fallbackCity || '').trim();
   if (!venueName) return item;
 
-  console.log(`[NFC Discovery] Пошук TG/IG для "${venueName}" (${city || 'без міста'})...`);
+  console.log(`[NFC Discovery] Глибокий пошук та верифікація TG/IG для "${venueName}" (${city || 'без міста'})...`);
 
-  // Step 1 & 2 in parallel: Google Maps + Website HTML scraping alongside DuckDuckGo Web Search
-  const [gm, ddg] = await Promise.all([
-    lookupGoogleMapsSinglePlace(venueName, city).catch(() => ({ phone: '', website: '', address: '', igHandles: [], tgHandles: [] })),
-    searchDuckDuckGoContacts(venueName, city).catch(() => ({ igHandle: '', tgHandle: '' }))
-  ]);
+  // Step 1: Google Maps Place + Website + Linktree + Phone
+  const gm = await lookupGoogleMapsSinglePlace(venueName, city).catch(() => ({
+    phone: '', sitePhones: [], website: '', address: '', title: '', igHandles: [], tgHandles: []
+  }));
 
-  const norm = normalizeVenueContacts({
-    phone: gm.phone || item.phone || '',
-    instagram: gm.igHandles[0] || ddg.igHandle || item.igTarget || '',
-    telegram: gm.tgHandles[0] || ddg.tgHandle || item.tgTarget || ''
-  });
+  // Step 2: Web candidates (Brave + DDG JS + IG Search Drawer) + Real Chrome Profile/Bio/Posts/Avatar Verification
+  const igDiscovery = await discoverAndVerifyInstagramAndWebWithChrome(venueName, city, gm, item);
 
-  let rawIg = gm.igHandles[0] || ddg.igHandle || norm.igTarget || '';
-  let rawTgHandle = gm.tgHandles[0] || ddg.tgHandle || (norm.tgTarget && norm.tgTarget.startsWith('@') ? norm.tgTarget : '');
-  const rawPhone = (norm.tgTarget && norm.tgTarget.startsWith('+')) ? norm.tgTarget : '';
-
-  // Step 3: Logged-in Instagram Topsearch (only if still missing IG)
-  if (!rawIg) {
-    const igTop = await searchInstagramTopsearch(venueName, city);
-    if (igTop) rawIg = igTop;
+  // Step 3: Aggregate ALL trusted phones & TG handles from GM, site, verified IG bio/posts, and web search
+  const candidatePhones = [];
+  if (gm.phone) candidatePhones.push({ phone: gm.phone, trust: 'official_gm_phone' });
+  for (const sp of (gm.sitePhones || [])) candidatePhones.push({ phone: sp, trust: 'official_gm_phone' });
+  if (item.phone) candidatePhones.push({ phone: item.phone, trust: 'official_gm_phone' });
+  for (const igP of (igDiscovery.extractedPhonesFromVerifiedIg || [])) {
+    candidatePhones.push({ phone: igP, trust: 'verified_ig_phone' });
   }
 
-  // Step 4: Verify Telegram availability via MTProto (phone registration / @username / admin extract)
-  const verifiedTg = await resolveTelegramViaMtproto(rawPhone, rawTgHandle, venueName);
+  const candidateHandles = [...(igDiscovery.tgCandidates || [])];
+  if (item.tgTarget && String(item.tgTarget).startsWith('@')) {
+    candidateHandles.push({ handle: item.tgTarget, trust: 'web_search', context: '' });
+  }
 
-  item.phone = gm.phone || item.phone || '';
+  // Step 4: Deep Telegram Verification via MTProto (GetFullUser bio/avatar, Channel about + 8 recent posts, ImportContacts)
+  const tgRes = await resolveTelegramViaMtproto({
+    candidatePhones,
+    candidateHandles,
+    venueName,
+    city
+  });
+
+  item.phone = gm.phone || item.phone || (igDiscovery.extractedPhonesFromVerifiedIg?.[0] || '');
   item.website = gm.website || item.website || '';
-  item.tgTarget = verifiedTg || '';
-  item.igTarget = rawIg || '';
+  if (gm.address && !item.address) item.address = gm.address;
+  item.igTarget = igDiscovery.verifiedIgHandle || '';
+  item.tgTarget = tgRes.tgTarget || '';
+  item.igInspection = igDiscovery.inspectedSummary || null;
+  item.tgInspection = tgRes.tgInspection || null;
   item.needsDiscovery = false;
 
   if (item.tgTarget || item.igTarget) {
@@ -1508,14 +2064,14 @@ export async function discoverContactsForVenueItem(item, fallbackCity = '') {
     if (!item.result || item.result === 'Пошук контактів...') {
       item.result = 'Ігнор / не відповідає';
     }
-    console.log(`[NFC Discovery] Знайдено для "${venueName}": TG=${item.tgTarget || '-'} | IG=${item.igTarget || '-'}`);
+    console.log(`[NFC Discovery] Верифіковано для "${venueName}": TG=${item.tgTarget || '-'} | IG=${item.igTarget || '-'}`);
   } else {
     item.discoveryState = 'not_found';
     item.channel = 'none';
     item.username = '—';
     item.sendState = 'skipped';
-    item.result = 'Контактів TG/IG не знайдено';
-    console.log(`[NFC Discovery] Контакти TG/IG не знайдено для "${venueName}".`);
+    item.result = 'Верифікованих TG/IG не знайдено';
+    console.log(`[NFC Discovery] Верифікованих TG/IG не знайдено для "${venueName}".`);
   }
 
   return item;
@@ -1871,6 +2427,57 @@ export async function pollActiveTelegramReplies() {
   }
 }
 
+let manualResolveBusy = false;
+async function processManualResolveQueue() {
+  if (manualResolveBusy || process.env.VERCEL) return;
+  manualResolveBusy = true;
+  try {
+    const kvUrl = getCloudKvOutreachUrl().replace(CLOUD_OUTREACH_RECORD, 'nfc_manual_resolve');
+    const res = await fetch(kvUrl, { signal: AbortSignal.timeout(4500) }).catch(() => null);
+    if (!res || !res.ok) return;
+    const data = await res.json().catch(() => null);
+    if (!data || !Array.isArray(data.requests)) return;
+    const pending = data.requests.find(r => r && r.status === 'pending' && r.name);
+    if (!pending) return;
+
+    const itemSnapshot = {
+      id: pending.venueId || pending.id,
+      name: pending.name,
+      city: pending.city || '',
+      phone: pending.phone || '',
+      website: pending.website || '',
+      address: pending.address || ''
+    };
+    await discoverContactsForVenueItem(itemSnapshot, pending.city || '');
+
+    // Re-read Cloud KV before updating so we don't drop concurrent requests from iPhone
+    const freshRes = await fetch(kvUrl, { signal: AbortSignal.timeout(4500) }).catch(() => null);
+    const freshData = (freshRes && freshRes.ok) ? await freshRes.json().catch(() => data) : data;
+    const reqList = Array.isArray(freshData?.requests) ? freshData.requests : data.requests;
+    const targetReq = reqList.find(r => r && r.id === pending.id);
+    if (targetReq) {
+      targetReq.status = 'done';
+      targetReq.resolvedAt = Date.now();
+      targetReq.phone = itemSnapshot.phone || '';
+      targetReq.website = itemSnapshot.website || '';
+      targetReq.instagram = itemSnapshot.igTarget || '';
+      targetReq.telegram = itemSnapshot.tgTarget || '';
+      targetReq.igInspection = itemSnapshot.igInspection || null;
+      targetReq.tgInspection = itemSnapshot.tgInspection || null;
+    }
+    const trimmed = reqList.slice(-20);
+    await fetch(kvUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ requests: trimmed, updatedAt: Date.now() }),
+      signal: AbortSignal.timeout(4500)
+    }).catch(() => {});
+  } catch (_) {
+  } finally {
+    manualResolveBusy = false;
+  }
+}
+
 let schedulerStarted = false;
 let schedulerBusy = false;
 export function startNfcOutreachScheduler() {
@@ -1887,6 +2494,7 @@ export function startNfcOutreachScheduler() {
     if (schedulerBusy) return;
     schedulerBusy = true;
     try {
+      await processManualResolveQueue().catch(() => {});
       const state = await syncNfcOutreachFromCloud();
       for (const camp of Object.values(state.campaigns || {})) {
         if (camp.status === 'running') {

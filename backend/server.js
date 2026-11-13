@@ -10,7 +10,7 @@ import { sendScanReport } from './bot.js';
 import './bot.js';
 import { startScrape, listJobs, getJob, deleteJob, buildCsv, csvFileName, sendCsvToTelegram, scraperMode, setApifyToken, getApifyToken, getSeenData, registerSeenBusinesses } from './scraper/scraper.js';
 import { scrapeLocalGmaps } from './scraper/localGmapsScraper.js';
-import { startNfcOutreachScheduler } from './outreach/nfcOutreachEngine.js';
+import { startNfcOutreachScheduler, discoverContactsForVenueItem } from './outreach/nfcOutreachEngine.js';
 import nfcOutreachHandler from '../api/nfc-outreach.js';
 
 dotenv.config();
@@ -668,6 +668,37 @@ app.post('/api/outreach/dispatch', (req, res) => {
 });
 
 // 9. NFC SMART AUTO-OUTREACH & 24/7 RESULTS MONITOR
+app.post('/api/nfc-resolve-venue', async (req, res) => {
+  try {
+    const { name, city, phone, website, address } = req.body || {};
+    if (!name || !String(name).trim()) {
+      return res.status(400).json({ success: false, error: 'Missing venue name' });
+    }
+    const snapshot = {
+      name: String(name).trim(),
+      city: String(city || '').trim(),
+      phone: String(phone || '').trim(),
+      website: String(website || '').trim(),
+      address: String(address || '').trim()
+    };
+    await discoverContactsForVenueItem(snapshot, snapshot.city);
+    res.json({
+      success: true,
+      data: {
+        phone: snapshot.phone || '',
+        website: snapshot.website || '',
+        address: snapshot.address || '',
+        instagram: snapshot.igTarget || '',
+        telegram: snapshot.tgTarget || '',
+        igInspection: snapshot.igInspection || null,
+        tgInspection: snapshot.tgInspection || null
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 app.all('/api/nfc-outreach', (req, res) => nfcOutreachHandler(req, res));
 
 // Fallback to index.html for SPA routing

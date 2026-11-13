@@ -10577,6 +10577,20 @@ document.addEventListener('click', (e) => {
     }, 120);
     return;
   }
+  const deepFindBtn = e.target.closest('[data-nfc-deep-find]');
+  if (deepFindBtn) {
+    e.preventDefault();
+    e.stopPropagation();
+    const jobId = deepFindBtn.dataset.job;
+    const venueId = deepFindBtn.dataset.nfcDeepFind;
+    const job = typeof findAnyNfcJob === 'function' ? findAnyNfcJob(jobId) : null;
+    const items = (job && typeof getJobFlatItems === 'function') ? getJobFlatItems(job) : [];
+    const venue = items.find(v => (String(v.id) === String(venueId) || v.name === venueId));
+    if (venue && typeof runDeepResolveForVenue === 'function') {
+      runDeepResolveForVenue(venue, job, deepFindBtn, null);
+    }
+    return;
+  }
 }, true);
 function _noopViberEnd() {
 }
@@ -10811,7 +10825,7 @@ function renderScrapeCat(job, cat) {
     const isMobile = isUkrainianMobilePhone(cleanPhone);
     const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
     const cleanInsta = (b.instagram || (b.source === 'instagram' ? b.username : '') || '').replace(/^@+/, '');
-    const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((b.name || '') + ' ' + (b.city || job.city || ''))}`;
+    const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : buildSmartInstagramLookupUrl(b.name, b.city || job.city, b.website);
     
     // Direct Google Maps business place card
     let mapUrl = b.link || b.mapsUrl || '';
@@ -13013,20 +13027,172 @@ function copyTextToClipboardSync(text) {
   return ok;
 }
 
+function buildSmartInstagramLookupUrl(name, city = '', website = '') {
+  const siteStr = String(website || '').trim();
+  const siteMatch = siteStr.match(/instagram\.com\/([a-zA-Z0-9._]{2,30})/i);
+  if (siteMatch && siteMatch[1] && !['p', 'reel', 'reels', 'explore', 'tags', 'locations'].includes(siteMatch[1].toLowerCase())) {
+    return `https://instagram.com/${siteMatch[1].replace(/[\/?#].*$/, '')}`;
+  }
+  const cleanName = String(name || '').replace(/["«»]/g, '').trim();
+  const cleanCity = (city && city !== 'Україна' && city !== 'Власний список') ? String(city).trim() : '';
+  // Exclude posts, reels, explore, locations, tags, and aggregators so Google puts profile pages first
+  const query = `site:instagram.com -inurl:/p/ -inurl:/reel/ -inurl:/reels/ -inurl:/explore/ -inurl:/locations/ -inurl:/tags/ -inurl:/popular/ "${cleanName}" ${cleanCity}`.trim();
+  return `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+}
+
+async function runDeepResolveForVenue(venue, job, btnEl, statusEl) {
+  if (!venue || !venue.name) return;
+  const origHtml = btnEl ? btnEl.innerHTML : '';
+  if (btnEl) {
+    btnEl.disabled = true;
+    btnEl.textContent = 'Пошук (опис + пости)...';
+  }
+  if (statusEl) {
+    statusEl.style.display = 'block';
+    statusEl.textContent = 'Шукаємо та перевіряємо профіль IG і TG (біо, ава, пости)...';
+  }
+
+  const applyResolvedData = (resData) => {
+    if (!resData) return false;
+    if (resData.instagram) venue.instagram = String(resData.instagram).replace(/^@+/, '');
+    if (resData.telegram) venue.telegram = String(resData.telegram).trim();
+    if (resData.phone && !venue.phone) venue.phone = resData.phone;
+    if (resData.website && !venue.website) venue.website = resData.website;
+    if (resData.address && !venue.address) venue.address = resData.address;
+    try { if (typeof saveNfcJobs === 'function') saveNfcJobs(); } catch (_) {}
+    try { if (typeof renderNfcRadar === 'function') renderNfcRadar(); } catch (_) {}
+
+    const parts = [];
+    if (resData.instagram) parts.push('IG: ' + resData.instagram);
+    if (resData.telegram) parts.push('TG: ' + resData.telegram);
+    if (statusEl) {
+      const bioInfo = resData.igInspection?.bioSnippet || resData.tgInspection?.bioSnippet || '';
+      statusEl.textContent = parts.length > 0
+        ? (`Знайдено: ${parts.join(' | ')}` + (bioInfo ? ` — ${bioInfo.slice(0, 90)}` : ''))
+        : 'Перевірених TG/IG не знайдено';
+    }
+    showToast(parts.length > 0 ? `Знайдено для «${venue.name}»: ${parts.join(', ')}` : `Для «${venue.name}» TG/IG не підтверджено`);
+    return parts.length > 0;
+  };
+
+  try {
+    const cityStr = venue.city || job?.city || '';
+    let resolved = null;
+
+    // 1. Direct PC backend if running locally
+    const isLocalHost = /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname || '');
+    if (isLocalHost) {
+      try {
+        const r = await fetch('/api/nfc-resolve-venue', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: venue.name,
+            city: cityStr,
+            phone: venue.phone || '',
+            website: venue.website || '',
+            address: venue.address || ''
+          }),
+          signal: AbortSignal.timeout(45000)
+        });
+        if (r.ok) {
+          const j = await r.json();
+          if (j?.success && j.data) resolved = j.data;
+        }
+      } catch (_) {}
+    }
+
+    // 2. Cloud KV bridge fallback (for iPhone / Vercel MiniApp -> PC Daemon)
+    if (!resolved && typeof getCloudKvNfcOutreachUrl === 'function') {
+      const kvUrl = getCloudKvNfcOutreachUrl().replace('nfc_outreach_state', 'nfc_manual_resolve');
+      const reqId = 'mr_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+      let existing = [];
+      try {
+        const curRes = await fetch(kvUrl);
+        if (curRes.ok) {
+          const curJson = await curRes.json().catch(() => null);
+          if (Array.isArray(curJson?.requests)) existing = curJson.requests;
+        }
+      } catch (_) {}
+
+      const nextList = existing.filter(r => r && (Date.now() - (r.createdAt || 0) < 180000)).slice(-15);
+      nextList.push({
+        id: reqId,
+        venueId: venue.id || '',
+        status: 'pending',
+        createdAt: Date.now(),
+        name: venue.name,
+        city: cityStr,
+        phone: venue.phone || '',
+        website: venue.website || '',
+        address: venue.address || ''
+      });
+
+      await fetch(kvUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ requests: nextList, updatedAt: Date.now() })
+      });
+
+      for (let attempt = 0; attempt < 22; attempt++) {
+        await new Promise(r => setTimeout(r, 2500));
+        const pollRes = await fetch(kvUrl).catch(() => null);
+        if (!pollRes || !pollRes.ok) continue;
+        const pollJson = await pollRes.json().catch(() => null);
+        const foundReq = (pollJson?.requests || []).find(r => r && r.id === reqId && r.status === 'done');
+        if (foundReq) {
+          resolved = foundReq;
+          break;
+        }
+      }
+    }
+
+    if (resolved) {
+      applyResolvedData(resolved);
+    } else {
+      if (statusEl) statusEl.textContent = 'Тайм-аут: перевірте, чи запущений сервер на ПК';
+      showToast('ПК-сервер не відповів вчасно');
+    }
+  } catch (err) {
+    if (statusEl) statusEl.textContent = 'Помилка пошуку: ' + err.message;
+  } finally {
+    if (btnEl) {
+      btnEl.disabled = false;
+      btnEl.innerHTML = origHtml;
+    }
+  }
+}
+
 function openContactActionModal(venue, job) {
-  if (!venue || !venue.phone) return;
-  const rawPhone = venue.phone;
+  if (!venue) return;
+  const rawPhone = venue.phone || '';
   const clean = rawPhone.replace(/\D/g, '');
   const clean380 = clean.startsWith('380') ? clean : (clean.startsWith('0') ? ('38' + clean) : clean);
 
   const titleEl = document.getElementById('contactActionTitle');
-  if (titleEl) titleEl.textContent = "Зв'язок";
+  if (titleEl) titleEl.textContent = venue.name ? `Зв'язок · ${venue.name}` : "Зв'язок";
   const phoneDisplayEl = document.getElementById('contactActionPhoneDisplay');
-  if (phoneDisplayEl) phoneDisplayEl.textContent = rawPhone;
+  if (phoneDisplayEl) phoneDisplayEl.textContent = rawPhone || 'Пошук контактів';
+
+  const statusEl = document.getElementById('contactDeepResolveStatus');
+  if (statusEl) {
+    statusEl.style.display = 'none';
+    statusEl.textContent = '';
+  }
+
+  const deepBtn = document.getElementById('contactDeepResolveBtn');
+  if (deepBtn) {
+    deepBtn.onclick = async () => {
+      haptic('light');
+      await runDeepResolveForVenue(venue, job, deepBtn, statusEl);
+      openContactActionModal(venue, job);
+    };
+  }
 
   // 1. Call Button
   const callBtn = document.getElementById('contactCallBtn');
   if (callBtn) {
+    callBtn.style.display = clean380 ? 'flex' : 'none';
     callBtn.onclick = () => {
       haptic('light');
       window.location.href = `tel:+${clean380}`;
@@ -13036,6 +13202,7 @@ function openContactActionModal(venue, job) {
   // 2. Viber Button
   const viberBtn = document.getElementById('contactViberBtn');
   if (viberBtn) {
+    viberBtn.style.display = clean380 ? 'flex' : 'none';
     viberBtn.onclick = () => {
       haptic('light');
       if (venue) {
@@ -13050,13 +13217,15 @@ function openContactActionModal(venue, job) {
   // 3. Telegram Button
   const tgBtn = document.getElementById('contactTgBtn');
   if (tgBtn) {
+    const cleanTgHandle = (venue.telegram || '').replace(/^https?:\/\/(www\.)?t\.me\//i, '').replace(/^@+/, '').replace(/[\/?#].*$/, '').trim();
+    tgBtn.style.display = (cleanTgHandle || clean380) ? 'flex' : 'none';
     tgBtn.onclick = () => {
       haptic('light');
       if (venue) {
         const pitch = generateNfcPitch(venue, job);
         copyTextToClipboardSync(pitch);
       }
-      const tgUrl = `https://t.me/+${clean380}`;
+      const tgUrl = cleanTgHandle ? `https://t.me/${cleanTgHandle}` : `https://t.me/+${clean380}`;
       openTelegramSmartUrl(tgUrl);
     };
   }
@@ -13064,6 +13233,7 @@ function openContactActionModal(venue, job) {
   // 4. Copy Phone Button
   const copyBtn = document.getElementById('contactCopyPhoneBtn');
   if (copyBtn) {
+    copyBtn.style.display = rawPhone ? 'flex' : 'none';
     copyBtn.onclick = () => {
       copyTextToClipboardSync(rawPhone);
       showToast(`Номер ${rawPhone} скопійовано!`);
@@ -13075,7 +13245,7 @@ function openContactActionModal(venue, job) {
   const igBtn = document.getElementById('contactIgBtn');
   if (igBtn) {
     const cleanInsta = (venue.instagram || '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/^@+/, '').replace(/[\/?#].*$/, '').trim();
-    const targetIg = cleanInsta ? `https://ig.me/m/${cleanInsta}` : `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((venue.name || '') + ' ' + (job?.city || ''))}`;
+    const targetIg = cleanInsta ? `https://ig.me/m/${cleanInsta}` : buildSmartInstagramLookupUrl(venue.name, venue.city || job?.city, venue.website);
     igBtn.onclick = () => {
       haptic('light');
       if (venue) {
@@ -13183,7 +13353,7 @@ function copyVenueNfcPitch(venue, job) {
   const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
   const tgUrl = venue.telegram ? (venue.telegram.startsWith('http') ? venue.telegram : 'https://t.me/' + venue.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
   const cleanInsta = (venue.instagram || '').replace(/^@+/, '');
-  const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((venue.name || '') + ' ' + (job?.city || ''))}`;
+  const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : buildSmartInstagramLookupUrl(venue.name, venue.city || job?.city, venue.website);
   const igDirectUrl = cleanInsta ? `https://ig.me/m/${cleanInsta}` : instaUrl;
 
   if (titleEl) titleEl.textContent = 'Офер: ' + (venue.name || 'Заклад');
@@ -13505,7 +13675,7 @@ function renderNfcVenuesList(job, items) {
       const isMobile = isUkrainianMobilePhone(cleanPhone);
       const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
       const cleanInsta = (v.instagram || '').replace(/^@+/, '');
-      const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
+      const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : buildSmartInstagramLookupUrl(v.name, v.city || job?.city, v.website);
       const cleanTg = (v.telegram || '').replace(/^https?:\/\/(www\.)?t\.me\//i, '').replace(/^@+/, '').replace(/[\/?#].*$/, '').trim();
       const tgHandleUrl = cleanTg ? `https://t.me/${cleanTg}` : '';
 
@@ -13578,7 +13748,7 @@ function renderNfcVenuesList(job, items) {
         const isMobile = isUkrainianMobilePhone(cleanPhone);
         const viberUrl = isMobile ? getViberDirectUrl(cleanPhone) : '';
         const cleanInsta = (v.instagram || '').replace(/^@+/, '');
-        const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.google.com/search?q=site:instagram.com+${encodeURIComponent((v.name || '') + ' ' + (job?.city || ''))}`;
+        const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : buildSmartInstagramLookupUrl(v.name, v.city || job?.city, v.website);
 
         return `
           <div class="nfc-venue-card">
@@ -13629,6 +13799,7 @@ function renderNfcVenuesList(job, items) {
               <div class="nfc-meta-item">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="${cleanInsta ? '#E1306C' : 'currentColor'}" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path></svg>
                 <a href="${instaUrl}" target="_blank" rel="noopener" class="nfc-insta-link" data-nfc-insta="true" data-job="${job.id}" data-venue="${v.id}" data-href="${instaUrl}" style="color:${cleanInsta ? '#E1306C' : 'var(--accent)'}; font-weight:700; text-decoration:none;">${cleanInsta ? '@' + cleanInsta : 'Знайти в Instagram'}</a>
+                ${!cleanInsta ? `<button type="button" data-nfc-deep-find="${v.id}" data-job="${job.id}" style="margin-left:6px; background:rgba(0,102,255,0.1); color:#0066FF; border:1px solid rgba(0,102,255,0.25); border-radius:6px; padding:1px 7px; font-size:0.7rem; font-weight:700; cursor:pointer; font-family:inherit;">Знайти ботом</button>` : ''}
               </div>
             </div>
 
@@ -15528,7 +15699,7 @@ function showMapVenueCard(v, job, idx) {
   const cleanPhone = (v.phone || '').replace(/[^\d]/g, '');
   const tgUrl = v.telegram ? (v.telegram.startsWith('http') ? v.telegram : 'https://t.me/' + v.telegram.replace('@', '')) : (cleanPhone ? 'https://t.me/+' + cleanPhone : '');
   const cleanInsta = (v.instagram || '').replace(/^@+/, '');
-  const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : `https://www.google.com/search?q=${encodeURIComponent('site:instagram.com "' + (v.name || '') + '" ' + (job?.city || ''))}`;
+  const instaUrl = cleanInsta ? `https://instagram.com/${cleanInsta}` : buildSmartInstagramLookupUrl(v.name, v.city || job?.city, v.website);
 
   card.innerHTML = `
     <div class="nfc-map-sheet-header">
