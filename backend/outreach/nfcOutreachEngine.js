@@ -387,19 +387,36 @@ export function normalizeVenueContacts(venue) {
 
 export function buildMessageForVenue(venueName, city, channel, templateIdx, state) {
   const cleanName = String(venueName || 'Заклад').trim();
-  const cleanCity = String(city || 'Київ').trim();
+  const rawCity = String(city || '').trim();
+  const hasRealCity = Boolean(rawCity && !/^(україна|власний список|—|-)$/i.test(rawCity));
+  const cleanCity = hasRealCity ? rawCity : '';
+
+  const applyTemplate = (raw) => {
+    let text = String(raw || '').replace(/\{NAME\}/gi, cleanName);
+    if (cleanCity) {
+      return text.replace(/\{CITY\}/gi, cleanCity);
+    }
+    return text
+      .replace(/\s*(?:з|у)\s+(?:міста|місті|м\.)\s*\{CITY\}/gi, '')
+      .replace(/\s*\(\{CITY\}\)/gi, '')
+      .replace(/\{CITY\}/gi, '')
+      .replace(/\s+([?!.,])/g, '$1')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  };
+
   if (channel === 'telegram') {
     const list = (Array.isArray(state?.config?.tgTemplates) && state.config.tgTemplates.length > 0)
       ? state.config.tgTemplates
       : NFC_TG_CONFIRM_TEMPLATES;
     const raw = list[templateIdx % list.length] || NFC_TG_CONFIRM_TEMPLATES[0];
-    return raw.replace(/\{NAME\}/gi, cleanName).replace(/\{CITY\}/gi, cleanCity);
+    return applyTemplate(raw);
   } else {
     const list = (Array.isArray(state?.config?.igTemplates) && state.config.igTemplates.length > 0)
       ? state.config.igTemplates
       : NFC_IG_OFFER_TEMPLATES;
     const raw = list[templateIdx % list.length] || NFC_IG_OFFER_TEMPLATES[0];
-    return raw.replace(/\{NAME\}/gi, cleanName).replace(/\{CITY\}/gi, cleanCity);
+    return applyTemplate(raw);
   }
 }
 
@@ -843,11 +860,13 @@ async function dispatchTelegramMessageMtproto(accountId, item, messageText) {
     const sentMsg = await client.sendMessage(entity, { message: messageText });
     return {
       sentViaMtproto: true,
-      peerId: String(entity.id || sentMsg?.peerId?.userId || '')
+      peerId: String(entity.id || sentMsg?.peerId?.userId || ''),
+      msgId: sentMsg?.id || null
     };
   } catch (err) {
-    console.warn(`[NFC Outreach] MTProto send warning (${accountId} -> ${item.username}):`, err.message);
-    return { sentViaMtproto: false, reason: 'send_error', peerId: '', error: err.message };
+    const errCode = String(err?.errorMessage || err?.message || 'send_error').trim();
+    console.warn(`[NFC Outreach] MTProto send warning (${accountId} -> ${item.username}):`, errCode);
+    return { sentViaMtproto: false, reason: 'send_error', peerId: '', error: errCode };
   }
 }
 
@@ -891,7 +910,13 @@ async function dispatchInstagramDirectMessage(item, messageText) {
   let page = null;
   try {
     const puppeteer = await import('puppeteer-core');
-    if (!igBrowserInstance || !igBrowserInstance.connected) {
+    let browserAlive = false;
+    try {
+      browserAlive = Boolean(igBrowserInstance && igBrowserInstance.connected);
+    } catch (_) {
+      browserAlive = false;
+    }
+    if (!browserAlive) {
       igBrowserInstance = await puppeteer.default.launch({
         executablePath: chromePath,
         headless: 'new',
@@ -1000,16 +1025,51 @@ async function dispatchInstagramDirectMessage(item, messageText) {
       }
     }
 
-    // Wait for DM textbox
+    // Wait for visible DM textbox (floating chat drawer or full /direct/t/ view)
     const textboxSelector = 'div[role="textbox"][contenteditable="true"]';
-    await page.waitForSelector(textboxSelector, { timeout: 15000 });
-    await new Promise(r => setTimeout(r, 1000));
+    await page.waitForSelector(textboxSelector, { visible: true, timeout: 15000 });
+    await new Promise(r => setTimeout(r, 800));
 
-    await page.click(textboxSelector);
+    // Dismiss any overlay popup that may have appeared right after clicking Message
+    await page.evaluate(() => {
+      const btns = Array.from(document.querySelectorAll('div[role="dialog"] button, button, div[role="button"]'));
+      const dismiss = btns.find(b => /^(Не зараз|Not Now)$/i.test((b.innerText || '').trim()));
+      if (dismiss) dismiss.click();
+    });
+
+    await page.evaluate((sel) => {
+      const boxes = Array.from(document.querySelectorAll(sel));
+      const tb = boxes.find(el => {
+        const r = el.getBoundingClientRect();
+        return r.width > 20 && r.height > 8;
+      }) || boxes[0];
+      if (tb) {
+        tb.scrollIntoView({ block: 'center', inline: 'center' });
+        tb.focus();
+        tb.click();
+      }
+    }, textboxSelector);
+    await new Promise(r => setTimeout(r, 300));
+
+    const tbRect = await page.evaluate((sel) => {
+      const boxes = Array.from(document.querySelectorAll(sel));
+      const tb = boxes.find(el => {
+        const r = el.getBoundingClientRect();
+        return r.width > 20 && r.height > 8;
+      });
+      if (!tb) return null;
+      const r = tb.getBoundingClientRect();
+      return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+    }, textboxSelector);
+    if (tbRect) {
+      await page.mouse.click(tbRect.x, tbRect.y);
+      await new Promise(r => setTimeout(r, 200));
+    }
+
     const lines = String(messageText || '').split('\n');
     for (let i = 0; i < lines.length; i++) {
       if (lines[i]) {
-        await page.keyboard.type(lines[i], { delay: 15 });
+        await page.keyboard.type(lines[i], { delay: 12 });
       }
       if (i < lines.length - 1) {
         await page.keyboard.down('Shift');
@@ -1017,15 +1077,56 @@ async function dispatchInstagramDirectMessage(item, messageText) {
         await page.keyboard.up('Shift');
       }
     }
-    await new Promise(r => setTimeout(r, 400));
-    await page.keyboard.press('Enter');
-    await new Promise(r => setTimeout(r, 2800));
+    await new Promise(r => setTimeout(r, 450));
 
-    await page.close().catch(() => {});
+    const typedLen = await page.evaluate((sel) => {
+      const tb = document.querySelector(sel);
+      return (tb?.innerText || tb?.textContent || '').trim().length;
+    }, textboxSelector);
+    if (typedLen === 0) {
+      await Promise.race([page.close().catch(() => {}), new Promise(r => setTimeout(r, 1500))]);
+      return { sentViaApi: false, reason: 'textbox_not_focused', error: 'ig_textbox_not_focused' };
+    }
+
+    await page.keyboard.press('Enter');
+    await new Promise(r => setTimeout(r, 2200));
+
+    // If Enter did not submit in floating DM popup, click explicit Send / Надіслати control
+    const stillHasText = await page.evaluate((sel) => {
+      const tb = document.querySelector(sel);
+      return (tb?.innerText || tb?.textContent || '').trim().length > 0;
+    }, textboxSelector);
+    if (stillHasText) {
+      const clickedSendBtn = await page.evaluate((sel) => {
+        const tb = document.querySelector(sel);
+        const container = tb?.closest('div[role="region"], form, section') || tb?.parentElement?.parentElement?.parentElement || document;
+        const btns = Array.from(container.querySelectorAll('div[role="button"], button'));
+        const sendEl = btns.find(b => /^(Надіслати|Send)$/i.test((b.innerText || b.getAttribute('aria-label') || '').trim()));
+        if (sendEl) {
+          sendEl.click();
+          return true;
+        }
+        return false;
+      }, textboxSelector);
+      if (clickedSendBtn) {
+        await new Promise(r => setTimeout(r, 2000));
+      }
+    }
+
+    const leftoverText = await page.evaluate((sel) => {
+      const tb = document.querySelector(sel);
+      return (tb?.innerText || tb?.textContent || '').trim().length;
+    }, textboxSelector);
+    await Promise.race([page.close().catch(() => {}), new Promise(r => setTimeout(r, 1500))]);
+    if (leftoverText > 5) {
+      return { sentViaApi: false, reason: 'send_not_submitted', error: 'ig_dm_not_submitted' };
+    }
     return { sentViaApi: true, targetUserId: String(targetUserId) };
   } catch (err) {
     console.warn(`[NFC Outreach] Instagram DM error (@${rawHandle}):`, err.message);
-    if (page) await page.close().catch(() => {});
+    if (page) {
+      await Promise.race([page.close().catch(() => {}), new Promise(r => setTimeout(r, 1500))]);
+    }
     return { sentViaApi: false, reason: 'send_error', error: err.message };
   } finally {
     igDispatchLock = false;
@@ -1149,7 +1250,39 @@ function hasForeignCityMismatch(text, targetCity) {
   return false;
 }
 
-const NOISE_PROFILE_RE = /(новини|тривог|світло|подслушано|підслухано|афіша|барахолка|огляди|блогер|відгуки|каталог заклад|vgorode|vinbazar|afisha|truexa|typical_|podslushano|foodblog|food_blog|guidenet|work_|robota_|vakans|rabota|реклама в |туристичн|офіс туризму)/i;
+function extractVenueSearchAliases(venueName) {
+  const raw = String(venueName || '').trim();
+  if (!raw) return [];
+  const out = [];
+  const addAlias = (s) => {
+    const clean = String(s || '').replace(/\s+/g, ' ').trim();
+    if (clean.length >= 2 && !out.some(x => x.toLowerCase() === clean.toLowerCase())) {
+      out.push(clean);
+    }
+  };
+
+  // Primary without parenthetical sub-brands: "Merkaba Group (A, B)" -> "Merkaba Group"
+  const noParens = raw.replace(/\([^)]*\)/g, ' ').replace(/\s+/g, ' ').trim();
+  if (noParens && !/[\/|]/.test(noParens)) {
+    addAlias(noParens);
+  }
+
+  // Slash / pipe alternatives: "Марані / Тіфліс" -> ["Марані", "Тіфліс"]
+  if (/[\/|]/.test(noParens || raw)) {
+    (noParens || raw).split(/[\/|]+/).forEach(part => addAlias(part));
+  }
+
+  // Parenthetical comma-separated sub-brands if main group has no results
+  const parenMatches = raw.matchAll(/\(([^)]{3,120})\)/g);
+  for (const pm of parenMatches) {
+    pm[1].split(',').forEach(sub => addAlias(sub));
+  }
+
+  addAlias(raw);
+  return out;
+}
+
+const NOISE_PROFILE_RE = /(новини\s+|тривог|світло\s+|подслушано|підслухано|афіша|барахолка|огляд\s+заклад|відгуки\s+про\s+заклад|куди\s+піти|де\s+поїсти|фудблог|foodblog|food_blog|каталог\s+заклад|vgorode|vinbazar|afisha|truexa|typical_|podslushano|guidenet|work_|robota_|vakans|rabota|реклама\s+в\s+|туристичн|офіс\s+туризму)/i;
 const BOT_OR_SPAM_TG_RE = /(казино|ставк|крипт|crypto|vip signal|інтим|escort|арбітраж|гарант|реклама і співпраця лише)/i;
 const VENUE_BUSINESS_SIGNAL_RE = /(ресторан|кафе|кав['’ʼ]?ярн|кофейн|бар|паб|піц|суші|салон|студія|барбер|стоматолог|клініка|бронь|резерв|заброн|меню|доставк|вул\.|просп\.|пров\.|графік|щодня|запис|direct|по замовленн|заклад|кухня|гостей|готель|рецепц|адмін)/i;
 
@@ -1280,7 +1413,13 @@ async function withLockedChromePage(fn) {
   let page = null;
   try {
     const puppeteer = await import('puppeteer-core');
-    if (!igBrowserInstance || !igBrowserInstance.connected) {
+    let browserAlive = false;
+    try {
+      browserAlive = Boolean(igBrowserInstance && igBrowserInstance.connected);
+    } catch (_) {
+      browserAlive = false;
+    }
+    if (!browserAlive) {
       igBrowserInstance = await puppeteer.default.launch({
         executablePath: chromePath,
         headless: 'new',
@@ -1674,9 +1813,16 @@ async function discoverAndVerifyInstagramAndWebWithChrome(venueName, city, gm, i
             if (hasBizSignal) score += 4;
             if (prof.canMessage) score += 2;
 
+            const strongCoreMatch = nameMatch >= 9;
             const passesGate = (nameMatch >= 3 || hasPhoneMatch || hasSiteMatch) &&
               !isAggregatorNoise &&
-              (score >= 9 || (cand.fromOfficialSite && score >= 6 && !foreignCity));
+              (score >= 9 || (cand.fromOfficialSite && score >= 6 && !foreignCity)) &&
+              (
+                cand.fromOfficialSite ||
+                hasPhoneMatch ||
+                hasSiteMatch ||
+                (cityPart ? (cityMatch || (strongCoreMatch && hasBizSignal)) : (hasBizSignal && nameMatch >= 5))
+              );
 
             const candPhones = Array.from(new Set([
               ...extractPhonesFromText(`${prof.headerText} ${postsJoined}`),
@@ -1938,14 +2084,23 @@ async function resolveTelegramViaMtproto({ candidatePhones = [], candidateHandle
           if (scoreCandidateRelevance(label, venueName) < 4) continue;
           const chanProf = await inspectTelegramChannelEntity(client, Api, c);
           if (!chanProf) continue;
+          const chanBlob = `${chanProf.title} ${chanProf.username || ''} ${chanProf.bio} ${chanProf.recentPostsText || ''}`;
+          const chanNameMatch = scoreCandidateRelevance(chanBlob, venueName);
           const chanNoise = NOISE_PROFILE_RE.test(`${chanProf.title} ${chanProf.bio}`) && !NOISE_PROFILE_RE.test(venueName);
           const chanForeign = hasForeignCityMismatch(`${chanProf.title} ${chanProf.bio}`, cityPart);
+          const chanCityMatch = textMatchesCity(chanBlob, cityPart);
+          const chanPhoneMatch = candidatePhones.some(p => {
+            const d = String(p?.phone || p || '').replace(/\D/g, '').slice(-9);
+            return d.length >= 9 && chanBlob.replace(/\D/g, '').includes(d);
+          });
+          const chanBiz = VENUE_BUSINESS_SIGNAL_RE.test(chanBlob);
+          const chanTrustedForCity = chanPhoneMatch || (cityPart ? (chanCityMatch && !chanForeign) : (chanNameMatch >= 6 && chanBiz && !chanForeign));
           if (!chanNoise && !chanForeign) {
             for (const adminH of chanProf.extractedHandles.slice(0, 3)) {
               const admEnt = await client.getEntity(adminH.replace(/^@+/, '')).catch(() => null);
               if (admEnt && admEnt.className === 'User') {
                 const admProf = await inspectTelegramUserEntity(client, Api, admEnt);
-                evaluateAndAddUser(admProf, 'verified_channel_admin', `${chanProf.title} ${chanProf.bio}`);
+                evaluateAndAddUser(admProf, chanTrustedForCity ? 'verified_channel_admin' : 'mtproto_search', `${chanProf.title} ${chanProf.bio}`);
               }
             }
           }
@@ -2011,20 +2166,14 @@ async function resolveTelegramViaMtproto({ candidatePhones = [], candidateHandle
   };
 }
 
-export async function discoverContactsForVenueItem(item, fallbackCity = '') {
-  const venueName = String(item?.name || '').trim();
-  const city = String(item?.city || fallbackCity || '').trim();
-  if (!venueName) return item;
-
-  console.log(`[NFC Discovery] Глибокий пошук та верифікація TG/IG для "${venueName}" (${city || 'без міста'})...`);
-
+async function discoverSingleVenueQuery(item, queryName, city) {
   // Step 1: Google Maps Place + Website + Linktree + Phone
-  const gm = await lookupGoogleMapsSinglePlace(venueName, city).catch(() => ({
+  const gm = await lookupGoogleMapsSinglePlace(queryName, city).catch(() => ({
     phone: '', sitePhones: [], website: '', address: '', title: '', igHandles: [], tgHandles: []
   }));
 
   // Step 2: Web candidates (Brave + DDG JS + IG Search Drawer) + Real Chrome Profile/Bio/Posts/Avatar Verification
-  const igDiscovery = await discoverAndVerifyInstagramAndWebWithChrome(venueName, city, gm, item);
+  const igDiscovery = await discoverAndVerifyInstagramAndWebWithChrome(queryName, city, gm, item);
 
   // Step 3: Aggregate ALL trusted phones & TG handles from GM, site, verified IG bio/posts, and web search
   const candidatePhones = [];
@@ -2044,9 +2193,36 @@ export async function discoverContactsForVenueItem(item, fallbackCity = '') {
   const tgRes = await resolveTelegramViaMtproto({
     candidatePhones,
     candidateHandles,
-    venueName,
+    venueName: queryName,
     city
   });
+
+  return { gm, igDiscovery, tgRes };
+}
+
+export async function discoverContactsForVenueItem(item, fallbackCity = '') {
+  const venueName = String(item?.name || '').trim();
+  const rawCity = String(item?.city || fallbackCity || '').trim();
+  const city = (rawCity && !/^(україна|власний список|—|-)$/i.test(rawCity)) ? rawCity : '';
+  if (!venueName) return item;
+
+  console.log(`[NFC Discovery] Глибокий пошук та верифікація TG/IG для "${venueName}" (${city || 'без міста'})...`);
+
+  const aliases = extractVenueSearchAliases(venueName);
+  const queryList = aliases.length > 0 ? aliases.slice(0, 3) : [venueName];
+
+  let bestPack = null;
+  for (const qName of queryList) {
+    const pack = await discoverSingleVenueQuery(item, qName, city);
+    const foundAny = Boolean(pack.tgRes.tgTarget || pack.igDiscovery.verifiedIgHandle);
+    const hasPhoneOrWeb = Boolean(pack.gm.phone || pack.gm.website);
+    if (!bestPack || foundAny || (hasPhoneOrWeb && !bestPack.gm.phone && !bestPack.gm.website)) {
+      bestPack = pack;
+    }
+    if (foundAny) break;
+  }
+
+  const { gm, igDiscovery, tgRes } = bestPack || { gm: {}, igDiscovery: {}, tgRes: {} };
 
   item.phone = gm.phone || item.phone || (igDiscovery.extractedPhonesFromVerifiedIg?.[0] || '');
   item.website = gm.website || item.website || '';
@@ -2135,8 +2311,12 @@ export function selectNextOutreachStep(campaign, state) {
     }
 
     if (hasTg && tgAvailable) {
-      const activeStage = tg1Available ? 'tg1' : 'tg2';
-      const activeAccount = tg1Available ? accs.tg1 : accs.tg2;
+      // Alternate smoothly between enabled TG accounts with fewer sent messages today
+      let activeStage = tg1Available ? 'tg1' : 'tg2';
+      if (tg1Available && tg2Available) {
+        activeStage = ((accs.tg2.sentToday || 0) < (accs.tg1.sentToday || 0)) ? 'tg2' : 'tg1';
+      }
+      const activeAccount = activeStage === 'tg2' ? accs.tg2 : accs.tg1;
       return {
         action: 'send',
         stage: activeStage,
@@ -2271,18 +2451,38 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
   let deferredForClient = false;
 
   if (activeChannel === 'telegram') {
-    const mtRes = await dispatchTelegramMessageMtproto(activeAccount.id, item, msgText);
+    let mtRes = await dispatchTelegramMessageMtproto(activeAccount.id, item, msgText);
+    // If primary/selected TG account hit no_client or account-side flood/spam limit, retry once with the other TG account
+    const errTxt = String(mtRes.error || mtRes.reason || '').toUpperCase();
+    const isAccountLevelIssue = mtRes.reason === 'no_client' || /PEER_FLOOD|FLOOD_WAIT|CHAT_WRITE_FORBIDDEN/.test(errTxt);
+    if (!mtRes.sentViaMtproto && isAccountLevelIssue) {
+      const altId = activeAccount.id === 'tg1' ? 'tg2' : 'tg1';
+      const altAcc = accs[altId];
+      const altLimit = Number(altAcc?.dailyLimit) || (state.config.warmupMode === 'warmed' ? 20 : 10);
+      if (altAcc && altAcc.enabled !== false && (altAcc.sentToday || 0) < altLimit) {
+        console.log(`[NFC Outreach] Switching ${activeAccount.id} -> ${altId} for "${item.name}" (${mtRes.error || mtRes.reason})`);
+        const altRes = await dispatchTelegramMessageMtproto(altId, item, msgText);
+        if (altRes.sentViaMtproto) {
+          activeAccount = altAcc;
+          activeStage = altId;
+          mtRes = altRes;
+        }
+      }
+    }
+
     if (mtRes.sentViaMtproto) {
       item.peerId = mtRes.peerId || '';
+      item.error = '';
       sentSuccessfully = true;
     } else if (mtRes.reason === 'no_client') {
       deferredForClient = true;
     } else {
-      console.warn(`[NFC Outreach] Telegram resolution failed for "${item.name}" (${targetHandle}).`);
+      item.error = mtRes.error || mtRes.reason || 'tg_send_failed';
+      console.warn(`[NFC Outreach] Telegram resolution failed for "${item.name}" (${targetHandle}): ${item.error}`);
       const ig1Limit = Number(accs.ig1?.dailyLimit) || 30;
       const ig1Available = accs.ig1?.enabled !== false && (accs.ig1.sentToday || 0) < ig1Limit;
       if (item.igTarget && ig1Available) {
-        console.log(`[NFC Outreach] Seamless fallback to Instagram (@${item.igTarget}) for "${item.name}"...`);
+        console.log(`[NFC Outreach] Seamless fallback to Instagram (${item.igTarget}) for "${item.name}"...`);
         activeChannel = 'instagram';
         activeAccount = accs.ig1;
         activeStage = 'ig1';
@@ -2292,26 +2492,37 @@ export async function executeNextOutreachSend(jobId = null, forceImmediate = fal
         const igRes = await dispatchInstagramDirectMessage(item, msgText);
         if (igRes.sentViaApi) {
           item.peerId = igRes.targetUserId || '';
+          item.error = '';
           sentSuccessfully = true;
         } else if (igRes.reason === 'no_client') {
           deferredForClient = true;
         } else {
+          item.error = igRes.error || igRes.reason || 'ig_send_failed';
           item.sendState = 'failed';
           item.result = 'Не вдалося надіслати в IG';
         }
       } else {
         item.sendState = 'failed';
-        item.result = 'Контакт недоступний в TG';
+        const upErr = String(item.error || '').toUpperCase();
+        if (/PRIVACY_PREMIUM_REQUIRED|ALLOW_PAYMENT_REQUIRED|USER_PRIVACY_RESTRICTED/.test(upErr)) {
+          item.result = 'TG: закриті повідомлення';
+        } else if (/PEER_FLOOD|FLOOD_WAIT/.test(upErr)) {
+          item.result = 'TG: ліміт акаунта';
+        } else {
+          item.result = 'Контакт недоступний в TG';
+        }
       }
     }
   } else if (activeChannel === 'instagram') {
     const igRes = await dispatchInstagramDirectMessage(item, msgText);
     if (igRes.sentViaApi) {
       item.peerId = igRes.targetUserId || '';
+      item.error = '';
       sentSuccessfully = true;
     } else if (igRes.reason === 'no_client') {
       deferredForClient = true;
     } else {
+      item.error = igRes.error || igRes.reason || 'ig_send_failed';
       item.sendState = 'failed';
       item.result = 'Не вдалося надіслати в IG';
     }

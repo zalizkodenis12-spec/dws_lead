@@ -17974,6 +17974,11 @@ function setupNfcAutoOutreachModule() {
 
   document.getElementById('openNfcCustomOutreachBtn')?.addEventListener('click', () => {
     haptic('light');
+    const cityEl = document.getElementById('nfcCustomOutreachCity');
+    if (cityEl && !cityEl.value.trim()) {
+      const radarCity = document.getElementById('nfcCity')?.value?.trim() || 'Вінниця';
+      cityEl.value = radarCity;
+    }
     openModal('modalNfcCustomOutreach');
   });
 
@@ -17995,7 +18000,7 @@ function setupNfcAutoOutreachModule() {
     const venueItems = names.map((name, idx) => ({
       id: `custom_${jobId}_${idx}`,
       name,
-      city: city || 'Україна',
+      city,
       address: city || 'Власний список',
       phone: '',
       website: '',
