@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794575178346-181",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "maintenance",
+      "subcategoryName": "Технічне обслуговування",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "post",
+      "authorUsername": "@post",
+      "title": "Okay, I've reviewed the provided Telegram post. Here's a summary of the job...",
+      "text": "Okay, I've reviewed the provided Telegram post. Here's a summary of the job seeker's profile and what they are looking for:\n\n**Candidate:** n1ck1111\n**Role:** Senior Frontend Developer (React | TypeScript)\n**Location:** Remote (Worldwide, B2B), also mentions Tbilisi as a potential base.\n**Employment Type:** Full-time / Project-based\n**Salary Expectation:** From $2,000\n\n**Experience:** 5+ years of commercial experience.\n\n**Key Skills & Specializations:**\n\n*   **Core Technologies:** React, TypeScript, JavaScript\n*   **UI Development:** Complex admin and product UIs, enterprise back-office systems.\n*   **Specific Areas:**\n    *   Design Systems\n    *   Accessibility (WCAG)\n    *   Internationalization (i18n) / Right-to-Left (RTL) support\n    *   Legacy to React Migrations\n*   **Fullstack Capabilities:** Node.js/Express + PostgreSQL\n*   **Development Lifecycle:** Implementation, code review, testing, release.\n\n**Key Achievements & Experience Highlights:**\n\n*   **RingCentral:** Worked on an admin portal for cloud communications with millions of business users.\n*   **EPAM Systems (Workhuman):** Migrated an enterprise admin panel and a Node.js integration layer.\n*   **Care Service (Freelance):** Built a caregiving platform from scratch using Next.js, Node, and PostgreSQL.\n*   **Migration Project:** Migrated 30+ admin screens (approx. 15k LOC) from jQuery/CanJS to React, resulting in faster page load times (4s -> 2s) and fewer bugs (-20%).\n*   **Shared UI/Design System:** Developed 20+ reusable components, leading to significant UI duplication reduction (-30%) and faster new screen development (5 days -> 2 days).\n*   **Accessibility & i18n/RTL:** Improved keyboard navigation, focus, and handled 4 locales for i18n/RTL.\n*   **Backend/API Work:** Created 8+ Express aggregation endpoints to reduce round-trips and speed up reporting views (8s -> 3s).\n*   **Testing & Mentorship:** Increased test coverage (55% -> 80%) and mentored 2 junior developers.\n*   **Greenfield Development:** Built database schemas (15+ tables), REST APIs (25+), RBAC, and improved Lighthouse scores.\n\n**Technology Stack:**\nJavaScript, TypeScript, React, Next.js, Redux Toolkit, TanStack Query, Zustand, HTML/CSS/SCSS, Tailwind, Styled Components, Material UI, Storybook, Vite, Webpack, Jest, React Testing Library, Playwright, Node.js, Express, PostgreSQL, Prisma, Docker, CI/CD, Git, AWS.\n\n**Contact Information:**\n*   **Telegram:** @n1ck1111\n*   **Email:** nikolosdolidze@gmail.com\n*   **LinkedIn:** linkedin.com/in/nikolos-dolidze\n\n**In summary, this is a highly experienced Senior Frontend Developer with strong React and TypeScript skills, a proven track record in complex UI development, migrations, and a good understanding of full-stack capabilities and best practices like accessibility and performance optimization.**\n\n⭐ Оцифрованные результаты на каждом шагу: page load 4s → 2s, сборка экранов с 5 до 2 дней и баги −20%\n⭐ Честная миграция крупного легаси (jQuery/CanJS на React) с zero downtime в RingCentral и EPAM\n⭐ Редкая для фронтов глубина: 0 critical Axe в accessibility и честная поддержка i18n/RTL",
+      "date": "2026-11-13T13:06:18.346Z",
+      "dateFormatted": "Сьогодні, 15:06",
+      "budget": 0,
+      "currency": "₴",
+      "country": "США",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: технічне обслуговування.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794574801157-212",
       "category": "development",
       "categoryName": "Веброзробка",
