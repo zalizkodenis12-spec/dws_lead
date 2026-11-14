@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794655693374-23",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "PHP — вакансии, поиск работы и аналитика",
+      "sourceUsername": "@php_jobs",
+      "authorName": "Николай Суконный | Поддержка сайтов",
+      "authorUsername": "@tg_id_51717492",
+      "title": "Вам разработчик в гемблинг не нужен?",
+      "text": "Вам разработчик в гемблинг не нужен?",
+      "date": "2026-11-14T11:28:13.374Z",
+      "dateFormatted": "Сьогодні, 13:28",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794655575514-339",
       "category": "development",
       "categoryName": "Веброзробка",
