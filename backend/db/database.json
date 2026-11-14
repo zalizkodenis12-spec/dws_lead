@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794639375233-575",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "kend",
+      "authorUsername": "@kend",
+      "title": "🔥 Резюме Backend / Fullstack Developer (Node.js / TypeScript) от @Axyonich...",
+      "text": "🔥 Резюме Backend / Fullstack Developer (Node.js / TypeScript) от @Axyonich, от 230 000₽, удаленно, фуллтайм / парт-тайм / проект\n\n⭐ 15+ платёжных провайдеров из разных стран — это не просто API потрогать, а выжить в аду чужих вебхуков и нестандартных статусов\n⭐ 9 000+ пользователей и 25 000+ оплат в «Талантошке» — реальный продукт с реальными деньгами, а не пет-проект для галочки\n⭐ Ускорение операций на 40% через Redis + единственный бэкендер в команде из 8 человек — сразу понятно, кто там тащил",
+      "date": "2026-11-14T06:56:15.232Z",
+      "dateFormatted": "Сьогодні, 08:56",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794634549025-9126",
       "category": "development",
       "categoryName": "Веброзробка",
