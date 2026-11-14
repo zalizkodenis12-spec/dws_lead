@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794680311985-68",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "ads_creatives",
+      "subcategoryName": "Рекламні креативи",
+      "sourceType": "chat",
+      "sourceName": "DIGITAL Tender / freelance / фриланс",
+      "sourceUsername": "@digitaltender",
+      "authorName": "digitaltender",
+      "authorUsername": "@digitaltender",
+      "title": "👔 Дизайнер для создания визуального контента для продвижения проектов",
+      "text": "👔 Дизайнер для создания визуального контента для продвижения проектов\n\n💼 Тип работы: постоянная\n\n👀 Задача: Создание статичных рекламных креативов и баннеров. Адаптация готовых материалов под разные форматы и рекламные площадки (ресайзы). Создание видеокреативов для рекламных кампаний. Монтаж, обработка и анимация видео. Генерация изображений и видеоматериалов с помощью AI-инструментов. Дополнительные дизайнерские задачи, связанные с продвижением проекта.\n\n💰 Оплата: по договорённости",
+      "date": "2026-11-14T18:18:31.984Z",
+      "dateFormatted": "Сьогодні, 20:18",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: рекламні креативи.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794678880705-4163",
       "category": "development",
       "categoryName": "Веброзробка",
