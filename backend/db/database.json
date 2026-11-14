@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794648186689-736",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "УМАНЬ РОБОТА",
+      "sourceUsername": "@umanwork",
+      "authorName": "Маргошка🚺❤️",
+      "authorUsername": "@tg_id_1962801680",
+      "title": "Шукаю програміста для одного проєкту. Якщо вас зацікавила пропозиція — за п...",
+      "text": "Шукаю програміста для одного проєкту. Якщо вас зацікавила пропозиція — за подробицями пишіть в особисті повідомлення.",
+      "date": "2026-11-14T09:23:06.688Z",
+      "dateFormatted": "Сьогодні, 11:23",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 48,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794647190298-896",
       "category": "development",
       "categoryName": "Веброзробка",
