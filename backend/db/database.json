@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794682182674-51",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "DOC",
+      "authorUsername": "@HRarochka",
+      "title": "💸 ДОХОД ОТ $1000 В МЕСЯЦ + БОНУСЫ",
+      "text": "💸 ДОХОД ОТ $1000 В МЕСЯЦ + БОНУСЫ\n🔥 ВЫПЛАТЫ КАЖДУЮ НЕДЕЛЮ\n\n‼️Выплачиваем самый высокий процент с доливов клиентов на рынке‼️\n\nИЩЕМ ЧАТТЕРОВ / SMM-МЕНЕДЖЕРОВ\n\nРассматриваем кандидатов из Украины🇺🇦!\n\nУсловия:\n\n- Полностью удалённая работа\n- Гибкий график: от 7 часов в день\n- Один из самых высоких процентов с клиентов на рынке\n- Еженедельная ставка\n- Предоставляем полное бесплатное обучение\n\nТребования:\n\n- Возраст от 17 до 25 лет\n- Знание письменного русского языка\n- Желание хорошо зарабатывать\n\n📩 За подробностями пишите @HRarochka",
+      "date": "2026-11-14T18:49:42.673Z",
+      "dateFormatted": "Сьогодні, 20:49",
+      "budget": 41500,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 78,
+      "aiSummary": "Замовлення: маркетинг з бюджетом 41500 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794680311985-68",
       "category": "montage",
       "categoryName": "Монтаж",
