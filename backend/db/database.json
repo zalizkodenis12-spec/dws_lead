@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1794641748239-2525",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "website_turnkey",
+      "subcategoryName": "Розробка сайтів та сервісів",
+      "sourceType": "weworkremotely",
+      "sourceName": "WeWorkRemotely",
+      "sourceUsername": "@weworkremotely",
+      "authorName": "Клієнт на WeWorkRemotely",
+      "authorUsername": "@weworkremotely",
+      "title": "Reddit: Analytics Engineer",
+      "text": "Reddit: Analytics Engineer\n\n<p>\n  <strong>Headquarters:</strong> Remote - United States\n</p>\n\n<div class=\"content-intro\"><div class=\"c-message_kit__blocks c-message_kit__blocks--rich_text\">\n<div class=\"c-message__message_blocks c-message__message_blocks--rich_text\">\n<div class=\"p-block_kit_renderer\">\n<div class=\"p-block_kit_renderer__block_wrapper p-block_kit_renderer__block_wrapper--first\">\n<div class=\"p-rich_text_block\">\n<div class=\"p-rich_text_section\">Reddit is a community of communities. It’s built on shared interests, passion, and trust, and is home to the most open and authentic conversations on the internet. Every day, Reddit users submit, vote, and comment on the topics they care most about. With 100,000+ active communities and approximately 1",
+      "url": "https://weworkremotely.com/remote-jobs/reddit-analytics-engineer",
+      "date": "2026-11-14T07:35:45.666Z",
+      "dateFormatted": "Сьогодні, 09:35",
+      "budget": 0,
+      "currency": "$",
+      "country": "WeWorkRemotely",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 88,
+      "aiSummary": "Замовлення на WeWorkRemotely: розробка сайтів та сервісів.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794639819749-451",
       "category": "development",
       "categoryName": "Веброзробка",
