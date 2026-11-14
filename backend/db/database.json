@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794632448835-369",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "fullstack",
+      "subcategoryName": "Fullstack розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "javascript_jobs_feed",
+      "authorUsername": "@javascript_jobs_feed",
+      "title": "☀️ Вакансии за 13 ноября",
+      "text": "☀️ Вакансии за 13 ноября\n\n💼 Вакансия Техлид / Тимлид (Fullstack) в ARMOR, от 350 000 до 400 000₽, удаленка (РФ), фуллтайм",
+      "date": "2026-11-14T05:00:48.810Z",
+      "dateFormatted": "Сьогодні, 07:00",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: fullstack розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794630896990-887",
       "category": "development",
       "categoryName": "Веброзробка",
