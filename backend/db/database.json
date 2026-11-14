@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794658137668-694",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "lonelycoder13",
+      "authorUsername": "@lonelycoder13",
+      "title": "🔥 Резюме Fullstack-инженер от @lonelycoder13, от 1 800 ₽/час, удаленка, па...",
+      "text": "🔥 Резюме Fullstack-инженер от @lonelycoder13, от 1 800 ₽/час, удаленка, парт-тайм или проектная работа\n\n⭐ Редчайший инженерный диапазон: от прошивок релейной защиты на STM32/C до автомобильного софта под Li Auto и десктопного аудио-граббера на Rust\n⭐ Глубокая работа с сетевыми протоколами и криптографией: гибридный ML-KEM, CRDT-движок на Rust внутри Go-сервиса и WASAPI loopback\n⭐ Продуктовый контекст вместо сухих списков: четко описана начинка каждого сервиса (LiveKit, SeaweedFS, gnet, NATS JetStream)",
+      "date": "2026-11-14T12:08:57.667Z",
+      "dateFormatted": "Сьогодні, 14:08",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": true,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794657262936-60",
       "category": "development",
       "categoryName": "Веброзробка",
