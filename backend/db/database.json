@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794639819749-451",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "oper",
+      "authorUsername": "@oper",
+      "title": "🔥 Резюме Backend Developer (Node.js) от @arthur_devF, $2 000–$2 500, г. Ни...",
+      "text": "🔥 Резюме Backend Developer (Node.js) от @arthur_devF, $2 000–$2 500, г. Нижний Новгород / удаленка, фуллтайм\n\n⭐ Ускорил процесс деплоя клиентам в 8 раз за счёт параллелизации и оптимизировал Apps Script на 58% — конкретные цифры, а не вода\n⭐ Вынес расчёт корзины из Express-монолита в отдельный NestJS-микросервис для «Кантаты» и снизил нагрузку на БД на 30% — реальная архитектурная задача с измеримым результатом\n⭐ Сократил время релиза с 8 часов до 2 на позиции стажёра — круто, когда джуниор сразу приносит такую пользу",
+      "date": "2026-11-14T07:03:39.747Z",
+      "dateFormatted": "Сьогодні, 09:03",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794639375233-575",
       "category": "development",
       "categoryName": "Веброзробка",
