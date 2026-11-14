@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794653818842-916",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "backend",
+      "subcategoryName": "Backend & API розробка",
+      "sourceType": "chat",
+      "sourceName": "Laravel Pro",
+      "sourceUsername": "@laravel_pro",
+      "authorName": "Paul",
+      "authorUsername": "@LaravelMoscow",
+      "title": "сейчас ставка laravel программиста 500 рублей/час",
+      "text": "сейчас ставка laravel программиста 500 рублей/час",
+      "date": "2026-11-14T10:56:58.841Z",
+      "dateFormatted": "Сьогодні, 12:56",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: backend & api розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794652547962-2301",
       "category": "marketing",
       "categoryName": "Маркетинг",
