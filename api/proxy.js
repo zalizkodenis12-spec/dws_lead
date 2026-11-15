@@ -28,7 +28,7 @@ export default async function handler(req, res) {
 
     const text = await response.text();
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-    res.setHeader('Cache-Control', 'public, max-age=60');
+    res.setHeader('Cache-Control', 'no-store, max-age=0');
     return res.status(response.ok ? 200 : response.status).send(text);
   } catch (err) {
     return res.status(502).json({ error: err.message || 'Proxy fetch failed' });

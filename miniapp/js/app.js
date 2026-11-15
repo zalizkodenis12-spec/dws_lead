@@ -9729,7 +9729,7 @@ function buildAccountSnapshot(nowTs = Date.now()) {
   const localNfc = (typeof nfcRadarState !== 'undefined' && Array.isArray(nfcRadarState.jobs) && nfcRadarState.jobs.length > 0)
     ? nfcRadarState.jobs
     : (typeof loadLocalNfcJobs === 'function' ? loadLocalNfcJobs() : []);
-  const localD2d = (typeof nfcRadarState !== 'undefined' && Array.isArray(nfcRadarState.d2dJobs) && nfcRadarState.d2dJobs.length > 0)
+  const localD2d = (typeof nfcRadarState !== 'undefined' && Array.isArray(nfcRadarState.d2dJobs))
     ? nfcRadarState.d2dJobs
     : (typeof loadLocalD2dJobs === 'function' ? loadLocalD2dJobs() : []);
 
@@ -9940,12 +9940,16 @@ function applyAccountSnapshot(d, mergeWithLocal = false, preferLocalOnMerge = fa
     }
   }
 
-  // 10. NFC Radar Jobs
+  // 10. NFC Radar Jobs (never overwrite active local 'running' jobs mid-search)
   if (Array.isArray(d.nfcJobs) && typeof nfcRadarState !== 'undefined') {
     const localNfc = nfcRadarState.jobs || [];
-    const nextNfc = mergeWithLocal
+    const activeRunningNfc = localNfc.filter(j => j && j.status === 'running');
+    let nextNfc = mergeWithLocal
       ? (preferLocalOnMerge ? mergeArraysById(localNfc, d.nfcJobs) : mergeArraysById(d.nfcJobs, localNfc))
       : d.nfcJobs;
+    if (!mergeWithLocal && activeRunningNfc.length > 0) {
+      nextNfc = mergeArraysById(activeRunningNfc, nextNfc);
+    }
     if (JSON.stringify(nextNfc) !== JSON.stringify(localNfc)) {
       localStorage.setItem('dws_nfc_radars', JSON.stringify(nextNfc));
       nfcRadarState.jobs = nextNfc;
@@ -9953,14 +9957,19 @@ function applyAccountSnapshot(d, mergeWithLocal = false, preferLocalOnMerge = fa
     }
   }
 
-  // 10a. D2D Radar Jobs
+  // 10a. D2D Radar Jobs (protect local active 'running' jobs from 2.5s poll overwrite)
   if (Array.isArray(d.d2dJobs) && typeof nfcRadarState !== 'undefined') {
     const localD2d = nfcRadarState.d2dJobs || [];
-    const nextD2d = mergeWithLocal
+    const activeRunningD2d = localD2d.filter(j => j && j.status === 'running');
+    let nextD2d = mergeWithLocal
       ? (preferLocalOnMerge ? mergeArraysById(localD2d, d.d2dJobs) : mergeArraysById(d.d2dJobs, localD2d))
       : d.d2dJobs;
+    if (!mergeWithLocal && activeRunningD2d.length > 0) {
+      nextD2d = mergeArraysById(activeRunningD2d, nextD2d);
+    }
     if (JSON.stringify(nextD2d) !== JSON.stringify(localD2d)) {
       localStorage.setItem('dws_nfc_d2d_radars', JSON.stringify(nextD2d));
+      localStorage.setItem('dws_d2d_initialized', '1');
       nfcRadarState.d2dJobs = nextD2d;
       hasChanges = true;
     }
@@ -10267,7 +10276,12 @@ function renderCurrentTab() {
     updateSourcesDisplay();
   }
   else if (state.currentTab === 'tab-scrape' && typeof renderScrapes === 'function') renderScrapes();
-  else if (state.currentTab === 'tab-nfc-radar' && typeof renderNfcRadar === 'function') renderNfcRadar();
+  else if (state.currentTab === 'tab-nfc-radar' && typeof renderNfcRadar === 'function') {
+    renderNfcRadar();
+    if (typeof nfcRadarState !== 'undefined' && nfcRadarState.viewMode === 'map' && typeof renderNfcMap === 'function') {
+      renderNfcMap();
+    }
+  }
   else if (state.currentTab === 'tab-requisites') renderRequisitesTab();
 
   if (typeof translateDomTree === 'function' && state?.lang === 'en') {
@@ -12658,41 +12672,50 @@ const nfcRadarState = {
 
 function loadLocalD2dJobs() {
   try {
+    const initialized = localStorage.getItem('dws_d2d_initialized') === '1';
     const raw = localStorage.getItem('dws_nfc_d2d_radars');
     if (!raw) {
+      if (initialized) return [];
       localStorage.setItem('dws_nfc_d2d_radars', JSON.stringify(DEFAULT_D2D_RADAR_JOBS));
+      localStorage.setItem('dws_d2d_initialized', '1');
       return JSON.parse(JSON.stringify(DEFAULT_D2D_RADAR_JOBS));
     }
     let parsed = JSON.parse(raw);
-    if (!Array.isArray(parsed) || parsed.length === 0) {
+    if (!Array.isArray(parsed)) parsed = [];
+    if (parsed.length === 0) {
+      if (initialized) return [];
       localStorage.setItem('dws_nfc_d2d_radars', JSON.stringify(DEFAULT_D2D_RADAR_JOBS));
+      localStorage.setItem('dws_d2d_initialized', '1');
       return JSON.parse(JSON.stringify(DEFAULT_D2D_RADAR_JOBS));
     }
-    // Auto-migrate away from old starter job that had HoReCa / printing shops
-    const hasOldStarter = parsed.some(j => j.id === 'd2d-job-vinnytsia-starter' || (j.id === 'd2d-job-vinnytsia-strict-d2d' && (!j.items || j.items.length < 18 || JSON.stringify(j).includes('t.me/s/') || /[🕵🚶📢💼🔥]/u.test(JSON.stringify(j)))) || (Array.isArray(j.items) && j.items.some(it => it.d2dType === 'horeca_rep' || it.d2dType === 'b2b_pos' || it.d2dType === 'beauty_auto_rep')));
-    if (hasOldStarter) {
-      parsed = parsed.filter(j => j.id !== 'd2d-job-vinnytsia-starter' && j.id !== 'd2d-job-vinnytsia-strict-d2d'); }
-    if (hasOldStarter) {
-      parsed = parsed.filter(j => j.id !== 'd2d-job-vinnytsia-starter').map(j => ({
-        ...j,
-        items: Array.isArray(j.items) ? j.items.filter(it => it.d2dType !== 'horeca_rep' && it.d2dType !== 'b2b_pos' && it.d2dType !== 'beauty_auto_rep') : []
-      })).filter(j => j.items.length > 0);
-      if (!parsed.some(j => j.id === 'd2d-job-vinnytsia-strict-d2d')) {
-        parsed.unshift(JSON.parse(JSON.stringify(DEFAULT_D2D_RADAR_JOBS[0])));
-      }
-      localStorage.setItem('dws_nfc_d2d_radars', JSON.stringify(parsed));
-    }
+    localStorage.setItem('dws_d2d_initialized', '1');
+    const now = Date.now();
     parsed.forEach(job => {
       job.isD2d = true;
       if (Array.isArray(job.items)) job.total = job.items.length;
+      // Stale running watchdog: recover jobs stuck after iOS/WebView background suspension (>3 min)
+      if (job.status === 'running') {
+        const started = new Date(job.createdAt || 0).getTime();
+        if (started && now - started > 180000) {
+          if (Array.isArray(job.items) && job.items.length > 0) {
+            job.status = 'done';
+            job.progressText = '';
+          } else {
+            job.status = 'error';
+            job.error = 'Пошук перервано (тайм-аут або згортання додатку). Запустіть заново.';
+            job.progressText = '';
+          }
+        }
+      }
     });
     return parsed;
   } catch {
-    return JSON.parse(JSON.stringify(DEFAULT_D2D_RADAR_JOBS));
+    return [];
   }
 }
 
 function saveLocalD2dJobs(jobs) {
+  localStorage.setItem('dws_d2d_initialized', '1');
   localStorage.setItem('dws_nfc_d2d_radars', JSON.stringify(jobs));
   if (typeof syncAccountToServer === 'function') syncAccountToServer();
 }
@@ -13059,7 +13082,13 @@ async function runDeepResolveForVenue(venue, job, btnEl, statusEl) {
     if (resData.phone && !venue.phone) venue.phone = resData.phone;
     if (resData.website && !venue.website) venue.website = resData.website;
     if (resData.address && !venue.address) venue.address = resData.address;
-    try { if (typeof saveNfcJobs === 'function') saveNfcJobs(); } catch (_) {}
+    try {
+      if (job?.isD2d && typeof saveLocalD2dJobs === 'function') {
+        saveLocalD2dJobs(nfcRadarState.d2dJobs);
+      } else if (typeof saveLocalNfcJobs === 'function') {
+        saveLocalNfcJobs(nfcRadarState.jobs);
+      }
+    } catch (_) {}
     try { if (typeof renderNfcRadar === 'function') renderNfcRadar(); } catch (_) {}
 
     const parts = [];
@@ -13163,7 +13192,7 @@ async function runDeepResolveForVenue(venue, job, btnEl, statusEl) {
   }
 }
 
-function openContactActionModal(venue, job) {
+function openContactActionModal(venue, job, preserveStatus = false) {
   if (!venue) return;
   const rawPhone = venue.phone || '';
   const clean = rawPhone.replace(/\D/g, '');
@@ -13175,7 +13204,7 @@ function openContactActionModal(venue, job) {
   if (phoneDisplayEl) phoneDisplayEl.textContent = rawPhone || 'Пошук контактів';
 
   const statusEl = document.getElementById('contactDeepResolveStatus');
-  if (statusEl) {
+  if (statusEl && !preserveStatus) {
     statusEl.style.display = 'none';
     statusEl.textContent = '';
   }
@@ -13185,7 +13214,7 @@ function openContactActionModal(venue, job) {
     deepBtn.onclick = async () => {
       haptic('light');
       await runDeepResolveForVenue(venue, job, deepBtn, statusEl);
-      openContactActionModal(venue, job);
+      openContactActionModal(venue, job, true);
     };
   }
 
@@ -13639,8 +13668,8 @@ function renderNfcRadar() {
             ${SCRAPE_ICONS[job.source] || SCRAPE_ICONS.gmaps}
           </div>
           <div class="scrape-job-info">
-            <div class="scrape-job-title">${job.cluster ? job.cluster : (job.niche || 'Заклади')}</div>
-            <div class="scrape-job-sub">${job.city}${job.cluster ? '' : ' (все місто)'}${job.isD2d ? '' : (job.scaleFilter === 'chain' ? ' • Мережі/Сітки' : ' • Окремі заклади')} • ${date} ${pill}</div>
+            <div class="scrape-job-title">${escapeHtml(job.cluster ? job.cluster : (job.niche || 'Заклади'))}</div>
+            <div class="scrape-job-sub">${escapeHtml(job.city || '')}${job.cluster ? '' : ' (все місто)'}${job.isD2d ? '' : (job.scaleFilter === 'chain' ? ' • Мережі/Сітки' : ' • Окремі заклади')} • ${date} ${pill}</div>
             ${outreachBadgeHtml}
           </div>
           <div style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
@@ -13761,7 +13790,10 @@ function renderNfcVenuesList(job, items) {
                 </a>
               </div>
               <div class="nfc-venue-score-badge ${(v.rating && v.rating <= 4.3 && !v.isD2d) ? 'warning' : 'good'}">
-                ★ ${v.rating ? Number(v.rating).toFixed(1) : '5.0'} <span class="revs">(${v.d2dMatchScore ? v.d2dMatchScore + '% D2D' : (v.reviews || 0)})</span>
+                ${(v.isD2d || job?.isD2d)
+                  ? `${v.d2dSourceLabel ? escapeHtml(v.d2dSourceLabel) + ' · ' : ''}${v.d2dMatchScore ? v.d2dMatchScore + '% D2D' : 'D2D'}${v.rating > 0 ? ' · ★ ' + Number(v.rating).toFixed(1) : ''}`
+                  : `★ ${v.rating ? Number(v.rating).toFixed(1) : '—'} <span class="revs">(${v.reviews || 0})</span>`
+                }
               </div>
             </div>
 
@@ -13784,10 +13816,10 @@ function renderNfcVenuesList(job, items) {
                   </button>
                 </div>
               ` : ''}
-              ${(!v.phone && v.website && /^https?:\/\//i.test(v.website)) ? `
+              ${(v.website && /^https?:\/\//i.test(v.website) && (!v.phone || v.isD2d || job?.isD2d)) ? `
                 <div class="nfc-meta-item">
                   <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#0066FF" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                  <a href="${escapeHtml(v.website)}" target="_blank" rel="noopener" class="nfc-insta-link" style="color:#0066FF; font-weight:800; text-decoration:underline;">Чат з офісом в оголошенні (${v.website.includes('olx.ua') ? 'OLX.ua' : (v.website.includes('work.ua') ? 'Work.ua' : 'Перейти')})</a>
+                  <a href="${escapeHtml(v.website)}" target="_blank" rel="noopener" class="nfc-insta-link" style="color:#0066FF; font-weight:800; text-decoration:underline;">${v.website.includes('olx.ua') ? 'Вакансія на OLX.ua' : (v.website.includes('work.ua') ? 'Вакансія на Work.ua' : (v.website.includes('t.me/') ? 'Пост у Telegram' : 'Сайт / Оголошення'))}</a>
                 </div>
               ` : ''}
               ${(v.telegram && v.telegram.replace(/^@+/, '').trim()) ? `
@@ -13835,7 +13867,7 @@ async function searchPlacesApiDirect(query, key, pageToken = '') {
     headers: {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': key,
-      'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.googleMapsUri,places.location,places.businessStatus,places.primaryType,places.types,nextPageToken'
+      'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.nationalPhoneNumber,places.internationalPhoneNumber,places.websiteUri,places.googleMapsUri,places.location,places.businessStatus,places.primaryType,places.primaryTypeDisplayName,places.types,places.editorialSummary,nextPageToken'
     },
     body: JSON.stringify(bodyPayload)
   });
@@ -14131,50 +14163,140 @@ async function runLiveNfcRadar(job, reviewsLimit, limit) {
 // ============================================================
 // D2D & WHOLESALE PARTNER DISCOVERY + VERIFICATION ENGINE
 // ============================================================
-function buildSmartD2dQueriesClient(niche, city, cluster = '') {
+function detectD2dCategoryClient(niche = '') {
+  const s = String(niche || '').toLowerCase();
+  if (/промоут|btl|бтл|бренд-консультант/.test(s) && !/прям|польов|всі d2d/i.test(s)) return 'promo';
+  if (/прямі продажі|щоденн|ходок|кур'єр-консультант/.test(s) && !/промоут|польов|всі d2d/i.test(s)) return 'direct';
+  if (/польові торгові|супервайзер|торгові представник/.test(s) && !/промоут|прямі продажі|всі d2d/i.test(s)) return 'field';
+  return 'all';
+}
+
+function buildSmartD2dQueriesClient(niche, city, cluster = '', waveIndex = 0) {
   const c = String(city || 'Вінниця').trim();
   const cl = String(cluster || '').trim();
   const loc = cl ? `${cl} ${c}` : c;
+  const cat = detectD2dCategoryClient(niche);
 
-  return [
-    { q: `промо агентство BTL промоутери ${loc}`, type: 'd2d_promo' },
-    { q: `роздача листівок флаєрів промоутери кур'єрська доставка ${loc}`, type: 'd2d_promo' },
-    { q: `агентство прямих продажів активні продажі ${loc}`, type: 'd2d_direct' },
-    { q: `агентство мерчендайзингу торгові представники ${loc}`, type: 'field_reps' },
-    { q: `рекрутингове агентство підбір торгових представників продажників ${loc}`, type: 'd2d_direct' },
-    { q: `кур'єрська служба доставка по місту ${loc}`, type: 'd2d_promo' },
-    { q: `дистриб'юторська компанія відділ торгових представників ${loc}`, type: 'field_reps' },
-    { q: `аутсорсинг відділу продажів кол центр телемаркетинг ${loc}`, type: 'd2d_direct' },
-    { q: `маркетингова агенція промо акції промоутери ${loc}`, type: 'd2d_promo' }
+  const promoQ = [
+    { q: `BTL агентство промоутери ${loc}`, type: 'd2d_promo' },
+    { q: `промо агентство рекламна агенція промо ${loc}`, type: 'd2d_promo' },
+    { q: `організація промо акцій дегустації івент BTL ${loc}`, type: 'd2d_promo' },
+    { q: `роздача листівок флаєрів промоутери ${loc}`, type: 'd2d_promo' }
   ];
+  const directQ = [
+    { q: `агентство прямих продажів активні продажі ${loc}`, type: 'd2d_direct' },
+    { q: `офіс активних продажів польовий маркетинг ${loc}`, type: 'd2d_direct' },
+    { q: `фандрайзинг представництво прямі продажі ${loc}`, type: 'd2d_direct' },
+    { q: `агенція польових продажів D2D ${loc}`, type: 'd2d_direct' }
+  ];
+  const fieldQ = [
+    { q: `дистриб'юторська компанія торгові представники ${loc}`, type: 'field_reps' },
+    { q: `агентство мерчендайзингу торгові представники ${loc}`, type: 'field_reps' },
+    { q: `супервайзер мерчендайзер торгова команда ${loc}`, type: 'field_reps' },
+    { q: `торговий дім дистриб'ютор польові представники ${loc}`, type: 'field_reps' }
+  ];
+
+  let base = [];
+  if (cat === 'promo') base = [...promoQ, ...directQ.slice(0, 1)];
+  else if (cat === 'direct') base = [...directQ, ...promoQ.slice(0, 1)];
+  else if (cat === 'field') base = [...fieldQ, ...directQ.slice(0, 1)];
+  else base = [...promoQ.slice(0, 3), ...directQ.slice(0, 3), ...fieldQ.slice(0, 3)];
+
+  const w = Math.max(0, Number(waveIndex || 0)) % base.length;
+  return base.slice(w).concat(base.slice(0, w));
 }
 
-const D2D_HARD_STOP_REGEX = /(поліграф|друкарн|друк|print|вивіск|зовнішня реклама|сувенір|тейбл|стенд|таблич|посуд|стакан|упаков|пакет|полімер|кава|каво|coffee|сироп|вода|пиво|продукт|фрукт|овоч|м'яс|молоч|кондитер|пекарн|косметик|салон|перукар|манікюр|барбер|стоматолог|клінік|медич|аптек|автохім|автозапчаст|шиномонтаж|автомийк|автосервіс|мебл|будівн|ремонт|сантехн|плитк|вікна|двері|нерухоміст|забудовник|концерн поділля|житловий комплекс|рієлтор|оцінка майна|ocenka|ligapro|армії|військов|територіальний центр|осбб|міська рада|державн|\.gov\.ua|разработка сайтов|створення сайтів|webhit|kraft|копірайтинг|seo|таргет|дизайн студія|фотосвіт|фотостуд|аніматор|аниматор|дитяч|свята|весілл|паб|docker|ресторан|кафе|кав['’ʼʻ`]?ярн|кофейн|піцері|суші|готел|банк|приватбанк|ощадбанк|нова пошта|укрпошта|meest|розетка|атб|сільпо|фора|аврора|епіцентр|фуршет|трц|торгово-розважальний| the mall|s-mall|бастилія|нотаріус|адвокат|юридичн|вінбазар|портал|газета|новини|радіо|телеканал)/i;
+const GOOGLE_PLACES_D2D_REJECT_TYPES = new Set([
+  'lodging', 'hotel', 'motel', 'hostel', 'bed_and_breakfast', 'resort_hotel', 'guest_house', 'campground',
+  'school', 'primary_school', 'secondary_school', 'high_school', 'university', 'college', 'preschool', 'library',
+  'post_office', 'government_office', 'local_government_office', 'city_hall', 'courthouse', 'embassy', 'police', 'fire_station',
+  'hospital', 'doctor', 'dentist', 'pharmacy', 'medical_lab', 'veterinary_care',
+  'restaurant', 'cafe', 'bar', 'bakery', 'fast_food_restaurant', 'coffee_shop', 'night_club', 'meal_delivery', 'meal_takeaway', 'amusement_center', 'bowling_alley', 'movie_theater',
+  'beauty_salon', 'hair_salon', 'barber_shop', 'spa', 'nail_salon', 'gym', 'fitness_center',
+  'real_estate_agency', 'bank', 'atm', 'insurance_agency', 'accounting', 'lawyer',
+  'church', 'place_of_worship', 'cemetery', 'funeral_home',
+  'car_repair', 'car_wash', 'car_dealer', 'gas_station', 'parking',
+  'grocery_store', 'supermarket', 'convenience_store', 'clothing_store', 'shoe_store', 'book_store', 'electronics_store', 'furniture_store', 'hardware_store', 'pet_store', 'florist', 'jewelry_store', 'department_store', 'shopping_mall', 'liquor_store'
+]);
 
-const D2D_POSITIVE_SIGNAL_REGEX = /(промо|promo|btl|прям[іи]х? продаж|активн[іи]х? продаж|торгов[иії]й? представник|торгових|мерчендайз|дистриб|кур'єр|курьер|тук-тук|рекрут|підбір персонал|подбор персонал|winwork|best heads|jobs go|кол-центр|колл-центр|контакт-центр|телемаркетинг|маркетингова|маркетингове|агенція|агентство|компанія|офіс|торгов|логіст|доставк|сервіс|груп|group|team)/i;
+const D2D_HARD_STOP_REGEX = /(лазертаг|квест|розважальн|медичн\w*\s*прилад|фізіотерап|естетичн\w*\s*медицин|aesthetics|барбер|салон\s*краси|перукар|нігт|бров|ресниц|манікюр|масаж|косметолог|стоматолог|клінік|лікарн|аптека|фармацевт|медсестр|ветклін|ресторан|кав['’ʼʻ`]?ярн|кофейн|піцер|піцейоло|суші|сушист|шаурм|мангаль|шашлич|паб\b|кафе\b|пекарн|пекар\b|кондитер|кіоск|лар[еьо]к|хлібобулоч|поліграф|друкарн|вивіск|сувенір|типограф|широкоформат|канцтовар|канцеляр|готел|hotel|hostel|хостел|отел[ьі]|училищ|дптнз|\bвпу\b|коледж|ліцей|гімназ|університет|технікум|школа\b|дитсадок|спецзв.?язок|укрпошт|нова\s*пошта|нотаріус|адвокат|юрист|бухгалтер|страхов|рієлтор|нерухом|realty|недвижим|забудовник|житловий комплекс|автошкол|турагент|тур\s*аген|автохім|автозапчаст|шиномонтаж|автомийк|автосервіс|\bсто\b|мебл[іе]|будмат|зоомагази|квіт[иі]|\bit[\s-]?(?:компан|аген|аутсорс)|web[\s-]?studio|веб[\s-]?студ|розробка сайтів|seo|smm|таргет|програмуван|фотостуд|аніматор|дитяч|весілл|meest|розетка|атб|сільпо|фора|аврора|епіцентр|фуршет|\bтрц\b|onlyfans|онліфан|вебкам|webcam|шлюбн|брачн|казино|крипт|crypto|арбітраж|glovo|bolt|uklon|uber|таксі\b|водій|водія|охоронець|охоронник|вантажник|пакувальник|сортувальник|прибиральн|кухар|офіціант|бармен|бариста|касир\b|продавец\w*\s+(?:в|у)\s+(?:кіоск|магазин|маркет)|колл[\s-]?центр|\.gov\.ua)/i;
+
+const D2D_POSITIVE_SIGNAL_REGEX = /(d2d|д2д|btl|бтл|промоутер|промо[\s-]*(?:акц|команд|аген|персонал|модел|груп)|роздач\w*\s+(?:листів|флаєр|буклет|візит|газет)|прям\w*\s+продаж|активн\w*\s+продаж|польов\w*\s+(?:команд|агент|менеджер|торгов|продаж|бригад|персонал)|торгов\w*\s+(?:представник|агент)|супервайзер|мерчендайз|дистриб['’]?ют|бренд[\s-]*(?:амбасадор|консультант|промоутер)|консультант\s*(?:у\s*полях|на\s*вулиц|на\s*стенд|на\s*точк)|фандрайзер|агітатор|опитуванн\w*|ходок\w*|вуличн\w*\s+продаж|дегустаці)/i;
+
+const D2D_DAILY_PAY_REGEX = /(щоденн\w*\s+(?:виплат|оплат|дохід)|оплата\s+(?:кожного|що)\s*дня|виплати\s*(?:кожного|що)\s*дня|від\s*\d[\d\s]{2,5}\s*грн\s*\/?\s*(?:день|зміна))/i;
+const D2D_SALES_CONTEXT_REGEX = /(продаж|клієнт|промо|btl|реклам|маркетинг|акці|консульт|представник|агент|команд|без\s*досвід)/i;
+const D2D_PLACES_SIGNAL_REGEX = /(d2d|д2д|btl|бтл|промо|promo|івент|event|мерченд|дистриб|торгов\w*\s+(?:дім|компан|представ)|рекрут|маркетинг\w*\s+аген|реклам\w*\s+аген|рекламн\w*\s+агентств|прям\w*\s+продаж|фандрайз)/i;
+
+function hasD2dPositiveSignalClient(text, isPlaces = false) {
+  if (D2D_POSITIVE_SIGNAL_REGEX.test(text)) return true;
+  if (isPlaces && D2D_PLACES_SIGNAL_REGEX.test(text)) return true;
+  return D2D_DAILY_PAY_REGEX.test(text) && D2D_SALES_CONTEXT_REGEX.test(text);
+}
+
+function normalizeD2dCitySlugClient(city) {
+  const low = String(city || '').toLowerCase().trim();
+  const map = [
+    ['вінниц', 'vinnytsia'], ['винниц', 'vinnytsia'],
+    ['київ', 'kyiv'], ['киев', 'kyiv'], ['kyiv', 'kyiv'],
+    ['львів', 'lviv'], ['львов', 'lviv'], ['lviv', 'lviv'],
+    ['одес', 'odesa'], ['odes', 'odesa'],
+    ['дніпр', 'dnipro'], ['днепр', 'dnipro'], ['dnipro', 'dnipro'],
+    ['харків', 'kharkiv'], ['харьков', 'kharkiv'], ['kharkiv', 'kharkiv'],
+    ['запоріж', 'zaporizhzhya'], ['запорож', 'zaporizhzhya'],
+    ['хмельниц', 'khmelnytskyi'],
+    ['тернопіл', 'ternopil'], ['тернопол', 'ternopil'],
+    ['франківськ', 'ivano-frankivsk'],
+    ['чернівц', 'chernivtsi'],
+    ['рівн', 'rivne'], ['ровн', 'rivne'],
+    ['луцьк', 'lutsk'],
+    ['житомир', 'zhytomyr'],
+    ['полтав', 'poltava'],
+    ['черкас', 'cherkasy'],
+    ['ужгород', 'uzhhorod'],
+    ['миколаїв', 'mykolaiv'], ['николаев', 'mykolaiv'],
+    ['сум', 'sumy'],
+    ['черніг', 'chernihiv'],
+    ['кропивниц', 'kropyvnytskyi'],
+    ['крив', 'kryvyi-rih'],
+    ['кременч', 'kremenchuk'],
+    ['біла церк', 'bila-tserkva']
+  ];
+  for (const [root, slug] of map) {
+    if (low.includes(root)) return slug;
+  }
+  return '';
+}
 
 function classifyAndVerifyD2dCandidate(p, defaultType, city, cluster, qIdx, idx) {
   if (!p || p.businessStatus === 'CLOSED_TEMPORARILY' || p.businessStatus === 'CLOSED_PERMANENTLY') return null;
 
   const name = (p.displayName?.text || '').trim();
-  if (!name || name.length < 2) return null;
+  if (!name || name.length < 3) return null;
 
   const addr = (p.formattedAddress || cluster || city || '').trim();
   const website = p.websiteUri || '';
-  const combinedText = `${name} ${addr} ${website}`;
+  const typeDisplay = p.primaryTypeDisplayName?.text || '';
+  const editorial = p.editorialSummary?.text || '';
+  const typesStr = Array.isArray(p.types) ? p.types.join(' ') : '';
+  const pType = String(p.primaryType || '').toLowerCase();
+  const allTypes = Array.isArray(p.types) ? p.types.map(t => String(t).toLowerCase()) : [];
 
-  // 1. Hard anti-noise filter (excludes retail, food, salons, printing, etc.)
+  const combinedText = `${name} ${typeDisplay} ${editorial} ${addr} ${website}`;
+
+  // 1. Strict hard-stop and Google Places primaryType/types blacklist
   if (D2D_HARD_STOP_REGEX.test(combinedText)) return null;
+  const hitBadType = GOOGLE_PLACES_D2D_REJECT_TYPES.has(pType) || allTypes.some(t => GOOGLE_PLACES_D2D_REJECT_TYPES.has(t));
+  if (hitBadType && !hasD2dPositiveSignalClient(name, true)) return null;
 
-  // 2. Verify city match so other oblast centers don't leak in
-  const cleanCityRoot = String(city || '').toLowerCase().trim().slice(0, 5);
-  if (cleanCityRoot && addr.length > 8 && !addr.toLowerCase().includes(cleanCityRoot)) {
-    const otherCities = ['київ', 'львів', 'одес', 'дніпр', 'харків', 'рівне', 'полтав', 'черкас', 'житомир', 'луцьк', 'терноп', 'чернівц', 'ужгород', 'хмельницьк', 'вінниц'];
-    const hitsOtherCity = otherCities.some(oc => !oc.startsWith(cleanCityRoot) && addr.toLowerCase().includes(oc));
-    if (hitsOtherCity) return null;
-  }
+  // 2. Mandatory positive D2D / BTL / promo / field-sales / agency signal gate
+  if (!hasD2dPositiveSignalClient(`${name} ${typeDisplay} ${editorial} ${typesStr} ${website}`, true)) return null;
 
-  // 3. Contactability gate: must have phone number or Instagram
+  // 3. Verify city match so other cities don't leak in
+  const targetSlug = normalizeD2dCitySlugClient(city);
+  const addrSlug = normalizeD2dCitySlugClient(addr);
+  if (targetSlug && addrSlug && targetSlug !== addrSlug) return null;
+
+  // 4. Contactability gate
   const rawPhone = p.internationalPhoneNumber || p.nationalPhoneNumber || '';
   const phone = normalizePhone(rawPhone);
   const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
@@ -14186,33 +14308,33 @@ function classifyAndVerifyD2dCandidate(p, defaultType, city, cluster, qIdx, idx)
   if (website && /instagram\.com/i.test(website)) {
     insta = cleanInstagramHandle(website);
   }
-
   if (!phone && !insta && !website) return null;
 
   let d2dType = defaultType || 'd2d_direct';
-  const lowerNameWeb = `${name} ${website}`.toLowerCase();
-
-  if (/(дистриб|торгов|мерчендайз)/i.test(lowerNameWeb)) {
+  const lowerNameWeb = `${name} ${editorial} ${website}`.toLowerCase();
+  if (/(дистриб|торгов|мерчендайз|супервайз)/i.test(lowerNameWeb)) {
     d2dType = 'field_reps';
-  } else if (/(промо|promo|btl|кур'єр|тук-тук)/i.test(lowerNameWeb)) {
+  } else if (/(промо|promo|btl|листів|флаєр|дегустац)/i.test(lowerNameWeb)) {
     d2dType = 'd2d_promo';
   } else {
     d2dType = 'd2d_direct';
   }
 
-  let painLevel = 'urgent';
-  const hasStrongSignal = D2D_POSITIVE_SIGNAL_REGEX.test(combinedText);
-  let d2dMatchScore = (isMobile && insta) ? 99 : (isMobile ? (hasStrongSignal ? 98 : 95) : 92);
-  let painChipLabel = `Офіс активних продажів / D2D (${d2dMatchScore}% Match)`;
-  let painText = 'Команда активних продажів — запропонуй викуп партії 50–100 NFC-карток по 280–300 ₴, щоб їхні агенти продавали їх у лице власникам бізнесів за 500–600 ₴ (+200–300 ₴ маржі з карти)!';
+  let d2dMatchScore = 76;
+  if (D2D_POSITIVE_SIGNAL_REGEX.test(name)) d2dMatchScore += 12;
+  if (isMobile) d2dMatchScore += 6;
+  if (insta) d2dMatchScore += 5;
+  d2dMatchScore = Math.min(98, d2dMatchScore);
 
-  if (d2dType === 'd2d_promo') {
-    painChipLabel = `Польові промоутери & BTL (${d2dMatchScore}% Match)`;
-    painText = 'Штат живих промоутерів та «ходоків», які щодня ходять ногами по місту — дай їм партію NFC-карток оптом під прямий перепродаж у кожен заклад!';
-  } else if (d2dType === 'field_reps') {
-    painChipLabel = `Штат польових торгових агентів (${d2dMatchScore}% Match)`;
-    painText = 'Їхні польові торгові представники щодня за маршрутом обходять десятки бізнесів міста — ідеальна бригада під оптовий викуп і збут NFC-карток!';
-  }
+  const chipTitles = {
+    d2d_promo: 'Промо-команда & BTL',
+    field_reps: 'Польові торгові представники',
+    d2d_direct: 'Активні / прямі продажі D2D'
+  };
+  const painChipLabel = `${chipTitles[d2dType]} · Google Maps (${d2dMatchScore}%)`;
+  const painText = editorial
+    ? `${editorial.slice(0, 140)} — профільний партнер під оптовий продаж або бренд-партії NFC-карток.`
+    : 'Профільна BTL / промо / польова команда продажів у місті — зв’яжіться для оптової пропозиції NFC-карток.';
 
   const mapsUrl = p.googleMapsUri || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' ' + addr)}`;
 
@@ -14220,6 +14342,8 @@ function classifyAndVerifyD2dCandidate(p, defaultType, city, cluster, qIdx, idx)
     id: 'v-d2d-' + Date.now() + '-' + qIdx + '-' + idx,
     isD2d: true,
     d2dType,
+    d2dSource: 'places',
+    d2dSourceLabel: 'Google Maps',
     d2dMatchScore,
     name,
     placeId: p.id || '',
@@ -14232,273 +14356,287 @@ function classifyAndVerifyD2dCandidate(p, defaultType, city, cluster, qIdx, idx)
     instagram: insta,
     telegram: '',
     telegramPhone,
-    rating: Number(p.rating || 4.9),
-    reviews: Number(p.userRatingCount || 14),
+    rating: Number(p.rating || 0),
+    reviews: Number(p.userRatingCount || 0),
     mapsUrl,
     lat: p.location?.latitude || null,
     lng: p.location?.longitude || null,
-    painLevel,
+    painLevel: d2dMatchScore >= 88 ? 'urgent' : 'boost',
     painChipLabel,
     painText
   };
 }
 
 async function enrichWebsiteSocialsBatchClient(items) {
-  const toEnrich = items.filter(it => it.website && !it.instagram && !/instagram\.com|facebook\.com|prom\.ua|t\.me|work\.ua|olx\.ua/i.test(it.website)).slice(0, 16);
+  const toEnrich = items.filter(it => it.website && !it.instagram && !/instagram\.com|facebook\.com|prom\.ua|t\.me|work\.ua|olx\.ua/i.test(it.website)).slice(0, 14);
   if (!toEnrich.length) return;
 
   await Promise.allSettled(toEnrich.map(async (it) => {
-    const proxies = [
-      '/api/proxy?url=' + encodeURIComponent(it.website),
-      'https://r.jina.ai/' + it.website
-    ];
-    for (const proxyUrl of proxies) {
-      try {
-        const ctrl = new AbortController();
-        const tid = setTimeout(() => ctrl.abort(), 3200);
-        const res = await fetch(proxyUrl, { signal: ctrl.signal });
-        clearTimeout(tid);
-        if (!res.ok) continue;
-        const html = await res.text();
-        const igMatch = html.match(/instagram\.com\/([a-zA-Z0-9._]{3,30})/i);
-        if (igMatch && igMatch[1] && !/^(p|reel|stories|explore|accounts|share)$/i.test(igMatch[1])) {
-          it.instagram = '@' + igMatch[1];
-          if (!it.username) it.username = it.instagram;
+    const proxyUrl = '/api/proxy?url=' + encodeURIComponent(it.website);
+    try {
+      const ctrl = new AbortController();
+      const tid = setTimeout(() => ctrl.abort(), 5000);
+      const res = await fetch(proxyUrl, { signal: ctrl.signal });
+      clearTimeout(tid);
+      if (!res.ok) return;
+      const html = await res.text();
+      const igMatch = html.match(/instagram\.com\/([a-zA-Z0-9._]{3,30})/i);
+      if (igMatch && igMatch[1] && !/^(p|reel|stories|explore|accounts|share)$/i.test(igMatch[1])) {
+        it.instagram = igMatch[1];
+        if (!it.username) it.username = '@' + igMatch[1];
+      }
+      const tgMatch = html.match(/t\.me\/([a-zA-Z0-9_]{4,32})/i);
+      if (tgMatch && tgMatch[1] && !/^(share|joinchat|addstickers|s)$/i.test(tgMatch[1])) {
+        it.telegram = '@' + tgMatch[1];
+      }
+      if (!it.isMobile) {
+        const mobMatch = html.match(/(?:\+?38)?[\s\-()]*0(50|66|95|99|67|68|96|97|98|77|63|73|93)[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2}/);
+        if (mobMatch) {
+          const d = mobMatch[0].replace(/\D/g, '');
+          it.phone = '+380' + d.slice(-9);
+          it.isMobile = true;
+          it.viberUrl = getViberDirectUrl('380' + d.slice(-9));
+          it.telegramPhone = 'https://t.me/+380' + d.slice(-9);
         }
-        const tgMatch = html.match(/t\.me\/([a-zA-Z0-9_]{4,32})/i);
-        if (tgMatch && tgMatch[1] && !/^(share|joinchat|addstickers|s)$/i.test(tgMatch[1])) {
-          it.telegram = '@' + tgMatch[1];
-        }
-        if (!it.isMobile) {
-          const mobMatch = html.match(/(?:\+?38)?[\s\-()]*0(50|66|95|99|67|68|96|97|98|77|63|73|93)[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2}/);
-          if (mobMatch) {
-            const d = mobMatch[0].replace(/\D/g, '');
-            it.phone = '+380' + d.slice(-9);
-            it.isMobile = true;
-            it.viberUrl = getViberDirectUrl('380' + d.slice(-9));
-            it.telegramPhone = 'https://t.me/+380' + d.slice(-9);
-          }
-        }
-        if (it.instagram || it.telegram || it.isMobile) break;
-      } catch (_) {}
-    }
+      }
+    } catch (_) {}
   }));
 }
 
-// Deep multi-page scanner of regional Telegram job channels for live D2D / Field Rep / Promo vacancies
 async function scanTelegramD2dVacanciesClient(city) {
-  const cLower = String(city || '').toLowerCase();
-  let channels = [];
-  if (cLower.includes('вінниц')) channels = ['vinnitsa_rabota', 'vinnitsa_vakansii', 'vinnitsa_work', 'vinnytsia_robota', 'work_vinnytsia'];
-  else if (cLower.includes('київ')) channels = ['robota_kyiv_ua', 'work_kyiv', 'kyiv_robota'];
-  else if (cLower.includes('львів')) channels = ['robota_lviv', 'lviv_robota'];
-  else if (cLower.includes('одес')) channels = ['robota_odesa', 'odesa_work'];
-  else if (cLower.includes('дніпр')) channels = ['robota_dnipro', 'dnipro_work'];
-  else if (cLower.includes('харків')) channels = ['robota_kharkiv', 'kharkiv_work'];
-  else if (cLower.includes('хмельниц')) channels = ['robota_khmelnytskyi', 'work_khm'];
-  else if (cLower.includes('терноп')) channels = ['robota_ternopil', 'ternopil_work'];
-  else if (cLower.includes('франківськ')) channels = ['robota_if', 'if_work'];
-  else if (cLower.includes('чернівц')) channels = ['robota_chernivtsi', 'cv_work'];
-  else if (cLower.includes('рівн')) channels = ['robota_rivne', 'rivne_work'];
-  else if (cLower.includes('луцьк')) channels = ['robota_lutsk', 'lutsk_work'];
-  else if (cLower.includes('житомир')) channels = ['robota_zhytomyr', 'zt_work'];
-  else if (cLower.includes('полтав')) channels = ['robota_poltava', 'poltava_work'];
-  else if (cLower.includes('черкас')) channels = ['robota_cherkasy', 'ck_work'];
-  if (!channels.length) return [];
+  const slug = normalizeD2dCitySlugClient(city);
+  const cityChannelsMap = {
+    vinnytsia: ['rabota_vakansiivin', 'top_vacansii', 'workplaceinukraine', 'ua_work', 'jobzy'],
+    kyiv: ['robota_kyiv_ua', 'rabota_kiev_vakansii', 'top_vacansii', 'workplaceinukraine', 'ua_work'],
+    lviv: ['lviv_vakansii', 'robota_lviv_ua', 'top_vacansii', 'workplaceinukraine', 'ua_work'],
+    odesa: ['rabota_odessa', 'odessa_vakansii', 'top_vacansii', 'workplaceinukraine', 'ua_work'],
+    dnipro: ['dnepr_vakansii', 'top_vacansii', 'workplaceinukraine', 'ua_work'],
+    kharkiv: ['work_kharkiv', 'kharkov_vakansii', 'rabota_kharkov', 'top_vacansii', 'workplaceinukraine']
+  };
+  const channels = cityChannelsMap[slug] || ['top_vacansii', 'workplaceinukraine', 'ua_work', 'work_in_ukraine_golovne', 'jobzy'];
 
   const found = [];
-  const seenPhones = new Set();
-  const d2dMarkers = /(торговий представник|завозити торгових|промоутер|прямі продажі|прямих продаж|активні продажі|активних продаж|менеджер з продажу b2b|робота в полі|кур'єр-консультант|агент з продажу|супервайзер|мерчендайзер|роздача листівок)/i;
-  const badMarkers = /(шлюбн|дейтинг|чатер|онліфанс|onlyfans|тікток|tiktok|прямі ефіри|трафік|крипт|форекс|глово|glovo|bolt|таксі|вантажник|прибиральн|кухар|шаурм|офіціант|бариста|бармен|касир|масаж|шиномонтаж|бухгалтер|швачка|охорон)/i;
+  const seenKeys = new Set();
 
   await Promise.allSettled(channels.map(async (ch) => {
-    let nextTargetUrl = `https://t.me/s/${ch}`;
-    for (let page = 0; page < 2; page++) {
-      try {
-        const proxyUrl = '/api/proxy?url=' + encodeURIComponent(nextTargetUrl);
-        const ctrl = new AbortController();
-        const tid = setTimeout(() => ctrl.abort(), 3500);
-        const res = await fetch(proxyUrl, { signal: ctrl.signal });
-        clearTimeout(tid);
-        if (!res.ok) break;
-        const html = await res.text();
-        const blocks = html.split('data-post="');
-        for (let i = 1; i < blocks.length; i++) {
-          const postIdEnd = blocks[i].indexOf('"');
-          const postId = postIdEnd > 0 ? blocks[i].slice(0, postIdEnd).trim() : '';
-          const exactPostUrl = postId ? `https://t.me/${postId}` : `https://t.me/${ch}`;
-          const msgIdx = blocks[i].indexOf('tgme_widget_message_text');
-          const rawBlock = msgIdx !== -1 ? blocks[i].slice(msgIdx, msgIdx + 2200) : blocks[i].slice(0, 2200);
-          const text = rawBlock.replace(/<[^>]+>/g, ' ').replace(/&#8239;|&thinsp;|&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/\s+/g, ' ').trim();
-          if (!d2dMarkers.test(text) || badMarkers.test(text)) continue;
+    try {
+      const proxyUrl = '/api/proxy?url=' + encodeURIComponent(`https://t.me/s/${ch}`);
+      const ctrl = new AbortController();
+      const tid = setTimeout(() => ctrl.abort(), 8500);
+      const res = await fetch(proxyUrl, { signal: ctrl.signal });
+      clearTimeout(tid);
+      if (!res.ok) return;
+      const html = await res.text();
+      if (!html.includes('tgme_widget_message_wrap')) return;
+      const blocks = html.split('data-post="');
+      const isCityCh = ch === 'rabota_vakansiivin' || /kiev|kyiv|lviv|odessa|dnepr|kharkov|kharkiv/.test(ch);
 
-          const phoneMatch = text.match(/(?:\+?38)?[\s\-()]*0(50|66|95|99|67|68|96|97|98|77|63|73|93)[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2}/);
-          const allUsers = [...text.matchAll(/@([a-zA-Z0-9_]{4,32})/g)].map(m => m[1]).filter(u => u.toLowerCase() !== ch.toLowerCase() && !/work|robota|vakansii|bot$/i.test(u));
-          if (!phoneMatch && !allUsers.length) continue;
+      for (let i = 1; i < blocks.length; i++) {
+        const postIdEnd = blocks[i].indexOf('"');
+        const postId = postIdEnd > 0 ? blocks[i].slice(0, postIdEnd).trim() : '';
+        const exactPostUrl = postId ? `https://t.me/${postId}` : `https://t.me/${ch}`;
+        const textMatch = blocks[i].match(/<div[^>]*class="[^"]*tgme_widget_message_text[^"]*"[^>]*>([\s\S]*?)<\/div>/i);
+        if (!textMatch) continue;
+        const text = textMatch[1].replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/&amp;/gi, '&').replace(/\s+/g, ' ').trim();
+        if (!hasD2dPositiveSignalClient(text, false) || D2D_HARD_STOP_REGEX.test(text)) continue;
 
-          const cleanDigits = phoneMatch ? phoneMatch[0].replace(/\D/g, '') : '';
-          const normPhone = cleanDigits ? ('+380' + cleanDigits.slice(-9)) : '';
-          const tgUser = allUsers.length ? ('@' + allUsers[0]) : '';
-          const dedupKey = normPhone || tgUser || exactPostUrl;
-          if (seenPhones.has(dedupKey)) continue;
-          seenPhones.add(dedupKey);
+        const blockCity = normalizeD2dCitySlugClient(text);
+        if (!isCityCh && slug && blockCity !== slug) continue;
+        if (slug && blockCity && blockCity !== slug) continue;
 
-          const cleanTitle = text.replace(/^tgme_widget_message_text[^>]*>/i, '').replace(/^js-message_text"[^>]*>/i, '').replace(/^[^а-яА-ЯіїєґІЇЄҐa-zA-Z0-9]+/, '').slice(0, 68).trim() + '...';
+        const phoneMatch = text.match(/(?:\+?38)?[\s\-()]*0(50|66|95|99|67|68|96|97|98|77|63|73|93)[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2}/);
+        const allUsers = [...text.matchAll(/@([a-zA-Z0-9_]{4,32})/g)].map(m => m[1]).filter(u => u.toLowerCase() !== ch.toLowerCase() && !/bot$/i.test(u));
+        if (!phoneMatch && !allUsers.length) continue;
 
-          found.push({
-            id: 'v-d2d-tg-' + Date.now() + '-' + ch + '-' + page + '-' + i,
-            isD2d: true,
-            d2dType: 'd2d_direct',
-            d2dMatchScore: 99,
-            name: `Набір у D2D / Польову команду: ${cleanTitle}`,
-            address: `${city} (Вакансія у Telegram: ${postId || '@' + ch})`,
-            city,
-            phone: normPhone,
-            isMobile: Boolean(normPhone),
-            viberUrl: normPhone ? getViberDirectUrl(normPhone.replace(/\D/g, '')) : '',
-            website: exactPostUrl,
-            instagram: '',
-            telegram: tgUser,
-            telegramPhone: normPhone ? `https://t.me/${normPhone}` : '',
-            rating: 5.0,
-            reviews: 15,
-            mapsUrl: exactPostUrl,
-            lat: null,
-            lng: null,
-            painLevel: 'urgent',
-            painChipLabel: 'Живий набір «ходоків» / торгових у Telegram (99% Match)',
-            painText: 'Команда прямо зараз набирає польових агентів / торгових представників по місту — напиши або подзвони бригадиру і запропонуй опт NFC-карток!'
-          });
-        }
-        const beforeMatches = [...html.matchAll(/data-before="(\d+)"/g)];
-        if (!beforeMatches.length) break;
-        nextTargetUrl = `https://t.me/s/${ch}?before=${beforeMatches[0][1]}`;
-      } catch (_) {
-        break;
+        const cleanDigits = phoneMatch ? phoneMatch[0].replace(/\D/g, '') : '';
+        const normPhone = cleanDigits ? ('+380' + cleanDigits.slice(-9)) : '';
+        const tgUser = allUsers.length ? ('@' + allUsers[0]) : '';
+        const dedupKey = normPhone || tgUser || exactPostUrl;
+        if (seenKeys.has(dedupKey)) continue;
+        seenKeys.add(dedupKey);
+
+        const cleanTitle = text.slice(0, 74).trim() + (text.length > 74 ? '...' : '');
+        found.push({
+          id: 'v-d2d-tg-' + Date.now() + '-' + ch + '-' + i,
+          isD2d: true,
+          d2dType: 'd2d_direct',
+          d2dSource: 'tg_web',
+          d2dSourceLabel: 'Telegram',
+          d2dMatchScore: (normPhone && tgUser) ? 99 : 95,
+          name: cleanTitle,
+          address: `${city} (Telegram @${ch})`,
+          city,
+          phone: normPhone,
+          isMobile: Boolean(normPhone),
+          viberUrl: normPhone ? getViberDirectUrl(normPhone.replace(/\D/g, '')) : '',
+          website: exactPostUrl,
+          instagram: '',
+          telegram: tgUser,
+          telegramPhone: normPhone ? `https://t.me/${normPhone}` : '',
+          rating: 0,
+          reviews: 0,
+          mapsUrl: exactPostUrl,
+          lat: null,
+          lng: null,
+          painLevel: 'urgent',
+          painChipLabel: 'Активні / прямі продажі · Telegram (99%)',
+          painText: `Жива вакансія з Telegram (@${ch}): ${text.slice(0, 165)}`
+        });
       }
-    }
+    } catch (_) {}
   }));
 
   return found;
 }
 
-// Live Work.ua D2D & Field Rep employer scanner via r.jina.ai (100% CORS-enabled) + Google Places phone lookup
-async function scanWorkUaFieldTeamsClient(city, key) {
-  const cLower = String(city || 'Вінниця').toLowerCase();
-  let citySlug = 'vinnytsia';
-  if (cLower.includes('київ')) citySlug = 'kyiv';
-  else if (cLower.includes('львів')) citySlug = 'lviv';
-  else if (cLower.includes('одес')) citySlug = 'odesa';
-  else if (cLower.includes('дніпр')) citySlug = 'dnipro';
-  else if (cLower.includes('харків')) citySlug = 'kharkiv';
-  else if (cLower.includes('хмельниц')) citySlug = 'khmelnytskyi';
-  else if (cLower.includes('терноп')) citySlug = 'ternopil';
-  else if (cLower.includes('франківськ')) citySlug = 'ivano-frankivsk';
-  else if (cLower.includes('чернівц')) citySlug = 'chernivtsi';
-  else if (cLower.includes('рівн')) citySlug = 'rivne';
-  else if (cLower.includes('луцьк')) citySlug = 'lutsk';
-  else if (cLower.includes('житомир')) citySlug = 'zhytomyr';
-  else if (cLower.includes('полтав')) citySlug = 'poltava';
-  else if (cLower.includes('черкас')) citySlug = 'cherkasy';
-
-  const roleSlugs = [
-    '%D1%82%D0%BE%D1%80%D0%B3%D0%BE%D0%B2%D0%B8%D0%B9+%D0%BF%D1%80%D0%B5%D0%B4%D1%81%D1%82%D0%B0%D0%B2%D0%BD%D0%B8%D0%BA',
-    '%D0%BF%D1%80%D0%BE%D0%BC%D0%BE%D1%83%D1%82%D0%B5%D1%80',
-    '%D1%81%D1%83%D0%BF%D0%B5%D1%80%D0%B2%D0%B0%D0%B9%D0%B7%D0%B5%D1%80'
-  ];
-
-  const discoveredCompanies = [];
-  const seenCo = new Set();
-
-  await Promise.allSettled(roleSlugs.map(async (rSlug) => {
-    try {
-      const url = `https://r.jina.ai/https://www.work.ua/jobs-${citySlug}-${rSlug}/`;
-      const ctrl = new AbortController();
-      const tid = setTimeout(() => ctrl.abort(), 4500);
-      const res = await fetch(url, { signal: ctrl.signal });
-      clearTimeout(tid);
-      if (!res.ok) return;
-      const txt = await res.text();
-      const lines = txt.split('\n').map(l => l.trim()).filter(Boolean);
-      for (let i = 0; i < lines.length; i++) {
-        const m = lines[i].match(/^## \[([^\]]+)\]\((https:\/\/www\.work\.ua\/jobs\/\d+\/)/);
-        if (!m) continue;
-        const jobTitle = m[1];
-        const jobUrl = m[2];
-        if (/продавець-консультант|касир|бариста|кухар|охоронець/i.test(jobTitle) && !/промоутер|торговий|представник|супервайзер|активн/i.test(jobTitle)) {
-          continue;
-        }
-        let companyName = '';
-        for (let k = 1; k <= 3 && (i + k) < lines.length; k++) {
-          const line = lines[i + k];
-          if (!/грн|відрахувань|зайнятість|графік|студентів|Зв’язок|^\*/i.test(line) && line.length >= 3 && line.length <= 55) {
-            companyName = line.replace(/,\s*(ТОВ|ПП|ФОП|ТД).*$/i, '').trim();
-            break;
-          }
-        }
-        if (!companyName || seenCo.has(companyName.toLowerCase())) continue;
-        seenCo.add(companyName.toLowerCase());
-        discoveredCompanies.push({ companyName, jobTitle, jobUrl });
-      }
-    } catch (_) {}
-  }));
-
-  const verifiedFromWork = [];
-  await Promise.allSettled(discoveredCompanies.slice(0, 8).map(async (co, idx) => {
-    try {
-      const data = await searchPlacesApiDirect(`${co.companyName} ${city}`, key, '');
-      const p = (data?.places || [])[0];
-      if (!p) return;
-      const rawPhone = p.internationalPhoneNumber || p.nationalPhoneNumber || '';
-      const phone = normalizePhone(rawPhone);
-      const cleanPhone = phone ? phone.replace(/[^\d]/g, '') : '';
-      const isMobile = isUkrainianMobilePhone(cleanPhone);
-      if (!phone) return;
-
-      verifiedFromWork.push({
-        id: 'v-d2d-workua-' + Date.now() + '-' + idx,
-        isD2d: true,
-        d2dType: 'field_reps',
-        d2dMatchScore: 99,
-        name: `${co.companyName} (Активний набір: ${co.jobTitle})`,
-        address: p.formattedAddress || `${city} (Work.ua роботодавець)`,
-        city,
-        phone,
-        isMobile,
-        viberUrl: isMobile ? getViberDirectUrl(cleanPhone) : '',
-        website: co.jobUrl,
-        instagram: (p.websiteUri && /instagram\.com/i.test(p.websiteUri)) ? cleanInstagramHandle(p.websiteUri) : '',
-        telegram: '',
-        telegramPhone: cleanPhone ? `https://t.me/+${cleanPhone}` : '',
-        rating: Number(p.rating || 4.9),
-        reviews: Number(p.userRatingCount || 18),
-        mapsUrl: p.googleMapsUri || co.jobUrl,
-        lat: p.location?.latitude || null,
-        lng: p.location?.longitude || null,
-        painLevel: 'urgent',
-        painChipLabel: `Активний набір «ходоків» на Work.ua (99% Match)`,
-        painText: `Прямо зараз шукають у штат «${co.jobTitle}» у м. ${city} — подзвони або напиши керівнику щодо оптової партії NFC-карток під їхню польову команду!`
-      });
-    } catch (_) {}
-  }));
-
-  return verifiedFromWork;
-}
-
-async function scanOlxUndercoverD2dClient(city) {
-  return [];
-}
-
 async function runLiveD2dRadar(job, limit) {
   const key = getClientGoogleMapsKey();
-  const targetCount = Math.max(5, Number(limit || job.limit || 15));
+  const targetCount = Math.max(5, Number(limit || job.limit || 30));
   const city = (job.city || 'Вінниця').trim();
   const cluster = (job.cluster || '').trim();
+  const isLocalHost = /^(localhost|127\.0\.0\.1)$/i.test(window.location.hostname || '');
 
   try {
     const reg = await loadGlobalSeenRegistry();
     const waveKey = `d2d:${String(job.niche || '').toLowerCase().trim()}:${city.toLowerCase()}:${cluster.toLowerCase()}`;
     const currentWave = Number(reg.waveOffsets[waveKey] || 0);
+
+    // 1. Direct PC Backend execution when running locally (MTProto + Chrome Work.ua/OLX + Places + Enrichment)
+    if (isLocalHost) {
+      job.progressText = `ПК-рушій сканує TG, Work.ua, OLX та Google Maps у м. ${city}…`;
+      renderNfcRadar();
+
+      const resp = await fetch('/api/scraper/live-d2d', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          niche: job.niche,
+          city,
+          cluster,
+          limit: targetCount,
+          waveOffset: currentWave,
+          googleKey: key
+        }),
+        signal: AbortSignal.timeout(60000)
+      });
+      const json = await resp.json().catch(() => null);
+      if (resp.ok && json?.success && Array.isArray(json.items)) {
+        job.status = 'done';
+        job.progressText = '';
+        job.items = json.items;
+        job.total = json.items.length;
+        job.d2dStats = json.stats || null;
+        if (json.items.length > 0) {
+          await saveGlobalSeenRegistry(json.items, waveKey, currentWave + 1, city);
+        }
+        saveLocalD2dJobs(nfcRadarState.d2dJobs);
+        renderNfcRadar();
+        showToast(`Знайдено ${json.items.length} перевірених D2D-контактів (${city})!`);
+        haptic('success');
+        return;
+      }
+    }
+
+    // 2. Remote / iPhone hybrid path: queue for PC daemon (MTProto + Chrome Work.ua/OLX) OR fallback to Vercel /api/d2d-search
+    let pcResult = null;
+    if (!isLocalHost && typeof getCloudKvNfcOutreachUrl === 'function') {
+      job.progressText = `Запит на ПК-сервер + хмарний пошук (${city})…`;
+      renderNfcRadar();
+      try {
+        const kvUrl = getCloudKvNfcOutreachUrl().replace('nfc_outreach_state', 'd2d_search_queue');
+        const reqId = 'd2d_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+        let existing = [];
+        try {
+          const curRes = await fetch(kvUrl);
+          if (curRes.ok) {
+            const curJson = await curRes.json().catch(() => null);
+            if (Array.isArray(curJson?.requests)) existing = curJson.requests;
+          }
+        } catch (_) {}
+
+        const nextList = existing.filter(r => r && (Date.now() - (r.createdAt || 0) < 180000)).slice(-6);
+        nextList.push({
+          id: reqId,
+          status: 'pending',
+          createdAt: Date.now(),
+          niche: job.niche,
+          city,
+          cluster,
+          limit: targetCount,
+          waveOffset: currentWave
+        });
+        await fetch(kvUrl, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ requests: nextList, updatedAt: Date.now() })
+        });
+
+        // Wait up to ~6s for PC daemon to claim ('running'); if claimed, wait up to ~24s for full multi-source results
+        for (let attempt = 0; attempt < 11; attempt++) {
+          await new Promise(r => setTimeout(r, 2200));
+          const pollRes = await fetch(kvUrl).catch(() => null);
+          if (!pollRes || !pollRes.ok) continue;
+          const pollJson = await pollRes.json().catch(() => null);
+          const foundReq = (pollJson?.requests || []).find(r => r && r.id === reqId);
+          if (!foundReq) break;
+          if (foundReq.status === 'done' && Array.isArray(foundReq.items)) {
+            pcResult = foundReq;
+            break;
+          }
+          if (foundReq.status === 'error') break;
+          if (attempt >= 2 && foundReq.status === 'pending') {
+            break;
+          }
+          if (foundReq.status === 'running') {
+            job.progressText = `ПК-сервер сканує TG / Work.ua / OLX (${city})…`;
+            renderNfcRadar();
+          }
+        }
+      } catch (_) {}
+    }
+
+    if (pcResult && Array.isArray(pcResult.items)) {
+      job.status = 'done';
+      job.progressText = '';
+      job.items = pcResult.items;
+      job.total = pcResult.items.length;
+      job.d2dStats = pcResult.stats || null;
+      if (pcResult.items.length > 0) {
+        await saveGlobalSeenRegistry(pcResult.items, waveKey, currentWave + 1, city);
+      }
+      saveLocalD2dJobs(nfcRadarState.d2dJobs);
+      renderNfcRadar();
+      showToast(`ПК-рушій знайшов ${pcResult.items.length} перевірених D2D-контактів!`);
+      haptic('success');
+      return;
+    }
+
+    // 3. Vercel Serverless + Strict Verified Client Fallback (when PC is offline)
+    job.progressText = `Хмарний пошук TG + Google Maps у м. ${city}…`;
+    renderNfcRadar();
+
+    let serverItems = [];
+    try {
+      const apiRes = await fetch('/api/d2d-search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          niche: job.niche,
+          city,
+          cluster,
+          limit: targetCount,
+          waveOffset: currentWave,
+          googleKey: key
+        }),
+        signal: AbortSignal.timeout(14000)
+      });
+      if (apiRes.ok) {
+        const apiJson = await apiRes.json().catch(() => null);
+        if (apiJson?.success && Array.isArray(apiJson.items)) {
+          serverItems = apiJson.items;
+        }
+      }
+    } catch (_) {}
 
     const runSeenKeys = new Set();
     const isSeenInThisRun = (v) => extractBizSeenKeysClient(v, city).some(k => runSeenKeys.has(k));
@@ -14507,106 +14645,63 @@ async function runLiveD2dRadar(job, limit) {
     const freshCollected = [];
     const seenOverflowPool = [];
 
-    // 1. Scan Telegram job channels + Work.ua live field-sales vacancies in parallel
-    job.progressText = `Сканую D2D-офіси та польові команди у ${city} (0/${targetCount})…`;
-    renderNfcRadar();
+    const ingestItem = (item) => {
+      if (!item || isSeenInThisRun(item)) return;
+      markSeenInThisRun(item);
+      if (reg.isBizSeen(item, city)) seenOverflowPool.push(item);
+      else freshCollected.push(item);
+    };
 
-    const [tgItems, workUaItems] = await Promise.all([
-      scanTelegramD2dVacanciesClient(city),
-      scanWorkUaFieldTeamsClient(city, key)
-    ]);
+    serverItems.forEach(ingestItem);
 
-    for (const item of [...tgItems, ...workUaItems]) {
-      if (!isSeenInThisRun(item)) {
-        markSeenInThisRun(item);
-        if (reg.isBizSeen(item, city)) {
-          seenOverflowPool.push(item);
-        } else {
-          freshCollected.push(item);
-        }
-      }
-    }
+    if (freshCollected.length < targetCount) {
+      const tgItems = await scanTelegramD2dVacanciesClient(city).catch(() => []);
+      tgItems.forEach(ingestItem);
 
-    // 2. Scan Google Places API v1 for Promo/BTL, Field Reps, Courier/Flyer teams & Sales Staffing
-    const queryObjects = buildSmartD2dQueriesClient(job.niche, city, cluster);
+      const queryObjects = buildSmartD2dQueriesClient(job.niche, city, cluster, currentWave);
+      for (let qIdx = 0; qIdx < queryObjects.length; qIdx++) {
+        if (freshCollected.length >= targetCount * 1.3) break;
+        const { q, type } = queryObjects[qIdx];
+        job.progressText = `Перевіряю BTL / D2D точки (${Math.min(targetCount, freshCollected.length)}/${targetCount})…`;
+        renderNfcRadar();
 
-    for (let qIdx = 0; qIdx < queryObjects.length; qIdx++) {
-      if (freshCollected.length >= targetCount * 1.4) break;
-
-      const { q, type } = queryObjects[qIdx];
-      job.progressText = `Пошук D2D-офісів та польових бригад (${Math.min(targetCount, freshCollected.length)}/${targetCount})…`;
-      renderNfcRadar();
-
-      let pageToken = '';
-      for (let page = 0; page < 2; page++) {
-        let data = null;
-        try {
-          data = await searchPlacesApiDirect(q, key, pageToken);
-        } catch (err) {
-          console.warn('[D2D Places] Error:', err.message);
-          break;
-        }
-        if (!data || !Array.isArray(data.places) || !data.places.length) break;
-
-        data.places.forEach((p, idx) => {
-          const candidate = classifyAndVerifyD2dCandidate(p, type, city, cluster, qIdx, idx);
-          if (!candidate || isSeenInThisRun(candidate)) return;
-          markSeenInThisRun(candidate);
-
-          if (reg.isBizSeen(candidate, city)) {
-            seenOverflowPool.push(candidate);
-          } else {
-            freshCollected.push(candidate);
+        let pageToken = '';
+        for (let page = 0; page < 2; page++) {
+          let data = null;
+          try {
+            data = await searchPlacesApiDirect(q, key, pageToken);
+          } catch (_) {
+            break;
           }
-        });
-
-        if (!data.nextPageToken || freshCollected.length >= targetCount) break;
-        pageToken = data.nextPageToken;
-        await new Promise(r => setTimeout(r, 300));
+          if (!data || !Array.isArray(data.places) || !data.places.length) break;
+          data.places.forEach((p, idx) => {
+            const candidate = classifyAndVerifyD2dCandidate(p, type, city, cluster, qIdx, idx);
+            if (candidate) ingestItem(candidate);
+          });
+          if (!data.nextPageToken || freshCollected.length >= targetCount) break;
+          pageToken = data.nextPageToken;
+          await new Promise(r => setTimeout(r, 250));
+        }
       }
     }
 
-    let combined = [...freshCollected];
+    const combined = [...freshCollected];
     if (combined.length < targetCount && seenOverflowPool.length > 0) {
       combined.push(...seenOverflowPool.slice(0, targetCount - combined.length));
     }
-    if (combined.length < targetCount && city.toLowerCase().includes('вінниц') && DEFAULT_D2D_RADAR_JOBS[0]?.items) {
-      for (const stItem of DEFAULT_D2D_RADAR_JOBS[0].items) {
-        if (combined.length >= targetCount) break;
-        if (!isSeenInThisRun(stItem)) {
-          markSeenInThisRun(stItem);
-          combined.push(JSON.parse(JSON.stringify(stItem)));
-        }
-      }
-    }
 
     combined.sort((a, b) => {
-      const aPhone = a.phone ? 1 : 0;
-      const bPhone = b.phone ? 1 : 0;
-      if (bPhone !== aPhone) return bPhone - aPhone;
-      const aSocial = (a.instagram || a.telegram) ? 1 : 0;
-      const bSocial = (b.instagram || b.telegram) ? 1 : 0;
-      if (bSocial !== aSocial) return bSocial - aSocial;
+      const aDirect = (a.isMobile ? 2 : 0) + (a.telegram ? 2 : 0) + (a.instagram ? 1 : 0);
+      const bDirect = (b.isMobile ? 2 : 0) + (b.telegram ? 2 : 0) + (b.instagram ? 1 : 0);
+      if (bDirect !== aDirect) return bDirect - aDirect;
       return (Number(b.d2dMatchScore) || 0) - (Number(a.d2dMatchScore) || 0);
     });
 
     const finalItems = combined.slice(0, targetCount);
-
-    job.progressText = `Перевірка прямих контактів (Viber / Telegram / Instagram)…`;
-    renderNfcRadar();
-    await enrichWebsiteSocialsBatchClient(finalItems);
-
-    finalItems.sort((a, b) => {
-      const aPhone = a.phone ? 1 : 0;
-      const bPhone = b.phone ? 1 : 0;
-      if (bPhone !== aPhone) return bPhone - aPhone;
-      const aSocial = (a.instagram || a.telegram) ? 1 : 0;
-      const bSocial = (b.instagram || b.telegram) ? 1 : 0;
-      if (bSocial !== aSocial) return bSocial - aSocial;
-      return (Number(b.d2dMatchScore) || 0) - (Number(a.d2dMatchScore) || 0);
-    });
-
-    await saveGlobalSeenRegistry(finalItems, waveKey, currentWave + 1, city);
+    if (finalItems.length > 0) {
+      await enrichWebsiteSocialsBatchClient(finalItems);
+      await saveGlobalSeenRegistry(finalItems, waveKey, currentWave + 1, city);
+    }
 
     job.status = 'done';
     job.progressText = '';
@@ -14616,7 +14711,9 @@ async function runLiveD2dRadar(job, limit) {
     renderNfcRadar();
 
     const locLabel = cluster ? `${cluster}, ${city}` : city;
-    showToast(`Знайдено ${finalItems.length} D2D-офісів та польових команд (${locLabel})!`);
+    showToast(finalItems.length > 0
+      ? `Знайдено ${finalItems.length} перевірених D2D-контактів (${locLabel})!`
+      : `У м. ${city} не знайдено нових активних D2D-команд. Увімкніть ПК-сервер для глибокого пошуку в TG / Work.ua / OLX.`);
     haptic('success');
   } catch (err) {
     console.error('[D2D Radar] Error:', err);
@@ -14660,16 +14757,19 @@ function configureNfcModalForCurrentMode() {
     if (isD2d) {
       nicheInput.readOnly = true;
       nicheInput.style.cursor = 'pointer';
-      if (!nicheInput.value || nicheInput.value === 'Кафе, бари, ресторани') {
-        nicheInput.value = 'Всі D2D-офіси (ходоки)';
-        nicheInput.dataset.fullNiche = 'D2D офіси (ходоки), прямі продажі, промоутери та польові торгові';
+      const defaultOpt = dropMenu?.querySelector('.d2d-dropdown-item.active') || dropMenu?.querySelector('.d2d-dropdown-item');
+      const curVal = String(nicheInput.value || '');
+      const matchesAnyOpt = dropMenu ? Array.from(dropMenu.querySelectorAll('.d2d-dropdown-item')).some(el => el.textContent.trim() === curVal) : false;
+      if (!matchesAnyOpt && defaultOpt) {
+        nicheInput.value = defaultOpt.textContent.trim();
+        nicheInput.dataset.fullNiche = defaultOpt.dataset.d2dVal || defaultOpt.textContent.trim();
       }
       if (chevron) chevron.style.display = 'block';
     } else {
       nicheInput.readOnly = false;
       nicheInput.style.cursor = 'text';
       delete nicheInput.dataset.fullNiche;
-      if (nicheInput.value.includes('D2D')) {
+      if (nicheInput.value.includes('D2D') || (dropMenu && Array.from(dropMenu.querySelectorAll('.d2d-dropdown-item')).some(el => el.textContent.trim() === nicheInput.value.trim()))) {
         nicheInput.value = '';
       }
       nicheInput.placeholder = 'Введіть нішу (наприклад: Барбершопи, Ресторани, Стоматологія, Тур агенства...)';
@@ -14677,6 +14777,8 @@ function configureNfcModalForCurrentMode() {
     }
   }
   if (dropMenu) dropMenu.style.display = 'none';
+  const clusterInput = document.getElementById('nfcClusterInput');
+  if (clusterInput) clusterInput.value = '';
 
   if (cityInput) {
     cityInput.value = '';
@@ -14706,7 +14808,7 @@ async function submitNfcSearch() {
     delete nicheInput?.dataset.fullNiche;
     niche = (nicheInput?.value || '').trim();
   }
-  const city = (cityInput?.value || '').trim() || (isD2d ? 'Вінниця' : 'Київ');
+  const city = (cityInput?.value || '').trim();
   const cluster = (clusterInput?.value || '').trim();
 
   if (!niche) {
@@ -15560,7 +15662,22 @@ const CITY_CENTERS = {
   'одеса': [46.4825, 30.7233],
   'дніпро': [48.4647, 35.0462],
   'харків': [49.9935, 36.2304],
-  'вінниця': [49.2331, 28.4682]
+  'вінниця': [49.2331, 28.4682],
+  'запоріжжя': [47.8388, 35.1396],
+  'полтава': [49.5883, 34.5514],
+  'черкаси': [49.4444, 32.0598],
+  'житомир': [50.2547, 28.6587],
+  'рівне': [50.6199, 26.2516],
+  'хмельницький': [49.4229, 26.9871],
+  'тернопіль': [49.5535, 25.5948],
+  'івано-франківськ': [48.9226, 24.7111],
+  'чернівці': [48.2921, 25.9358],
+  'луцьк': [50.7472, 25.3254],
+  'ужгород': [48.6208, 22.2879],
+  'миколаїв': [46.9750, 31.9946],
+  'суми': [50.9077, 34.7981],
+  'чернігів': [51.4982, 31.2893],
+  'кропивницький': [48.5079, 32.2623]
 };
 
 function renderNfcMap() {
@@ -15704,16 +15821,17 @@ function showMapVenueCard(v, job, idx) {
   card.innerHTML = `
     <div class="nfc-map-sheet-header">
       <div class="nfc-map-sheet-title">#${idx + 1} ${escapeHtml(v.name)}</div>
-      <div class="nfc-map-sheet-score">★ ${v.rating ? Number(v.rating).toFixed(1) : '5.0'} (${v.d2dMatchScore ? v.d2dMatchScore + '% D2D' : (v.reviews || 0)})</div>
+      <div class="nfc-map-sheet-score">${(v.isD2d || job?.isD2d) ? `${v.d2dSourceLabel ? escapeHtml(v.d2dSourceLabel) + ' · ' : ''}${v.d2dMatchScore ? v.d2dMatchScore + '% D2D' : 'D2D'}` : `★ ${v.rating ? Number(v.rating).toFixed(1) : '—'} (${v.reviews || 0})`}</div>
     </div>
     <div class="nfc-map-sheet-addr">${escapeHtml(v.address || job?.cluster || job?.city || '—')}</div>
 
     <div class="nfc-map-sheet-contacts" style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:8px 0;">
       <a href="${mapUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="display:inline-flex; align-items:center; gap:4px; font-weight:700;">
         <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-        <span>Точка в Google Maps</span>
+        <span>${v.website && /work\.ua|olx\.ua|t\.me/i.test(v.website) ? 'Відкрити оголошення' : 'Точка в Google Maps'}</span>
       </a>
       ${v.phone ? `<button type="button" class="btn btn--out btn--xs" data-map-contact="${v.id}" style="font-weight:700;">${v.phone}</button>` : ''}
+      ${tgUrl ? `<a href="${escapeHtml(tgUrl)}" target="_blank" rel="noopener" class="btn btn--out btn--xs" style="color:#0066FF; font-weight:600;">${v.telegram ? escapeHtml(v.telegram) : 'Telegram'}</a>` : ''}
       <a href="${instaUrl}" target="_blank" rel="noopener" class="btn btn--out btn--xs nfc-insta-link" data-nfc-insta="true" data-job="${job?.id}" data-venue="${v.id}" data-href="${instaUrl}" style="color:${cleanInsta ? '#E1306C' : 'var(--muted)'}; border-color:${cleanInsta ? '#E1306C' : 'var(--border)'}; font-weight:600;">
         ${cleanInsta ? '@' + cleanInsta : 'Insta пошук'}
       </a>
@@ -15721,7 +15839,7 @@ function showMapVenueCard(v, job, idx) {
 
     <div class="form-row gap-2" style="margin-top: 6px;">
       <button type="button" class="btn btn--fill btn--sm flex-1 nfc-pitch-btn" data-nfc-act="pitch" data-job="${job?.id}" data-venue="${v.id}">
-        <span>AI-Відгук</span>
+        <span>${(v.isD2d || job?.isD2d) ? 'Опт Офер' : 'AI-Відгук'}</span>
       </button>
       <button type="button" class="btn btn--fill btn--sm flex-1 nfc-crm-btn" data-nfc-act="crm" data-job="${job?.id}" data-venue="${v.id}">
         <span>CRM</span>
@@ -17976,7 +18094,7 @@ function setupNfcAutoOutreachModule() {
     haptic('light');
     const cityEl = document.getElementById('nfcCustomOutreachCity');
     if (cityEl && !cityEl.value.trim()) {
-      const radarCity = document.getElementById('nfcCity')?.value?.trim() || 'Вінниця';
+      const radarCity = document.getElementById('nfcCityInput')?.value?.trim() || 'Вінниця';
       cityEl.value = radarCity;
     }
     openModal('modalNfcCustomOutreach');

@@ -10,7 +10,8 @@ import { sendScanReport } from './bot.js';
 import './bot.js';
 import { startScrape, listJobs, getJob, deleteJob, buildCsv, csvFileName, sendCsvToTelegram, scraperMode, setApifyToken, getApifyToken, getSeenData, registerSeenBusinesses } from './scraper/scraper.js';
 import { scrapeLocalGmaps } from './scraper/localGmapsScraper.js';
-import { startNfcOutreachScheduler, discoverContactsForVenueItem } from './outreach/nfcOutreachEngine.js';
+import { scrapeD2dRadar, processD2dCloudQueue } from './scraper/d2dScraper.js';
+import { startNfcOutreachScheduler, discoverContactsForVenueItem, registerD2dQueueHandler } from './outreach/nfcOutreachEngine.js';
 import nfcOutreachHandler from '../api/nfc-outreach.js';
 
 dotenv.config();
@@ -550,6 +551,26 @@ app.post('/api/scraper/live-nfc', async (req, res) => {
   }
 });
 
+// Multi-Source D2D Search Engine (Telegram MTProto + Work.ua + OLX + Google Places + Social Enrichment)
+app.post('/api/scraper/live-d2d', async (req, res) => {
+  try {
+    const { niche, city, cluster, limit, waveOffset, googleKey } = req.body || {};
+    console.log(`[POST /api/scraper/live-d2d] D2D Search: ${niche} | ${city} | ${cluster} | limit: ${limit}`);
+    const result = await scrapeD2dRadar({ niche, city, cluster, limit, waveOffset, googleKey });
+    res.json({
+      success: true,
+      count: result.items.length,
+      items: result.items,
+      stats: result.stats,
+      waveKey: result.waveKey,
+      nextWaveOffset: result.nextWaveOffset
+    });
+  } catch (err) {
+    console.error('[API /api/scraper/live-d2d] Error:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 app.get('/api/scrapes/seen', async (req, res) => {
   try {
     const data = await getSeenData();
@@ -715,6 +736,7 @@ if (!process.env.VERCEL) {
     console.log(`====================================================`);
     
     // Launch live channel monitor & scheduler
+    registerD2dQueueHandler(processD2dCloudQueue);
     startMonitor();
     startNfcOutreachScheduler();
   });

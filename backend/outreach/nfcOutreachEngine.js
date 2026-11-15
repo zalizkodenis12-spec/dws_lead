@@ -17,7 +17,7 @@ const CLOUD_KV_STORE_ID = 'sJ4EPV4bcEMHAhMJi';
 const CLOUD_OUTREACH_RECORD = 'nfc_outreach_state';
 const DEFAULT_APIFY_TOKEN = Buffer.from('YXBpZnlfYXBpX1gzM1I4NEsyWDJia2ZNZjdYQWZrQ1R5RU1rblNiSTR4dXVmWA==', 'base64').toString('utf8');
 
-function getCloudKvOutreachUrl() {
+export function getCloudKvOutreachUrl() {
   const token = (process.env.APIFY_TOKEN || DEFAULT_APIFY_TOKEN || '').trim();
   if (!token) return '';
   return `https://api.apify.com/v2/key-value-stores/${CLOUD_KV_STORE_ID}/records/${CLOUD_OUTREACH_RECORD}?token=${encodeURIComponent(token)}`;
@@ -661,7 +661,7 @@ export function updateOutreachConfig(updates = {}) {
   return cfg;
 }
 
-async function getMtprotoClientForAccount(accountId) {
+export async function getMtprotoClientForAccount(accountId) {
   const state = loadNfcOutreachDb();
   const apiId = Number(process.env.TELEGRAM_API_ID);
   const apiHash = String(process.env.TELEGRAM_API_HASH || '').trim();
@@ -870,7 +870,7 @@ async function dispatchTelegramMessageMtproto(accountId, item, messageText) {
   }
 }
 
-function findLocalBrowserPath() {
+export function findLocalBrowserPath() {
   const candidates = [
     'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
     'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
@@ -1213,7 +1213,7 @@ const CITY_ALIASES_MAP = {
   'ужгород': ['ужгород', 'uzhhorod', 'uzhgorod']
 };
 
-function getCityVariants(city) {
+export function getCityVariants(city) {
   const c = String(city || '').toLowerCase().trim();
   if (!c || c === 'україна' || c === 'власний список') return [];
   for (const [root, aliases] of Object.entries(CITY_ALIASES_MAP)) {
@@ -1228,7 +1228,7 @@ function getCityVariants(city) {
   return Array.from(new Set(list));
 }
 
-function textMatchesCity(text, targetCity) {
+export function textMatchesCity(text, targetCity) {
   const variants = getCityVariants(targetCity);
   if (variants.length === 0) return false;
   const hay = String(text || '').toLowerCase();
@@ -1236,7 +1236,7 @@ function textMatchesCity(text, targetCity) {
   return variants.some(v => hay.includes(v) || (v.length >= 4 && hayLat.includes(v)));
 }
 
-function hasForeignCityMismatch(text, targetCity) {
+export function hasForeignCityMismatch(text, targetCity) {
   const variants = getCityVariants(targetCity);
   if (variants.length === 0) return false;
   if (textMatchesCity(text, targetCity)) return false;
@@ -1296,7 +1296,7 @@ const TG_RESERVED_PATHS = new Set([
 
 const BIO_LINK_DOMAINS_RE = /https?:\/\/(?:www\.)?(?:linktr\.ee|taplink\.cc|mssg\.me|hipolink\.me|beacons\.ai|bento\.me|campsite\.bio|bio\.link)\/[a-zA-Z0-9._-]+/gi;
 
-function extractPhonesFromText(str) {
+export function extractPhonesFromText(str) {
   const out = new Set();
   const s = String(str || '');
   const matches = s.matchAll(/(?:\+?38[\s\-()]*)?0[\s\-()]*\d{2}[\s\-()]*\d{3}[\s\-()]*\d{2}[\s\-()]*\d{2}/g);
@@ -1315,7 +1315,7 @@ function isUkrainianMobileNormalized(phone) {
   return /^380(50|63|66|67|68|73|75|77|89|91|92|93|94|95|96|97|98|99)\d{7}$/.test(digits);
 }
 
-function extractSocialHandlesFromHtml(html, baseUrl = '') {
+export function extractSocialHandlesFromHtml(html, baseUrl = '') {
   const igSet = new Set();
   const tgSet = new Set();
   const linktreeSet = new Set();
@@ -1403,7 +1403,7 @@ async function fetchExternalBioLinks(urls, maxLinks = 2) {
   };
 }
 
-async function withLockedChromePage(fn) {
+export async function withLockedChromePage(fn) {
   const chromePath = findLocalBrowserPath();
   if (!chromePath) return null;
   while (igDispatchLock) {
@@ -2689,6 +2689,12 @@ async function processManualResolveQueue() {
   }
 }
 
+let d2dQueueHandler = null;
+let d2dQueueBusy = false;
+export function registerD2dQueueHandler(fn) {
+  d2dQueueHandler = typeof fn === 'function' ? fn : null;
+}
+
 let schedulerStarted = false;
 let schedulerBusy = false;
 export function startNfcOutreachScheduler() {
@@ -2730,6 +2736,18 @@ export function startNfcOutreachScheduler() {
   setInterval(() => {
     pollActiveTelegramReplies().catch(() => {});
   }, 45000);
+
+  // Poll Cloud KV D2D search queue every 3 seconds independently so outreach ticks stay unblocked
+  setInterval(async () => {
+    if (!d2dQueueHandler || d2dQueueBusy) return;
+    d2dQueueBusy = true;
+    try {
+      await d2dQueueHandler();
+    } catch (_) {
+    } finally {
+      d2dQueueBusy = false;
+    }
+  }, 3000);
 
   console.log('[NFC Outreach] Автономний серверний рушій NFC-розсилки та 24/7 моніторингу відповідей запущено.');
 }

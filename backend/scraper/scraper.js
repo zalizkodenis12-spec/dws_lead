@@ -206,6 +206,10 @@ export async function getSeenData() {
             if (job.demo || String(job.id || '').startsWith('nfc-job-kyiv') || String(job.id || '').startsWith('nfc-job-lviv') || String(job.id || '').startsWith('nfc-job-odesa')) return;
             (job.items || []).forEach(b => extractBizSeenKeys(b, job.city).forEach(k => keySet.add(k)));
           });
+          (acc.d2dJobs || []).forEach(job => {
+            if (job.demo || String(job.id || '').startsWith('d2d-job-vinnytsia-strict')) return;
+            (job.items || []).forEach(b => extractBizSeenKeys(b, job.city).forEach(k => keySet.add(k)));
+          });
           (acc.crm || []).forEach(c => extractBizSeenKeys(c, c.city).forEach(k => keySet.add(k)));
         }
       }

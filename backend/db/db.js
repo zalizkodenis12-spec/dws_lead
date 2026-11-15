@@ -538,6 +538,7 @@ export const db = {
     if (payload.sources) acc.sources = payload.sources;
     if (Array.isArray(payload.scrapes)) acc.scrapes = payload.scrapes;
     if (Array.isArray(payload.nfcJobs)) acc.nfcJobs = payload.nfcJobs;
+    if (Array.isArray(payload.d2dJobs)) acc.d2dJobs = payload.d2dJobs;
     if (Array.isArray(payload.crmPinnedStages)) acc.crmPinnedStages = payload.crmPinnedStages;
     if (payload.deviceId) acc.deviceId = payload.deviceId;
     if (payload.syncId) acc.syncId = payload.syncId;

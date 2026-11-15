@@ -19,6 +19,8 @@
   ],
   "rewrites": [
     { "source": "/api/nfc-outreach", "destination": "/api/nfc-outreach.js" },
+    { "source": "/api/d2d-search", "destination": "/api/d2d-search.js" },
+    { "source": "/api/scraper/live-d2d", "destination": "/api/d2d-search.js" },
     { "source": "/api/leads/scan", "destination": "/api/scan.js" },
     { "source": "/api/cron-scan", "destination": "/api/scan.js?report=1" },
     { "source": "/api/proxy", "destination": "/api/proxy.js" },
