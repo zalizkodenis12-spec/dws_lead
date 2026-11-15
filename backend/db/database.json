@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1794764773526-4393",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "djinni",
+      "sourceName": "Djinni",
+      "sourceUsername": "@djinni",
+      "authorName": "Рекрутер на Djinni",
+      "authorUsername": "@djinni",
+      "title": "UGC Manager",
+      "text": "UGC Manager\n\nAbout us\nWe’re a small product team behind a Christian mobile app for daily Bible reading and prayer, available on iOS and Android. Our main market is the US. The app is live and runs on a subscription model. We’re now building an organic growth channel through UGC creators on TikTok, Instagram and YouTube, and we’re looking for the person who will own it.\n \nAbout the role\nYou’ll build and run our creator program: find and sign UGC creators, brief them, review their videos and grow the app’s organic reach through their content. The best-performing videos may also be used in paid ads. We expect you to bring your own approach to sourcing, pricing and content, not just follow ours.\n \nWhat you’ll do\nSource, vet and sign UGC creators, mostly US-based (TikTok, Instagram Reels, YouTube Shorts)\nNegotiate rates, deal terms and usage rights; manage contracts and calculate creator payouts\nRun test rounds with new creators and decide who stays\nWrite content briefs based on niche research and content performance\nReview every video and give creators clear, specific feedback\nTrack which creators, hooks and formats bring views and installs, and plan the next round around that\nSpot videos with potential for paid ads\nKeep the creator pipeline organized as it grows\n \n\nWhat we’re looking for\n1+ year of hands-on experience managing UGC creators for a mobile app or a DTC brand\nStrong understanding of short-form video: hooks, structure, and why some videos work while others don’t\nA data-driven approach: you base decisions on niche and content analysis and on in-app user data (e.g. AppsFlyer), not on gut feeling\nHands-on experience with modern tools for sourcing, tracking and content analysis\nEnglish: B1 or higher\nClear, friendly and to-the-point communication\nComfortable working with Christian content\n \n\nNice to have\nExperience with faith-based, wellness or other subscription apps\nExperience building automations for routine work (sourcing, outreach, tracking)",
+      "url": "https://djinni.co/jobs/856666-ugc-manager/",
+      "date": "2026-11-15T17:46:12.401Z",
+      "dateFormatted": "Сьогодні, 19:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Djinni",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення на Djinni: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794762554041-4074",
       "category": "development",
       "categoryName": "Веброзробка",
