@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794768674966-219",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Олександра",
+      "authorUsername": "@tg_id_840900036",
+      "title": "Вітаю. Шукаю терміново монтажера! Надсилайте одразу ваші приклади та вартіс...",
+      "text": "Вітаю. Шукаю терміново монтажера! Надсилайте одразу ваші приклади та вартість✨",
+      "date": "2026-11-15T18:51:14.965Z",
+      "dateFormatted": "Сьогодні, 20:51",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794768627107-5585",
       "category": "development",
       "categoryName": "Веброзробка",
