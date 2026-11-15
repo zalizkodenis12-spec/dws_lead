@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794773041333-721",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Founder VELT | Freelance",
+      "authorUsername": "@tg_id_8400578667",
+      "title": "Потрібен монтаж?",
+      "text": "Потрібен монтаж?\n\n🎬 VELT — фріланс агенція\n\nНаша команда займається монтажем вертикальних і горизонтальних відео для TikTok, Reels, YouTube та інших платформ.\n\nЩо пропонуємо:\n— Якісний відеомонтаж\n— Індивідуальний підхід до кожного проєкту\n— Дотримання дедлайнів\n\n📩 Маєте проєкт? Напишіть нам — обговоримо деталі!\n\nКейси в описі 🙌",
+      "date": "2026-11-15T20:04:01.330Z",
+      "dateFormatted": "Сьогодні, 22:04",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 60,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794772214145-3342",
       "category": "development",
       "categoryName": "Веброзробка",
