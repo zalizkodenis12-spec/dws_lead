@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794838718378-645",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@tles",
+      "title": "#перепост",
+      "text": "#перепост\nCommunity Manager (game product) / CapsGame ⚡️\nRemote\n\nCapsGame is a Telegram game inspired by classic pog battles. Collect, upgrade, battle and trade unique caps, mint them as NFTs on TON and Solana, and compete in seasons and events.\n\nTLDR: Ищем человека для развития комьюнити CapsGame в Telegram и Discord, ведение чатов, конкурсы и активности для игроков.\n\nТребования к кандидату:\n- Опыт ведения онлайн-сообществ\n- Умение работать с негативом\n- Опыт с игровыми сообществами\n- Знакомство с TON будет плюсом\n\nЧитать подробнее:\n→ Откликнуться тут\n\nДля связи и отправки резюме:\nTG: @nastyaakostina\n\nПоправили контакты рекрутера",
+      "date": "2026-11-16T14:18:38.378Z",
+      "dateFormatted": "Сьогодні, 16:18",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794838475207-421",
       "category": "development",
       "categoryName": "Веброзробка",
