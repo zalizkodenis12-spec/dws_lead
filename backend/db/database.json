@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794863962692-354",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Анастасія Олексієнко",
+      "authorUsername": "@ritwwxx9",
+      "title": "🎬 Чи потребує ваш блог або бізнес професійного відеомонтажу?",
+      "text": "🎬 Чи потребує ваш блог або бізнес професійного відеомонтажу?\n\nЗалучу до створення контенту, який ефективно приверне увагу та зацікавить вашу цільову аудиторію. 📈\nПерелік послуг:\n📱 Монтаж відео для TikTok та Instagram Reels\n✨ Створення Stories\n🎨 Дизайн каруселей\n📢 Розробка рекламних відео та креативів\n💬 Додавання субтитрів та анімації тексту\n\n🤍 Доступна вартість усіх послуг!\nЗараз я активно вдосконалюю свої професійні навички, тому пропоную вигідні умови співпраці. 🚀\nБуду рада допомогти зробити ваш контент більш привабливим та якісним. 🙌\n\n📩 Telegram: @ritwwxx9",
+      "date": "2026-11-16T21:19:22.691Z",
+      "dateFormatted": "Сьогодні, 23:19",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794863505390-2268",
       "category": "development",
       "categoryName": "Веброзробка",
