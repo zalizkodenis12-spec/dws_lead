@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794850133317-389",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "django_jobs",
+      "sourceUsername": "@django_jobs",
+      "authorName": "Larroquette",
+      "authorUsername": "@eSQL",
+      "title": "#вакансия #vacancy #remote #python #backend #fullstack #senior #middle",
+      "text": "#вакансия #vacancy #remote #python #backend #fullstack #senior #middle\n\nВакансия: Fullstack Python Developer (Senior / Middle).\n\nПроект: разработка торговой онлайн-платформы с нуля.\n\nУсловия: удалённо, загрузка от 30 ч/неделю.\n\nСтек: Python (asyncio), FastAPI, WebSockets, PostgreSQL (индексы/партиционирование), фронтенд на React/TypeScript с вёрсткой по PDF-макету. Инфраструктура: Docker, Nginx (позже Rclone для бэкапов).\n\nЖелателен опыт разработки SaaS-платформ (как показатель умения строить продукты с нуля и понимания архитектуры) и базовый технический английский.\n\nЗадачи: проектирование и разработка бэкенда, движка сигналов, очереди и исполнения ордеров; вёрстка и реализация фронтенда по макету.\n\nTG: @Larroquette",
+      "date": "2026-11-16T17:28:53.317Z",
+      "dateFormatted": "Сьогодні, 19:28",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794849104663-2620",
       "category": "development",
       "categoryName": "Веброзробка",
