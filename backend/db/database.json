@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794848314934-237",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "backend",
+      "subcategoryName": "Backend & API розробка",
+      "sourceType": "chat",
+      "sourceName": "Remote IT (Inflow)",
+      "sourceUsername": "@Remoteit",
+      "authorName": "Remoteit",
+      "authorUsername": "@Remoteit",
+      "title": "БОЛЬШЕ ВАКАНСИИ ДЛЯ GO/PHP - НА ЗАКРЫТОМ КАНАЛЕ (167 с момента запуска в ок...",
+      "text": "БОЛЬШЕ ВАКАНСИИ ДЛЯ GO/PHP - НА ЗАКРЫТОМ КАНАЛЕ (167 с момента запуска в октябре)",
+      "date": "2026-11-16T16:58:34.934Z",
+      "dateFormatted": "Сьогодні, 18:58",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: backend & api розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794848257791-520",
       "category": "montage",
       "categoryName": "Монтаж",
