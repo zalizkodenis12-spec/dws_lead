@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794844756014-214",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Barshchuk Serhii",
+      "authorUsername": "@tg_id_386904598",
+      "title": "Всем привет",
+      "text": "Всем привет\nЕсть ли тут SMM кто понимает метрики своей работы и ищет место работы?\n\nНапишите в лс",
+      "date": "2026-11-16T15:59:16.014Z",
+      "dateFormatted": "Сьогодні, 17:59",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794843735928-644",
       "category": "montage",
       "categoryName": "Монтаж",
