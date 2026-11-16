@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794867187266-963",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "backend",
+      "subcategoryName": "Backend & API розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "oper",
+      "authorUsername": "@oper",
+      "title": "🔥 Резюме Fullstack Developer (Node.js/Python) от @neversuptou, от 150 000₽...",
+      "text": "🔥 Резюме Fullstack Developer (Node.js/Python) от @neversuptou, от 150 000₽, РФ, удаленно, фуллтайм или парт-тайм\n\n⭐ Кейс с заменой платной LLM на дообученный rubert-tiny2: 93% точности на 3 736 заявках, инференс на CPU за 0,1–0,5 с и нулевой чек за токены.\n⭐ Практический прод-опыт с ИИ: монорепо Selleria, MCP-сервер для amoCRM и пайплайн разбора заявок за копейки в сутки.\n⭐ Здравый подход к вебу: переписанный на vanilla JS сайт на 130 страниц с адаптацией под ИИ-агентов через llms.txt.",
+      "date": "2026-11-16T22:13:07.266Z",
+      "dateFormatted": "Сьогодні, 00:13",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: backend & api розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794867106955-1583",
       "category": "development",
       "categoryName": "Веброзробка",
