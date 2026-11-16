@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794858663378-124",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Max",
+      "authorUsername": "@maxon4176",
+      "title": "МОНТАЖ ВІД МАКСА🎬",
+      "text": "МОНТАЖ ВІД МАКСА🎬\n\nТИ Думаєш:\n- Як підвищити рівень утримання?\n- Як не залишитись без переглядів?\n- Як знайти топ монтажера?\n\n- ТОБІ Допоможе ВІН.\n\n- БУДЬ-ЯКИЙ обсяг в строк.\n- Зворотний звʼязок протягом УСЬОГО ПРОЄКТУ\n- Підвищення УТРИМАННЯ твого відео, щоб воно взлетіло до небес🚀\n\n📂ПОРТФОЛІО:\n@maxportfolio3\n@maxportfolio3\n@maxportfolio3\n\n💬 Звʼяжись зі мною - @maxon4176",
+      "date": "2026-11-16T19:51:03.378Z",
+      "dateFormatted": "Сьогодні, 21:51",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 60,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794857217330-861",
       "category": "montage",
       "categoryName": "Монтаж",
