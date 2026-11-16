@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794859939411-985",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "𝙉𝙖𝙨𝙩𝙮𝙖",
+      "authorUsername": "@tg_id_5748545835",
+      "title": "Таргетологи ‼️",
+      "text": "Таргетологи ‼️\n\nЄ лід, теплий, робота вже і одразу\n\nЧорнуха:\nГео кз, узб і т.д\nНа сайт\n\nБюджет 1.5к$\nРОБОТА ТАРГЕТОЛОГА 350$\nПри об'ємах плата за роботу звісно буде вища\n🤝🤝\n\nЗацікавлена персона, з кейсами у цій ніші, яка не зіл'ється а буде працювати по блату\nЧекаю в лс 😎",
+      "date": "2026-11-16T20:12:19.411Z",
+      "dateFormatted": "Сьогодні, 22:12",
+      "budget": 14500,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 67,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 14500 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794859905346-3947",
       "category": "development",
       "categoryName": "Веброзробка",
