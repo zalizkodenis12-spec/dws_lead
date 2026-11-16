@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794838475207-421",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "Laravel Pro",
+      "sourceUsername": "@laravel_pro",
+      "authorName": "Angela Borja",
+      "authorUsername": "@angela_borja_20",
+      "title": "Нужен разработчик для создания AI-конвейера по производству коротких видео...",
+      "text": "Нужен разработчик для создания AI-конвейера по производству коротких видео и шортс, нужно настроить автоматическую генерацию сценариев, voces, монтажа и публикации, бюджет 80 т.р., откликайтесь в личку",
+      "date": "2026-11-16T14:14:35.207Z",
+      "dateFormatted": "Сьогодні, 16:14",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794838320277-8518",
       "category": "marketing",
       "categoryName": "Маркетинг",
