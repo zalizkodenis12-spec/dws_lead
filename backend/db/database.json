@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794904176287-891",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "backend",
+      "subcategoryName": "Backend & API розробка",
+      "sourceType": "chat",
+      "sourceName": "Mobile jobs | Вакансии/Резюме",
+      "sourceUsername": "@mobile_vacancies",
+      "authorName": "Мария Тестировщик",
+      "authorUsername": "@tg_id_6818100957",
+      "title": "Добрый день! 👋",
+      "text": "Добрый день! 👋\n\nЕсли не хотите терять время на найм автотестера на Python, обратите внимание на AQA-инженера с нашего бенча.\n\n⚙️ Анна Б. – AQA Python Middle+, опыт 4 года\n\nЗа время работы участвовала в 30 успешных релизах, включая высоконагруженные проекты с аудиторией свыше 5 млн пользователей. Имеет опыт построения фреймворков автоматизации с нуля с использованием PyTest, Selenium и Appium, а также глубокого тестирования REST API.\n\nТакже доступны QA-инженеры с продвинутыми навыками документации:\n\n⚙️ Наталья В. QA Middle – опыт 2 года. Стек: Docker • Kafka • REST API • Swagger • Grafana • Kibana\n\n⚙️ Анаит А. – опыт 10+ лет. Стек: Jenkins • GitLab • Allure • DevTools • Postman • SoapUI • Git • Java • Python • SQL • Xcode\n\nПодключение без оформления в штат, усиление команды на нужный период, прозрачная отчётность. Проведём бесплатную консультацию и поможем подобрать специалиста под ваш стек.\n\n📩 Пишите мне в ЛС, чтобы запросить резюме\n\n#AQA #Python #QA #ManualQA #Тестирование #API #ITVacancy #ITRecruitment #ITJobs",
+      "date": "2026-11-17T08:29:36.286Z",
+      "dateFormatted": "Сьогодні, 10:29",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 47,
+      "aiSummary": "Замовлення: backend & api розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794903106885-4710",
       "category": "development",
       "categoryName": "Веброзробка",
