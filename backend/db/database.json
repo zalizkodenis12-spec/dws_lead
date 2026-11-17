@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794911466049-480",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "ecommerce",
+      "subcategoryName": "Онлайн-магазин",
+      "sourceType": "chat",
+      "sourceName": "Варшава Новости | The Warsaw",
+      "sourceUsername": "@thewwarsaw",
+      "authorName": "thewwarsaw",
+      "authorUsername": "@thewwarsaw",
+      "title": "🛍️🖤 В Польше стартовали скидки Black Friday на технику",
+      "text": "🛍️🖤 В Польше стартовали скидки Black Friday на технику\n\nВ интернет-магазине Philips проходят акции на бытовую технику. Со скидками можно купить кофемашины, аэрогрили, пылесосы, паровые утюги, отпариватели и другие устройства для дома.\n\n👉 Посмотреть все предложения и выбрать технику по сниженной цене можно по ссылке.\n\nРабота | Прислать новость | Заказать рекламу | Бот для поиска жилья",
+      "date": "2026-11-17T10:31:06.048Z",
+      "dateFormatted": "Сьогодні, 12:31",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: онлайн-магазин.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794911337520-920",
       "category": "development",
       "categoryName": "Веброзробка",
