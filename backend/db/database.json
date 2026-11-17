@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794946772796-659",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Katya",
+      "authorUsername": "@tg_id_479263785",
+      "title": "Всім привіт!!! Шукаю помічницю з напрямку дизайну для постійної співпраці т...",
+      "text": "Всім привіт!!! Шукаю помічницю з напрямку дизайну для постійної співпраці та роботи над SMM-проєктами 🤍 Якщо цікаво, заповнюй форму → https://docs.google.com/forms/d/e/1FAIpQLSfpE-P3Sk7RyyK_z_mPypWppgITTVufWbMk35HNlnLS5toZVw/viewform?usp=dialog",
+      "date": "2026-11-17T20:19:32.795Z",
+      "dateFormatted": "Сьогодні, 22:19",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794946524733-571",
       "category": "marketing",
       "categoryName": "Маркетинг",
