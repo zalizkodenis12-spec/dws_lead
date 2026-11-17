@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794904545355-467",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Yurovska Helen",
+      "authorUsername": "@Helen_Yurovska",
+      "title": "Hiring #Marketing #B2B #Remote #Health&Beauty",
+      "text": "Hiring #Marketing #B2B #Remote #Health&Beauty\n\n🔥 Шукаємо B2B Marketing Manager - майстра дистрибуції 🔥\n\nЗапрошуємо до команди міжнародного бренду — одного з провідних дистриб'юторів у сфері естетичної медицини та професійної косметології. Якщо тобі цікаво будувати маркетинг системно, впливати на бізнес-результати та розвивати міжнародний бренд — будемо раді знайомству!\n\n🔎 Що буде у твоїй зоні відповідальності:\n· Розробка маркетингової стратегії та Go-to-Market.\n· Позиціонування бренду й продуктів.\n· B2B lead generation та розвиток партнерських каналів.\n· Аналітика ринків, конкурентів і маркетингової ефективності.\n· Координація digital, контенту, SMM та підрядників.\n· Управління маркетинговим бюджетом і результатами.\n🎯 Що важливо:\n· Від 3 років досвіду в B2B-маркетингу.\n· Практичний досвід побудови маркетингової стратегії.\n· Розуміння B2B-продажів, лідогенерації та аналітики.\n· Обов'язково: Досвід у Health & Beauty, фармацевтиці або медицині\n· Англійська - середній рівень\n Формат: full-time, remote.\n\n📩 Більше деталей -  ТГ @Helen_Yurovska",
+      "date": "2026-11-17T08:35:45.353Z",
+      "dateFormatted": "Сьогодні, 10:35",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794904176287-891",
       "category": "development",
       "categoryName": "Веброзробка",
