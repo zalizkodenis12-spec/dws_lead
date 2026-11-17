@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794891822717-463",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "oper",
+      "authorUsername": "@oper",
+      "title": "🔥 Резюме Fullstack Developer (Node.js / TypeScript) от @mrhexvel, от $2 00...",
+      "text": "🔥 Резюме Fullstack Developer (Node.js / TypeScript) от @mrhexvel, от $2 000, удаленка или гибрид, фуллтайм\n\n⭐ Бодрые инженерные метрики: разгон FCP на 35%, снижение оверхеда на 40% и оптимизация с O(N) до O(1)\n⭐ Глубокое понимание рантайма V8, аллокации памяти и работы Garbage Collector вместо банального «знаю JS»\n⭐ Оцифрованный лидерский опыт: управление командой из 10 человек с ускорением Time-to-Market на 30%",
+      "date": "2026-11-17T05:03:42.716Z",
+      "dateFormatted": "Сьогодні, 07:03",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794889119595-564",
       "category": "development",
       "categoryName": "Веброзробка",
