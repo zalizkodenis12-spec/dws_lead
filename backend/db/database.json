@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794905180355-796",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "motion",
+      "subcategoryName": "Моушн-дизайн",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@list",
+      "title": "2D Animator / BGaming ⚡️",
+      "text": "2D Animator / BGaming ⚡️\nRemote\n\nBGaming is a fast-growing iGaming content provider converting gambling into gaming.\n\nTLDR: Join BGaming as a Middle/Senior 2D Animator to create engaging animations for online slot games, collaborating with a creative team.\n\nТребования к кандидату:\n- 2+ years of professional experience in 2D animation\n- Strong proficiency in Spine 2D (rigging, skinning, animation)\n- Experience with slot games\n- Knowledge of Adobe Photoshop; After Effects is a plus\n- Strong portfolio demonstrating Spine 2D animation skills\n\nЧитать подробнее:\n→ Откликнуться тут\n\nДругие вакансии:\n• Training & Development Specialist ⚡️\n• Technical Compliance Analyst ⚡️\n• Product Marketing Manager ⚡️ +",
+      "date": "2026-11-17T08:46:20.354Z",
+      "dateFormatted": "Сьогодні, 10:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: моушн-дизайн.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794905017110-628",
       "category": "development",
       "categoryName": "Веброзробка",
