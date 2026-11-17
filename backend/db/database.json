@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794924007226-284",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "ecommerce",
+      "subcategoryName": "Онлайн-магазин",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "ddle",
+      "authorUsername": "@ddle",
+      "title": "**My Internal Monologue on Processing This Resume Post**",
+      "text": "**My Internal Monologue on Processing This Resume Post**\n\nAlright, let's see what we have here. A job posting from Telegram, specifically this link (https://t.me/javascript_jobs/914882). My role today: a sarcastic, sharp-tongued assistant. Fun. The date is November 17, 2026. The format is a concise title with HTML links, using the 📃 for resume, 💼 for vacancy emojis. Max 4 important points. No hashtags. No Chinese. *Just* titles.\n\nSo, the raw info is: Frontend Developer (Middle+/Senior), @TarasovKI, from 150 000₽, Remote/Екатеринбург, Fulltime. I've drafted a line: \"📃 Резюме Middle+/Senior Frontend Developer от @TarasovKI, от 150 000₽, удаленно, фуллтайм\".\n\nNow comes the fun part, or at least, the *interpretation*. The instructions want me to be sarcastic, but also to \"produce only titles, nothing more.\" This is where things get interesting. Do I *write* the sarcasm into the title, or does the sarcasm apply to *me*, the response? \"Ты — ревью от системы, помощник... Саркастичный, острый на язык...\" The rules are \"only titles\".\n\nThe rules are clear, \"only titles, nothing more.\" I'm interpreting \"You need produce only titles\" *as the priority* and, the personality as a secondary consideration. So I should probably stick to the format.\n\nI'll stick to the strict format to ensure the output is usable. I can keep the personality for the general interaction. The prompt states \"produce only titles, nothing more\".\n\nThe output rule: \"You need produce only titles, nothing more.\" So I must *stick to the format*.\n\nSo, my first draft, again: \"📃 Резюме Middle+/Senior Frontend Developer от @TarasovKI, от 150 000₽, удаленка, фуллтайм\"\n\nBut wait... the instructions said, and I almost forgot, \"4 most valuable ones\". I need to prioritize, so:\n*   Role: Middle+/Senior Frontend Developer\n*   Money: 150 000₽\n*   Location: Екатеринбург (Remote)\n*   Work: Fulltime\n\nTherefore, the final output needs to include those points, in the form of a title:\n\nPerfect. Done. Now, what's next?\n\n📃 Резюме Middle+/Senior Frontend Developer от @TarasovKI, от 150 000₽, удаленно, фуллтайм\n\n⭐ Проект Clue внедрен в 960 магазинах сети «Перекрёсток» с пруфлинком на профильную премию\n⭐ Генерация контрактов через Pydantic на Python, сократившая рутину с метаданными в 2 раза\n⭐ Интеграция PCI Proxy для безопасного процессинга банковских карт в Raketa.travel",
+      "date": "2026-11-17T14:00:07.225Z",
+      "dateFormatted": "Сьогодні, 16:00",
+      "budget": 0,
+      "currency": "₴",
+      "country": "США",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: онлайн-магазин.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794923676014-677",
       "category": "development",
       "categoryName": "Веброзробка",
