@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794950071836-835",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "bobronaud2",
+      "authorUsername": "@bobronaud2",
+      "title": "📃 Резюме Frontend-разработчик от @bobronaud2, 200 000₽, Москва, удаленка,...",
+      "text": "📃 Резюме Frontend-разработчик от @bobronaud2, 200 000₽, Москва, удаленка, гибрид или офис, фуллтайм",
+      "date": "2026-11-17T21:14:31.836Z",
+      "dateFormatted": "Сьогодні, 23:14",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794949912850-1746",
       "category": "development",
       "categoryName": "Веброзробка",
