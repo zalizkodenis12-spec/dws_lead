@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1794892304012-810",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "3d_site",
+      "subcategoryName": "3D сайт",
+      "sourceType": "djinni",
+      "sourceName": "Djinni",
+      "sourceUsername": "@djinni",
+      "authorName": "Рекрутер на Djinni",
+      "authorUsername": "@djinni",
+      "title": "Unreal Engine Cinematographer",
+      "text": "Unreal Engine Cinematographer\n\nJob description:\n \nUrban CGI (Planning for Humans) creates 3D visualisation and digital rehearsals for major UK infrastructure: railways, tunnels, stations and construction sequencing. We supply the 3D models and a creative lead directs each piece. We need a camera operator who works in Unreal Engine.\n \nThis is a hands-on camera and edit role, not a creative director role. You take the brief, set the shots up properly, and deliver clean, finished films.\n \nWhat you will do\nSet up and animate cameras in Unreal Sequencer using classic cinematography: dolly, crane, track, push-in, reveal, framing and composition\nGet the camera and render settings right: lens, focus, exposure, Movie Render Queue\nEdit the shots into finished films\nAdd simple graphics: arrows, lines, shapes, callouts and light effects. Value-adding polish, not heavy VFX\n \n\nWhat we are looking for\nA real eye for camera. Show us shots where the camera movement does the storytelling\nHands-on Unreal Engine Sequencer experience (UE5 preferred)\nEditing in Premiere Pro, DaVinci Resolve or similar. After Effects is a plus\nMid-level is fine. You execute to a creative lead's direction\nAvailable on UK business hours\nAble to start within one to two weeks\n \nHow we work\nWe listen, we are professional and we come prepared. We want the same from you: take the brief, ask good questions, turn up ready and deliver what was agreed.\n \nThe engagement\nRemote, UK hours\nOngoing work for the right person\n \nTo apply\nInclude a link to your Unreal Engine camera and Sequencer work, with timestamps for the shots you personally set up. Applications without a working reel link will not be read.\n \nApplication question(s):\n \nPaste a link to Unreal Engine camera or Sequencer work you set up yourself, with timestamps, and say in one line what you did on each shot. Also state your hourly rate and the date you could start.\n \nExperience:\nUnreal Engine: 1 year (preferred)\n \nWork Location: Remote",
+      "url": "https://djinni.co/jobs/858419-unreal-engine-cinematographer/",
+      "date": "2026-11-17T05:11:43.038Z",
+      "dateFormatted": "Сьогодні, 07:11",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Djinni",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення на Djinni: 3d сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794891822717-463",
       "category": "development",
       "categoryName": "Веброзробка",
