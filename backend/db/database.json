@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794939232104-483",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Liza Makarenko",
+      "authorUsername": "@tg_id_553889060",
+      "title": "Шукаю SMM-асистента / спеціаліста для довгострокової співпраці 🤍",
+      "text": "Шукаю SMM-асистента / спеціаліста для довгострокової співпраці 🤍\n\nОсновні завдання:\n• Переведення трафіку з Reels у Stories та Telegram\n• Розвиток і монетизація Telegram-каналу\n• Побудова контент-системи та воронок продажів\n• У перспективі — запуск інфопродуктів і закритого ком’юніті\n\nЗ мене — ідеї, сенси та контент. З вас — стратегія, система та реалізація.\n\nШукаю ініціативну людину з досвідом, яка хоче розвивати проєкт разом зі мною.\n\nДеталі — в особисті 💌",
+      "date": "2026-11-17T18:13:52.103Z",
+      "dateFormatted": "Сьогодні, 20:13",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794939110676-7810",
       "category": "development",
       "categoryName": "Веброзробка",
