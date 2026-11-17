@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1794895904723-4381",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "motion",
+      "subcategoryName": "Моушн-дизайн",
+      "sourceType": "djinni",
+      "sourceName": "Djinni",
+      "sourceUsername": "@djinni",
+      "authorName": "Рекрутер на Djinni",
+      "authorUsername": "@djinni",
+      "title": "Senior Motion Designer (After Effects)",
+      "text": "Senior Motion Designer (After Effects)\n\nJob description:\n \nRemote, UK hours. Full-time.\n \nIf you can make a line travel across a map and make it look expensive, keep reading. That is the job.\n \nWe make the digital products that get major infrastructure built safely. Tunnelling, heavy civil, transport, some of the largest programmes in the world. Animation, interactive models, 4D sequences, procedures people actually follow.\n \nA great deal of that work is cartographic. Routes, alignments, tunnel drives, haul roads, staging, phasing, exclusion zones. Drawn over real plans and real terrain, for people who will make hundred-million-pound decisions off the back of it. Most of it lives or dies on the quality of the line work. That is what we are hiring.\n \nThe job\n \nDesign and animate the map sequences. Route reveals, alignment build-ons, phasing, logistics flows, callouts, legends, the lot. Take a set of drawings and a geospatial file and turn it into something with pace and clarity that a minister could follow.\nAfter Effects is where you will spend most of your day. You will also move between Unreal and Cinema 4D or 3ds Max for terrain and camera, and cut and deliver in Premiere. You will work alongside 3D and Unreal specialists who will hand you assets and expect them back better.\nYou will be given real briefs from week one and you will own the finish.\n \n\nWhat you need\n \nFive years or more of professional motion design. Expert in After Effects, with expressions, shape layers, masking, trims, 3D layers and camera all second nature.\nMap, route or diagrammatic line animation in your work, visible on screen. Broadcast, documentary, sport, infrastructure, data journalism, we do not mind where it came from.\nWorking knowledge of Unreal Engine. Sequencer, camera, render out.\nWorking knowledge of Cinema 4D or 3ds Max. Either is fine.\nPremiere Pro for assembly and delivery.\nTaste. You know why a reveal reads and why the version before it did not, and you can say so out loud.\nAI fluent, and this one is not optional. You already use it daily in your own pipeline.\nYou can work the UK day, wherever you sit.\n \nHelps, not essential\nAny exposure to GIS or geospatial data, shapefiles, DEM, satellite tiles, georeferenced drawings. Houdini. Interest in the built world, transport or civil engineering. A degree, postgraduate especially.\n \nHow this works\nApply here with a link to your work. If you get through, we will ask you for a short screen recording, a Loom or similar, walking us through one of your own map or route sequences and talking us through how you built it. We would rather hear you talk about your work than guess at it from a reel.\n \nThe setup\nSmall company, short lines, no committees to get past. You will be close to the senior work immediately, which is unusual and is the main reason to take the job.\nWe are hiring several people over the next few months, so apply even if the fit is not exact.",
+      "url": "https://djinni.co/jobs/858420-senior-motion-designer-after-effects/",
+      "date": "2026-11-17T06:11:43.754Z",
+      "dateFormatted": "Сьогодні, 08:11",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Djinni",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення на Djinni: моушн-дизайн.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794895589732-161",
       "category": "development",
       "categoryName": "Веброзробка",
