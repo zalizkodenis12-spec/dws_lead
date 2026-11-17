@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794929298122-460",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Yuliia🌹",
+      "authorUsername": "@eads",
+      "title": "#vacancy #smm #govtech #kyiv #hiring #remote",
+      "text": "#vacancy #smm #govtech #kyiv #hiring #remote\n\n⚡️ Шукаємо  SMM-експерта для заступника Міністра економіки, довкілля та сільського господарства України з питань цифрового розвитку, цифрових трансформацій і цифровізації (CDTO Мінекономіки).\n\n🌍 Full-time | Київ / Гібрид\n\n🟩 Коротко про головне:\n • Досвід: від 3 років в SMM і контенті, портфоліо з кейсами (цифри, охоплення) та текстами. Досвід роботи з державою, розуміння GR-середовища та готовність до швидкого темпу роботи.\n• Навички: мобільна зйомка і монтаж (Reels/Shorts, CapCut), вміння писати від чужого імені, англійська Upper-Intermediate (B2+).\n• Завдання: ведення соцмереж CDTO (FB, LinkedIn, Instagram, Threads), створення відеоконтенту, пояснення цифрових реформ (єДозвіл тощо), оперативна робота з інфоприводами.\n\n🟩 Що пропонуємо:\n• Роботу безпосередньо із заступником Міністра над його особистим брендом та комунікацією реформ.\n• Масштабний вплив на державні комунікації у потужному середовищі (Мінекономіки, Мінцифра, донори).\n\n✉️ Зацікавила позиція? Надсилайте своє резюме ➡️ @Juliia108",
+      "date": "2026-11-17T15:28:18.121Z",
+      "dateFormatted": "Сьогодні, 17:28",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 56,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794928309293-3989",
       "category": "development",
       "categoryName": "Веброзробка",
