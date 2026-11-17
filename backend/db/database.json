@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794912962693-441",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Михайло Корінь | Таргетолог",
+      "authorUsername": "@mykhailo_korin",
+      "title": "Хелооу 👋🏼️️",
+      "text": "Хелооу 👋🏼️️\n\nЗробили сервіс easyAd для агенцій: усі рекламні кабінети, клієнти, звіти й окупність в одному місці, плюс телеграм-бот з алертами по списаннях і кампаніях, які зливають бюджет.\n\nШукаю кількох людей, хто веде від 5 клієнтів, щоб потестували й чесно сказали, що не так. Доступ безкоштовний.\n\nКому цікаво пишіть - @mykhailo_korin",
+      "date": "2026-11-17T10:56:02.692Z",
+      "dateFormatted": "Сьогодні, 12:56",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794911655276-312",
       "category": "marketing",
       "categoryName": "Маркетинг",
