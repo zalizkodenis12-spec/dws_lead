@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794946524733-571",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Олександр Дзюбук",
+      "authorUsername": "@dzyubuk",
+      "title": "Шукаю Media Buyer’a до себе в команду 👥",
+      "text": "Шукаю Media Buyer’a до себе в команду 👥\n\n💻 Ми працюємо з українськими білими проектами в яких високий LTV. Потрібен таргетолог з досвідом від 6 міс з успішними кейсами.\n\nЗП від 800$ вже в перший місяць роботи.\n\nДаємо стабільність і простір для швидкого росту.\n\nПиши мені в особисті - @dzyubuk",
+      "date": "2026-11-17T20:15:24.732Z",
+      "dateFormatted": "Сьогодні, 22:15",
+      "budget": 33000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 73,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 33000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794946308069-6691",
       "category": "development",
       "categoryName": "Веброзробка",
