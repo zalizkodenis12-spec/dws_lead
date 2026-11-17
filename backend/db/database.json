@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794900727352-60",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "УМАНЬ РОБОТА",
+      "sourceUsername": "@umanwork",
+      "authorName": "Bogdana",
+      "authorUsername": "@chupira",
+      "title": "Умань 📍",
+      "text": "Умань 📍\nШукаємо контент-мейкерів, UGC-креаторів та людей, які люблять вести свої сторінки, створювати красивий контент і ділитися ним зі своєю аудиторією 🖤\n\nЯкщо вам подобається знімати фото, відео, Reels, TikTok або просто вести свою сторінку — напишіть нам у приватні повідомлення. Будемо раді знайомству та співпраці! ✨",
+      "date": "2026-11-17T07:32:07.351Z",
+      "dateFormatted": "Сьогодні, 09:32",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794899506676-3199",
       "category": "development",
       "categoryName": "Веброзробка",
