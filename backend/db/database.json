@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794936051918-703",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@rumbubblegum",
+      "title": "Ищем художника нам в издательство!",
+      "text": "Ищем художника нам в издательство!\n\nКапсулы для стима, ключ арты, всякие арты для ивентов, распродаж и соцсетей. Всё то, что игрок видит раньше трейлера. Важно уметь подстраиваться под разные стили. Если в портфолио уже есть капсулы — вообще кайф.\n\nКстати, монтажера и видеодизайнера тоже ищем.\n\nУсловия обсудим, всё индивидуально. Пишите мне личку сразу с портфолио.\n\np.s. Есть знакомый художник или монтажер? Скиньте ему пост!",
+      "date": "2026-11-17T17:20:51.917Z",
+      "dateFormatted": "Сьогодні, 19:20",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794935506911-508",
       "category": "development",
       "categoryName": "Веброзробка",
