@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794898558294-308",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Богдан Дубовик",
+      "authorUsername": "@_Bohdan",
+      "title": "Шукаю Lead Generation Manager /  Менеджера з лідогенерації / Менеджера з ау...",
+      "text": "Шукаю Lead Generation Manager /  Менеджера з лідогенерації / Менеджера з аутричу / пошуку клієнтів / Менеджера з пошуку та залучення потенційних клієнтів на діагностику.\n\nНапрям: B2B консалтинг\nДосвіт: від 6 місяців\n\nЗа подробмцями пиши в особисті: Dubovyk_Bohdan",
+      "date": "2026-11-17T06:55:58.292Z",
+      "dateFormatted": "Сьогодні, 08:55",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794898202419-282",
       "category": "development",
       "categoryName": "Веброзробка",
