@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794901999852-693",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Anastasiia | Marketing | Makodzeba",
+      "authorUsername": "@ttps",
+      "title": "Дівчата,привіт всім🩷",
+      "text": "Дівчата,привіт всім🩷\nМаю вакансію до себе в команду для класного смм\n\nЯкщо ви втомились шукати клієнтів але все одно хочете рости і розвиватись в смм-тоді вас до моєї команди🔥🔥🔥\n\n➡️Перший проєкт — особистий бренд хірурга\n☑️Стратегія вже готова, зйомки організовані, працювати можна віддалено\n\n✉️Якщо впевнено пишеш сильні, чіпляючи тексти, робиш естетичний дизайн і класно монтуєш Reels — давай знайомитися!\n\nВідгукнутися можна тут: https://forms.gle/uk3dpHstjLnCgkYw7",
+      "date": "2026-11-17T07:53:19.852Z",
+      "dateFormatted": "Сьогодні, 09:53",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794901892058-523",
       "category": "marketing",
       "categoryName": "Маркетинг",
