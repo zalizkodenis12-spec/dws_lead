@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794921812276-770",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "motion",
+      "subcategoryName": "Моушн-дизайн",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@hr_talaboos",
+      "title": "Position: AI Motion Designer (Performance)",
+      "text": "Position: AI Motion Designer (Performance)\nCompany: Talaboos\nWork format: remote, full-time\nCompensation: base salary + KPI bonus, discussed individually\n\nYou’ll make performance video ads for our subscription apps — the ones that run on Meta and TikTok and get tested against each other every week. You work with creative producers and UA, and you see how every video performs.\n\nWhat you’ll do:\n• Produce short vertical video ads (UGC-style, motion, AI-generated) from briefs and your own ideas\n• Make variations and localisations of winning creatives fast\n• Build AI tools into your workflow so you ship more without losing quality\n• Suggest hooks and new angles based on test results\n\nWhat we expect:\n• Motion design / video editing experience: After Effects, Premiere or similar\n• Hands-on AI experience is a must: you use AI video, image and voice tools every day (Higgsfield, Kling, Runway, Veo, HeyGen, ElevenLabs or similar)\n• You can work at volume and keep the quality\n• You understand what makes an ad work, not just look good\n\nNice to have: performance ads for mobile/subscription apps; scripting or automating routine in AE\n\n⚠️ Hiring process includes a test task: intro call with HR → test task (an AI-generated UGC video, about half a day of work) → call with the creative lead → offer. Please apply only if you’re ready to do it.\n\nApply: https://www.talaboos.com/careers or Telegram @hr_talaboos",
+      "date": "2026-11-17T13:23:32.276Z",
+      "dateFormatted": "Сьогодні, 15:23",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: моушн-дизайн.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1794921105541-4766",
       "category": "development",
       "categoryName": "Веброзробка",
