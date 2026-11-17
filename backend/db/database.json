@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1794895426328-357",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "catalog",
+      "subcategoryName": "Сайти-каталоги",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ivan",
+      "authorUsername": "@ttps",
+      "title": "❗️ SAKURA GAMES | 3 НОВЫЕ ВАКАНСИИ В GAMEDEV",
+      "text": "❗️ SAKURA GAMES | 3 НОВЫЕ ВАКАНСИИ В GAMEDEV\n\n👀  Sakura Games расширяет команду и ищет специалистов сразу на три позиции! Если ты работаешь с Unity или занимаешься игровым дизайном — обрати внимание на эти возможности.\n\n📱 Product Owner / Senior Game Designer — Mobile F2P\n\n📱 Senior Unity Developer\n\n📱 Senior Technical Artist (Unity)\n\n🏠 Удалённо\n👨‍💻 Частичная занятость\n\nНаправления: Mobile F2P, Game Design, Unity, C#, Multiplayer и URP.\n\nЕсли у тебя есть подходящий опыт — переходи в каталог, изучай требования к каждой позиции и отправляй отклик!\n\n📱 Вакансии и отклик: https://spawnparty.dev/jobs\n\n📱  Больше вакансий из GameDev — в нашем Telegram-канале. Подписывайся, чтобы не пропустить следующую возможность!\n\n#GameDev #GameDevJobs #SakuraGames #Unity #CSharp #GameDesigner #TechnicalArtist #SpawnParty",
+      "date": "2026-11-17T06:03:46.328Z",
+      "dateFormatted": "Сьогодні, 08:03",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: сайти-каталоги.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1794895262191-628",
       "category": "development",
       "categoryName": "Веброзробка",
