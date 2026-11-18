@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795022100742-721",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "backend",
+      "subcategoryName": "Backend & API розробка",
+      "sourceType": "chat",
+      "sourceName": "DOU Jobs: DevOps | SysAdmin",
+      "sourceUsername": "@dou_jobs",
+      "authorName": "dou_jobs",
+      "authorUsername": "@dou_jobs",
+      "title": "🔸 Platform Engineer (Node.js & DevOps) based in the USA в OneReach.ai",
+      "text": "🔸 Platform Engineer (Node.js & DevOps) based in the USA в OneReach.ai\n📍 за кордоном, віддалено\nAbout us\nOneReach.ai builds conversational AI and automation tools that help organizations improve how they communicate and operate. Founded by Robb Wilson, author of Age of Invisible Machines, the company focuses on practical, human-centered automation for real business use cases.\nOur…",
+      "date": "2026-11-18T17:15:00.742Z",
+      "dateFormatted": "Сьогодні, 19:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "США",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: backend & api розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795020604804-108",
       "category": "marketing",
       "categoryName": "Маркетинг",
