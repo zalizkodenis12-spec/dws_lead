@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795028189444-864",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Irina_MK26",
+      "authorUsername": "@Irina_MK26",
+      "title": "👨‍💻 Вакансія: розробник / бот-мейкер | віддалена робота, part time",
+      "text": "👨‍💻 Вакансія: розробник / бот-мейкер | віддалена робота, part time\n\n📍Віддалено, part time\n\nЗадача:\nСтворити Аі агента / бота для ТГ-чату.\nБот має брати оплату за участь;\nумовно - перетворити чат на платну спільноту.\n\nВимоги:\nОбов’язковий досвід в розробці та запровадженні АІ-агентів / ботів;\nрозуміння специфіки роботи й монетизації  спільноти / чату;\nвміння працювати швидко, з урахуванням побажань замовника.\n\nДосвід у монетизації спільнот буде перевагою.\n\nДля звʼязку @vitakravchuk ✉️\n\n#ботмейкер #чатботи #розробник #вакансія #віддалено #фріланс\n\n———\n🔗 Більше вакансій ти знайдеш у нашому\nчаті з вакансіями\nРозмістити вакансію @Irina_MK26",
+      "date": "2026-11-18T18:56:29.441Z",
+      "dateFormatted": "Сьогодні, 20:56",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795027484466-52",
       "category": "development",
       "categoryName": "Веброзробка",
