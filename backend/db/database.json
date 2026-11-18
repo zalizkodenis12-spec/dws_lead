@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795027484466-52",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "Tilda Publishing News Chat",
+      "sourceUsername": "@tilda_official_chat",
+      "authorName": "Isa",
+      "authorUsername": "@tg_id_6046743044",
+      "title": "Для записи к выбранному специалисту есть вариант через ссылку из карточки....",
+      "text": "Для записи к выбранному специалисту есть вариант через ссылку из карточки. В настраиваемом Потоке можно хранить ссылку в кастомном поле и назначить её карточке в стандартном блоке FD500. Например, вести на отдельную страницу формы с параметром ?form-setter-specialist=Ivan, где specialist — имя переменной поля формы, а Ivan — его значение. Тильда умеет подставлять такие значения из URL на опубликованной странице.\n\nЭто маршрут «карточка специалиста → форма с выбранным специалистом». Если нужен именно выпадающий список внутри Vibe-формы с автоматическим обновлением из Потока, поддержку такого сценария лучше уточнить у команды. В текущей инструкции описан вывод постов.\n\nПро предзаполнение формы — раздел «Предопределение значения поля из URL страницы»\nhttps://help-ru.tilda.cc/forms/settings",
+      "date": "2026-11-18T18:44:44.464Z",
+      "dateFormatted": "Сьогодні, 20:44",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795026012491-8893",
       "category": "development",
       "categoryName": "Веброзробка",
