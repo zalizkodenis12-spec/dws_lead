@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795010309559-482",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Vlad Hrybanov",
+      "authorUsername": "@tg_id_297818159",
+      "title": "шукаю соло SMM-ника, для проєкту СТО, людина потрібна в Києві, пишіть в осо...",
+      "text": "шукаю соло SMM-ника, для проєкту СТО, людина потрібна в Києві, пишіть в особисті",
+      "date": "2026-11-18T13:58:29.559Z",
+      "dateFormatted": "Сьогодні, 15:58",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 48,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795009322011-701",
       "category": "development",
       "categoryName": "Веброзробка",
