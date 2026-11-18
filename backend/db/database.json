@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795014989281-183",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Tilda Publishing News Chat",
+      "sourceUsername": "@tilda_official_chat",
+      "authorName": "∞",
+      "authorUsername": "@tg_id_5038604196",
+      "title": "Ещё проверьте работает ли тильда в штатном режиме пж",
+      "text": "Ещё проверьте работает ли тильда в штатном режиме пж",
+      "date": "2026-11-18T15:16:29.280Z",
+      "dateFormatted": "Сьогодні, 17:16",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795014900886-994",
       "category": "development",
       "categoryName": "Веброзробка",
