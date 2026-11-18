@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795015894298-357",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "ecommerce",
+      "subcategoryName": "Онлайн-магазин",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "ddle",
+      "authorUsername": "@ddle",
+      "title": "🔥 Резюме Middle+/Senior Frontend Developer от @TarasovKI, от 150 000 ₽, г....",
+      "text": "🔥 Резюме Middle+/Senior Frontend Developer от @TarasovKI, от 150 000 ₽, г. Екатеринбург, удаленно, фуллтайм\n\n⭐ Реальный масштаб: внедрение проекта Clue в 960 магазинах «Перекрёсток» со ссылкой на кейс\n⭐ Выход за рамки чистого фронтенда: схемы на Pydantic сократили задачи по метаданным в 2 раза\n⭐ Четкие оцифрованные результаты: сокращение бойлерплейта в 4 раза и безопасная интеграция PCI Proxy",
+      "date": "2026-11-18T15:31:34.296Z",
+      "dateFormatted": "Сьогодні, 17:31",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: онлайн-магазин.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795015212178-3821",
       "category": "development",
       "categoryName": "Веброзробка",
