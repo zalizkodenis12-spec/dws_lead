@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795013839669-255",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Mykyta",
+      "authorUsername": "@RozarioRecrut",
+      "title": "#vacancy",
+      "text": "#vacancy\n🔥 Media Buyer (Facebook) | Gambling\n🌍 Гео: LATAM (10+ GEO в работе)\n📍 Формат: Remote\nЧто нужно делать:\n— Запускать и масштабировать рекламные кампании Facebook Ads.\n— Готовить и прогревать Facebook-аккаунты.\n— Работать с готовыми связками и тестировать собственные.\n— Анализировать показатели CPC, CPA, ROI и другие метрики.\n— Вести ежедневную отчётность.\nЧто предлагаем:\n— Готовая инфраструктура: аккаунты, прокси, платёжки, трекеры.\n— Безлимитные рекламные бюджеты.\n— Готовые связки для залива.\n— Оплата: % от спенда по KPI + бонусы за объём FD.\n— Все расходы на инфраструктуру покрывает команда.\nУсловия:\n— Удалённая работа.\n— Гибкий график (GMT+3).\n📩 Заинтересовала вакансия? Пиши в личные сообщения, обсудим детали!",
+      "date": "2026-11-18T14:57:19.666Z",
+      "dateFormatted": "Сьогодні, 16:57",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795011649674-821",
       "category": "development",
       "categoryName": "Веброзробка",
