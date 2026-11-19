@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795106334491-193",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@rumbubblegum",
+      "title": "Head of PMO",
+      "text": "Head of PMO\nв Леста Игры — разработчик игр, создавший такие проекты, как «Мир танков», «Мир кораблей», Tanks Blitz.\nГибрид (Минск, Москва).\nПодробности у Дмитрия Акулы, его пост на LinkedIn.",
+      "date": "2026-11-19T16:38:54.490Z",
+      "dateFormatted": "Сьогодні, 18:38",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795105736139-939",
       "category": "development",
       "categoryName": "Веброзробка",
