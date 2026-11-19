@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795096005482-542",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "tiktok_ads",
+      "subcategoryName": "TikTok реклама",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "lana?",
+      "authorUsername": "@lana_zabav",
+      "title": "Шукаю можливість розвиватися у сфері SMM / маркетингу",
+      "text": "Шукаю можливість розвиватися у сфері SMM / маркетингу\n\nПривіт! Я Лана, і зараз відкрита до нових професійних можливостей у сфері digital-маркетингу.\nРозглядаю позиції:\n• SMM Assistant\n• Junior SMM Specialist\n• Помічник маркетолога\n• Marketing Assistant\nЧим можу бути корисна:\n— Монтаж коротких відео для Reels / TikTok / Stories.\n— Базова робота у Figma.\n— Допомога з повсякденними SMM-задачами та контентними процесами.\n— Організація робочих процесів і пошук простих рішень для поставлених задач.\n\nЯ уважна до деталей, швидко освоюю нові інструменти та відповідально ставлюся до роботи. Мені цікаво не просто виконувати завдання, а розуміти, як працює маркетинг і як контент допомагає бізнесу розвиватися.\n\nШукаю команду, у якій зможу бути корисною, отримувати практичний досвід і професійно зростати.\nЯкщо у вас є відповідна вакансія або ви шукаєте помічника для своїх проєктів — буду рада знайомству!\n\nПишіть у Telegram: @lana_zabav",
+      "date": "2026-11-19T13:46:45.482Z",
+      "dateFormatted": "Сьогодні, 15:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: tiktok реклама.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795095357348-646",
       "category": "development",
       "categoryName": "Веброзробка",
