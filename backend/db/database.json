@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795095357348-646",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "neer",
+      "authorUsername": "@neer",
+      "title": "🔥 Резюме Senior Frontend Engineer (React, TypeScript) от @k1rnic, от 400 0...",
+      "text": "🔥 Резюме Senior Frontend Engineer (React, TypeScript) от @k1rnic, от 400 000₽, г. Москва, удаленка, гибрид или офис, фуллтайм\n\n⭐ Разработал ядро визуального редактора (графы до 500 узлов) и свой DSL-редактор бизнес-правил с парсингом и валидацией\n⭐ Конкретные цифры оптимизации: ускорил обработку Excel на 1 млн строк в 4 раза через Web Worker и сборку в 10 раз на Vite\n⭐ Нишевый сложный стек для Data/ML-платформ: React Flow, ECharts, Web Workers, Module Federation, FSD",
+      "date": "2026-11-19T13:35:57.291Z",
+      "dateFormatted": "Сьогодні, 15:35",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795093408236-830",
       "category": "marketing",
       "categoryName": "Маркетинг",
