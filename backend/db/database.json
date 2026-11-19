@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795086034107-25",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "neer",
+      "authorUsername": "@neer",
+      "title": "🔥 Резюме Senior Full Stack Engineer (Node.js / NestJS / React / Web3 / LLM...",
+      "text": "🔥 Резюме Senior Full Stack Engineer (Node.js / NestJS / React / Web3 / LLM) от @sijuz, от $2 000, Сербия, удаленно или офис, фуллтайм\n\n⭐ Конкретные боевые метрики нагрузки и масштаба: 500+ RPS, 100M+ записей в TimescaleDB, 30 000+ устройств в майнинг-пуле и 1 млн регистраций в Telegram-игре за 100 дней\n⭐ Жирный и редкий микс: высоконагруженный Node.js/NestJS + глубокий TON/Web3 стек (DeWallet, DeDust, order-book DEX) + продуманные LLM-пайплайны со стримингом и откатом версий\n⭐ Реальные названия продуктов с контекстом (DeWallet из официального списка TON, DeDust) и ссылка на личный сайт-портфолио",
+      "date": "2026-11-19T11:00:34.106Z",
+      "dateFormatted": "Сьогодні, 13:00",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795085384229-2245",
       "category": "development",
       "categoryName": "Веброзробка",
