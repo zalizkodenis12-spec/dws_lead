@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795104964017-246",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Anastasia Kolomoiets",
+      "authorUsername": "@tg_id_717121354",
+      "title": "Шукаємо талановитих людей у команду BilDrive 🚗",
+      "text": "Шукаємо талановитих людей у команду BilDrive 🚗\n\nЩо потрібно робити:\n— Монтувати короткі відео для Reels і TikTok\n— Додавати субтитри, музику, ефекти\n— Оформлювати та публікувати контент на сторінках компанії в Instagram і TikTok\n— Слідкувати за трендами та пропонувати цікаві ідеї\n\nФормат:\n— Віддалено\n— Full-time (8 годин) або part-time (4 години на день)\n— Шукаємо одну людину на повну зайнятість або двох на часткову\n\nМи — BilDrive, автомобільна компанія на польському ринку. Багато автомобілів, динамічного контенту та можливостей для реалізації твоїх ідей.\n\nВміння працювати з AI-інструментами буде великим плюсом 🔥\n\n*Відправляйте CV та приклади своїх робіт в особисті повідомлення",
+      "date": "2026-11-19T16:16:04.016Z",
+      "dateFormatted": "Сьогодні, 18:16",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 65,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795104833759-549",
       "category": "marketing",
       "categoryName": "Маркетинг",
