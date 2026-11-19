@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795099293785-446",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Вакансии Backend/Frontend",
+      "sourceUsername": "@fordev",
+      "authorName": "Ярослав",
+      "authorUsername": "@YaroslavHR",
+      "title": "Middle+/Senior Go Software Engineer (Fintech)",
+      "text": "Middle+/Senior Go Software Engineer (Fintech)\nЛокация: Лимассол, Кипр (офис)\nЯзык команды: русский\n\nИщем опытного Go-разработчика в продуктовую финтех-команду в Лимассоле.\n\nЗадачи:\n• разработка и развитие торговых и рыночных инструментов, автоматизация процессов;\n• проектирование алгоритмов оценки и прайсинга;\n• интеграции с внешними API (в том числе неполностью документированными), парсинг и работа с распределёнными системами.\n\nЧто ожидаем:\n• уверенный коммерческий опыт на Go (уровень Middle+/Senior);\n• опыт работы с высоконагруженными / распределёнными системами и внешними API;\n• плюсом будет Python, бэкграунд в финтехе/трейдинге и использование AI-инструментов в работе.\n\n⚠️ Важно по локации: формат работы предполагает офис в Лимассоле (full remote без привязки к офису не рассматриваем). На текущем этапе смотрим в первую очередь кандидатов, которые уже находятся на Кипре.\n\nЗа деталями и с резюме — в личку: @YaroslavHR\n\n#vacancy #go #golang #backend #fintech #кипр #лимассол #cyprus #limassol #senior #middle",
+      "date": "2026-11-19T14:41:33.782Z",
+      "dateFormatted": "Сьогодні, 16:41",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795098428620-30",
       "category": "development",
       "categoryName": "Веброзробка",
