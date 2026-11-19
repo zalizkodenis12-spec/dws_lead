@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795090424133-12",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "seo",
+      "subcategoryName": "SEO оптимізація",
+      "sourceType": "chat",
+      "sourceName": "Чат: продажі на Prom.ua / Rozetka",
+      "sourceUsername": "@evo_prom",
+      "authorName": "Volodymyr",
+      "authorUsername": "@tg_id_563352438",
+      "title": "1. Дизайн",
+      "text": "1. Дизайн\n2. Нова Пошта, Укрпошта (опціонально)\n3. Плагін XML, XLSX Імпорту Товарів\n4. SEO URL GENERATOR\n\nВ деяких дизайнах можна обійтись без Нової Пошти але там небуде випадаючого списку міст і відділень\n\nЯкщо потрібна онлайн оплата то чекаути Моно або Wayforpay і т.д.\n\nАле з особистого досвіду, цих 4х планів більш ніж достатньо. Залежить що ви хочете від сайту",
+      "date": "2026-11-19T12:13:44.132Z",
+      "dateFormatted": "Сьогодні, 14:13",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: seo оптимізація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795089546515-838",
       "category": "montage",
       "categoryName": "Монтаж",
