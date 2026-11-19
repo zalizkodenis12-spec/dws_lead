@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795075845496-725",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "ads_creatives",
+      "subcategoryName": "Рекламні креативи",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Dmytro Solomakhin",
+      "authorUsername": "@gram",
+      "title": "Реклама крутиться, а клієнтів більше не стає? ⛔️",
+      "text": "Реклама крутиться, а клієнтів більше не стає? ⛔️\n\nМожливо, проблема не в бюджеті, а в тому, як саме налаштована реклама.\n\nЯ Дмитро — сертифікований таргетолог. Допомагаю бізнесам залучати клієнтів через Facebook та Instagram.\n\n🔹 аналізую аудиторію та маркетинг;\n🔹 створюю рекламні креативи;\n🔹 налаштовую, контролюю й оптимізую рекламу;\n🔹 показую результати та даю конкретні рекомендації.\n\nБез обіцянок «100 клієнтів за 3 дні».\nТільки системна робота з рекламою та цифрами.\n\n📲 Хочете зрозуміти, що можна покращити у вашій рекламі?\nПишіть у Telegram / WhatsApp: +380503948179",
+      "date": "2026-11-19T08:10:45.493Z",
+      "dateFormatted": "Сьогодні, 10:10",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: рекламні креативи.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795074583657-504",
       "category": "development",
       "categoryName": "Веброзробка",
