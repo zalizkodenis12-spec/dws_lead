@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795079144580-968",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "3d_site",
+      "subcategoryName": "3D сайт",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "varhor",
+      "authorUsername": "@varhor",
+      "title": "🔥 Резюме Frontend-разработчик от @varhor, от 150 000₽, г. Белград (или Алм...",
+      "text": "🔥 Резюме Frontend-разработчик от @varhor, от 150 000₽, г. Белград (или Алматы, Ереван, Тбилиси, Ташкент), удаленка, гибрид или офис, фуллтайм\n\n⭐ Конкретные кейсы с метриками (поднял Lighthouse с 20 до 60+ на Three.js)\n⭐ Использование актуального стека 2026 года (работа в связке с Claude Code)\n⭐ Продемонстрированная экспертиза в сложных темах (3D, GSAP, accessibility, кастомный UI)",
+      "date": "2026-11-19T09:05:44.580Z",
+      "dateFormatted": "Сьогодні, 11:05",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: 3d сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795078621510-290",
       "category": "marketing",
       "categoryName": "Маркетинг",
