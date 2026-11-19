@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795089546515-838",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "bogdan_shumakov",
+      "authorUsername": "@tg_id_446759752",
+      "title": "Шукаю в команду сценариста!",
+      "text": "Шукаю в команду сценариста!\n\nЦікавлять сценарії на такому рівні:\nhttps://www.instagram.com/reels/DfplZ0JsoJ6/\nhttps://www.instagram.com/reels/DdOmPCQPpih/\nhttps://www.instagram.com/p/DN_gXY5jBIq/\n\nПишіть в особисти одразу з кейсами та ціною",
+      "date": "2026-11-19T11:59:06.513Z",
+      "dateFormatted": "Сьогодні, 13:59",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795088986123-4158",
       "category": "development",
       "categoryName": "Веброзробка",
