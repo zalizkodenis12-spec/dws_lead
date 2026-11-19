@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795068662760-576",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "gamedev_roblox",
+      "subcategoryName": "gamedev_roblox",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ivan",
+      "authorUsername": "@ttps",
+      "title": "‼️ AZUR GAMES | 3 НОВЫЕ ВАКАНСИИ В GAMEDEV",
+      "text": "‼️ AZUR GAMES | 3 НОВЫЕ ВАКАНСИИ В GAMEDEV\n\n🔥 Azur Games открывает сразу три позиции для специалистов, готовых присоединиться к разработке игровых проектов!\n\n📱 Middle+ / Senior Game Designer\nРазработка игровых механик и F2P-проектов.\n\n📱 Level Artist\nСоздание игровых окружений с использованием Unreal Engine 5.\n\n📱 Senior Unity Developer (AI)\nUnity-разработка с применением AI-инструментов, включая Claude Code.\n\n🏠 Удалённо\n👨‍💻 Полная занятость\n\nЕсли у тебя есть опыт в Game Design, Level Art или Unity-разработке — переходи к вакансиям, изучай требования и отправляй отклик!\n\n📱 Вакансии и отклик: https://spawnparty.dev/jobs\n\n📱 Больше вакансий из GameDev — в нашем Telegram-канале. Подписывайся, чтобы не пропустить следующую возможность!\n\n#GameDev #GameDevJobs #AzurGames #Unity #UnrealEngine5 #GameDesigner #LevelArtist #SpawnParty",
+      "date": "2026-11-19T06:11:02.759Z",
+      "dateFormatted": "Сьогодні, 08:11",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: gamedev_roblox.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795068547976-419",
       "category": "development",
       "categoryName": "Веброзробка",
