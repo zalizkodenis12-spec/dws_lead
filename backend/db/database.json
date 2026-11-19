@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795082101446-142",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@rumbubblegum",
+      "title": "AI-Native Software Engineer в Playrix",
+      "text": "AI-Native Software Engineer в Playrix\n\nКипр, Армения, Казахстан, Сербия, Черногория  или удаленно\n\n🔗 Подробности на 👉 offerclaw.app",
+      "date": "2026-11-19T09:55:01.446Z",
+      "dateFormatted": "Сьогодні, 11:55",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Казахстан",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795082083609-934",
       "category": "development",
       "categoryName": "Веброзробка",
