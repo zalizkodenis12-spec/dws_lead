@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795074084533-483",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Маша 🌸",
+      "authorUsername": "@tg_id_717343208",
+      "title": "Шукємо SMM дівчинку у агенцію, робота віддалено, важливо мати сильний скіл...",
+      "text": "Шукємо SMM дівчинку у агенцію, робота віддалено, важливо мати сильний скіл у дизайні, обов`язкво тестове, кому цікаво велком у особисті 👋️️️️️️",
+      "date": "2026-11-19T07:41:24.531Z",
+      "dateFormatted": "Сьогодні, 09:41",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795073649637-672",
       "category": "marketing",
       "categoryName": "Маркетинг",
