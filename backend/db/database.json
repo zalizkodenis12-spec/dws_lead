@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1795070982087-5765",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "freelancehunt",
+      "sourceName": "Freelancehunt",
+      "sourceUsername": "@freelancehunt",
+      "authorName": "Замовник на Freelancehunt",
+      "authorUsername": "@freelancehunt",
+      "title": "Сделать сайт",
+      "text": "Сделать сайт\n\nНужен сайт, на CMS что бы в дальнейшем могли корректировать и добавлять информацию и статьи в блог.\nСайт будет ориентирован на b2b.\nСверху сайта, на главной странице - видео, как вот здесь: https://profacade.com/ или здесь https://www.crowncorr.com/\nТам же навигация на разделы: О нас / Услуги / Проекты...",
+      "url": "https://freelancehunt.com/project/sdelat-sayt/1665481.html",
+      "date": "2026-11-19T06:49:42.086Z",
+      "dateFormatted": "Сьогодні, 08:49",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Freelancehunt",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення на Freelancehunt: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795070825482-916",
       "category": "marketing",
       "categoryName": "Маркетинг",
