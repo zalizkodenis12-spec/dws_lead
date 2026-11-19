@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795104833759-549",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Anya",
+      "authorUsername": "@tg_id_5155318614",
+      "title": "Шукаю SMM-спеціаліста, якому потрібна помічниця",
+      "text": "Шукаю SMM-спеціаліста, якому потрібна помічниця\n\nЗараз проходжу навчання з SMM та хочу практикувати свої навички на реальних проєктах\n\nЗ чим можу допомогти:\nоформлення сторіс і каруселей,\nнаписання контент-планів,\nнаписання текстів для постів, сторіс і каруселей,та з виконанням інших поставлених завдань\n\nБуду рада стати твоєю правою рукою\nДля співпраці пишіть в ЛС",
+      "date": "2026-11-19T16:13:53.758Z",
+      "dateFormatted": "Сьогодні, 18:13",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795104061636-388",
       "category": "montage",
       "categoryName": "Монтаж",
