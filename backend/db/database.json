@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795076270852-78",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Valentina Barzolevska",
+      "authorUsername": "@Barzolevska",
+      "title": "🔥 Remote | Media Buyer (FB / Nutra)",
+      "text": "🔥 Remote | Media Buyer (FB / Nutra)\n\nМи - прямий рекламодавець із 8+ роками досвіду в Nutra-вертикалі. Шукаємо крутого медіабаєра для масштабування успішних зв'язок на цікаві GEO!\n\n🎯Кого ми бачимо в команді:\n→Маєш успішний бекграунд у заливі Nutra (FB Ads) від 1 року\n→Вмієш упевнено працювати з великими спендами та знаєш, як масштабувати зв'язку\n→Володієш сильною аналітикою і генеруєш чіпкі гіпотези під конвертні креативи\n\n⚡️Що на тебе чекає:\n→Повноцінну інфраструктуру - акаунти, якісні сетапи, платіжки, софт\n→Ексклюзивні прямі in-house офери + анлім бюджети під робочі зв'язки + можливість підключати інші гео через ПП\n→Прозора й зрозуміла система аналітики\n→Ставка + бонусна частина, яка росте разом із твоїм грейдом.\n→Повністю віддалений формат співпраці\n\n📩 Готовий обговорити деталі? Пиши @Barzolevska - познайомимося!",
+      "date": "2026-11-19T08:17:50.850Z",
+      "dateFormatted": "Сьогодні, 10:17",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795075845496-725",
       "category": "montage",
       "categoryName": "Монтаж",
