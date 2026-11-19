@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795106808409-584",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "ads_creatives",
+      "subcategoryName": "Рекламні креативи",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Катя | Designer",
+      "authorUsername": "@k41thy",
+      "title": "#дизайнер #креативи",
+      "text": "#дизайнер #креативи\n\nКатя · рекламні креативи та дизайн для брендів\n\nРоблю дизайн, який окуповується, а не просто гарно виглядає.\n\n✦ 2 роки в дизайні, 1+ рік у маркетинговій агенції для європейського ринку\n✦ Креативи для таргету, SMM, email, презентації\n✦ б'юті, e-com, особисті бренди\n\nПрацюю з дедлайнами, а не «як вийде».\n\n📁 Портфоліо: https://drive.google.com/drive/u/2/folders/1H8-VygRCe9uZrqio6u6EkJcunNNSKeKe\n✉️ Обговорити задачу: @k41thy",
+      "date": "2026-11-19T16:46:48.408Z",
+      "dateFormatted": "Сьогодні, 18:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 56,
+      "aiSummary": "Замовлення: рекламні креативи.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795106719837-186",
       "category": "marketing",
       "categoryName": "Маркетинг",
