@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795102567671-332",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Alina",
+      "authorUsername": "@aaaleeechkaaa",
+      "title": "Можу стати тією людиною, якій ви скидаєте ТЗ зі словами «зроби красиво» 😉...",
+      "text": "Можу стати тією людиною, якій ви скидаєте ТЗ зі словами «зроби красиво» 😉\n\nПрацюю з контентом і візуалом, тому можу долучитися до вашої команди як контент-мейкер або підрядник на окремі задачі.\n\nЧим можу бути корисна:\n— створення фото- та відеоконтенту для соцмереж;\n— зйомка та монтаж Reels / TikTok;\n— відеомонтаж;\n— графічний дизайн (дописи, сторіс, рекламні креативи, презентації);\n— обробка та ретуш фотографій.\n\nПрацюю з Adobe Photoshop, Illustrator, Premiere Pro, After Effects, Figma та іншими інструментами.\nВідкрита як до разових замовлень, так і до довгострокової співпраці.\nПортфоліо надішлю в особисті, мій нік @aaaleeechkaaa\n\nЯкщо шукаєте людину, яка допоможе перетворити ідеї на якісний контент, буду рада знайомству! 💌",
+      "date": "2026-11-19T15:36:07.670Z",
+      "dateFormatted": "Сьогодні, 17:36",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 56,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795102075174-172",
       "category": "development",
       "categoryName": "Веброзробка",
