@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795092772815-461",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "ecommerce",
+      "subcategoryName": "Онлайн-магазин",
+      "sourceType": "chat",
+      "sourceName": "WordPress Russian Community",
+      "sourceUsername": "@wordpress_ru",
+      "authorName": "Ivan Zhuck",
+      "authorUsername": "@ivan_zhuck",
+      "title": "Дорогой клод, надеюсь ты пребываешь в добром здравии и не допускаешь ошибок...",
+      "text": "Дорогой клод, надеюсь ты пребываешь в добром здравии и не допускаешь ошибок. Прости, что не писал тебе так долго, на это было много причин, но сейчас не об этом. Хочу попросить тебя об одной услуге, дорогой друг, не окажешь ли мне честь побыть для меня senior developer с phd в computer science, и сделать магазин с оплатой для продажи WordPress-плагинов за  3 000 ₽ 596 ₽? Спасибо, искренне твой, Кот.",
+      "date": "2026-11-19T12:52:52.815Z",
+      "dateFormatted": "Сьогодні, 14:52",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: онлайн-магазин.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795092583845-1895",
       "category": "marketing",
       "categoryName": "Маркетинг",
