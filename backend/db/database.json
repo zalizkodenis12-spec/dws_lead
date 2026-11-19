@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795073649637-672",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "google_ads",
+      "subcategoryName": "Google реклама",
+      "sourceType": "chat",
+      "sourceName": "БЛІЦ",
+      "sourceUsername": "@you_can_know_more",
+      "authorName": "you_can_know_more",
+      "authorUsername": "@you_can_know_more",
+      "title": "⭐️️️️️️️ Universe шукає User Acquisition Manager, який/яка успішно запускає...",
+      "text": "⭐️️️️️️️ Universe шукає User Acquisition Manager, який/яка успішно запускає рекламу в Google Ads (або іншому джерелі Performance трафіку) і хоче активного зростання та нових досягнень.\n\nФултайм, офіси в Києві та Львові (є релокаційний пакет).\n\nДетальніше — за посиланням.\n\n#вакансія",
+      "date": "2026-11-19T07:34:09.636Z",
+      "dateFormatted": "Сьогодні, 09:34",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: google реклама.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795073002701-745",
       "category": "montage",
       "categoryName": "Монтаж",
