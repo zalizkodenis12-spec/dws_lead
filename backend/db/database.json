@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795105736139-939",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "PHP — вакансии, поиск работы и аналитика",
+      "sourceUsername": "@php_jobs",
+      "authorName": "Sergey",
+      "authorUsername": "@tg_id_685620604",
+      "title": "Доброго времени суток!",
+      "text": "Доброго времени суток!\n8+ лет в коммерческой разработке, из них 7+ — в экосистеме Битрикс.\nПоследние 2 года — на крупном госпроекте.\nЖелаемый тип работы: удалённо\n\nЧто делаю:\n▪️ Компоненты и модули под Битрикс и коробку Битрикс24\n▪️ Интеграции с 1С, CRM и внешними сервисами по API, разработка своего API\n▪️ Адаптивная вёрстка (Vue.js), переносы данных с других CMS\n▪️ Оптимизация и ускорение: профилирование xdebug/xhprof, работа с MySQL под большие объёмы\n\nBackend: PHP 8, DDD, микросервисы, Docker, Kafka.\nРуководил техотделом — хорошо оцениваю сроки и говорю на одном языке и с бизнесом, и с разработчиками.",
+      "date": "2026-11-19T16:28:56.139Z",
+      "dateFormatted": "Сьогодні, 18:28",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795105251037-373",
       "category": "marketing",
       "categoryName": "Маркетинг",
