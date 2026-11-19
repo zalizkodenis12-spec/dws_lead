@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795113341058-663",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Oleg Bakaiev | Brand Visual Creator | Target (Inst, Fb)",
+      "authorUsername": "@tg_id_493324985",
+      "title": "Потрібен контент для бізнесу, який виглядає дорого і реально привертає уваг...",
+      "text": "Потрібен контент для бізнесу, який виглядає дорого і реально привертає увагу? Створюю AI-креативи під ваш продукт або послугу: рекламні відео, банери, AI UGC, відео з вашим товаром, Reels, CGI, мультфільми та анімацію. Можу повністю зробити все з нуля — від ідеї та візуалу до готового контенту для реклами й соцмереж. Пишіть у приватні — покажу приклади робіт.",
+      "date": "2026-11-19T18:35:40.986Z",
+      "dateFormatted": "Сьогодні, 20:35",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 51,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795110588891-9359",
       "category": "development",
       "categoryName": "Веброзробка",
