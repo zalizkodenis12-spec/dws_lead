@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795093408236-830",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Daria | AI content | SMM",
+      "authorUsername": "@daria_l15",
+      "title": "Вітаю💫",
+      "text": "Вітаю💫\nЯкщо вам потрібен АІ контент або SMM-послуги, або все разом, звертайтеся ⬇️\n\n👌🏻 2 роки досвіду в АІ, top rated на Upwork\n👌🏻 реалізм та анімація\n👌🏻 трендові перформанс-формати та креативні концепції\n👌🏻 SMM наразі за символічним прайсом (аудит, стратегія, контент-план, ведення Тредс)\n\nПишіть @daria_l15 📲\nПо АІ на грудень дуже мало місць залишилося 🎄",
+      "date": "2026-11-19T13:03:28.236Z",
+      "dateFormatted": "Сьогодні, 15:03",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795093373067-546",
       "category": "marketing",
       "categoryName": "Маркетинг",
