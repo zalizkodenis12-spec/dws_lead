@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795073002701-745",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "HOOKY | контент для соцмереж",
+      "authorUsername": "@tg_id_5567637648",
+      "title": "Привіт! Беремо нові проєкти на створення контенту для Instagram / TikTok: м...",
+      "text": "Привіт! Беремо нові проєкти на створення контенту для Instagram / TikTok: монтаж відео, сторіс, дописи та ведення сторінок.\n\nМожна замовити окремі матеріали або ведення на місяць. Кому актуально - напишіть у приват, покажу приклади й обговоримо вашу задачу 🙂",
+      "date": "2026-11-19T07:23:22.699Z",
+      "dateFormatted": "Сьогодні, 09:23",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 60,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795072381415-371",
       "category": "montage",
       "categoryName": "Монтаж",
