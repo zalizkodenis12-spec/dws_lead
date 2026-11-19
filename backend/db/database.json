@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795093373067-546",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Anastazia Makarenko",
+      "authorUsername": "@tg_id_1953181679",
+      "title": "Привіт☺️",
+      "text": "Привіт☺️\nЯ SMM-спеціаліст з міста Рівного. Маю досвід понад 2 роки та зараз готова взяти новий проєкт для співпраці.\n\nПрацювала з різними напрямами, тому вмію адаптувати контент під специфіку ніші, знаходити цікаві ідеї та створювати матеріали, які привертають увагу аудиторії.\n\nЧим можу бути корисною вашому бізнесу:\n• Розробка контент-плану та SMM-стратегії;\n• Ведення Instagram: Stories, дописи, Reels;\n• Написання сценаріїв для відео;\n• Створення, зйомка та монтаж відеоконтенту;\n• Генерація креативних ідей для контенту;\n• Робота над візуальним оформленням сторінки.\n\n📍Рівне та віддалено.\n\nЯкщо шукаєте SMM-спеціаліста, буду рада познайомитися та обговорити можливу співпрацю! 🤍",
+      "date": "2026-11-19T13:02:53.066Z",
+      "dateFormatted": "Сьогодні, 15:02",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795093228720-542",
       "category": "development",
       "categoryName": "Веброзробка",
