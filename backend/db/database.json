@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795160597715-651",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Dmitriy",
+      "authorUsername": "@tg_id_582652225",
+      "title": "Всім привіт, зараз багато запитів в SMM на відоси, рілси, серіали в стилі G...",
+      "text": "Всім привіт, зараз багато запитів в SMM на відоси, рілси, серіали в стилі GTA тому хто шукає собі чи під свого клієнта людину на створення контенту пишіть, можу запропонувати різні варіанти від швидкої генерації в AI до детального ручного монтажа по тз під рекламу бренда і повним урахуванням побажань клієнта. нажаль не дають сюди завантажити приклади тому пишіть кому цікаво відправлю)",
+      "date": "2026-11-20T07:43:17.643Z",
+      "dateFormatted": "Сьогодні, 09:43",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 51,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795159128439-161",
       "category": "development",
       "categoryName": "Веброзробка",
