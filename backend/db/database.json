@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795218696096-504",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "tack",
+      "authorUsername": "@tack",
+      "title": "📃 Резюме Fullstack-разработчик (React / Next.js / Node.js) от @IlyaGrigore...",
+      "text": "📃 Резюме Fullstack-разработчик (React / Next.js / Node.js) от @IlyaGrigorev2, от $1 000/мес ($8–12/час), Украина, удаленно, фуллтайм или парт-тайм",
+      "date": "2026-11-20T23:51:36.093Z",
+      "dateFormatted": "Сьогодні, 01:51",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795218617896-3139",
       "category": "development",
       "categoryName": "Веброзробка",
