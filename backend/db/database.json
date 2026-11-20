@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795206695198-709",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Natalia Yurchak | ТАРГЕТОЛОГ 🏹",
+      "authorUsername": "@tg_id_5269640557",
+      "title": "Шукаємо SMM-спеціаліста для ведення соціальних мереж.",
+      "text": "Шукаємо SMM-спеціаліста для ведення соціальних мереж.\n\nОсновне завдання — ведення соцмереж із фокусом на продажі та бренд-маркетинг.\n\nВажливо не просто створювати контент, а й відстежувати його ефективність:\n\n• Аналізувати конверсію: скільки людей заходять на сторінку та скільки з них здійснюють покупку.\n• Вимірювати вплив ведення соцмереж на впізнаваність і позиціонування бренду.\n• Спільно створювати  метрики, за якими будемо оцінювати розвиток бренду та результати роботи.",
+      "date": "2026-11-20T20:31:35.138Z",
+      "dateFormatted": "Сьогодні, 22:31",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795204197573-6044",
       "category": "development",
       "categoryName": "Веброзробка",
