@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795150913692-708",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "3d_site",
+      "subcategoryName": "3D сайт",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "oper",
+      "authorUsername": "@oper",
+      "title": "🔥 Резюме Frontend Developer (Vue.js) от @let_me_code, от 180 000 ₽, удален...",
+      "text": "🔥 Резюме Frontend Developer (Vue.js) от @let_me_code, от 180 000 ₽, удаленка\n\n⭐ Ускорение рендера canvas/three.js в 3-4 раза\n⭐ Опыт в узких нишах: картография и mini-apps\n⭐ Демонстрация навыка решения проблем, а не просто перечисления стека",
+      "date": "2026-11-20T05:01:53.689Z",
+      "dateFormatted": "Сьогодні, 07:01",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: 3d сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795150133770-230",
       "category": "development",
       "categoryName": "Веброзробка",
