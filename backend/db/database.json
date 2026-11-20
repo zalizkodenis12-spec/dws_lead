@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795164047568-39",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "v",
+      "authorUsername": "@tg_id_7985310748",
+      "title": "шукаю монтажера на 3 схожих між собою відео",
+      "text": "шукаю монтажера на 3 схожих між собою відео\nнадішлю в пп приклади, від Вас схожі приклади та прайс за роботу\n\nдякую!",
+      "date": "2026-11-20T08:40:47.500Z",
+      "dateFormatted": "Сьогодні, 10:40",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795163165336-275",
       "category": "montage",
       "categoryName": "Монтаж",
