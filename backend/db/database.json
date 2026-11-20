@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795152142876-481",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "tend",
+      "authorUsername": "@tend",
+      "title": "🔥 Резюме Senior Frontend & Game Developer от @self_noname, $2 000–3 000, М...",
+      "text": "🔥 Резюме Senior Frontend & Game Developer от @self_noname, $2 000–3 000, Минск, удаленка, фуллтайм\n\n⭐ Впечатляющие метрики оптимизации (снижение времени отклика, багов и нагрузки)\n⭐ Уникальный профиль: экспертный iGaming + глубокий Web3 (Solana/Rust) + GameDev\n⭐ Фокус на бизнес-результатах (аналитика, GGR, конверсии) вместо простого перечисления технологий",
+      "date": "2026-11-20T05:22:22.875Z",
+      "dateFormatted": "Сьогодні, 07:22",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795150913692-708",
       "category": "development",
       "categoryName": "Веброзробка",
