@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795199542629-248",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "tend",
+      "authorUsername": "@tend",
+      "title": "📃 Резюме Frontend-разработчик (React / Next.js) от @io112, от 200 000₽ ($2...",
+      "text": "📃 Резюме Frontend-разработчик (React / Next.js) от @io112, от 200 000₽ ($2 500), удаленно (Санкт-Петербург), фуллтайм",
+      "date": "2026-11-20T18:32:22.628Z",
+      "dateFormatted": "Сьогодні, 20:32",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795199078351-378",
       "category": "development",
       "categoryName": "Веброзробка",
