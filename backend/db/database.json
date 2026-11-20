@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795194228255-225",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@rumbubblegum",
+      "title": "Event & Special Projects Manager",
+      "text": "Event & Special Projects Manager\nв Twinby — современный сервис и мобильное приложение для знакомств, которое подбирает людей не по внешности и случайным фото, а на основе их психологической совместимости.\nУдалённая работа. Важно находиться в Москве для участия в офлайн-проектах.\nПост компании на LinkedIn.",
+      "date": "2026-11-20T17:03:48.255Z",
+      "dateFormatted": "Сьогодні, 19:03",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795193389310-7118",
       "category": "development",
       "categoryName": "Веброзробка",
