@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795171364203-473",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Екатерина Рышкевич",
+      "authorUsername": "@hirix_Ekaterina",
+      "title": "🎮 Game Designer (iGaming) | Middle+ / Senior",
+      "text": "🎮 Game Designer (iGaming) | Middle+ / Senior\n🌍 Remote | Full-time\n\nИщем опытного геймдизайнера в команду крупного международного iGaming-проекта, которая занимается разработкой собственных игр.\n\nОсновной фокус — создание новых игр с нуля до релиза: от игровых концепций и механик до анализа результатов. Команда выпускает примерно одну игру в месяц.\n\nЗадачи:\n• Разработка игровых механик, Core/Meta Loops, баланса и экономики.\n• Создание GDD и технических заданий.\n• Работа с продуктовыми гипотезами и аналитикой.\n• Участие в полном цикле разработки игр.\n\nОжидания:\n• От 2 лет опыта в real-money iGaming.\n• Опыт работы у игрового провайдера или в in-house студии оператора.\n• Опыт разработки Slots / Crash / Instant / Fast Games.\n• Опыт запуска коммерческих игр и понимание результатов своей работы.\n\nУсловия:\n✅ Полностью удалённая работа\n✅ Гибкое начало рабочего дня\n✅ Команда полного цикла разработки\n✅ Возможность создавать новые игровые продукты и влиять на их развитие\n\n📩 За подробностями и откликом — в личные сообщения.\nTelegram: @hirix_Ekaterina",
+      "date": "2026-11-20T10:42:44.203Z",
+      "dateFormatted": "Сьогодні, 12:42",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795170420501-11",
       "category": "development",
       "categoryName": "Веброзробка",
