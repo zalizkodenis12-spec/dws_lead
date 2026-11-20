@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795170420501-11",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ivan",
+      "authorUsername": "@ttps",
+      "title": "‼️ N3EDED | GAME DESIGNER (CENTRAL ASIA)",
+      "text": "‼️ N3EDED | GAME DESIGNER (CENTRAL ASIA)\n\n👀 Интересуешься игровыми механиками и хочешь создавать проекты, вдохновлённые культурой и историей Центральной Азии? Международная iGaming-компания N3EDED ищет Game Designer в свою команду!\n\nℹ️ О проекте: разработка онлайн-слотов и игровых решений для международного рынка с акцентом на культуру, историю и мифологию Центральной Азии.\n\n📱 Удалённо (Узбекистан / Казахстан / Кыргызстан)\n👨‍💻 Полная занятость\n💬 Направление: Game Design\n\nОт кандидата ожидают опыт в Game Design от 2 лет, умение самостоятельно разрабатывать игровые механики и создавать игровую документацию (GDD). Знание культуры Центральной Азии обязательно.\nЕсли у тебя есть подходящий опыт и желание работать над международными игровыми проектами — переходи к вакансии, изучай требования и отправляй отклик!\n\n📱 Вакансия и отклик: https://spawnparty.dev/jobs/game-designer-central-asia-uz-kz-kg-n-ded-81d579a8\n\n📱 Больше вакансий из GameDev — в нашем Telegram-канале. Подписывайся, чтобы не следующую возможность!\n\n#GameDev #GameDevJobs #GameDesigner #GameDesign #iGaming #RemoteJobs #SpawnParty",
+      "date": "2026-11-20T10:27:00.443Z",
+      "dateFormatted": "Сьогодні, 12:27",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Казахстан",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795169418199-952",
       "category": "montage",
       "categoryName": "Монтаж",
