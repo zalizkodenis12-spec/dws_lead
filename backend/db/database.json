@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795172088028-233",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "oper",
+      "authorUsername": "@oper",
+      "title": "📃 Резюме Middle Frontend Developer (React) от @ivan909017, от $1 500, удал...",
+      "text": "📃 Резюме Middle Frontend Developer (React) от @ivan909017, от $1 500, удаленно, фуллтайм или парт-тайм",
+      "date": "2026-11-20T10:54:47.952Z",
+      "dateFormatted": "Сьогодні, 12:54",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795171788042-6548",
       "category": "marketing",
       "categoryName": "Маркетинг",
