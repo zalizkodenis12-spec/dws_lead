@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795188956826-486",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Dominic Decoco",
+      "authorUsername": "@tg_id_8984438811",
+      "title": "Шукаю монтажера на монтаж відео до 15сек, рівень монтажу легкий, ціни та по...",
+      "text": "Шукаю монтажера на монтаж відео до 15сек, рівень монтажу легкий, ціни та портфоліо в лс",
+      "date": "2026-11-20T15:35:56.824Z",
+      "dateFormatted": "Сьогодні, 17:35",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795188810397-148",
       "category": "marketing",
       "categoryName": "Маркетинг",
