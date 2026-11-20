@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795207236182-791",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Вероніка",
+      "authorUsername": "@tg_id_896416522",
+      "title": "Привіт😉",
+      "text": "Привіт😉\n\nЗараз шукаю нові проєкти для співпраці у сфері відеомонтажу та AI-контенту\n\nЗаймаюся монтажем Reels і коротких відео для Instagram, TikTok та ін. А також створенням і редагуванням фото та відео за допомогою AI-інструментів\n\nПрацюю з візуальним контентом, допомагаю втілювати креативні ідеї та створювати якісні, сучасні матеріали для брендів і соціальних мереж\n\nБуду рада обговорити можливості співпраці та долучитися до ваших майбутніх проєктів 😎",
+      "date": "2026-11-20T20:40:36.180Z",
+      "dateFormatted": "Сьогодні, 22:40",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795206695198-709",
       "category": "marketing",
       "categoryName": "Маркетинг",
