@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795194738399-618",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Ivvoo",
+      "authorUsername": "@tg_id_5176462198",
+      "title": "Привіт! Я спеціалізуюся на динамічному монтажі коротких вертикальних відео...",
+      "text": "Привіт! Я спеціалізуюся на динамічному монтажі коротких вертикальних відео (Reels, TikTok, Shorts) для експертів, блогерів та бізнесу. Робота з темпом, кольорокорекцією та акцентними субтитрами, щоб ролик утримував увагу з перших секунд. А яка у вас тематика проєкту",
+      "date": "2026-11-20T17:12:18.399Z",
+      "dateFormatted": "Сьогодні, 19:12",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795194228255-225",
       "category": "development",
       "categoryName": "Веброзробка",
