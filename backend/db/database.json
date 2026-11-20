@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795175767670-88",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "UX UI design - вакансии и резюме",
+      "sourceUsername": "@uxui_jobs",
+      "authorName": "Mehmet Ahmetoğlu",
+      "authorUsername": "@MehmetRuk",
+      "title": "Looking for an Experienced UI/UX Designer",
+      "text": "Looking for an Experienced UI/UX Designer\n\nWe are planning to build a website for a crypto exchange service based in Antalya, Turkey, and are looking for an experienced UI/UX designer to work on the project.\n\nThe website should have a modern, premium look, with a clear structure and convenient user experience. The main focus will be cryptocurrency exchange, cash-to-crypto and crypto-to-cash operations, exchange rates and customer enquiries.\n\nWe're looking for someone who:\n- Has extensive commercial UI/UX experience.\n- Has completed paid projects for real clients.\n- Has experience with fintech, crypto platforms or exchange services.\n- Is confident working in Figma.\n- Can handle the project from initial concepts to complete, developer-ready designs.\n\nPlease don't apply if your portfolio consists mainly of practice projects or unimplemented concepts.\n\nSend me your portfolio, relevant examples of previous work and your rates.\n\nLooking for a serious professional for potential long-term cooperation.",
+      "date": "2026-11-20T11:56:07.669Z",
+      "dateFormatted": "Сьогодні, 13:56",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795175388357-2202",
       "category": "development",
       "categoryName": "Веброзробка",
