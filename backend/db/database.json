@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795169141761-76",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Reshetnikowa Anna",
+      "authorUsername": "@reshetnikowa",
+      "title": "Шукаємо Project Manager / Account Manager в Solarweb 🔍",
+      "text": "Шукаємо Project Manager / Account Manager в Solarweb 🔍\n\nSolarweb — digital-агентство, офіційний партнер Google. Працюємо з малим і середнім бізнесом: SEO, PPC, таргет, SMM.\n\nЩо робити:\n— вести кілька клієнтських проектів паралельно\n— бути основною точкою комунікації з клієнтом\n— ставити задачі спеціалістам (SEO, PPC, SMM) та контролювати виконання\n— аналізувати результати, працювати зі звітами\n— контролювати KPI, рентабельність проектів\n\nЩо важливо:\n— досвід у digital від 2 років — обов'язково\n— розуміння SEO, PPC, SMM, таргету\n— знання Google Analytics та маркетингових метрик\n— вміння читати дані та робити висновки\n— досвід одночасного ведення кількох клієнтів\n— самостійність та відповідальність за результат\n\nУмови: віддалено, повна зайнятість\n\nЗа подробицями писати @reshetnikowa",
+      "date": "2026-11-20T10:05:41.760Z",
+      "dateFormatted": "Сьогодні, 12:05",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 47,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795168822790-386",
       "category": "development",
       "categoryName": "Веброзробка",
