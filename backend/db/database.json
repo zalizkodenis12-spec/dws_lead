@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795189571734-39",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Mariee",
+      "authorUsername": "@tg_id_1942530353",
+      "title": "Шукаємо сильного SMM & Copywriter✨",
+      "text": "Шукаємо сильного SMM & Copywriter✨\n\nНаш метч, якщо в тебе є:\n• 2+ роки в SMM і крутий копірайтинг із власним стилем;\n• розуміння використання AI в роботі з контентом;\n• сміливість пропонувати й відстоювати свої ідеї.\n\nВіддалено або гібрид, фултайм, надсилайте портфоліо в особисті 📩️️️️️️",
+      "date": "2026-11-20T15:46:11.732Z",
+      "dateFormatted": "Сьогодні, 17:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 60,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795188956826-486",
       "category": "montage",
       "categoryName": "Монтаж",
