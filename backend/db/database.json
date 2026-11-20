@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795182892503-582",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "ecommerce",
+      "subcategoryName": "Онлайн-магазин",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@nels",
+      "title": "📈 Kokoc Global is hiring: CRO / Experimentation Developer (Dynamic Yield)...",
+      "text": "📈 Kokoc Global is hiring: CRO / Experimentation Developer (Dynamic Yield)\nKokoc Global is an outstaffing company. You’ll join our team as a contractor and collaborate directly with our client on a long-term project in the telecommunications industry.\n📍 Location: Remote, EU residence permit required\n💶 Rate: €15–20/hour\n🗣 English: B2+\n💼 Experience: 5+ years\n━━━━━━━━━━━━━━━\n📡 About the project\nOur client is a large telecommunications company offering mobile services, broadband internet and TV subscriptions through its digital channels.\nThe team focuses on optimizing the customer journey and increasing online sales through regular A/B testing and experimentation. Its digital products are built using both legacy .NET solutions and modern React/Next.js applications.\nAs an Experimentation Developer, you'll be responsible for bringing optimization ideas to life by developing and maintaining experiments with Dynamic Yield. You'll work alongside CRO managers, designers, analysts and frontend engineers to improve the performance of the client's digital platforms.\nYour responsibilities:\n🔹 Develop and launch A/B and multivariate experiments using Dynamic Yield.\n🔹 Create custom experiment variations with HTML, CSS and JavaScript, as well as implement backend-driven testing through the Dynamic Yield API when required.\n🔹 Work with React/Next.js frontends and existing .NET applications, ensuring smooth integration with the current architecture.\n🔹 Configure user segments, experiment objectives and tracking events to ensure accurate measurement of results.\n🔹 Perform cross-browser and cross-device testing, monitoring loading behavior, visual stability and Core Web Vitals.\n🔹 Collaborate with product teams to roll out successful experiments into production.\n🔹 Maintain and improve a collection of reusable solutions for future experiments.\n🔹 Consult the CRO team on implementation options, technical complexity and the most suitable experimentation methods.\nMust-have skills:\n✅ 5+ years of professional development experience.\n✅ Strong knowledge of HTML, CSS and JavaScript.\n✅ Practical experience with React/Next.js.\n✅ Previous experience developing A/B and multivariate tests (Dynamic Yield experience is a strong advantage).\n✅ Understanding of event tracking, audience segmentation and experiment goal configuration.\n✅ Experience with cross-browser and cross-device testing.\n✅ Familiarity with Core Web Vitals and web performance optimization.\n✅ Ability to navigate and contribute to projects built on .NET.\nNice to have:\n➕ Experience with server-side testing and API integrations.\n➕ Knowledge of tag management systems and consent management solutions.\n➕ Background in e-commerce or telecommunications.\n━━━━━━━━━━━━━━━\n📩 Interested? Send your CV to @Kokoc_Global_HR_Arina and mention the position you're applying for. Our team will be happy to provide more details!\n#vacancy #remote #outstaff #CRO #abtesting #dynamicyield #react #nextjs #frontend #EU\n\n👉 Наш второй канал с резюме",
+      "date": "2026-11-20T13:54:52.503Z",
+      "dateFormatted": "Сьогодні, 15:54",
+      "budget": 0,
+      "currency": "₴",
+      "country": "США",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: онлайн-магазин.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795182878301-766",
       "category": "development",
       "categoryName": "Веброзробка",
