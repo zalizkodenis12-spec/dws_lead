@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795184539979-701",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Polina",
+      "authorUsername": "@precruiterhb",
+      "title": "\"Retention Manager | iGaming | Remote 🚀",
+      "text": "\"Retention Manager | iGaming | Remote 🚀\n\nТи знаєш, як зробити так, щоб гравець повертався знову і знову? Тоді в нас для тебе є продукт, де retention-напряму ще немає, і його побудуєш саме ти.\n\nМи шукаємо Retention Manager, який з нуля створить CRM-стратегію та безпосередньо впливатиме на LTV і Retention Rate нашого iGaming-продукту. Без легасі й без «у нас так заведено»: тільки твоє бачення та швидкі рішення.\n\n🎯 Твоя зона впливу:\n— Створення Email/CRM-стратегії та сегментація аудиторії\n— Автоматизовані customer journeys: retention, reactivation, churn prevention і не тільки\n— Email-кампанії в Customer.io\n— A/B-тести та постійна оптимізація комунікацій\n— KPI, за які ти відповідаєш: LTV, Retention Rate, CR, FTD, Revenue\n— Контроль deliverability і розвиток CRM-механік\n\n💡 Ти наша людина, якщо:\n— Маєш 2+ роки досвіду в CRM / Email Marketing\n— Уже будував(-ла) email-маркетинг з нуля\n— Впевнено працюєш у Customer.io або аналогах\n— Знаєш iGaming і працював(-ла) з Tier-1 GEO\n— Розумієшся на lifecycle marketing, сегментації, A/B-тестах і deliverability\n— Маєш досвід роботи з SMS, Push та In-app\n\n⭐ Буде плюсом: SQL, DWH, досвід із кількома GEO.\n\n🔥 Що отримаєш:\n— 100% remote, працюєш звідки зручно\n— Повну свободу будувати напрям так, як вважаєш правильним, і впливати на продукт\n— Автономність, швидкі рішення та вибір інструментів без бюрократії\n— Оплачувані відпустку й лікарняні\n— Індивідуальні умови, які обговоримо з тобою особисто\n\nГотовий(-а) побудувати retention, яким пишатимешся?\n👉 Резюме сюди: @precruiterhb\"",
+      "date": "2026-11-20T14:22:19.911Z",
+      "dateFormatted": "Сьогодні, 16:22",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795182892503-582",
       "category": "development",
       "categoryName": "Веброзробка",
