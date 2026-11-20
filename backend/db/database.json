@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795188208878-373",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Anastasia HR Гелексі Фінанс",
+      "authorUsername": "@Stacy_HR_RSG",
+      "title": "💫 Royal Standard Group шукає Head of Social Media & Brand Communications!...",
+      "text": "💫 Royal Standard Group шукає Head of Social Media & Brand Communications!\nМи — українська FinTech-компанія, яка активно розвивається та шукає сильного маркетингового лідера, готового масштабувати B2C-бренд і формувати його комунікаційну стратегію.\n\nЩо буде у фокусі:\nРозвиток бренду та підвищення впізнаваності.\nПобудова SMM-стратегії та управління командою.\nPR, influencer marketing та партнерства.\nСтворення інтегрованих маркетингових кампаній.\nЗростання охоплень, лідів, конверсій і залучення клієнтів.\n\nКого шукаємо: фахівця з 5+ роками досвіду в SMM / Digital / Brand Marketing, сильними кейсами, управлінським досвідом та орієнтацією на бізнес-результат.\n📍 Київ, гібридний формат роботи.\nЯкщо Ви готові очолити розвиток бренду та впливати на маркетинг FinTech-компанії — будемо раді знайомству!\n📩 Надсилайте CV та портфоліо в особисті повідомлення.",
+      "date": "2026-11-20T15:23:28.830Z",
+      "dateFormatted": "Сьогодні, 17:23",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 56,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795187474101-286",
       "category": "development",
       "categoryName": "Веброзробка",
