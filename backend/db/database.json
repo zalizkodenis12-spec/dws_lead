@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795188810397-148",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Seda K.",
+      "authorUsername": "@SedaRecruits",
+      "title": "#vacancy #performancemarketing #remote",
+      "text": "#vacancy #performancemarketing #remote\n\nA fast-growing consumer app company is looking for a Junior Performance Marketer – fully remote\n\nWhat you'll do:\n• Run paid acquisition campaigns (Meta, Google, TikTok)\n• Test creatives and audiences, track CPA/ROAS\n• Work closely with a senior team to scale winning campaigns\n\nWhat we're looking for:\n• Hands-on experience running paid campaigns yourself\n• App or subscription product experience is a plus\n• Analytical mindset, fast learner\n\nPlease reply with:\n1. Years of hands-on paid acquisition experience?\n2. Average monthly ad budget you managed (USD)?\n3. Have you worked on app/subscription user acquisition? (Yes/No)\n\nSend your CV via DM: @SedaRecruits",
+      "date": "2026-11-20T15:33:30.393Z",
+      "dateFormatted": "Сьогодні, 17:33",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795188527106-327",
       "category": "development",
       "categoryName": "Веброзробка",
