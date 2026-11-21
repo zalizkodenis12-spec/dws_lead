@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795236313902-757",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "landing",
+      "subcategoryName": "Односторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "UI/UX Jobs — вакансии и аналитика",
+      "sourceUsername": "@uiux_jobs",
+      "authorName": "ww",
+      "authorUsername": "@etohow",
+      "title": "🚀 Сайт или лендинг за 2 часа — от 500 ₽",
+      "text": "🚀 Сайт или лендинг за 2 часа — от 500 ₽\n​Делаю сайты и веб-приложения через топовых платных AI-агентов. Цена зависит только от сложности задачи:\n​Простой лендинг / мини-сайт: от 500 ₽\n​Полноценный сайт: 1 000 – 2 000 ₽ (в чек 2 000 ₽ уже входит домен)\n​Под ключ: сам ставлю на хостинг, отдаю вам домен и все исходники.\n​Сложные проекты (биржи и т.д.): сервер оплачивается отдельно.\n​💻 Есть свой проект в разработке — скину в ЛС как пример.\n​Пишите тему и задачу, сразу назову точную цену 👇\n@etohow",
+      "date": "2026-11-21T04:45:13.901Z",
+      "dateFormatted": "Сьогодні, 06:45",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: односторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795232991515-3611",
       "category": "montage",
       "categoryName": "Монтаж",
