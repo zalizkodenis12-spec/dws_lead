@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795360256243-875",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "neer",
+      "authorUsername": "@neer",
+      "title": "📃 Резюме Product Engineer / Фронтенд-лид, от $50/час, удаленка, Буэнос-Айр...",
+      "text": "📃 Резюме Product Engineer / Фронтенд-лид, от $50/час, удаленка, Буэнос-Айрес, проектная или частичная занятость",
+      "date": "2026-11-22T15:10:56.241Z",
+      "dateFormatted": "Сьогодні, 17:10",
+      "budget": 2000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: frontend розробка з бюджетом 2000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795359642060-960",
       "category": "marketing",
       "categoryName": "Маркетинг",
