@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795363743190-491",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Mariaa✨",
+      "authorUsername": "@mariashhhha",
+      "title": "🎬 відеомонтажер | 4 роки досвіду",
+      "text": "🎬 відеомонтажер | 4 роки досвіду\n\nстворюю якісний та стильний відеоконтент для Instagram, TikTok та інших соцмереж. працюю з різними нішами та форматами 🤍\n\nмонтаж рілсів - поштучно, попроєктно або на довгостроковій основі в межах проєкту.\n\nза деталями та прайсом пишіть в особисті повідомлення ✨\n\n@mariashhhha 💌",
+      "date": "2026-11-22T16:09:03.189Z",
+      "dateFormatted": "Сьогодні, 18:09",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795363237350-743",
       "category": "marketing",
       "categoryName": "Маркетинг",
