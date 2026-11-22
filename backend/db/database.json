@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795379016472-501",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Yharon",
+      "authorUsername": "@Thestol1",
+      "title": "ЗРОБЛЮ ПРОСТИЙ МОНТАЖ TIKTOK / REELS / SHORTS",
+      "text": "ЗРОБЛЮ ПРОСТИЙ МОНТАЖ TIKTOK / REELS / SHORTS\n\nШукаю невеликі разові замовлення.\n\nМожу:\n• обрізати та склеїти відео;\n• додати музику;\n• зробити субтитри;\n• додати прості переходи;\n• оформити вертикальне відео 9:16;\n• змонтувати за вашим прикладом або ТЗ.\n\n Ціна: від 100 грн за простий ролик.\n\n Пишіть у Telegram: @Thestol1\nСкинете матеріали й ТЗ — скажу, чи зможу зробити.\nПриклад роботи можу скинути у ЛС.",
+      "date": "2026-11-22T20:23:36.471Z",
+      "dateFormatted": "Сьогодні, 22:23",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795378382535-221",
       "category": "development",
       "categoryName": "Веброзробка",
