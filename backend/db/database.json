@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795406230831-227",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "nnlowww",
+      "authorUsername": "@nnlowww",
+      "title": "🔥 Резюме Fullstack-разработчик от @nnlowww, от 195 000 ₽ / $2,400, удаленн...",
+      "text": "🔥 Резюме Fullstack-разработчик от @nnlowww, от 195 000 ₽ / $2,400, удаленно, фуллтайм или парт-тайм\n\n⭐ Инициатор AI-ревью MR в GitLab CI/CD для 200+ MR в месяц — не просто «использую ChatGPT», а встроил в процессы\n⭐ Кросс-сейв механика с сокращением вывода контента с 2 дней до пары минут — идеальный формат «проблема → решение → метрика»\n⭐ Миграция Express→NestJS с сокращением типовой разработки с ~4 до ~2 дней",
+      "date": "2026-11-23T03:57:10.830Z",
+      "dateFormatted": "Сьогодні, 05:57",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795403632634-928",
       "category": "development",
       "categoryName": "Веброзробка",
