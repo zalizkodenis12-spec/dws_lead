@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795438733395-523",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "landing",
+      "subcategoryName": "Односторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "landing_des",
+      "authorUsername": "@landing_des",
+      "title": "🎁 Безкоштовний гайд для SMM-ників, проджектів і маркетологів, які ведуть з...",
+      "text": "🎁 Безкоштовний гайд для SMM-ників, проджектів і маркетологів, які ведуть запуски експертів!\n\n«Паспорт стилю»: як генерувати банери, пости й сторіс у ChatGPT, Claude і Canva, щоб увесь запуск виглядав одним брендом.\n\nВсередині - готові промпти, шаблон паспорта, приклад з брендбука онлайн-курсу і чек-лист візуалу перед стартом реклами.\n\nВід Анастасії @a_nvisd, дизайнерки запусків для експертів і онлайн-шкіл, 300+ проєктів!\n\nЗабрати за підписку 👉 https://t.me/landing_des/203\n\n#гайд #безкоштовнадопомога #дизайнер #ментор",
+      "date": "2026-11-23T12:58:53.394Z",
+      "dateFormatted": "Сьогодні, 14:58",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: односторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795438161905-6439",
       "category": "marketing",
       "categoryName": "Маркетинг",
