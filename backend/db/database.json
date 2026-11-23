@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795432158685-845",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Работа ищет аналитиков // Вакансии",
+      "sourceUsername": "@analysts_hunter",
+      "authorName": "Юлия",
+      "authorUsername": "@HR_JuliaG",
+      "title": "#вакансия #dataAnalyst #middle #удаленноРФ",
+      "text": "#вакансия #dataAnalyst #middle #удаленноРФ\n\n🔥Компания: IT People group\nРоль: Data analyst\nГрейд: Middle\nФормат: удаленно из РФ, ИП/СмЗ\nСтавка: рассмотрим вашу\n\nОбязательные требования:\n- Релевантный опыт от 4 лет;\n- SQL: уверенные средние запросы  JOIN, CTE, агрегации, оконные функции; корректная и читаемая запись\n- Python: базовый синтаксис, работа с pandas/numpy, простые скрипты для ad-hoc аналитики, визуализация (plotly/seaborn)\n- Spark: простые запросы и операции с DataFrame, фильтрация, JOIN, агрегации, простая сверка данных\n- BI: простые отчёты и дашборды в PowerBI/Superset, базовые типы визуализаций\n- ETL: понимание этапов ETL, проверка корректности загруженных данных, запуск готового DAG\n- DQ: чтение кода в GitLab, актуальная документация в DataHub, базовые подходы к оценке качества данных\n- Дата-контракты: понимание и чтение готовых контрактов\n- LLM: эффективные промпты, использование LLM для анализа/обработки текстов и кода, понимание ограничений.\n\nДля резюме @HR_JuliaG",
+      "date": "2026-11-23T11:09:18.684Z",
+      "dateFormatted": "Сьогодні, 13:09",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795431820197-724",
       "category": "marketing",
       "categoryName": "Маркетинг",
