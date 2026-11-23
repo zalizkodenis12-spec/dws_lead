@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1795409357207-479",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "djinni",
+      "sourceName": "Djinni",
+      "sourceUsername": "@djinni",
+      "authorName": "Рекрутер на Djinni",
+      "authorUsername": "@djinni",
+      "title": "Strong junior or middle Business analyst в AI-сферу",
+      "text": "Strong junior or middle Business analyst в AI-сферу\n\nПРО ПОЗИЦІЮ\nШукаємо в команду людину, яка буде працювати на стику 3-х напрямків: business analysis, data analysis та product management.\n \nВимоги:\nДосвід product manager/business analyst/data analyst від 1-2 років\nВища технічна освіта, бажано з фокусом на математику: КПІ ІПСА, МехМат Шевченко тощо\nВміння аналізувати ринок, конкурентів, потреби користувачів, висувати та перевіряти продуктові гіпотези\nДосвід роботи з Python та інструментами аналізу даних\nДосвід підготовки презентацій, навчальних матеріалів, технічної документації\nБазове розуміння data science та етапів розробки програмних продуктів\nВолодіння англійською на рівні B2+\n \nПриклади задач:\nАналіз ринку, конкурентів, пошук та перевірка продуктових гіпотез\nУчасть в аналізі внутрішніх даних продукту, побудова дашбордів та пошук можливостей для оптимізації\nУчасть в комбінуванні та тестуванні LLM-моделей, написання промптів\nРобота з документацією: підготовка та підтримка технічної документації і навчальних матеріалів",
+      "url": "https://djinni.co/jobs/830748-strong-junior-or-middle-business-analyst-v-ai/",
+      "date": "2026-11-23T04:49:15.718Z",
+      "dateFormatted": "Сьогодні, 06:49",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Djinni",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 56,
+      "aiSummary": "Замовлення на Djinni: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795406230831-227",
       "category": "development",
       "categoryName": "Веброзробка",
