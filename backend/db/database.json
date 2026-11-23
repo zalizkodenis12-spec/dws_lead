@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1795474172030-1384",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "freelancehunt",
+      "sourceName": "Freelancehunt",
+      "sourceUsername": "@freelancehunt",
+      "authorName": "Замовник на Freelancehunt",
+      "authorUsername": "@freelancehunt",
+      "title": "Разработка сайта для предпродажи криптотокена с подключением кошелька",
+      "text": "Разработка сайта для предпродажи криптотокена с подключением кошелька\n\nИщу разработчика или команду для создания сайта предпродажи криптотокена. Покупатель должен иметь возможность подключить криптокошелек на сайте, указать количество токенов, увидеть сумму к оплате и подтвердить покупку в своем кошельке.\nЧто нужно реализовать Адаптивный сайт для компьютеров и телефонов...",
+      "url": "https://freelancehunt.com/project/rozrobka-saytu-dlya-peredprodazhu-kriptotokena/1666288.html",
+      "date": "2026-11-23T22:49:32.029Z",
+      "dateFormatted": "Сьогодні, 00:49",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Freelancehunt",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення на Freelancehunt: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795472765370-439",
       "category": "development",
       "categoryName": "Веброзробка",
