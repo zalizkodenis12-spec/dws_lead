@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795466303366-560",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Rita",
+      "authorUsername": "@tg_id_992403140",
+      "title": "Я в пошуку крутих проєктів і клієнтів",
+      "text": "Я в пошуку крутих проєктів і клієнтів\n\nПрацюю за розумні гроші, без космосу в чеку.\n\nЧим можу бути корисною:\n• Монтую відео під блоги, особисті бренди та бізнес — щоб глядач додивився, а не свайпнув.\n• Веду сторінки як SMM-спеціаліст — я цим живу і горю, тому за стабільність, відповідальність на всі 100%.\n• Створюю креативи\n\nМожна зайти на один напрямок або зібрати пакет під ваш запит.\n\nЧекаю в особистих!",
+      "date": "2026-11-23T20:38:23.284Z",
+      "dateFormatted": "Сьогодні, 22:38",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795463359818-3053",
       "category": "development",
       "categoryName": "Веброзробка",
