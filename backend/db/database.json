@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795439980819-391",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "mobile",
+      "subcategoryName": "Мобільні додатки",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@lent",
+      "title": "2D Artist - Puzzle Unit / voodoo",
+      "text": "2D Artist - Puzzle Unit / voodoo\nEurope (Remote)\n\nVoodoo is a tech company that creates mobile games and apps. Voodoo is the #3 mobile publisher worldwide in terms of downloads after Google and Meta.\n\nTLDR: Join Voodoo's new Studio to enhance a successful game, focusing on UI design and player engagement with a creative, multidisciplinary team.\n\nТребования к кандидату:\n- 3+ years of experience in game development\n- Strong Unity skills for implementation and optimization\n- Excellent 2D design skills and UI experience\n- Experience with cross-functional remote teams\n- Fluent in English\n\nЧитать подробнее:\n→ Откликнуться тут\n\nДругие вакансии:\n• Lead Game Developer - Woodturning\n• Senior QA Tester - Paper.io 2\n• Marketing Video Artist - Growth ⚡️ ✈️",
+      "date": "2026-11-23T13:19:40.817Z",
+      "dateFormatted": "Сьогодні, 15:19",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: мобільні додатки.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795439567080-774",
       "category": "development",
       "categoryName": "Веброзробка",
