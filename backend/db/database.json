@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795435103992-474",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "Khrystyna Mandryk",
+      "authorUsername": "@ager",
+      "title": "We are looking for an experienced Business Development Manager 🐝",
+      "text": "We are looking for an experienced Business Development Manager 🐝\n\nThis role works with companies that generate and purchase leads from investors and homeowners.\n\nRequirements:\n\n- Previous experience as a Business Development Manager or Partnership Manager\n\n- English proficiency at C1+ level\n\n- Experience in U.S. lead generation industries\n\n- Experience working with Ping/Post, Direct Post, lead distribution, or affiliate partnership models\n\nRemote, full-time\n📩@khrystyna_mandryk",
+      "date": "2026-11-23T11:58:23.945Z",
+      "dateFormatted": "Сьогодні, 13:58",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795434555611-8616",
       "category": "development",
       "categoryName": "Веброзробка",
