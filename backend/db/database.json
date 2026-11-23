@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795432550942-324",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "РИНГ ЭКСПРЕСС БЕРДЯНСК",
+      "sourceUsername": "@ring_express_brd",
+      "authorName": "Lion",
+      "authorUsername": "@tg_id_8385733477",
+      "title": "Добрый день нужен программист село Дмитровку",
+      "text": "Добрый день нужен программист село Дмитровку",
+      "date": "2026-11-23T11:15:50.941Z",
+      "dateFormatted": "Сьогодні, 13:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795432158685-845",
       "category": "development",
       "categoryName": "Веброзробка",
