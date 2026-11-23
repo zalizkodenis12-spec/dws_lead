@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795423838861-6",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ivan",
+      "authorUsername": "@gner",
+      "title": "‼️ GAMEDEV ВАКАНСИИ | НОВЫЕ ВОЗМОЖНОСТИ",
+      "text": "‼️ GAMEDEV ВАКАНСИИ | НОВЫЕ ВОЗМОЖНОСТИ\n\nПодобрали две свежие вакансии для тех, кто хочет развиваться в GameDev и работать над игровыми проектами!\n\n🟢 HYPERHUG — Senior Community Coordinator\n\n👨‍💻 Удалённо\n🗓 Полная занятость\n💬 Направление: Community Management\n📱 Инструменты: Discord, Telegram\n\n🟢 SOFTGAMES — UI Designer (Casual Games)\n\n👨‍💻 Удалённо\n🗓 Freelance\n📱 Направление: UI Design, 2D Art\n🖥 Проекты: Casual Games\n\nИщешь новую возможность в игровой индустрии? Заглядывай на SpawnParty.dev, изучай вакансии и отправляй отклики!\n\n🌐 Все вакансии: https://spawnparty.dev/jobs\n\n📱 Больше вакансий из GameDev — в нашем Telegram-канале. Подписывайся, чтобы не пропустить следующую возможность!\n\n#GameDev #GameDevJobs #CommunityManager #UIDesigner #2DArt #HyperHug #SoftGames #SpawnParty",
+      "date": "2026-11-23T08:50:38.861Z",
+      "dateFormatted": "Сьогодні, 10:50",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795423757187-1722",
       "category": "development",
       "categoryName": "Веброзробка",
