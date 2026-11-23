@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795437185374-87",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Сергій Півень",
+      "authorUsername": "@gram",
+      "title": "🎬 Шукаємо монтажера зі знанням AI",
+      "text": "🎬 Шукаємо монтажера зі знанням AI\n\nBuntar Agency шукає монтажера для постійної співпраці.\n\nОбсяг: від 20 відео на місяць, стабільно.\n\nКого шукаємо:\n— впевнено монтуєш відео для соцмереж\n— працюєш з AI-інструментами: генерація відео та зображень, AI-озвучка тощо\n— вмієш працювати в Claude Code або налаштовувати AI-процеси для монтажу\n\nЯк відгукнутися:\nПиши в Telegram 👉 @pivensmm\n\nОдразу надсилай:\n• приклади своїх робіт\n• прайс за одне відео\n• з якими AI-інструментами працюєш",
+      "date": "2026-11-23T12:33:05.373Z",
+      "dateFormatted": "Сьогодні, 14:33",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 56,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795436903236-831",
       "category": "marketing",
       "categoryName": "Маркетинг",
