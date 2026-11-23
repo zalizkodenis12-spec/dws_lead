@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795439567080-774",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "gamedev_roblox",
+      "subcategoryName": "gamedev_roblox",
+      "sourceType": "chat",
+      "sourceName": "Remote IT (Inflow)",
+      "sourceUsername": "@Remoteit",
+      "authorName": "ttps",
+      "authorUsername": "@ttps",
+      "title": "Доброго понедельника, друзья!",
+      "text": "Доброго понедельника, друзья!\nПока я готовлю новый закрытый канал с вакансиями в геймдеве для гд, нарративов, пм и продюсеров я хочу сообщить что один из каналов моей сетки был подарен человеку который о нем наверняка позаботится лучше чем я :) Несколько лет назад уже было понятно что недостаток хороших новостей наводит на грустные мысли и это надо исправлять - появился канал с хорошими новостями - https://t.me/gooddaily и вот после долгого перерыва, новая хозяйка всерьез взялась за дело. Давайте поддержим Дашу подписками а она в ответ будет публиковать только хорошие новости)",
+      "date": "2026-11-23T13:12:47.079Z",
+      "dateFormatted": "Сьогодні, 15:12",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: gamedev_roblox.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795439326108-494",
       "category": "development",
       "categoryName": "Веброзробка",
