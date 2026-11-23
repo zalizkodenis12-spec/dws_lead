@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795472765370-439",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "neversuptou",
+      "authorUsername": "@neversuptou",
+      "title": "🔥 Резюме Fullstack-разработчик — Web + GenAI от @neversuptou, от 150 000₽,...",
+      "text": "🔥 Резюме Fullstack-разработчик — Web + GenAI от @neversuptou, от 150 000₽, РФ, удаленно, фуллтайм или парт-тайм\n\n⭐ Заменил платный DeepSeek на дообученный rubert-tiny2 (3 736 заявок): 93% точности против 95,8%, но бесплатно и за 0,1–0,5 с на CPU\n⭐ Парсер заявок из Telegram в проде: ~80 заявок в день при расходе меньше 3 юаней в сутки\n⭐ Живой коммерческий продукт Selleria ([https://selleria-ai.ru](https://selleria-ai.ru)) с биллингом через Robokassa, автовозвратами при ошибках LLM и учётом токенов",
+      "date": "2026-11-23T22:26:05.366Z",
+      "dateFormatted": "Сьогодні, 00:26",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795470571210-4698",
       "category": "marketing",
       "categoryName": "Маркетинг",
