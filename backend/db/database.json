@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795532635361-515",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "google_ads",
+      "subcategoryName": "Google реклама",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "anystalina",
+      "authorUsername": "@tg_id_371627790",
+      "title": "ШУКАЄМО ФАХІВЦЯ З КОНТЕКСТНОЇ РЕКЛАМИ (GOOGLE ADS) 📱📱",
+      "text": "ШУКАЄМО ФАХІВЦЯ З КОНТЕКСТНОЇ РЕКЛАМИ (GOOGLE ADS) 📱📱\nПотрібен спеціаліст для просування нашого сайту в Google Ads.\n\nОсновні завдання\n- Запуск, ведення та оптимізація рекламних кампаній.\n- Спільна підготовка щомісячного звіту, аналіз результатів і планування подальших дій.",
+      "date": "2026-11-24T15:03:55.360Z",
+      "dateFormatted": "Сьогодні, 17:03",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: google реклама.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795532191357-291",
       "category": "marketing",
       "categoryName": "Маркетинг",
