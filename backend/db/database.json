@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795536815036-791",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "ecommerce",
+      "subcategoryName": "Онлайн-магазин",
+      "sourceType": "chat",
+      "sourceName": "Mobile jobs | Вакансии/Резюме",
+      "sourceUsername": "@mobile_vacancies",
+      "authorName": "Robin Taylor",
+      "authorUsername": "@tg_id_9011908485",
+      "title": "Нужны участники для тестирования нового интернет-магазина. Оплата 3000р...",
+      "text": "Нужны участники для тестирования нового интернет-магазина. Оплата 3000р",
+      "date": "2026-11-24T16:13:35.034Z",
+      "dateFormatted": "Сьогодні, 18:13",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: онлайн-магазин.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795536507418-431",
       "category": "development",
       "categoryName": "Веброзробка",
