@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795542905993-692",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Traffka",
+      "authorUsername": "@trafflover",
+      "title": "Здравствуйте! Ищу работ UA manager Igaming/mobile apps. Гео европа и южная...",
+      "text": "Здравствуйте! Ищу работ UA manager Igaming/mobile apps. Гео европа и южная азия, источники-meta ads и unity ads.\nROAS: 100+ 7D",
+      "date": "2026-11-24T17:55:05.944Z",
+      "dateFormatted": "Сьогодні, 19:55",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795540722166-114",
       "category": "montage",
       "categoryName": "Монтаж",
