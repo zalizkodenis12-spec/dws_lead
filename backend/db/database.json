@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795537854816-511",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "javascript_jobs_feed",
+      "authorUsername": "@javascript_jobs_feed",
+      "title": "💼 Вакансия Senior Fullstack (TypeScript) в ChatMarket, от 200 000 до 280 0...",
+      "text": "💼 Вакансия Senior Fullstack (TypeScript) в ChatMarket, от 200 000 до 280 000₽, удаленка, фуллтайм",
+      "date": "2026-11-24T16:30:54.769Z",
+      "dateFormatted": "Сьогодні, 18:30",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795536815036-791",
       "category": "development",
       "categoryName": "Веброзробка",
