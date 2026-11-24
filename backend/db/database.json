@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795534680952-768",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Маркетологи та Креатив: робота та резюме",
+      "sourceUsername": "@marketing_jobs_ua",
+      "authorName": "HR “Panaceya.agency”",
+      "authorUsername": "@Panaceyaagency",
+      "title": "Шукаємо відеомонтажера в агенцію🎬",
+      "text": "Шукаємо відеомонтажера в агенцію🎬\n\nЩо ти отримаєш:\n• Роботу з цікавими та різноплановими проєктами\n• Гідну та своєчасну оплату\n• Дружню команду й комфортну комунікацію\n• Можливість професійно розвиватися\n\nЩо для нас важливо:\n• Досвід у сфері відеомонтажу від 6 місяців\n• Досвід монтажу Reels, Stories та інших відеоформатів\n• Вміння працювати з субтитрами, переходами, музикою та звуком\n• Розуміння актуальних трендів і сучасних монтажних прийомів\n• Відповідальність, уважність до деталей та дотримання дедлайнів\n\n🌍 Віддалено\n📱 Повна зайнятість\n\nЗацікавила вакансія? Пиши нам одразу в особисті «монтаж»📩",
+      "date": "2026-11-24T15:38:00.923Z",
+      "dateFormatted": "Сьогодні, 17:38",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 47,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795532635361-515",
       "category": "marketing",
       "categoryName": "Маркетинг",
