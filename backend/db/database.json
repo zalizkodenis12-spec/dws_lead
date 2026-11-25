@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795617835123-307",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "Remote IT (Inflow)",
+      "sourceUsername": "@Remoteit",
+      "authorName": "Remoteit",
+      "authorUsername": "@Remoteit",
+      "title": "FRONTEND DEVELOPER (VUE/NUXT) | REMOTE GLOBAL / CY / GE | STARTRIBE #remore...",
+      "text": "FRONTEND DEVELOPER (VUE/NUXT) | REMOTE GLOBAL / CY / GE | STARTRIBE #remore #fulltime #itjob https://teletype.in/@remoteit/xT86wbkYmAG Вот как раз из закрытого канала вакансия.",
+      "date": "2026-11-25T14:43:55.123Z",
+      "dateFormatted": "Сьогодні, 16:43",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795617716638-6582",
       "category": "development",
       "categoryName": "Веброзробка",
