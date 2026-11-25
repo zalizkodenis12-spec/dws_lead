@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795615737331-680",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Remote IT (Inflow)",
+      "sourceUsername": "@Remoteit",
+      "authorName": "uces",
+      "authorUsername": "@uces",
+      "title": "Доброго вечера всем.",
+      "text": "Доброго вечера всем.\nХочу напомнить что больше 2 месяцев существует закрытый канал с вакансиями для FRONTEND (Больше 400 вакансий), месяц работает закрытый канал для GO/PHP и вот сегодня мы запустили новый закрытый канал с вакансиями DESIGN AND PRODUCE - канала с вакансиями для Game / Narrative Designers / PM и Game Produces . Как и в первых 2 каналах ежедневно публикуем в среднем 6 а иногда и более вакансий. В том числе с релокацией. Без джуновских вакансий - только Middle/Senior. Если для вас - время это ценный ресурс - присоединяйтесь и экономьте время на поиске, вычитке и просмотре вакансий.",
+      "date": "2026-11-25T14:08:57.329Z",
+      "dateFormatted": "Сьогодні, 16:08",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795615509773-462",
       "category": "marketing",
       "categoryName": "Маркетинг",
