@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795639861560-172",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Irina Kovalenko",
+      "authorUsername": "@tg_id_9072181378",
+      "title": "Хай!",
+      "text": "Хай!\nИщу ассистента таргетолога\nС тебя: КРЕО, настройка, отчеты\nС меня: стратегия, менторство и проекты\n\nПиши в личку/ Заполняй форму",
+      "date": "2026-11-25T20:51:01.558Z",
+      "dateFormatted": "Сьогодні, 22:51",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795633217037-765",
       "category": "marketing",
       "categoryName": "Маркетинг",
