@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795629121784-351",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "HR NewLook",
+      "authorUsername": "@tg_id_7606813822",
+      "title": "🔥 Шукаю SMM-менеджера в онлайн-школу NewLook (віддалено)!",
+      "text": "🔥 Шукаю SMM-менеджера в онлайн-школу NewLook (віддалено)!\n\nЯкщо вам хочеться, щоб Instagram був повністю у ваших руках: від ідеї та контент-плану до готового допису, сторіс чи рілса, — ця роль для вас.\n\nВажливо, щоб ви:\n– мали 2+ роки досвіду в SMM і результати в цифрах\n– впевнено працювали у Figma\n– знімали й монтували Reels (та були готові бути обличчям бренду у соцмережах)\n– генерували ідеї та мали своє бачення\n\n📌 віддалено, гнучкий графік, $1000–1500, можливість вирости до SMM Lead\n\n👉 Цікаво ?\nНадсилайте портфоліо або рекомендацію в особисті 💬",
+      "date": "2026-11-25T17:52:01.780Z",
+      "dateFormatted": "Сьогодні, 19:52",
+      "budget": 62500,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 89,
+      "aiSummary": "Замовлення: монтаж reels/tiktok з бюджетом 62500 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795628516506-1176",
       "category": "development",
       "categoryName": "Веброзробка",
