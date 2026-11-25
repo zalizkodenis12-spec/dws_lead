@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795605327205-140",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": ".",
+      "authorUsername": "@tg_id_1452286566",
+      "title": "Привіт! 👋 Я допомагаю зробити ваш бізнес і контент помітнішими в інтернеті...",
+      "text": "Привіт! 👋 Я допомагаю зробити ваш бізнес і контент помітнішими в інтернеті.\n🎬 Монтаж відео для Reels, Shorts і TikTok. Працюю з вашими матеріалами: швидкі склейки, субтитри, музика та звукові ефекти, щоб ролики були динамічними.\n🤖 Telegram-боти для бізнесу: прийом заявок, відповіді клієнтам, каталог.\n💻 Сайти для товарів і послуг: допоможу представити вашу пропозицію.\nПишить у пп",
+      "date": "2026-11-25T11:15:27.205Z",
+      "dateFormatted": "Сьогодні, 13:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795605310512-6934",
       "category": "development",
       "categoryName": "Веброзробка",
