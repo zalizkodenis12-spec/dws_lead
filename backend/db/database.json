@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795617478052-467",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "multipages",
+      "subcategoryName": "Багатосторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "YuliaJOIDY",
+      "authorUsername": "@YuliaJOIDY",
+      "title": "Шукаємо Senior DevOps Engineer (Microsoft Azure) 🚀",
+      "text": "Шукаємо Senior DevOps Engineer (Microsoft Azure) 🚀\n\n📍 Локація: 100% Remote (ЄС, оверлап із CET)\n\n🕐 Формат: Full-Time (довготривалий контракт) | Старт: ASAP\n\nℹ️ Про проєкт:\n\nРоль ключового DevOps SME у мультидисциплінарній DevSecOps-команді для інноваційного digital-консалтингу. Повна відповідальність за хмарну інфраструктуру Microsoft Azure, CI/CD пайплайни, безпеку та стабільність продакшн-сервісів.\n\n🛠 Основний стек:\n\nCloud & PaaS: Microsoft Azure, Azure Service Fabric, Azure PaaS, AWS (плюс)\n\nContainers & CI/CD: Kubernetes, Docker, Azure DevOps (експертний рівень), Jenkins / CircleCI / Bitbucket Pipelines\n\nAutomation & OS: Python, Linux, NGINX, Apache2\n\n📌 Ключові вимоги:\n\nЕкспертне володіння Azure DevOps та  досвід побудови інфраструктури на Microsoft Azure.\n\nВпевнена робота з Docker, Kubernetes, Azure Service Fabric та PaaS.\n\nСильні навички скриптингу на Python.\n\nВпровадження DevSecOps-практик, й HA-архітектур.\n\nАнглійська: Upper-Intermediate / Fluent.\n\n📩 Пишіть @YuliaJOIDY 🙌",
+      "date": "2026-11-25T14:37:58.049Z",
+      "dateFormatted": "Сьогодні, 16:37",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: багатосторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795617060771-715",
       "category": "development",
       "categoryName": "Веброзробка",
