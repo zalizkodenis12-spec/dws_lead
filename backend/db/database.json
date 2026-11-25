@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795617901524-594",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "DOU Jobs: DevOps | SysAdmin",
+      "sourceUsername": "@dou_jobs",
+      "authorName": "dou_jobs",
+      "authorUsername": "@dou_jobs",
+      "title": "🔸 SharePoint Administrator/ Developer в Kyivstar.Tech",
+      "text": "🔸 SharePoint Administrator/ Developer в Kyivstar.Tech\n📍 Київ, віддалено\nПро нас\nKyivstar.Tech — українська гібридна ІТ-компанія, резидент Дія.City. Ми є дочірньою компанією Київстар, одного з найбільших українських операторів зв’язку.\nНаша місія — змінювати життя в Україні та в світі, створюючи технологічні рішення і продукти, що реалізують потенціал компаній і…",
+      "date": "2026-11-25T14:45:01.524Z",
+      "dateFormatted": "Сьогодні, 16:45",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795617835123-307",
       "category": "development",
       "categoryName": "Веброзробка",
