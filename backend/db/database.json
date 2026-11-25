@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795625715116-818",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@rumbubblegum",
+      "title": "Senior Performance Marketing Specialist",
+      "text": "Senior Performance Marketing Specialist\nв OnBali — travel media и маркетинговое агентство, которое помогает ресторанам, отелям, виллам, wellness-проектам, туристическим сервисам и lifestyle-брендам привлекать клиентов через контент, рекламу и digital-маркетинг.\nУдалённая работа (часовые пояса Бали или Москвы) или гибрид (Индонезия).\nОписание вакансии на GeekJob.ru",
+      "date": "2026-11-25T16:55:15.115Z",
+      "dateFormatted": "Сьогодні, 18:55",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795624916017-6367",
       "category": "development",
       "categoryName": "Веброзробка",
