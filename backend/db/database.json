@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795619341831-507",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "WordPress Russian Community",
+      "sourceUsername": "@wordpress_ru",
+      "authorName": "Ярослав Попов",
+      "authorUsername": "@yarops",
+      "title": "Спорят Элементор с Битриксом чей эяй круче.",
+      "text": "Спорят Элементор с Битриксом чей эяй круче.\n\nЭ: Да мой сайт бацает за час - сразу номенация топ-5 Аввард года.\nБ: А мой за полчаса - такой, что клиенты полдня сидят кнопочки тычут - уходить не хотят\nЭ: А я еще кофе варю, только к аппараату коннект настрой\nБ: А я еще клиенту это кофе допом отгружаю за 1,5 прайса!\n\nГигачат: ребят, я тут ваши проекты случайно удалил, посмотрите есть ли бэкапы.",
+      "date": "2026-11-25T15:09:01.830Z",
+      "dateFormatted": "Сьогодні, 17:09",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795619161779-602",
       "category": "marketing",
       "categoryName": "Маркетинг",
