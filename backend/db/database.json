@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795724839246-887",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Ірина Донець",
+      "authorUsername": "@tg_id_510968574",
+      "title": "Всім привіт! 🤍",
+      "text": "Всім привіт! 🤍\n\nШукаю спеціалістів у команду:\n\n• Stories Maker — написання сторітейлів, генерація ідей, візуальне оформлення Stories, монтаж коротких відео.\n\n• SMM-спеціаліст — розробка стратегії, створення контент-плану, написання текстів та сценаріїв, оформлення й ведення сторінок, аналітика.\n\nЗацікавлених прошу писати в особисті повідомлення. Одразу надсилайте своє портфоліо, прайс та детальний перелік того, що входить у вартість ваших послуг.\n\nРозглядаю довгострокову співпрацю 🫶🏻",
+      "date": "2026-11-26T20:27:19.177Z",
+      "dateFormatted": "Сьогодні, 22:27",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 56,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795723281028-125",
       "category": "development",
       "categoryName": "Веброзробка",
