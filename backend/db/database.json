@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795711291856-703",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Віталій Власовець",
+      "authorUsername": "@tg_id_1006042624",
+      "title": "Привіт. Потрібні  послуги з Таргетованої реклами у Facebook та Instagram. Т...",
+      "text": "Привіт. Потрібні  послуги з Таргетованої реклами у Facebook та Instagram. Тоді вам до мене, я зможу вашому бізнесу знайти більше клієнтів на основі підбору цільової аудиторії саме для вашого бізнесу з урахуванням ваших побажань.Якщо комусь цікаво пишіть, буду радий обговорити з вами більш детально.",
+      "date": "2026-11-26T16:41:31.807Z",
+      "dateFormatted": "Сьогодні, 18:41",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795708803260-795",
       "category": "marketing",
       "categoryName": "Маркетинг",
