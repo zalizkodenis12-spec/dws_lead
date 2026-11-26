@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795702616608-204",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Анастасія",
+      "authorUsername": "@tg_id_384247611",
+      "title": "Привіт 🙋‍♀️",
+      "text": "Привіт 🙋‍♀️\nШукаю досвідчених SMM-менторів, незалежних експертів або агенції для проведення аудиту та стратегічного консалтингу для компанії.\n\nЦікавить комплексний аналіз поточної SMM-стратегії, оцінка ефективності контенту, виявлення точок росту та практичні рекомендації щодо розвитку соціальних мереж.\n\nВажливий досвід роботи з великими брендами та наявність успішних кейсів.\n\nБуду вдячна за рекомендації та контакти перевірених спеціалістів 🙌",
+      "date": "2026-11-26T14:16:56.580Z",
+      "dateFormatted": "Сьогодні, 16:16",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795701607021-884",
       "category": "marketing",
       "categoryName": "Маркетинг",
