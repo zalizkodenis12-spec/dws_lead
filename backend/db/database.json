@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1795736788659-1137",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "freelancehunt",
+      "sourceName": "Freelancehunt",
+      "sourceUsername": "@freelancehunt",
+      "authorName": "Замовник на Freelancehunt",
+      "authorUsername": "@freelancehunt",
+      "title": "Специалист по генерации лидов для обмена или финтеха – рынок Африки",
+      "text": "Специалист по генерации лидов для обмена или финтеха – рынок Африки\n\nИщем специалиста по генерации лидов\n\nМы управляем обменным сервисом, ориентированным на Африку (Кения), и нам нужен опытный специалист, который быстро приведет нам лиды.\n\n\nКаналы: любые, которые работают. Платная реклама (Google, Meta, PPC), социальные сети, инфлюенсеры, WhatsApp, Telegram, SMS, радио,...",
+      "url": "https://freelancehunt.com/project/lead-generation-specialist-for-exchange/1666854.html",
+      "date": "2026-11-26T23:46:28.658Z",
+      "dateFormatted": "Сьогодні, 01:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Freelancehunt",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення на Freelancehunt: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795735191607-751",
       "category": "development",
       "categoryName": "Веброзробка",
