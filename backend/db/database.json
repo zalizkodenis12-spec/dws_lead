@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795718466917-711",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "React Native & Expo Jobs - работа связанная с react-native",
+      "sourceUsername": "@react_native_jobs",
+      "authorName": "Nursultan Kadyrov",
+      "authorUsername": "@nursultankzh",
+      "title": "Архитектура для второго раунда списком",
+      "text": "Архитектура для второго раунда списком\n1. Четыре уровня, которые держать в голове\nСистема: как приложение говорит с банком. BFF на канал, read-модели на событиях, никаких синхронных вызовов в core, команды с idempotency key.\nКодовая база: как 5–10 сквадов работают вместе. Nx-монорепо, feature → domain, границы в CI, дизайн-система, общие пакеты.\nПриложение: что внутри. Shell, фичи, данные, дизайн-система, натив; серверное и клиентское состояние раздельно; навигация с auth flow.\nДоставка: как выпускать быстро поверх медленного стора. CI/CD, флаги, kill-switch, SDUI, OTA, поэтапная раскатка, наблюдаемость.\nСквозные темы: безопасность, офлайн, арабский и RTL, AI-чат.\n2. Схема, которую рисуешь за 2 минуты\nМобильное приложение: React Native + Expo + New Architecture; веб — позже.\nВнутри приложения:\nShell: запуск, конфиг, навигация.\nFeatures: accounts, cards, payments, transfers, AI chat.\nData: API-клиент из OpenAPI, TanStack Query, store сессии.\nDesign system: токены, компоненты, RTL, доступность.\nNative: Keychain / Keystore, биометрия, антифрод SDK, push.\nКанал: HTTPS + pinning, App Attest / Play Integrity; REST для запросов, SSE для стриминга и статусов.\nBFF на канал: данные под экран, auth, rate limit, флаги, SDUI-схемы.\nЧтение: BFF → read-модели и кэш ← события (Kafka / CDC) ← core.\nЗапись: BFF → команда с idempotency key → очередь → core.\nСквозное: Sentry / Crashlytics, RUM, продуктовые события, SLO-алерты, синтетика.\n3. Ключевые решения: выбор → почему → цена\nПлатформа: React Native + Expo → одна команда, общая логика с вебом → нативные краши и сборки всё равно нужно знать.\nРепозиторий: Nx-монорепо → атомарные изменения, общие пакеты без версий → тяжёлый CI и связность. Код вендора или security SDK — отдельный репо.\nСтруктура: feature-based, потом domain-based → фичи и домены совпадают с командами → нужна дисциплина границ.\nГраницы: теги Nx и lint в CI, публичный index.ts, CODEOWNERS → папки сами не защищают от импортов.\nМикрофронтенды: нет, на мобильном модульный монолит в одном бинаре; независимость дают флаги и SDUI. Re.Pack — только если правда нужны независимые релизы команд.\nИнтеграция: BFF + read-модели → core не получает запрос на каждый экран → данные отстают, честно показываем «обновлено в 14:05».\nСостояние: TanStack Query для серверного, Zustand для клиентского.\nХранилища: Keychain / Keystore — секреты; MMKV — настройки (ключ шифрования в Keychain); SQLite — офлайн-кэш.\nОфлайн: чтение из кэша; безопасные действия через outbox; деньги — только онлайн.\nРелизы: флаги + kill-switch + phased release + OTA для JS + минимальная версия → бинарь нельзя откатить → флаги нужно поддерживать и чистить.\nSDUI: только для часто меняющихся частей (промо, онбординг), не для платёжных экранов → сложнее тестировать, нужна версия схемы.",
+      "date": "2026-11-26T18:41:06.775Z",
+      "dateFormatted": "Сьогодні, 20:41",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795715188915-5652",
       "category": "marketing",
       "categoryName": "Маркетинг",
