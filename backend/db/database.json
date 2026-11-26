@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795700056087-638",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "CRESSO AGENCY",
+      "authorUsername": "@tg_id_8993207345",
+      "title": "Вітаємо! Знайомтеся, ми — Cresso Agency.",
+      "text": "Вітаємо! Знайомтеся, ми — Cresso Agency.\n\nМи команда спеціалістів, яка бере на себе монтаж відео та дизайн контенту для блогерів, експертів і бізнесів.\n\nПонад 5 років досвіду, робота з відомими блогерами, публічними особистостями та невеликими проєктами.\n\nПрацюємо індивідуально з кожним клієнтом, дотримуємося дедлайнів та орієнтуємося на результат.\n\nБудемо раді вашому зверненню та співпраці! 🤍",
+      "date": "2026-11-26T13:34:16.086Z",
+      "dateFormatted": "Сьогодні, 15:34",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795699849303-915",
       "category": "montage",
       "categoryName": "Монтаж",
