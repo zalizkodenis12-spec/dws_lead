@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795711804058-374",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Наталія Кравчук",
+      "authorUsername": "@Natalia_Kravchuk95",
+      "title": "🖤 ШУКАЮ ПЕРШІ ПРОЄКТИ НА SMM-ВЕДЕННЯ!",
+      "text": "🖤 ШУКАЮ ПЕРШІ ПРОЄКТИ НА SMM-ВЕДЕННЯ!\n\nЯ тільки починаю свій шлях у SMM і зараз відкрита до співпраці з новими проєктами.\n\nЧим можу бути корисна?\n✨ Розробка контент-плану та SMM-стратегії\n✨ Пошук ідей для дописів, Stories та Reels\n✨ Написання текстів і сценаріїв\n✨ Монтаж Reels\n✨ Робота над візуалом та оформленням профілю\n✨ Аналіз сторінки й рекомендації щодо покращення\n\nЯ використовую AI-інструменти, постійно навчаюся та відповідально ставлюся до кожного проєкту 🤍\n\n🔥 А зараз ще й Black Friday! Тому для перших проєктів підготувала особливо приємну ціну на SMM-ведення.\n\nЯкщо давно хотіли делегувати Instagram або навести лад у своїй сторінці - це саме той момент!\n\nДеталі @Natalia_Kravchuk95",
+      "date": "2026-11-26T16:50:04.057Z",
+      "dateFormatted": "Сьогодні, 18:50",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795711588181-2473",
       "category": "development",
       "categoryName": "Веброзробка",
