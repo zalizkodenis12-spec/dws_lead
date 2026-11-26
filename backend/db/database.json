@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795733337678-97",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "oper",
+      "authorUsername": "@oper",
+      "title": "📃 Резюме Frontend Developer (React / Next.js) от @romanzzzzzz, $20/час, уд...",
+      "text": "📃 Резюме Frontend Developer (React / Next.js) от @romanzzzzzz, $20/час, удаленно, проектная или частичная занятость",
+      "date": "2026-11-26T22:48:57.675Z",
+      "dateFormatted": "Сьогодні, 00:48",
+      "budget": 1000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: frontend розробка з бюджетом 1000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795733208996-4212",
       "category": "development",
       "categoryName": "Веброзробка",
