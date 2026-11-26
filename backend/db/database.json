@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795706000289-338",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Анастасія",
+      "authorUsername": "@tg_id_701406835",
+      "title": "Кому потрібен монтаж відео?🧐",
+      "text": "Кому потрібен монтаж відео?🧐\n\nПрацюю з будь яким форматом,є вигідні пакетні пропозиції , готові відео віддаю дуже швидко - тому давайте співпрацювати!🔥",
+      "date": "2026-11-26T15:13:20.287Z",
+      "dateFormatted": "Сьогодні, 17:13",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795705389751-291",
       "category": "marketing",
       "categoryName": "Маркетинг",
