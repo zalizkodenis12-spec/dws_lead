@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795722900587-407",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Tilda Publishing News Chat",
+      "sourceUsername": "@tilda_official_chat",
+      "authorName": "Murad — Web Developer",
+      "authorUsername": "@tg_id_590495890",
+      "title": "Тильда сам по себе не уведомляет о ошибках с вебхук.",
+      "text": "Тильда сам по себе не уведомляет о ошибках с вебхук.\n\nВ одном проекте мы столкнулись с такой проблемой.\nЯ нашел решение, развернул свой api getaway в яндексе, на которую отправлял заявки с тильда.\n\nНа стороне яндекса в случае фейла при получении заявок по вебхуку я настроил отправку уведомлений с помощью тг бота.\n\nЕсли все ок то яндекс передает заказ дальше в срмку.",
+      "date": "2026-11-26T19:55:00.553Z",
+      "dateFormatted": "Сьогодні, 21:55",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795722387232-6057",
       "category": "marketing",
       "categoryName": "Маркетинг",
