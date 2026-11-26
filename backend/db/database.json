@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795705076604-474",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "tiktok_ads",
+      "subcategoryName": "TikTok реклама",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Sonja",
+      "authorUsername": "@tg_id_950544646",
+      "title": "шукаю проєкти, яким потрібен SMM 💌",
+      "text": "шукаю проєкти, яким потрібен SMM 💌\n\nмаю 2 роки досвіду роботи з різними нішами: від мобільних ігор до б’юті та культурно-освітніх проєктів)\n\nможу долучитися як до повноцінного ведення соцмереж, так і до окремих завдань:\n— розробка SMM-стратегії;\n— створення контент-плану та рубрикатора;\n— написання текстів і сценаріїв;\n— створення контенту для Stories та дописів;\n— монтаж Reels / TikTok;\n— оформлення та ведення профілю;\n— аналіз результатів\n\nвідкрита до різних форматів співпраці — разових завдань, проєктної роботи або довгострокового ведення.\n\nякщо шукаєте SMM-спеціаліста або потрібна допомога з окремими задачами - буду рада поспілкуватися! ☺️",
+      "date": "2026-11-26T14:57:56.604Z",
+      "dateFormatted": "Сьогодні, 16:57",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 63,
+      "aiSummary": "Замовлення: tiktok реклама.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795704389416-695",
       "category": "development",
       "categoryName": "Веброзробка",
