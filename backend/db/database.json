@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795700924980-687",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Ярослав Ситник",
+      "authorUsername": "@tg_id_8143020478",
+      "title": "Привіт! 👋 Шукаю нові проєкти з відеомонтажу 🎬",
+      "text": "Привіт! 👋 Шукаю нові проєкти з відеомонтажу 🎬\n\nПрикріпив приклади моїх робіт. Буду радий співпраці! 🤝",
+      "date": "2026-11-26T13:48:44.979Z",
+      "dateFormatted": "Сьогодні, 15:48",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": false,
+      "aiRating": 50,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795700787169-6541",
       "category": "marketing",
       "categoryName": "Маркетинг",
