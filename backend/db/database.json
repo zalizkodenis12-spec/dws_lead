@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795698813923-267",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@rumbubblegum",
+      "title": "Ищем композера",
+      "text": "Ищем композера\n\nМы — k.post: ссылка студия компьютерной графики для рекламы. Делаем Full CG и ИИ-ролики, занимаемся графикой и постпродакшеном съёмочных проектов. В портфолио — работы для Сбера, ВТБ и Т-Банка.\n\nНа VFX-проект нужен Compositing artist для работы над шотами. Задачи — стандартный набор: композитинг CG, интеграция ИИ-исходников в съёмочный материал, клинапы, трекинг камер.\nВ отклике приложите пару шотов с интеграциями в съёмку. Если есть breakdown, добавьте его.\n\nФриланс\nСроки [04.12-25.12]\nБюджет [по договорённости]\nTelegram [@ATumasov: ссылка] · Сайт студии ссылка\n\n🧐🥰Лучшие свежие вакансии геймдева постятся в канале ссылка\nПарсинг всех доступных новых вакансий геймдева по ключевым словам здесь в реальном времени! ссылка 👈💽💾💡",
+      "date": "2026-11-26T13:13:33.922Z",
+      "dateFormatted": "Сьогодні, 15:13",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795698070963-452",
       "category": "marketing",
       "categoryName": "Маркетинг",
