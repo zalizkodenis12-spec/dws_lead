@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795812437067-887",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Чат: продажі на Prom.ua / Rozetka",
+      "sourceUsername": "@evo_prom",
+      "authorName": "Ydmgp Ozindvt",
+      "authorUsername": "@tg_id_8978879428",
+      "title": "🔝 Прокачка Telegram-проектов 🔝",
+      "text": "🔝 Прокачка Telegram-проектов 🔝\n\n☑️ Инвайты в чаты\n☑️ Массовая рассылка по чатам\n☑️ Рассылки в личные сообщения\n☑️ Сбор и парсинг аудитории\n☑️ Актуальные базы чатов\n☑️ Спец-софт для продвижения\n☑️ Разработка скриптов, сайтов, ботов",
+      "date": "2026-11-27T20:47:17.066Z",
+      "dateFormatted": "Сьогодні, 22:47",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795811709210-741",
       "category": "montage",
       "categoryName": "Монтаж",
