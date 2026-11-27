@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795775547873-201",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "Варшава Новости | The Warsaw",
+      "sourceUsername": "@thewwarsaw",
+      "authorName": "thewwarsaw",
+      "authorUsername": "@thewwarsaw",
+      "title": "🎬🏰 Чем заняться на этих выходных в Варшаве (27–29 ноября): ярмарки, пряни...",
+      "text": "🎬🏰 Чем заняться на этих выходных в Варшаве (27–29 ноября): ярмарки, пряничный город и бесплатные концерты\n\nПоследние выходные ноября в Варшаве: на открытие Kino Tęcza приезжает Тильда Суинтон, в Вилянове впервые устраивают адвентную ярмарку, а в центре города можно увидеть Варшаву из пряников. Собрали события на 27–29 ноября — куда сходить, что посмотреть и где не придётся платить за вход.\n\nhttps://www.the-warsaw.pl/188433/\n\nРабота | Прислать новость | Заказать рекламу | Бот для поиска жилья",
+      "date": "2026-11-27T10:32:27.833Z",
+      "dateFormatted": "Сьогодні, 12:32",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Польща",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795773542389-805",
       "category": "marketing",
       "categoryName": "Маркетинг",
