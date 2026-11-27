@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795792320222-34",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "ecommerce",
+      "subcategoryName": "Онлайн-магазин",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Irina_MK26",
+      "authorUsername": "@Irina_MK26",
+      "title": "🚗 Вакансія: Media Buyer | віддалена робота, full time / part time",
+      "text": "🚗 Вакансія: Media Buyer | віддалена робота, full time / part time\n\n📍Віддалено, full time / part time\n\nНіша: автохімія та автотовари\n\n\nШукаємо спеціаліста (або команду) з досвідом арбітражу трафіку для інтернет-магазину, автохімія та автотовари.\n\nПотрібно запускати й масштабувати рекламні кампанії в Google Ads, Facebook, Instagram та TikTok з метою збільшення продажів.\n\nОсновна задача — залучення реальних покупців і збільшення кількості викуплених замовлень.\n\nЦікавить досвід роботи з товарними інтернет-магазинами, самостійне ведення рекламних кампаній, аналітика та оптимізація реклами.\n\nУ відгуку просимо вказати досвід, рекламні канали, з якими працюєте, приклади результатів та умови співпраці.\n\nДля звʼязку @callmeanichka ✉️\n\n#таргетолог #баєр #арбітраж #віддаленаробота #фріланс\n\n———\n🔗 Більше вакансій ти знайдеш у нашому\nчаті з вакансіями\nРозмістити вакансію @Irina_MK26",
+      "date": "2026-11-27T15:12:00.221Z",
+      "dateFormatted": "Сьогодні, 17:12",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 65,
+      "aiSummary": "Замовлення: онлайн-магазин.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795790790838-2737",
       "category": "development",
       "categoryName": "Веброзробка",
