@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795767018428-721",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "𝐌𝐚𝐫𝐭𝐚 𝐇𝐫𝐮𝐝𝐤𝐚",
+      "authorUsername": "@tymosh2",
+      "title": "🚀 РОЗРОБКА • ДИЗАЙН • МОНТАЖ",
+      "text": "🚀 РОЗРОБКА • ДИЗАЙН • МОНТАЖ\n💻 Сайти, Telegram-боти, додатки\n🎨 Логотипи, банери, UI/UX дизайн\n🎬 Моушн-дизайн, анімації, монтаж\n📱 Shorts, Reels, TikTok, оформлення соцмереж\n🤖 AI-контент, автоматизація, 3D\n📈 Рекламні креативи та просування\n⚡️ Якісно • Швидко • Доступно\n🎁 Консультація безкоштовна!\n📩 Замовлення та консультації ПИШІТЬ НА ЦЕЙ АКАУНТ  @tymosh2",
+      "date": "2026-11-27T08:10:18.366Z",
+      "dateFormatted": "Сьогодні, 10:10",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": true,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795766401252-869",
       "category": "development",
       "categoryName": "Веброзробка",
