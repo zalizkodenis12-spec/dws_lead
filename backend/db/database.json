@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1795754788727-3102",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "website_turnkey",
+      "subcategoryName": "Розробка сайтів та сервісів",
+      "sourceType": "weworkremotely",
+      "sourceName": "WeWorkRemotely",
+      "sourceUsername": "@weworkremotely",
+      "authorName": "Клієнт на WeWorkRemotely",
+      "authorUsername": "@weworkremotely",
+      "title": "OpenTrain AI: Full-Stack Engineer",
+      "text": "OpenTrain AI: Full-Stack Engineer\n\n<p>\n  <strong>Headquarters:</strong> United States\n    <br /><strong>URL:</strong> <a href=\"https://opentrain.ai/\">https://opentrain.ai/</a>\n</p>\n\n<p>Full-Stack Engineer, Part-Time AI Code Evaluation - Remote (United States)</p>\n<p>• $50–$100 per hour equivalent, paid per accepted task<br>• 100% remote<br>• Part-time<br>• Under 20 hours a week, you choose when</p>\n<p>Work on AI code evaluation on your own schedule, using your full-stack engineering judgment to create, review and validate software tasks.</p>\n<p>AI systems improve through examples reviewed by engineers. In this role, full-stack professionals design realistic tasks, assess generated code, write reference solutions",
+      "url": "https://weworkremotely.com/remote-jobs/opentrain-ai-full-stack-engineer",
+      "date": "2026-11-27T04:46:24.888Z",
+      "dateFormatted": "Сьогодні, 06:46",
+      "budget": 0,
+      "currency": "$",
+      "country": "WeWorkRemotely",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 88,
+      "aiSummary": "Замовлення на WeWorkRemotely: розробка сайтів та сервісів.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795747584881-2830",
       "category": "development",
       "categoryName": "Веброзробка",
