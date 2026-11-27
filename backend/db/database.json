@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795771345674-563",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "JEWELER",
+      "authorUsername": "@tg_id_963305225",
+      "title": "Добрый день, ищу трафик на черные нишы.",
+      "text": "Добрый день, ищу трафик на черные нишы.",
+      "date": "2026-11-27T09:22:25.615Z",
+      "dateFormatted": "Сьогодні, 11:22",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795771147643-652",
       "category": "development",
       "categoryName": "Веброзробка",
