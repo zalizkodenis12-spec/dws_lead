@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795780025264-408",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "PROMOVIE",
+      "authorUsername": "@tg_id_8275561661",
+      "title": "Шукаєш, хто запустить рекламу, яка приноситиме результат? 🚀",
+      "text": "Шукаєш, хто запустить рекламу, яка приноситиме результат? 🚀\n\nУ нас є команда під ключ — таргетолог і маркетолог, які працюють проєктно з різними бюджетами.\n\nТи приходиш зі своїм запитом і бюджетом, а ми беремо на себе стратегію, креативи, запуск та ведення реклами.\n\nПиши, обговоримо твій проєкт і підберемо рішення під твої цілі!",
+      "date": "2026-11-27T11:47:05.262Z",
+      "dateFormatted": "Сьогодні, 13:47",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: таргетована реклама (meta).",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795779990518-9278",
       "category": "marketing",
       "categoryName": "Маркетинг",
