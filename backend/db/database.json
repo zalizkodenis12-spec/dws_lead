@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795797286194-177",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "general",
+      "subcategoryName": "Монтаж",
+      "sourceType": "chat",
+      "sourceName": "DIGITAL Tender / freelance / фриланс",
+      "sourceUsername": "@digitaltender",
+      "authorName": "digitaltender",
+      "authorUsername": "@digitaltender",
+      "title": "👔 AI Video Creator / AI UGC-креатор",
+      "text": "👔 AI Video Creator / AI UGC-креатор\n\n💼 Тип работы: постоянная\n\n👀 Задача: В команду UGC-платформы ищем специалиста по созданию и переработке видеоконтента с помощью AI.\n\nЗадачи:\n— Переработка готовых UGC-роликов: замена продукта, фона, локации и отдельных деталей.\n— Создание реалистичных AI-персонажей и видеороликов с их участием.\n— Генерация и публикация контента в социальных сетях.\n\nТребования:\n— Практический опыт генерации и трансформации AI-видео.\n— Навыки работы с промптами.\n— Визуальная насмотренность и понимание трендов соцсетей.\n\nРабота внутри UGC-платформы. Профессиональные навыки видеомонтажа не требуются.\n\nУсловия: удалённая работа, долгосрочное сотрудничество, оплата обсуждается индивидуально.\n\nДля отклика присылайте портфолио и финансовые ожидания.\n\n💰 Оплата: по договорённости, обсуждается индивидуально",
+      "date": "2026-11-27T16:34:46.149Z",
+      "dateFormatted": "Сьогодні, 18:34",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: монтаж.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795795259233-63",
       "category": "marketing",
       "categoryName": "Маркетинг",
