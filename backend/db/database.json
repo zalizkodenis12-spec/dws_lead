@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795773542389-805",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "google_ads",
+      "subcategoryName": "Google реклама",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@SimArt1010",
+      "title": "Позиция: Mobile User Acquisition Manager / Performance Marketing Specialist...",
+      "text": "Позиция: Mobile User Acquisition Manager / Performance Marketing Specialist\nКомпания: Eye XP\nФормат работы: удалённо, проектное сотрудничество на 3 месяца с возможностью продления.\nЗарплата: договорная.\n\nEye XP — мобильное AI-приложение для анализа техники спортивных упражнений по видео.\nРынки: Узбекистан, в перспективе Казахстан. Платформы: Android и iOS.\nЗадачи:\nПривлечение целевого трафика через Google Ads.\nПродвижение приложения в Google Play и App Store (ASO).\nРазработка стратегии привлечения пользователей.\nОптимизация стоимости установок, активаций и платных подписок.\nТребования:\nПодтверждённые кейсы продвижения мобильных приложений.\nОпыт работы с международными рынками.\nУмение работать с CPI, CPA, CAC и ROAS.\nРассматриваем отдельных специалистов и команды. При отклике просим предоставить кейсы, предварительное видение стратегии и стоимость услуг отдельно от рекламного бюджета.\nКонтакты: @SimArt1010",
+      "date": "2026-11-27T09:59:02.365Z",
+      "dateFormatted": "Сьогодні, 11:59",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Казахстан",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: google реклама.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795773428869-29",
       "category": "marketing",
       "categoryName": "Маркетинг",
