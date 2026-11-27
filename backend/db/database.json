@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795778080813-917",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Irina_MK26",
+      "authorUsername": "@Irina_MK26",
+      "title": "💼 💜 Вакансія: Creative Strategist (Meta Ads) — ViralDrop.ai | віддалена р...",
+      "text": "💼 💜 Вакансія: Creative Strategist (Meta Ads) — ViralDrop.ai | віддалена робота, full time\n\n📍Віддалено, full time\n\nМасштабуємо ViralDrop.ai через Meta Ads у web2web-воронку з квізом на ринки US, UK, CA, AU\n\nЗакупівля та продакшн (SMM, відеокреатор, AI-дизайнер, UGC) -уже в команді\n\n\nПотрібен стратег під гіпотези, брифи та пошук креативів-переможців.\n\nВажливо мати:\nдосвід креативної стратегії в Meta Ads на бюджетах $100K+/міс;\nдосвід із мобільними додатками, підписним SaaS або web2web / квіз-воронками;\n5+ креативів за рік, кожен з яких витратив $10K+ за цільовим CPA;\nсильна письмова англійська під ресьорч і сценарії для ринку США.\n\nВід нас: перетин 4+ год із Києвом, оплата інструментів та AI-підписок, мінімум погоджень і ріст до ліда креативної команди.\nПишіть у особисті — одразу надішліть 3–5 креативів-переможців із цифрами (спенд, CPA або ROAS) та короткі відповіді на 3 вимоги вище.\n\nЗарплата: $2500 – $3500/міс + бонус за цілі\n\nДля звʼязку @klsn_ol ✉️\n\n#маркетолог #стратег #вакансія #віддаленаробота #роботаУкраїна\n\n———\n🔗 Більше вакансій ти знайдеш у нашому\nчаті з вакансіями\nРозмістити вакансію @Irina_MK26",
+      "date": "2026-11-27T11:14:40.766Z",
+      "dateFormatted": "Сьогодні, 13:14",
+      "budget": 4000,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 73,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 4000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795777322939-742",
       "category": "development",
       "categoryName": "Веброзробка",
