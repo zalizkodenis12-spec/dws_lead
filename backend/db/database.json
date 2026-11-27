@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795794301367-806",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "general",
+      "subcategoryName": "Веброзробка",
+      "sourceType": "chat",
+      "sourceName": "DOU Jobs: DevOps | SysAdmin",
+      "sourceUsername": "@dou_jobs",
+      "authorName": "dou_jobs",
+      "authorUsername": "@dou_jobs",
+      "title": "🔸 Системний адміністратор в Air3F",
+      "text": "🔸 Системний адміністратор в Air3F\n📍 Київ\n1. Про нас і задачуAir3F — розробник комплексних рішень для управління безпілотними системами: від НРК й наземних станцій до ретрансляторів і щогл.\nУсі продукти створюються українськими інженерами та проходять випробування в реальних бойових умовах. Ми поєднуємо власний R&D та практичний досвід,…",
+      "date": "2026-11-27T15:45:01.053Z",
+      "dateFormatted": "Сьогодні, 17:45",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": true,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: веброзробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795793686471-170",
       "category": "development",
       "categoryName": "Веброзробка",
