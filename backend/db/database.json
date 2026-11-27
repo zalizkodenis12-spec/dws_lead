@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795764041376-50",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "backend",
+      "subcategoryName": "Backend & API розробка",
+      "sourceType": "chat",
+      "sourceName": "Вакансии Backend/Frontend",
+      "sourceUsername": "@fordev",
+      "authorName": "Matvei Dudochkin",
+      "authorUsername": "@eSQL",
+      "title": "#вакансия #data #job #remote #fulltime #russia #РФ #dataengineer #middle #s...",
+      "text": "#вакансия #data #job #remote #fulltime #russia #РФ #dataengineer #middle #senior\n\n🔸Вакансия: Data Engineer (Middle-Senior)\n🔸ЗП: зп от 180\n🔸Формат работы: удаленка\n🔸Занятость: полная 5/2\n\n🔸Требования:\n— Python;\n— Spark;\n— SQL;\n— Airflow;\n— dbt;\n— Git;\n— Знание архитектур хранения данных;\n— S3;\n— Data Vault 2.0;\n— Понимание архитектуры платформы данных;\n— k8s (docker, docker compose);\n— Мониторинг (Grafana, Centry, Kibana);\n— Навыки работы с СУБД (PostgreSQL, ClickHouse, Greenplum, Oracle, MySQL);\n— NoSQL;\n— Управление доступностью и консистентностью данных;\n— DataHub.\n\n🔸Контакты HR:\nTelegram: @matvei_dudochkin",
+      "date": "2026-11-27T07:20:41.324Z",
+      "dateFormatted": "Сьогодні, 09:20",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 47,
+      "aiSummary": "Замовлення: backend & api розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795763759412-321",
       "category": "development",
       "categoryName": "Веброзробка",
