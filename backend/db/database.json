@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795767468183-583",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "backend",
+      "subcategoryName": "Backend & API розробка",
+      "sourceType": "chat",
+      "sourceName": "Gamedev & IT Job Finder",
+      "sourceUsername": "@gamedevjobtinder",
+      "authorName": "Ksenia K",
+      "authorUsername": "@rumbubblegum",
+      "title": "Senior Automation QA Engineer (Mobile Games / Unity) / Cleverside",
+      "text": "Senior Automation QA Engineer (Mobile Games / Unity) / Cleverside\nCyprus (Remote)\n\nCleverside is a mobile game developer renowned for its expertise in crafting engaging casual games.\n\nTLDR: Join Cleverside as a Senior QA Automation Engineer to build test automation for Unity mobile games, enhancing product quality and efficiency.\n\nТребования к кандидату:\n- 3+ years of experience in QA Automation\n- Experience in GameDev with Unity Engine\n- Knowledge of C#/Python/Java or similar\n- Familiarity with test automation tools and frameworks\n- Experience with CI/CD integration for automated tests\n\nЧитать подробнее:\n→ Откликнуться тут\n\nДругие вакансии:\n• Game Designer (part-time) ⚡️",
+      "date": "2026-11-27T08:17:48.181Z",
+      "dateFormatted": "Сьогодні, 10:17",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: backend & api розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795767018428-721",
       "category": "montage",
       "categoryName": "Монтаж",
