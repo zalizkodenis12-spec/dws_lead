@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795801263651-764",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "rhaiqo",
+      "authorUsername": "@rhaiqo",
+      "title": "📃 Резюме Frontend-разработчик от @rhaiqo, от 30 000 ₽ за проектный этап, у...",
+      "text": "📃 Резюме Frontend-разработчик от @rhaiqo, от 30 000 ₽ за проектный этап, удалённо, проектная работа",
+      "date": "2026-11-27T17:41:03.605Z",
+      "dateFormatted": "Сьогодні, 19:41",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795801125858-108",
       "category": "montage",
       "categoryName": "Монтаж",
