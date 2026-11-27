@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795777322939-742",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "frontend",
+      "subcategoryName": "Frontend розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "oper",
+      "authorUsername": "@oper",
+      "title": "🔥 Резюме Senior Frontend Developer (React, TS) от @Raym0NT, $2 000–3 000,...",
+      "text": "🔥 Резюме Senior Frontend Developer (React, TS) от @Raym0NT, $2 000–3 000, удаленно или релокация\n\n⭐ Конкретные метрики оптимизации: сокращение bundle на 30% и время загрузки первого экрана до 1.4 секунды.\n⭐ Глубокая техническая проработка сложных кейсов: 50+ real-time графиков с управлением подписками и утечками памяти.\n⭐ Чёткое позиционирование в нише Web3/Fintech с реальными интеграциями (Robokassa, СДЭК, TON Connect).",
+      "date": "2026-11-27T11:02:02.938Z",
+      "dateFormatted": "Сьогодні, 13:02",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: frontend розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795777238918-737",
       "category": "development",
       "categoryName": "Веброзробка",
