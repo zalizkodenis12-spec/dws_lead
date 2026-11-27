@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795793325416-903",
+      "category": "montage",
+      "categoryName": "Монтаж",
+      "subcategory": "reels_tiktok",
+      "subcategoryName": "Монтаж Reels/TikTok",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "Юля Гаращенко",
+      "authorUsername": "@tg_id_1289809441",
+      "title": "Відкрита до нових проєктів 🤍",
+      "text": "Відкрита до нових проєктів 🤍\n\nЗараз шукаю проєкти для співпраці та буду рада новим знайомствам!\n\nМожу допомогти з:\n\n• веденням Stories на постійній основі;\n• створенням окремих сторітелінгів;\n• оформленням постів-каруселей;\n• монтажем Reels та інших відео.\n\nЗа деталями та обговоренням пишіть мені в особисті повідомлення 💌",
+      "date": "2026-11-27T15:28:45.368Z",
+      "dateFormatted": "Сьогодні, 17:28",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 58,
+      "aiSummary": "Замовлення: монтаж reels/tiktok.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795792320222-34",
       "category": "development",
       "categoryName": "Веброзробка",
