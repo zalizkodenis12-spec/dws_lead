@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795779969293-335",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "Rudenko.smm.chat | чат вакансій | робота",
+      "sourceUsername": "@RudenkoSMM",
+      "authorName": "Rudenko_jobs",
+      "authorUsername": "@Rudenko_jobs",
+      "title": "🔥 «Який чат - для чого?",
+      "text": "🔥 «Який чат - для чого?\n\n@RudenkoSMM (чат):\nвакансії + спілкування!\n🫂 💼\n\nВ цьому чаті, окрім перегляду вакансій, можна (і потрібно) задавати питання, спілкуватися на діджитал-теми.\n\n* щотижня -\nДні реклами, коли ви можете надіслати розсилки безкоштовно!\n\n@Rudenko_Job (канал):\nвакансії + корисний контент (уроки, статті, розбори, стратегії)\n💰 💼\n\n@Rudenko_jobs (чат):\nтільки вакансії!\nВ цьому чаті, нічого, крім вакансій, Не розміщуємо!\n💼 📉\n\n#Rudenko #навігація",
+      "date": "2026-11-27T11:46:09.293Z",
+      "dateFormatted": "Сьогодні, 13:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 54,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795778981750-593",
       "category": "montage",
       "categoryName": "Монтаж",
