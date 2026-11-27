@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795790102840-523",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "ecommerce",
+      "subcategoryName": "Онлайн-магазин",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "javascript_jobs_feed",
+      "authorUsername": "@javascript_jobs_feed",
+      "title": "🔥 Вакансия Senior Fullstack в ChatMarket, 200 000–300 000 ₽ на руки, удалё...",
+      "text": "🔥 Вакансия Senior Fullstack в ChatMarket, 200 000–300 000 ₽ на руки, удалённо по России, фуллтайм\n\n⭐ Мультитенантный B2B-магазин прямо в Telegram и MAX — ниша заметнее очередного «делаем SaaS».\n⭐ Ответственность за весь цикл: от миграции MySQL и API до интерфейса магазина и кабинета.\n⭐ Конкретно описаны боевые нюансы: идемпотентность вебхуков оплаты, лимиты рассылок и фоновые импорты.",
+      "date": "2026-11-27T14:35:02.840Z",
+      "dateFormatted": "Сьогодні, 16:35",
+      "budget": 0,
+      "currency": "₴",
+      "country": "РФ",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: онлайн-магазин.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795790085755-629",
       "category": "montage",
       "categoryName": "Монтаж",
