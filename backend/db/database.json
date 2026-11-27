@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795800886338-693",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "DIGITAL Tender / freelance / фриланс",
+      "sourceUsername": "@digitaltender",
+      "authorName": "digitaltender",
+      "authorUsername": "@digitaltender",
+      "title": "👔 Контент-менеджер / менеджер органического трафика",
+      "text": "👔 Контент-менеджер / менеджер органического трафика\n\n💼 Тип работы: постоянная\n\n👀 Задача: Разрабатывать контент-план и вести соцсети; создавать вовлекающие посты, сторис и короткие видео; генерировать идеи и адаптировать тренды; анализировать эффективность контента\n\n💰 Оплата: от 1000€",
+      "date": "2026-11-27T17:34:46.295Z",
+      "dateFormatted": "Сьогодні, 19:34",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795799700662-94",
       "category": "marketing",
       "categoryName": "Маркетинг",
