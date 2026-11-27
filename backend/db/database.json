@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795772502585-184",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "meta_target",
+      "subcategoryName": "Таргетована реклама (Meta)",
+      "sourceType": "chat",
+      "sourceName": "Dobra Praca / Работа Варшава (The Warsaw)",
+      "sourceUsername": "@rabotawarszawa",
+      "authorName": "gs_galya",
+      "authorUsername": "@gs_galya",
+      "title": "User Acquisition Manager / Media Buyer (Mobile Apps)",
+      "text": "User Acquisition Manager / Media Buyer (Mobile Apps)\n\n📍 Варшава | Гибридный формат\n\nTraffic Jam развивает направление Mobile Apps и ищет опытного специалиста по закупке трафика для iOS-приложений с подписочной моделью монетизации.\n\nЧто мы предлагаем:\n•  Unlimited Budget;\n•  Собственную IT-инфраструктуру;\n•  In-house дизайн-команду;\n•  Свободу в реализации и тестировании гипотез;\n•  Профессиональный и финансовый рост;\n•  Сильную команду и комфортную рабочую атмосферу;\n• Гибридный формат — 3 дня в офисе, остальные удалённо.\n\nЧто мы ожидаем:\n•  Опыт в Mobile User Acquisition от 2 лет;\n•  Опыт работы с iOS subscription apps от 1 года;\n•  Уверенную работу с Facebook Ads;\n•  Опыт продвижения non-gaming subscription apps;\n•  Опыт работы с бюджетами от $50 000 в месяц;\n•  Наличие успешных кейсов;\n•  Навыки когортного анализа и понимание своих цифр.\n\nТакже готовы рассматривать Junior-специалистов с опытом закупки трафика от 6 месяцев, заинтересованных в развитии в направлении Mobile User Acquisition.\n\n📩 Для отклика отправляй резюме и желаемый уровень дохода: @gs_galya",
+      "date": "2026-11-27T09:41:42.539Z",
+      "dateFormatted": "Сьогодні, 11:41",
+      "budget": 2000,
+      "currency": "₴",
+      "country": "Польща",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 64,
+      "aiSummary": "Замовлення: таргетована реклама (meta) з бюджетом 2000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795771345674-563",
       "category": "marketing",
       "categoryName": "Маркетинг",
