@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795763759412-321",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "fullstack",
+      "subcategoryName": "Fullstack розробка",
+      "sourceType": "chat",
+      "sourceName": "JavaScript Jobs — вакансии и резюме",
+      "sourceUsername": "@javascript_jobs_feed",
+      "authorName": "oddbear",
+      "authorUsername": "@oddbear",
+      "title": "🔥 Резюме Senior Fullstack-разработчик от @oddbear, от $4 500, Алматы, удал...",
+      "text": "🔥 Резюме Senior Fullstack-разработчик от @oddbear, от $4 500, Алматы, удаленка, фуллтайм или парт-тайм\n\n⭐ Агент автобагфикса вместо Sentry с 20–30 исправлениями в неделю на живом проде\n⭐ Разработка архитектуры ядра для Ton Dating и движка с мультиплеером на 11k+ игроков\n⭐ Конкретный доменный опыт: от онкологических систем в США до геймингового финтеха",
+      "date": "2026-11-27T07:15:59.372Z",
+      "dateFormatted": "Сьогодні, 09:15",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: fullstack розробка.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795763283621-485",
       "category": "montage",
       "categoryName": "Монтаж",
