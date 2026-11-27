@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1795819588203-2817",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "tg_bots",
+      "subcategoryName": "Телеграм-бот та автоматизація",
+      "sourceType": "freelancehunt",
+      "sourceName": "Freelancehunt",
+      "sourceUsername": "@freelancehunt",
+      "authorName": "Замовник на Freelancehunt",
+      "authorUsername": "@freelancehunt",
+      "title": "Бот карманный вариант",
+      "text": "Бот карманный вариант\n\nПроект: Телеграм-бот для торговых сигналов OTC Pocket Option\n\n\nПлатформа: Телеграм\nБрокер: Pocket Option\nЯзык: Английский (с возможностью добавления русского)\n\n\n1. Обзор проекта\n\n\nЯ ищу опытного разработчика для создания телеграм-бота, который анализирует валютные пары OTC Pocket Option и генерирует...",
+      "url": "https://freelancehunt.com/project/bot-pocket-option/1667030.html",
+      "date": "2026-11-27T22:46:28.203Z",
+      "dateFormatted": "Сьогодні, 00:46",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Freelancehunt",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення на Freelancehunt: телеграм-бот та автоматизація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795812437067-887",
       "category": "development",
       "categoryName": "Веброзробка",
