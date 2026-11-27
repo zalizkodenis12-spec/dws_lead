@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795788289698-445",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "seo",
+      "subcategoryName": "SEO оптимізація",
+      "sourceType": "chat",
+      "sourceName": "DIGITAL Tender / freelance / фриланс",
+      "sourceUsername": "@digitaltender",
+      "authorName": "digitaltender",
+      "authorUsername": "@digitaltender",
+      "title": "👔 SEO-специалист",
+      "text": "👔 SEO-специалист\n\n💼 Тип работы: постоянная\n\n👀 Задача: Продвижение сайта и Google Maps\n\n💰 Оплата: по договорённости",
+      "date": "2026-11-27T14:04:49.634Z",
+      "dateFormatted": "Сьогодні, 16:04",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 42,
+      "aiSummary": "Замовлення: seo оптимізація.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795787190073-2854",
       "category": "development",
       "categoryName": "Веброзробка",
