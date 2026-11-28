@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1795873016726-1498",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "3d_site",
+      "subcategoryName": "3D сайт",
+      "sourceType": "freelancehunt",
+      "sourceName": "Freelancehunt",
+      "sourceUsername": "@freelancehunt",
+      "authorName": "Замовник на Freelancehunt",
+      "authorUsername": "@freelancehunt",
+      "title": "Мое Украинское лето",
+      "text": "Мое Украинское лето - 10000UAH\n\nЗдравствуйте! Ищу 3D-моделиста для создания автомобиля Daewoo Lanos T100 (седан, 1997–2000 год) для компьютерной игры на Unity в жанре автомобильного симулятора, подобного My Summer Car и My Winter Car.\nНужна не цельная модель автомобиля, а полностью разборная конструкция, которую игрок сможет самостоятельно...",
+      "url": "https://freelancehunt.com/project/moe-ukrayinske-lito/1667088.html",
+      "date": "2026-11-28T13:36:56.726Z",
+      "dateFormatted": "Сьогодні, 15:36",
+      "budget": 10000,
+      "currency": "₴",
+      "country": "Freelancehunt",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 59,
+      "aiSummary": "Замовлення на Freelancehunt: 3d сайт з бюджетом 10000 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795869416611-1014",
       "category": "development",
       "categoryName": "Веброзробка",
