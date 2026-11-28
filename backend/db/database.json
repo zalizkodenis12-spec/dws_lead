@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795867200909-868",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "chat",
+      "sourceName": "є контакт",
+      "sourceUsername": "@jecontact",
+      "authorName": "jecontact",
+      "authorUsername": "@jecontact",
+      "title": "Сюююююрприз від Kukurudza Blog і дуже прикольна механіка на чорну пʼятницю...",
+      "text": "Сюююююрприз від Kukurudza Blog і дуже прикольна механіка на чорну пʼятницю 😎\n\nМожна запустити на сайті рандомайзер та виграти до 70% знижки на будь-який їх SMM-курс 😊\n\nАле спроба лише одна. І все це працює тільки 27, 28 та 29 листопада.\n\n👉 Переходь за посиланням\n\n#ads",
+      "date": "2026-11-28T12:00:00.851Z",
+      "dateFormatted": "Сьогодні, 14:00",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення: маркетинг.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795865926631-914",
       "category": "development",
       "categoryName": "Веброзробка",
