@@ -1,6 +1,33 @@
 {
   "leads": [
     {
+      "id": "lead-ex-1795880213555-6873",
+      "category": "marketing",
+      "categoryName": "Маркетинг",
+      "subcategory": "general",
+      "subcategoryName": "Маркетинг",
+      "sourceType": "freelancehunt",
+      "sourceName": "Freelancehunt",
+      "sourceUsername": "@freelancehunt",
+      "authorName": "Замовник на Freelancehunt",
+      "authorUsername": "@freelancehunt",
+      "title": "Привлечение целевого трафика в Telegram-каналы криптовалютной тематики",
+      "text": "Привлечение целевого трафика в Telegram-каналы криптовалютной тематики - 25EUR\n\nПривлечение целевого трафика в Telegram-каналы криптовалютной тематики\n\n\nНеобходимо организовать привлечение реального целевого трафика в действующий криптовалютный проект.\n\n\nВ рамках проекта имеются два отдельных Telegram-канала:\n\n\n* Русскоязычный — для русскоязычной аудитории.\n* Англоязычный — для...",
+      "url": "https://freelancehunt.com/project/privlechenie-tselevogo-trafika-telegram-kanalyi-kriptovalyutnoy/1667102.html",
+      "date": "2026-11-28T15:36:53.554Z",
+      "dateFormatted": "Сьогодні, 17:36",
+      "budget": 25,
+      "currency": "₴",
+      "country": "Freelancehunt",
+      "isUrgent": false,
+      "requiresPortfolio": false,
+      "experienceRequired": false,
+      "aiRating": 49,
+      "aiSummary": "Замовлення на Freelancehunt: маркетинг з бюджетом 25 ₴.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-1795880186359-646",
       "category": "marketing",
       "categoryName": "Маркетинг",
