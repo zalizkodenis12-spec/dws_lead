@@ -1,6 +1,32 @@
 {
   "leads": [
     {
+      "id": "lead-1795883280979-517",
+      "category": "development",
+      "categoryName": "Веброзробка",
+      "subcategory": "landing",
+      "subcategoryName": "Односторінковий сайт",
+      "sourceType": "chat",
+      "sourceName": "чат «SMM-укриття 🇺🇦»",
+      "sourceUsername": "@smmbunker",
+      "authorName": "N ₿",
+      "authorUsername": "@thibauddequer",
+      "title": "Привіт! Я Нікіта, копірайтер з досвідом 1 рік. Шукаю нові проєкти для співп...",
+      "text": "Привіт! Я Нікіта, копірайтер з досвідом 1 рік. Шукаю нові проєкти для співпраці.\n\nЩо пишу:\n— Пости та контент-плани для Telegram, Instagram.\n— Продаючі тексти, описи, розсилки, лендінги.\n— Сценарії Reels і Stories.\n— Тексти українською та англійською (C1).\n\nМій досвід:\n— Працював із нішевими та новинними Telegram-каналами.\n— Понад 20 000 переглядів на постах за три тижні.\n— Вмію адаптувати tone of voice під аудиторію та специфіку проєкту.\n\nНе просто заповнюю контент-план, а думаю над тим, як зробити текст зрозумілим, цікавим і корисним для читача.\n\nПортфоліо та приклади робіт надішлю в особисті повідомлення.\n\n📩 Telegram: @thibauddequer",
+      "date": "2026-11-28T16:28:00.921Z",
+      "dateFormatted": "Сьогодні, 18:28",
+      "budget": 0,
+      "currency": "₴",
+      "country": "Україна",
+      "isUrgent": false,
+      "requiresPortfolio": true,
+      "experienceRequired": true,
+      "aiRating": 65,
+      "aiSummary": "Замовлення: односторінковий сайт.",
+      "aiAnalysis": null,
+      "inCrm": false
+    },
+    {
       "id": "lead-ex-1795880213555-6873",
       "category": "marketing",
       "categoryName": "Маркетинг",
